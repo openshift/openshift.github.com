@@ -136,6 +136,7 @@ the stack so you can focus on your code.
 <p class='gutter'><a href="https://www.redhat.com/openshift/blogs" class="action-more">Read the OpenShift blog</a></p>
 </div>
 </div>
+<div id="repositories" />
 </div>
 </div>
 
@@ -205,6 +206,69 @@ the stack so you can focus on your code.
 <script src="http://openshift.redhat.com/app/javascripts/home.branding.js" type="text/javascript"></script>
 <script src="http://openshift.redhat.com/app/javascripts/script.js" type="text/javascript"></script>
 
+<style type="text/css">
+	#repositories .repository {
+		width: 150px;
+		height: 200px;
+		float: left;
+		border: 1px solid gray;
+		margin-left: 10px;
+		margin-bottom: 10px;
+		padding: 5px;
+	}
+
+	#repositories .repository .name{
+		font-weight: bold;
+	}
+
+	#repositories .repository .language{
+		font-style: italic;
+	}
+
+	#repositories .repository .description{
+		padding-top: 20px;
+	}
+</style>
+
+<script type="text/javascript">
+
+$(function(){
+	var colors = {
+		"Ruby": "red",
+		"PHP": "blue",
+		"Java": "brown",
+		"Shell": "yellow",
+		"Python": "green",
+		"Perl": "purple",
+		"JavaScript": "orange",
+		"C": "silver"
+	};
+	$.getJSON("https://api.github.com/orgs/openshift/repos?callback=?", function (result) {
+		data = result.data;
+		console.log(data);
+		output = $("<div/>").addClass("repositories");
+		for(x in data){
+			repo = data[x];
+			color = colors[repo.language] ? colors[repo.language] : "black";
+			output.append(html = $("<div/>").addClass("repository"));
+			html.css("cursor", "pointer");
+			html.append($("<div/>").html(repo.name).addClass("name").css("color", color));
+			html.append($("<div/>").html(repo.language).addClass("language"));
+			html.append($("<div/>").html(repo.description).addClass("description"));
+			html.click(function(){
+				window.location = repo.html_url;
+			});
+			html.hover(function(){
+				$(this).css("background", "gray");
+			}, function(){
+				$(this).css("background", "");
+			});
+		};
+		$("#repositories").append(output);
+	});
+});
+
+</script>
 
 <!-- SiteCatalyst code version: H.23.3.
 Copyright 1996-2011 Adobe, Inc. All Rights Reserved
