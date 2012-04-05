@@ -136,8 +136,15 @@ the stack so you can focus on your code.
 <p class='gutter'><a href="https://www.redhat.com/openshift/blogs" class="action-more">Read the OpenShift blog</a></p>
 </div>
 </div>
-<div id="organization"></div>
-<div id="repositories"></div>
+<div id="organization">
+	<h2>OpenShift</h2>
+</div>
+<div id="repositories" class="repositories">
+	<h3>OpenShift projects</h3>
+</div>
+<div id="forks" class="repositories">
+	<h3>Community projects</h3>
+</div>
 </div>
 </div>
 
@@ -220,10 +227,16 @@ the stack so you can focus on your code.
 	}
 
 	#repositories {
-		clear: both;
+		width: 50%;
+		float: left;
 	}
 
-	#repositories .repository {
+	#forks {
+		width: 50%;
+		float: left;
+	}
+
+	.repositories .repository {
 		width: 150px;
 		height: 200px;
 		float: left;
@@ -234,15 +247,15 @@ the stack so you can focus on your code.
 		cursor: pointer;
 	}
 
-	#repositories .repository .name{
+	.repositories .repository .name{
 		font-weight: bold;
 	}
 
-	#repositories .repository .language{
+	.repositories .repository .language{
 		font-style: italic;
 	}
 
-	#repositories .repository .description{
+	.repositories .repository .description{
 		padding-top: 20px;
 	}
 </style>
@@ -252,13 +265,12 @@ the stack so you can focus on your code.
 $(function(){
 	$.getJSON("https://api.github.com/orgs/openshift?callback=?", function (result) {
 		data = result.data;
-		output = $("<div />");
-		output.append($("<div />").addClass("name").html(data.name));
+		output = $("#organization");
 		output.append($("<div />").addClass("followers").html("Followers: " + data.followers));
 		output.append($("<div />").addClass("repositories").html("Repositories: " + data.public_repos));
 		output.append($("<div />").addClass("gists").html("Gists: " + data.public_gists));	
-		$("#organization").append(output);
 	});
+	
 	var colors = {
 		"Ruby": "red",
 		"PHP": "blue",
@@ -269,35 +281,53 @@ $(function(){
 		"JavaScript": "orange",
 		"C": "silver"
 	};
+
+	var container = function(repo){
+		console.log(repo);
+		color = colors[repo.language] ? colors[repo.language] : "black";
+		var html = $("<div/>").addClass("repository")
+		html.append($("<div/>").html(repo.name).addClass("name").css("color", color));
+		html.append($("<div/>").html(repo.language).addClass("language"));
+		html.append($("<div/>").html(repo.description).addClass("description"));
+		html.data('repo', repo);
+		html.click(function(){
+			window.location = $(this).data('repo').html_url;
+		});
+		html.hover(function(){
+			$(this).css("background", "gray");
+		}, function(){
+			$(this).css("background", "");
+		});
+		return html;
+	};
+
 	$.getJSON("https://api.github.com/orgs/openshift/repos?callback=?", function (result) {
 		data = result.data;
-		output = $("<div/>").addClass("repositories");
 		repos = {};
 		dates = [];
+		var repositories = $("#repositories");
+		var forks = $("#forks");
 		$.each(data, function(i, repo){
 			date = Date.parse(repo.pushed_at);
 			dates.push(date);
-			repos[date] = repo;
+			if(!repos[date]){
+				repos[date] = [];
+			};
+			repos[date].push(repo);
 		});
 		dates.sort();
 		dates.reverse();
-		$.each(dates, function(i, date){
-			repo = repos[date];
-			color = colors[repo.language] ? colors[repo.language] : "black";
-			output.append(html = $("<div/>").addClass("repository"));
-			html.append($("<div/>").html(repo.name).addClass("name").css("color", color));
-			html.append($("<div/>").html(repo.language).addClass("language"));
-			html.append($("<div/>").html(repo.description).addClass("description"));
-			html.click(function(){
-				window.location = repo.html_url;
-			});
-			html.hover(function(){
-				$(this).css("background", "gray");
-			}, function(){
-				$(this).css("background", "");
+		$.each(dates, function(i, date){		
+			var repo = repos[date];
+			$.each(repo, function(i, repo){
+				console.log(repo);
+				if(repo.fork){
+					forks.append(container(repo));
+				}else{
+					repositories.append(container(repo));
+				};
 			});
 		});
-		$("#repositories").append(output);
 	});
 });
 
