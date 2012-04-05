@@ -233,6 +233,18 @@ $(function(){
 		"JavaScript": "http://dartr.com/wp-content/uploads/2011/10/javascript-logo.png"
 	};
 
+	var excludes = [
+		"wordpress-example", 
+		"drupal-example", 
+		"joomla-example", 
+		"redmine-openshift-quickstart", 
+		"CodeIgniterQuickStart", 
+		"cakephp-example", 
+		"rails-example", 
+		"django-example",
+		"openshift.github.com"
+	];
+
 	var container = function(repo){
 		background = backgrounds[repo.language] ? backgrounds[repo.language] : "black";
 		var html = $('<a/>').addClass("link-tile").attr('href', repo.html_url);
@@ -261,11 +273,12 @@ $(function(){
 		$.each(dates, function(i, date){		
 			var repo = repos[date];
 			$.each(repo, function(i, repo){
-				console.log(repo);
+				console.log(repo.name);
+				console.log(excludes.indexOf(repo.name));
 				if(repo.fork){
-					forks.append(container(repo));
+					if(excludes.indexOf(repo.name) == -1) forks.append(container(repo));
 				}else{
-					repositories.append(container(repo));
+					if(excludes.indexOf(repo.name) == -1) repositories.append(container(repo));
 				};
 			});
 		});
