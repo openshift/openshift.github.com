@@ -194,28 +194,15 @@
 		margin-bottom: 10px;
 	}
 
-	.repositories .repository {
-		width: 150px;
-		height: 200px;
-		float: left;
-		border: 1px solid gray;
-		margin-left: 10px;
-		margin-bottom: 10px;
-		padding: 5px;
+	.repository {
+		min-height: 80px;
 		cursor: pointer;
+		background-repeat: no-repeat;
+		background-position: left;
+		background-size: 40px;
+		padding-left: 50px;
 	}
 
-	.repositories .repository .name{
-		font-weight: bold;
-	}
-
-	.repositories .repository .language{
-		font-style: italic;
-	}
-
-	.repositories .repository .description{
-		padding-top: 20px;
-	}
 </style>
 
 <script type="text/javascript">
@@ -229,26 +216,22 @@ $(function(){
 		output.append($("<div />").addClass("gists").html("Gists: " + data.public_gists));	
 	});
 	
-	var colors = {
-		"Ruby": "red",
-		"PHP": "blue",
-		"Java": "brown",
-		"Shell": "yellow",
-		"Python": "green",
-		"Perl": "purple",
-		"JavaScript": "orange",
-		"C": "silver"
+	var backgrounds = {
+		"Ruby": "http://brug.cz/images/ruby_logo.png",
+		"PHP": "http://static.php.net/www.php.net/images/php.gif",
+		"Java": "http://upload.wikimedia.org/wikipedia/en/thumb/3/39/Java_logo.svg/300px-Java_logo.svg.png",
+		"Python": "http://wadah-it.com/wp-content/uploads/2010/06/python-logo.png",
+		"Perl": "http://developers.digium.com/switchvox/blog/wp-content/uploads/2009/05/perl_logo.jpg",
+		"JavaScript": "http://dartr.com/wp-content/uploads/2011/10/javascript-logo.png"
 	};
 
 	var container = function(repo){
-		console.log(repo);
-		color = colors[repo.language] ? colors[repo.language] : "black";
-		var html = $('<a/>').addClass("link-title").attr('href', repo.html_url);
-		html.append($("<h4/>").html(repo.name).css("color", color));
-		//html.append($("<div/>").html(repo.language).addClass("language"));
+		background = backgrounds[repo.language] ? backgrounds[repo.language] : "black";
+		var html = $('<a/>').addClass("link-tile").attr('href', repo.html_url);
+		html.append($("<h4/>").html(repo.name));
 		html.append($("<p/>").html(repo.description));
 		html.data('repo', repo);
-		return $("<li/>").append(html);
+		return $("<li/>").addClass('repository').css('background-image', "URL('" + background + "')").append(html);
 	};
 
 	$.getJSON("https://api.github.com/orgs/openshift/repos?callback=?", function (result) {
