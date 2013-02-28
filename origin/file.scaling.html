@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  File: scaling
+  
+    &mdash; Documentation by YARD 0.8.5.2
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: scaling</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><h1>Scaling in OpenShift</h1>
+
+<p>The first thing to know about scaling in OpenShift is that it is implemented
+using haproxy.  The best technical document on how this is done can be found in
+the <a href="../cartridges/openshift-origin-cartridge-haproxy-1.4/README">haproxy cartridge README</a>.</p>
+
+<p>You should definitely read that document before continuing further.</p>
+
+<h1>Overview of the moving parts</h1>
+
+<p>It&#39;s important to understand that the decision to scale and application or not
+is made at application creation time.  This is because the haproxy cartridge is
+embedded into the framework cartridge you are trying to scale at application
+creation time.</p>
+
+<p>You can take a look in <code>controller/app/models/application.rb</code> at how
+template_scalable_app is called when new applications are created.  Today
+haproxy is configured as a proxy component for the first gear in all scalable
+applications.  If you wanted to add another type of scaling to OpenShift this
+code would have to be modified.</p>
+
+<p>Once the application is running the scale_events.log is monitored by
+<code>haproxy_ctld</code>.  The details of autoscale is best covered in the haproxy
+cartridge README file.  However the ultimately <code>haproxy_ctld</code>&#39;s add_gear method
+is called which effectively calls the add-gear script and eventually reaches
+<code>app_events_controller.rb</code>.</p>
+
+<p>In order for add-gear to work the node has to make a connection to the broker
+on behalf of the user.  This is done with encrypted token authentication.
+Whenever an haproxy cartridge is embedded a broker auth token will be created
+in the gear.  For more details see <a href="how_nodes_act_on_behalf_of_users.md">How nodes act on behalf of users</a>.</p>
+
+<h1>Scaling up</h1>
+
+<p>The process of scaling up entails a few things:</p>
+
+<ul>
+<li><p>A DNS entry is created for the newly created gear.  It will be in the form of:</p>
+
+<p><code>$RANDOM_IDENTIFIER-$USERS_NAMESPACE.$CLOUD_DOMAIN</code></p>
+
+<p>For example, <code>868b21e893-mydomain.example.com</code>.</p>
+
+<p>This is done in <code>controller/app/models/group_instance.rb</code>.</p></li>
+<li><p>The logic in <code>group_instance.rb</code> also handles copying the settings for the
+original gear to the newly created gear.  This includes things like the
+user&#39;s environment variables and the various ssh keys in OpenShift.</p></li>
+<li><p>The <code>set-proxy</code> connection hook is called when the connector-execute message
+is sent from the broker to update the haproxy configuration for the scaling gear.</p></li>
+</ul>
+
+<h1>The gear registry</h1>
+
+<p>The haproxy maintains a gear registry for quickly keeping track of what gears
+have been created for a user as part of scaling.  One thing to note is that we
+use IP addresses for loadbalancing in OpenShift because we can&#39;t always depend
+on DNS resolving in time while scaling up.  Because of this we have to have
+some way to fix things when the addresses change.</p>
+
+<p><code>haproxy_ctld</code> handles this in the <code>repair_configuration</code> method.  It will check
+the registry&#39;s hostname and do a DNS lookup to see if anything has changed.</p>
+</div></div>
+
+    <div id="footer">
+  Generated on Wed Feb 27 20:11:44 2013 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.5.2 (ruby-1.8.7).
+</div>
+
+  </body>
+</html>

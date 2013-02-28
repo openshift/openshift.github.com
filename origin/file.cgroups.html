@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  File: cgroups
+  
+    &mdash; Documentation by YARD 0.8.5.2
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: cgroups</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><h1>Control Groups in OpenShift</h1>
+
+<p>Cgroups are used to throttle the use of resources on each OpenShift node.
+Cgroups are a kernel feature that allow restricting the resource utilization in
+number of subsystems.  You can read more on that
+<a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch-Subsystems_and_Tunable_Parameters.html">here</a>.</p>
+
+<h1>Node Startup</h1>
+
+<p>When an OpenShift node starts up, it needs to start the cgroups services
+(cgconfig and cgred) and make sure all user cgroup configurations are applied.
+The cgconfig service is used to set up the cgroups filesystem layout.  The
+cgred service is used to start the groups rules engine daemon.</p>
+
+<p>The <a href="../node/misc/init/openshift-cgroups">openshift-cgroups</a> service controls
+the initialization of the openshift control groups.  The openshift-cgroups
+service uses the <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a>
+script to read the configured default values and start cgroups for each
+OpenShift user.</p>
+
+<p>The list of users for which cgroups are started is established from <code>getent
+passwd</code> and finding any user that has &quot;OpenShift guest&quot; as the User ID Info
+field in /etc/passwd on the node.</p>
+
+<p>Once the service has looked up the list of OpenShift users, a call to startuser
+in <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> on each user
+is made.</p>
+
+<h1>User Creation and Deletion</h1>
+
+<p>When an OpenShift user is created, their cgroup configuration is applied using the default resource limit
+values.  The
+<a href="../node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a>
+is invoked, calling after_unix_user_create, which then makes a call to the
+<a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;startuser&#39;.
+When a user is deleted, their cgroup controlled resources are &#39;frozen&#39; so they
+won&#39;t be able to start any new processes.  Once the user is removed from a
+node, the cgroup configuration for that user is removed.  The
+<a href="../node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a>
+once again makes a call to
+<a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;stopuser&#39; is made.</p>
+
+<h1>Start and Stop a User Control Group</h1>
+
+<p>Default resource limit settings  are configured in
+/etc/openshift/resource_limits.conf which is installed by the
+<a href="../node/rubygem-openshift-origin-node.spec">rubygem-openshift-origin-node rpm</a>
+based upon the <a href="../node/conf/resource_limits.template">resource_limits</a>
+template.</p>
+
+<p>Post cgroup initialization, each OpenShift user has a cgroup configuration,
+which can be found under /cgroup/all/openshift/$USER.</p>
+
+<p>The <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> startuser functionality will apply the default resource limits, and will create a
+cgroup rule in /etc/cgrules.conf specific to the new user.</p>
+
+<p>Any time the control group rules are altered, the cgred process needs to be
+reloaded.  Our tools use pkill -USR2 to reload the cgred.</p>
+
+<p>The <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> stopuser functionality will use cgdelete to remove the cgroup for the user and
+remove the user rule in /etc/cgrules.conf.</p>
+
+<h1>Optimizations</h1>
+
+<p>The configure hook on all cartridges increases the cpu quota as an
+optimization, allowing the configure hook to finish more quickly.  You&#39;ll
+notice every cartridge we ship has a configure hook that disables and enables
+cgroups.  The call to disable_cgroups in the configure hooks only lifts the
+cpu.cfs_quota_us resource restriction, and does not in fact disable all
+cgroups.  The disable_cgroups function will set the cpu.cfs_quota_us to
+whatever value is in cpu.cfs_period_us.  Once the configure hook is done doing
+its work, the original setting to cpu.cfs_quota_us is restored.</p>
+
+<h1>Check the Control Groups Configuration</h1>
+
+<p><a href="../node-util/bin/oo-accept-node">oo-accept-node</a> can be used to make sure all
+the cgroups are configured properly.  You can also use &#39;lscgroup
+cpu,cpuacct,memory,freezer,net_cls:/openshift&#39; to see what cgroups are
+configured.</p>
+
+<p><a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html-single/Resource_Management_Guide/#ex-cgsnapshot-usage">cgsnapshot</a>
+can be used to see the current current rules the kernel is operating under.</p>
+
+<p>All gear accounts must have a cgroup
+  search /etc/passwd for gear accounts
+   verify that /cgroup/all/openshift/<acctname> exists, containes correct subsystems</p>
+
+<p>for ACCT in $(grep guest /etc/passwd | cut -d: -f1) ; do test -d /cgroup/all/openshift/$ACCT || echo &quot;$ACCT is missing cgroup directory&quot;  ; done</p>
+
+<p>All gear accounts must have a cgrules.conf entry:</p>
+
+<p>for ACCTNAME in $(grep guest /etc/passwd | cut -d: -f1) ; do if ! grep $ACCTNAME /etc/cgrules.conf &gt;/dev/null 2&gt;/dev/null ; then echo &quot;$ACCTNAME does not have a cgrules.conf entry&quot; ; fi ; done</p>
+
+<p>All gear processes must be assigned to their cgroup
+  For all processes owned by the account UID, verify that the PID is listed in cgroup.procs</p>
+
+<p>for ACCTINFO in $(grep guest /etc/passwd | awk -F: &#39;$1&quot;:&quot;$3&#39;)
+do
+  ACCTNAME=$(echo $ACCTINFO | cut -d: -f1)
+  ACCTPID=$(echo $ACCTINFO | cut -d: -f2)
+  #
+  # get the processes with that PID
+  PIDLIST=$(ps --no-headers -o pid -u $ACCTPID)
+  GROUPED=$(cat /cgroup/all/openshift/$ACCTNAME/cgroup.procs)</p>
+
+<p>if [ &quot;$PIDLIST&quot; != &quot;$GROUPED&quot; ]
+  then
+    echo &quot;Acct Name: $ACCTNAME pid: $ACCTPID): bad cgroup containment&quot;
+    echo &quot; &lt; = Unconfined   &gt; = not owned by gear&quot;
+    diff &lt;(echo $PIDLIST | tr &#39; &#39; &#39;\n&#39;) &lt;(echo $GROUPED | tr &#39; &#39; &#39;\n&#39;)
+  fi
+done</p>
+</div></div>
+
+    <div id="footer">
+  Generated on Wed Feb 27 20:11:44 2013 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.5.2 (ruby-1.8.7).
+</div>
+
+  </body>
+</html>
