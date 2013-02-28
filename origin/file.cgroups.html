@@ -68,12 +68,40 @@ Cgroups are a kernel feature that allow restricting the resource utilization in
 number of subsystems.  You can read more on that
 <a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch-Subsystems_and_Tunable_Parameters.html">here</a>.</p>
 
+<p>Cgroups are a kernel feature.  Every process is assigned to a group
+when the process is created.  Processes can be moved from one group to another.
+Subsystems are kernel modules that manage different resources.  Each
+subsystem can have different settings for every group.</p>
+
+<h1>Cgroup Services</h1>
+
+<p>The cgroup mechanism uses two services to set the initial group of a
+new process.  the Cgroup Rules Daemon (cgred) assigns new processes to
+a group using a set of matching rules defined in /etc/cgrules.conf.
+Pam_cgroup is used to assign shell processes to a cgroup after
+authentication.</p>
+
+<p>A third service provides the filesystem interface to cgroups.  The
+cgconfig service mounts a virtual filesystem which presents the
+cgroups and subsystem settings as files within a directory tree.  On
+Linux hosts which use systemd as the init process (Fedora &gt;= 15 and
+RHEL7) there is no need of a separate cgconfig service, as cgroups are
+integrated into the systemd process.</p>
+
+<h1>Cgroup Management</h1>
+
+<p>Cgroups have two primary control interfaces.  There is a set of
+command line tools (cgclassify, cgget, cgset) which are used to assign
+processes to a group, and to read and write the subsystem settings.
+There is also a filesystem interface which allows cgroup control using
+only ordinary file read and write operation.  </p>
+
+<p>Openshift uses the command line interface.</p>
+
 <h1>Node Startup</h1>
 
-<p>When an OpenShift node starts up, it needs to start the cgroups services
-(cgconfig and cgred) and make sure all user cgroup configurations are applied.
-The cgconfig service is used to set up the cgroups filesystem layout.  The
-cgred service is used to start the groups rules engine daemon.</p>
+<p>When an OpenShift node starts up, it needs to make sure all user
+cgroup configurations are applied.</p>
 
 <p>The <a href="../node/misc/init/openshift-cgroups">openshift-cgroups</a> service controls
 the initialization of the openshift control groups.  The openshift-cgroups
@@ -112,7 +140,7 @@ based upon the <a href="../node/conf/resource_limits.template">resource_limits</
 template.</p>
 
 <p>Post cgroup initialization, each OpenShift user has a cgroup configuration,
-which can be found under /cgroup/all/openshift/$USER.</p>
+which can be found in the cgroup path under /openshift/$USER.</p>
 
 <p>The <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> startuser functionality will apply the default resource limits, and will create a
 cgroup rule in /etc/cgrules.conf specific to the new user.</p>
@@ -144,39 +172,125 @@ configured.</p>
 <p><a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html-single/Resource_Management_Guide/#ex-cgsnapshot-usage">cgsnapshot</a>
 can be used to see the current current rules the kernel is operating under.</p>
 
-<p>All gear accounts must have a cgroup
+<p>All gear accounts must have a cgroup for each subsystem
   search /etc/passwd for gear accounts
-   verify that /cgroup/all/openshift/<acctname> exists, containes correct subsystems</p>
+   verify that /openshift/<acctname> exists for each subsystem</p>
 
-<p>for ACCT in $(grep guest /etc/passwd | cut -d: -f1) ; do test -d /cgroup/all/openshift/$ACCT || echo &quot;$ACCT is missing cgroup directory&quot;  ; done</p>
+<pre class="code bash"><code class="bash">SUBSYSTEMS=&quot;cpu cpuacct freezer memory net_cls&quot;
+for ACCT in $(grep guest /etc/passwd | cut -d: -f1)
+do
+  ACCTSS=$(lscgroup | grep /openshift/$ACCT | cut -d: -f1 | tr &quot;,\n&quot; &quot; &quot; | sort)
+  for SUBSYSTEM in $SUBSYSTEMS
+  do
+    if ! echo &quot;$ACCTSS&quot; | grep -q -s &quot;$SUBSYSTEM &quot;
+    then
+      echo &quot;account $ACCT is missing cgroup subsystem $SUBSYSTEM&quot;
+    fi
+  done
+  test -d /cgroup/all/openshift/${ACCT} || echo &quot;$ACCT is missing cgroup directory&quot;  
+done
+</code></pre>
 
 <p>All gear accounts must have a cgrules.conf entry:</p>
 
-<p>for ACCTNAME in $(grep guest /etc/passwd | cut -d: -f1) ; do if ! grep $ACCTNAME /etc/cgrules.conf &gt;/dev/null 2&gt;/dev/null ; then echo &quot;$ACCTNAME does not have a cgrules.conf entry&quot; ; fi ; done</p>
-
-<p>All gear processes must be assigned to their cgroup
-  For all processes owned by the account UID, verify that the PID is listed in cgroup.procs</p>
-
-<p>for ACCTINFO in $(grep guest /etc/passwd | awk -F: &#39;$1&quot;:&quot;$3&#39;)
-do
-  ACCTNAME=$(echo $ACCTINFO | cut -d: -f1)
-  ACCTPID=$(echo $ACCTINFO | cut -d: -f2)
-  #
-  # get the processes with that PID
-  PIDLIST=$(ps --no-headers -o pid -u $ACCTPID)
-  GROUPED=$(cat /cgroup/all/openshift/$ACCTNAME/cgroup.procs)</p>
-
-<p>if [ &quot;$PIDLIST&quot; != &quot;$GROUPED&quot; ]
-  then
-    echo &quot;Acct Name: $ACCTNAME pid: $ACCTPID): bad cgroup containment&quot;
-    echo &quot; &lt; = Unconfined   &gt; = not owned by gear&quot;
-    diff &lt;(echo $PIDLIST | tr &#39; &#39; &#39;\n&#39;) &lt;(echo $GROUPED | tr &#39; &#39; &#39;\n&#39;)
+<pre class="code bash"><code class="bash">for ACCTNAME in $(grep guest /etc/passwd | cut -d: -f1)
+do 
+  if ! grep -s -q $ACCTNAME /etc/cgrules.conf
+  then 
+    echo &quot;$ACCTNAME does not have a cgrules.conf entry&quot;
   fi
-done</p>
+done
+</code></pre>
+
+<p>All gear processes must be assigned to their cgroups
+  For all processes owned by the account UID, verify that the process
+  is a member of each of the subsystems used by Openshift</p>
+
+<p>You can determine the cgroup of a process with <em>ps</em>.</p>
+
+<p><code>ps -o cgroup &lt;pid&gt;</code></p>
+
+<p>Using this and some clever <em>sed</em> operations you can check each user process
+  to be sure it is properly contained.</p>
+
+<p>This is a more exhaustive and complex test.</p>
+
+<pre class="code bash"><code class="bash">#!/bin/sh
+#
+# Check that all user processes are contained by their cgroup
+#
+# This is horribly inefficient.  It uses repeated calls to ps to get different
+# cgroup elements rather than re-using a single call.
+# This is for ease of coding and clarity of reading.
+# Use oo-accept-node or the openshift-cgroups service status in the real world.
+#
+PROCESSES_CHECKED=0
+ACCOUNTS_CHECKED=0
+FAIL=0
+
+# return the cgroups for a process, one per line
+function process_cgroups() {
+    # PID=$1
+    ps -o cgroup --no-header $1 | sed 's/^[0-9]*:// ; s/,\([0-9]\):/;/g'
+}
+
+# True if the given process is contained by the subsystem in the group path
+function process_is_member() {
+    # PID=$1
+    # SUBSYSTEM=$2
+    # GPATH=$3
+    # PROC_CGROUPS=$4
+    ACTUAL_PATH=$(echo &quot;$4&quot; | sed -e 's/;/\n/g' | grep -e $2[,:] | cut -d: -f2)
+    if [ &quot;$ACTUAL_PATH&quot; != $3 ] ; then
+    return 1
+    fi
+    return 0
+}
+
+#
+# Is the process a member of the provided group path for all subsystems
+#
+OPENSHIFT_SUBSYSTEMS=&quot;cpu cpuacct freezer memory net_cls&quot;
+function process_contained() {
+    # PID=$1
+    # CGROUP_PATH=$2
+    # PROC_CGROUPS=$3
+    PROCESSES_CHECKED=$((PROCESSES_CHECKED + 1))
+    for SUBSYSTEM in $OPENSHIFT_SUBSYSTEMS ; do
+    if ! process_is_member $1 $SUBSYSTEM $2 &quot;$3&quot; ; then
+        return 1
+    fi
+    done
+    return 0
+}
+
+# Check that all processes for an account are contained in the subsystem cgroup
+function account_contained() {
+    # ACCOUNT=$1
+    ACCOUNTS_CHECKED=$(($ACCOUNTS_CHECKED + 1))
+    for PID in $(ps --no-headers -o pid -u $1) ;  do
+      PROC_CGROUPS=$(ps -o cgroup --no-header $PID | sed 's/^[0-9]*:// ; s/,\([0-9]\):/;/g')
+      if ! process_contained $PID /openshift/$1 &quot;$PROC_CGROUPS&quot; ;then
+      return 1
+      fi
+  done
+  return 0
+}
+
+# Check that all user processes are contained by their subsystem cgroups
+for ACCOUNT in $(grep 'guest' /etc/passwd | cut -d: -f1) ; do
+    if ! account_contained $ACCOUNT ; then
+    echo ERROR: $1 ;  FAIL=$(($FAIL + 1))
+    fi
+done
+
+if [ $FAIL -eq 0 ] ; then echo PASS ; else echo FAIL ; fi
+echo accounts: $ACCOUNTS_CHECKED, processes: $PROCESSES_CHECKED
+</code></pre>
 </div></div>
 
     <div id="footer">
-  Generated on Wed Feb 27 20:11:44 2013 by
+  Generated on Thu Feb 28 17:55:07 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

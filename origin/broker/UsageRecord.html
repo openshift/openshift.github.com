@@ -720,7 +720,12 @@ Additional filesystem storage in GB.
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -755,6 +760,9 @@ Additional filesystem storage in GB.
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -802,16 +810,18 @@ Additional filesystem storage in GB.
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -836,10 +846,10 @@ Additional filesystem storage in GB.
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -1024,7 +1034,12 @@ Application name that belongs to the user.
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -1059,6 +1074,9 @@ Application name that belongs to the user.
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -1106,16 +1124,18 @@ Application name that belongs to the user.
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -1140,10 +1160,10 @@ Application name that belongs to the user.
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -1328,7 +1348,12 @@ Premium cartridge name
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -1363,6 +1388,9 @@ Premium cartridge name
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -1410,16 +1438,18 @@ Premium cartridge name
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -1444,10 +1474,10 @@ Premium cartridge name
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -1632,7 +1662,12 @@ Denotes begin/continue/end of given usage_type
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -1667,6 +1702,9 @@ Denotes begin/continue/end of given usage_type
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -1714,16 +1752,18 @@ Denotes begin/continue/end of given usage_type
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -1748,10 +1788,10 @@ Denotes begin/continue/end of given usage_type
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -1936,7 +1976,12 @@ Gear identifier
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -1971,6 +2016,9 @@ Gear identifier
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -2018,16 +2066,18 @@ Gear identifier
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -2052,10 +2102,10 @@ Gear identifier
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -2240,7 +2290,12 @@ Gear size
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -2275,6 +2330,9 @@ Gear size
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -2322,16 +2380,18 @@ Gear size
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -2356,10 +2416,10 @@ Gear size
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -2544,7 +2604,12 @@ Login name for the user.
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -2579,6 +2644,9 @@ Login name for the user.
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -2626,16 +2694,18 @@ Login name for the user.
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -2660,10 +2730,10 @@ Login name for the user.
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -2848,7 +2918,12 @@ When is the last time it synced this Usage record with billing vendor
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -2883,6 +2958,9 @@ When is the last time it synced this Usage record with billing vendor
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -2930,16 +3008,18 @@ When is the last time it synced this Usage record with billing vendor
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -2964,10 +3044,10 @@ When is the last time it synced this Usage record with billing vendor
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -3152,7 +3232,12 @@ Represents type of usage, either gear or additional storage
 139
 140
 141
-142</pre>
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 20</span>
@@ -3187,6 +3272,9 @@ Represents type of usage, either gear or additional storage
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:gear_size</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_gear_size?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:addtl_fs_gb</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_addtl_fs_gb?</span>
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:cart_name</span><span class='comma token'>,</span> <span class='symbol val'>:presence</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='symbol val'>:if</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:validate_cart_name?</span>
+
+  <span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>'login'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_create_indexes identifier id'>create_indexes</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
     <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -3234,16 +3322,18 @@ Represents type of usage, either gear or additional storage
       <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
       <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+        <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
       <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -3268,10 +3358,10 @@ Represents type of usage, either gear or additional storage
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
       <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
       <span class='rubyid_begin begin kw'>begin</span>
-        <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+        <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
         <span class='comment val'># Can't fail because of a secondary logging error</span>
         <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -3308,9 +3398,6 @@ Represents type of usage, either gear or additional storage
       <pre class="lines">
 
 
-63
-64
-65
 66
 67
 68
@@ -3358,10 +3445,15 @@ Represents type of usage, either gear or additional storage
 110
 111
 112
-113</pre>
+113
+114
+115
+116
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 66</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_track_usage identifier id'>track_usage</span><span class='lparen token'>(</span><span class='rubyid_login identifier id'>login</span><span class='comma token'>,</span> <span class='rubyid_app_name identifier id'>app_name</span><span class='comma token'>,</span> <span class='rubyid_gear_id identifier id'>gear_id</span><span class='comma token'>,</span> <span class='rubyid_event identifier id'>event</span><span class='comma token'>,</span> <span class='rubyid_usage_type identifier id'>usage_type</span><span class='comma token'>,</span>
                      <span class='rubyid_gear_size identifier id'>gear_size</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_addtl_fs_gb identifier id'>addtl_fs_gb</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
@@ -3397,16 +3489,18 @@ Represents type of usage, either gear or additional storage
     <span class='rubyid_usage identifier id'>usage</span><span class='dot token'>.</span><span class='rubyid_save! fid id'>save!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_usage identifier id'>usage</span>
   <span class='rubyid_end end kw'>end</span>
 
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
     <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;User: #{login}  Event: #{event}&quot;</span>
     <span class='rubyid_case case kw'>case</span> <span class='rubyid_usage_type identifier id'>usage_type</span>
     <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span>
-      <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Gear Size: #{gear_size}&quot;</span>
+      <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Gear Size: #{gear_size}&quot;</span>
     <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span>
-      <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id}   Addtl File System GB: #{addtl_fs_gb}&quot;</span>
+      <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Addtl Storage GB: #{addtl_fs_gb}&quot;</span>
+    <span class='rubyid_when when kw'>when</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span>
+      <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='opasgn op'>+=</span> <span class='dstring node'>&quot;   Gear: #{gear_id} Catridge: #{cart_name}&quot;</span>
     <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_begin begin kw'>begin</span>
-      <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
     <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
       <span class='comment val'># Can't fail because of a secondary logging error</span>
       <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -3435,11 +3529,6 @@ Represents type of usage, either gear or additional storage
       <pre class="lines">
 
 
-115
-116
-117
-118
-119
 120
 121
 122
@@ -3461,10 +3550,15 @@ Represents type of usage, either gear or additional storage
 138
 139
 140
-141</pre>
+141
+142
+143
+144
+145
+146</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 115</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 120</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_untrack_usage identifier id'>untrack_usage</span><span class='lparen token'>(</span><span class='rubyid_login identifier id'>login</span><span class='comma token'>,</span> <span class='rubyid_gear_id identifier id'>gear_id</span><span class='comma token'>,</span> <span class='rubyid_event identifier id'>event</span><span class='comma token'>,</span> <span class='rubyid_usage_type identifier id'>usage_type</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:datastore_enabled</span><span class='rbrack token'>]</span>
@@ -3482,10 +3576,10 @@ Represents type of usage, either gear or additional storage
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_configuration identifier id'>configuration</span><span class='dot token'>.</span><span class='rubyid_usage_tracking identifier id'>usage_tracking</span><span class='lbrack token'>[</span><span class='symbol val'>:syslog_enabled</span><span class='rbrack token'>]</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_is_enabled? fid id'>is_enabled?</span>
     <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Rollback User: #{login} Event: #{event} Gear: #{gear_id} UsageType: #{usage_type}&quot;</span>
     <span class='rubyid_begin begin kw'>begin</span>
-      <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='string val'>'openshift_usage'</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='bitor op'>|</span> <span class='rubyid_s identifier id'>s</span><span class='dot token'>.</span><span class='rubyid_notice identifier id'>notice</span> <span class='rubyid_usage_string identifier id'>usage_string</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UsageAuditLog constant id'>UsageAuditLog</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='lparen token'>(</span><span class='rubyid_usage_string identifier id'>usage_string</span><span class='rparen token'>)</span>
     <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
       <span class='comment val'># Can't fail because of a secondary logging error</span>
       <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
@@ -3542,12 +3636,12 @@ Represents type of usage, either gear or additional storage
       <pre class="lines">
 
 
-55
-56
-57</pre>
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 58</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_addtl_fs_gb? fid id'>validate_addtl_fs_gb?</span>
   <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:addtl_fs_gb</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -3595,12 +3689,12 @@ Represents type of usage, either gear or additional storage
       <pre class="lines">
 
 
-59
-60
-61</pre>
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 62</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_cart_name? fid id'>validate_cart_name?</span>
   <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:premium_cart</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -3648,12 +3742,12 @@ Represents type of usage, either gear or additional storage
       <pre class="lines">
 
 
-51
-52
-53</pre>
+54
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/usage_record.rb', line 54</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_gear_size? fid id'>validate_gear_size?</span>
   <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_usage_type identifier id'>usage_type</span> <span class='eq op'>==</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_USAGE_TYPES constant id'>USAGE_TYPES</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_usage</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_event identifier id'>event</span> <span class='neq op'>!=</span> <span class='rubyid_UsageRecord constant id'>UsageRecord</span><span class='colon2 op'>::</span><span class='rubyid_EVENTS constant id'>EVENTS</span><span class='lbrack token'>[</span><span class='symbol val'>:end</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_true true kw'>true</span> <span class='colon op'>:</span> <span class='rubyid_false false kw'>false</span>
@@ -3669,7 +3763,7 @@ Represents type of usage, either gear or additional storage
 </div>
 
     <div id="footer">
-  Generated on Wed Feb 27 20:14:52 2013 by
+  Generated on Thu Feb 28 17:57:42 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

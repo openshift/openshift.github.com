@@ -589,7 +589,12 @@ destroy the domain
 163
 164
 165
-166</pre>
+166
+167
+168
+169
+170
+171</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 141</span>
@@ -605,10 +610,15 @@ destroy the domain
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_force identifier id'>force</span>
-    <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
-      <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
+    <span class='rubyid_apps identifier id'>apps</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_apps identifier id'>apps</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_apps identifier id'>apps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+        <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
+      <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
+      <span class='rubyid_apps identifier id'>apps</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span>
     <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
+  <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:bad_request</span><span class='comma token'>,</span> <span class='string val'>&quot;Domain contains applications. Delete applications first or set force to true.&quot;</span><span class='comma token'>,</span> <span class='integer val'>128</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_DOMAIN&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
@@ -726,16 +736,16 @@ REST object for API version == 1.0
       <pre class="lines">
 
 
-176
-177
-178
-179
-180
 181
-182</pre>
+182
+183
+184
+185
+186
+187</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 176</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 181</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_rest_domain identifier id'>get_rest_domain</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_owner identifier id'>owner</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_requested_api_version identifier id'>requested_api_version</span> <span class='eq op'>==</span> <span class='float val'>1.0</span>
@@ -1122,7 +1132,7 @@ The updated domain
 </div>
 
     <div id="footer">
-  Generated on Wed Feb 27 20:27:11 2013 by
+  Generated on Thu Feb 28 18:10:01 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

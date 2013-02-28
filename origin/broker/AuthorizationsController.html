@@ -353,6 +353,8 @@ Display only non-revoked tokens (includes expired tokens).
       <pre class="lines">
 
 
+13
+14
 15
 16
 17
@@ -382,12 +384,10 @@ Display only non-revoked tokens (includes expired tokens).
 41
 42
 43
-44
-45
-46</pre>
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 13</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
   <span class='rubyid_scopes identifier id'>scopes</span> <span class='assign token'>=</span> <span class='rubyid_if if kw'>if</span> <span class='rubyid_s identifier id'>s</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:scope</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:scopes</span><span class='rbrack token'>]</span>
@@ -401,7 +401,7 @@ Display only non-revoked tokens (includes expired tokens).
   <span class='rubyid_expires_in identifier id'>expires_in</span> <span class='assign token'>=</span>
     <span class='rubyid_if if kw'>if</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:expires_in</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_present? fid id'>present?</span>
       <span class='rubyid_expires_in identifier id'>expires_in</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:expires_in</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span>
-      <span class='lparen token'>(</span><span class='rubyid_expires_in identifier id'>expires_in</span> <span class='leq op'>&lt;=</span> <span class='integer val'>0</span> <span class='orop op'>||</span> <span class='rubyid_expires_in identifier id'>expires_in</span> <span class='gt op'>&gt;</span> <span class='rubyid_max_expires identifier id'>max_expires</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_nil nil kw'>nil</span> <span class='colon op'>:</span> <span class='rubyid_expires_in identifier id'>expires_in</span>
+      <span class='lparen token'>(</span><span class='rubyid_expires_in identifier id'>expires_in</span> <span class='lt op'>&lt;</span> <span class='integer val'>0</span> <span class='orop op'>||</span> <span class='rubyid_expires_in identifier id'>expires_in</span> <span class='gt op'>&gt;</span> <span class='rubyid_max_expires identifier id'>max_expires</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_nil nil kw'>nil</span> <span class='colon op'>:</span> <span class='rubyid_expires_in identifier id'>expires_in</span>
     <span class='rubyid_end end kw'>end</span> <span class='orop op'>||</span> <span class='rubyid_scopes identifier id'>scopes</span><span class='dot token'>.</span><span class='rubyid_default_expiration identifier id'>default_expiration</span>
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:reuse</span><span class='rbrack token'>]</span>
@@ -442,15 +442,15 @@ Display only non-revoked tokens (includes expired tokens).
       <pre class="lines">
 
 
+61
+62
 63
 64
 65
-66
-67
-68</pre>
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 61</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_Authorization constant id'>Authorization</span><span class='dot token'>.</span><span class='rubyid_for_owner identifier id'>for_owner</span><span class='lparen token'>(</span><span class='rubyid_current_user identifier id'>current_user</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_any_of identifier id'>any_of</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='symbol val'>:token</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_delete_all identifier id'>delete_all</span>
@@ -479,13 +479,13 @@ Display only non-revoked tokens (includes expired tokens).
       <pre class="lines">
 
 
+68
+69
 70
-71
-72
-73</pre>
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 68</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy_all identifier id'>destroy_all</span>
   <span class='rubyid_Authorization constant id'>Authorization</span><span class='dot token'>.</span><span class='rubyid_for_owner identifier id'>for_owner</span><span class='lparen token'>(</span><span class='rubyid_current_user identifier id'>current_user</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_delete_all identifier id'>delete_all</span>
@@ -529,17 +529,13 @@ Display only non-revoked tokens (includes expired tokens).
 8
 9
 10
-11
-12
-13</pre>
+11</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 6</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_index identifier id'>index</span>
-  <span class='rubyid_authorizations identifier id'>authorizations</span> <span class='assign token'>=</span> <span class='rubyid_Authorization constant id'>Authorization</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span>
-                    <span class='symbol val'>:user</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_current_user identifier id'>current_user</span><span class='comma token'>,</span>
-                    <span class='symbol val'>:revoked_at</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span><span class='dot token'>.</span>
+  <span class='rubyid_authorizations identifier id'>authorizations</span> <span class='assign token'>=</span> <span class='rubyid_Authorization constant id'>Authorization</span><span class='dot token'>.</span><span class='rubyid_for_owner identifier id'>for_owner</span><span class='lparen token'>(</span><span class='rubyid_current_user identifier id'>current_user</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_not_expired identifier id'>not_expired</span><span class='dot token'>.</span>
                    <span class='rubyid_order_by identifier id'>order_by</span><span class='lparen token'>(</span><span class='lbrack token'>[</span><span class='symbol val'>:created_at</span><span class='comma token'>,</span> <span class='symbol val'>:desc</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='dot token'>.</span>
                    <span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_auth identifier id'>auth</span><span class='bitor op'>|</span> <span class='rubyid_RestAuthorization constant id'>RestAuthorization</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_auth identifier id'>auth</span><span class='comma token'>,</span> <span class='rubyid_get_url identifier id'>get_url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
   <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;authorizations&quot;</span><span class='comma token'>,</span> <span class='rubyid_authorizations identifier id'>authorizations</span><span class='comma token'>,</span> <span class='string val'>&quot;LIST_AUTHORIZATIONS&quot;</span><span class='comma token'>,</span> <span class='string val'>'List authorizations'</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>'IP'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_request identifier id'>request</span><span class='dot token'>.</span><span class='rubyid_remote_ip identifier id'>remote_ip</span><span class='rparen token'>)</span>
@@ -565,15 +561,15 @@ Display only non-revoked tokens (includes expired tokens).
       <pre class="lines">
 
 
+46
+47
 48
 49
 50
-51
-52
-53</pre>
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 46</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_show identifier id'>show</span>
   <span class='rubyid_auth identifier id'>auth</span> <span class='assign token'>=</span> <span class='rubyid_Authorization constant id'>Authorization</span><span class='dot token'>.</span><span class='rubyid_for_owner identifier id'>for_owner</span><span class='lparen token'>(</span><span class='rubyid_current_user identifier id'>current_user</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_any_of identifier id'>any_of</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='symbol val'>:token</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span>
@@ -602,16 +598,16 @@ Display only non-revoked tokens (includes expired tokens).
       <pre class="lines">
 
 
+53
+54
 55
 56
 57
 58
-59
-60
-61</pre>
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/authorizations_controller.rb', line 53</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update identifier id'>update</span>
   <span class='rubyid_auth identifier id'>auth</span> <span class='assign token'>=</span> <span class='rubyid_Authorization constant id'>Authorization</span><span class='dot token'>.</span><span class='rubyid_for_owner identifier id'>for_owner</span><span class='lparen token'>(</span><span class='rubyid_current_user identifier id'>current_user</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_any_of identifier id'>any_of</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='symbol val'>:token</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span>
@@ -631,7 +627,7 @@ Display only non-revoked tokens (includes expired tokens).
 </div>
 
     <div id="footer">
-  Generated on Wed Feb 27 20:28:40 2013 by
+  Generated on Thu Feb 28 18:11:03 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
