@@ -216,7 +216,11 @@ done
 
 &lt;%= LOAD_ENV %&gt;
 
-pre_receive_app.sh
+for cartridge in $(ls -d $OPENSHIFT_HOMEDIR/* | grep -E -v 'app-root|git')
+do
+  $cartridge/bin/control stop
+done
+
 }</span>
 </pre></dd>
       
@@ -242,7 +246,19 @@ scripts. Kinda like an egg race!
 
 &lt;%= LOAD_ENV %&gt;
 
-post_receive_app.sh &lt;%= @broker_host %&gt;
+$OPENSHIFT_HOMEDIR/&lt;%= @cartridge_name %&gt;/bin/control build
+
+if [ $? -eq 0 ]; then
+  $OPENSHIFT_HOMEDIR/&lt;%= @cartridge_name %&gt;/bin/control deploy
+else
+  echo &quot;Skipping deployment; build failed with exit status $?&quot;
+fi
+
+for cartridge in $(ls -d $OPENSHIFT_HOMEDIR/* | grep -E -v 'app-root|git')
+do
+  $cartridge/bin/control start
+done
+
 }</span>
 </pre></dd>
       
@@ -636,7 +652,6 @@ Install Git repository hooks and set permissions
       <pre class="lines">
 
 
-135
 136
 137
 138
@@ -652,10 +667,11 @@ Install Git repository hooks and set permissions
 148
 149
 150
-151</pre>
+151
+152</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 135</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 136</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_configure_repository identifier id'>configure_repository</span>
   <span class='rubyid_UnixUser constant id'>UnixUser</span><span class='dot token'>.</span><span class='rubyid_match_ownership identifier id'>match_ownership</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span>
@@ -695,7 +711,6 @@ Install Git repository hooks and set permissions
       <pre class="lines">
 
 
-119
 120
 121
 122
@@ -707,10 +722,11 @@ Install Git repository hooks and set permissions
 128
 129
 130
-131</pre>
+131
+132</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 119</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 120</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy_repository identifier id'>deploy_repository</span>
   <span class='comment val'># expose variables for ERB processing</span>
@@ -861,7 +877,8 @@ will be cloned as the application&#8217;s repository.
 80
 81
 82
-83</pre>
+83
+84</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 52</span>
@@ -896,6 +913,7 @@ will be cloned as the application&#8217;s repository.
     <span class='rubyid_when when kw'>when</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template_git identifier id'>cartridge_template_git</span><span class='rparen token'>)</span>
       <span class='rubyid_pull_bare_repository identifier id'>pull_bare_repository</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template_git identifier id'>cartridge_template_git</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_configure_repository identifier id'>configure_repository</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -931,12 +949,12 @@ Copy bare git repository to be used as application repository
       <pre class="lines">
 
 
-87
 88
-89</pre>
+89
+90</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 88</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_pull_bare_repository identifier id'>pull_bare_repository</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='rparen token'>)</span>
   <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_cp_r identifier id'>cp_r</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='comma token'>,</span> <span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span>
@@ -974,7 +992,6 @@ Copy a file tree structure and build an application repository
       <pre class="lines">
 
 
-93
 94
 95
 96
@@ -998,10 +1015,11 @@ Copy a file tree structure and build an application repository
 114
 115
 116
-117</pre>
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 94</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_pull_directory identifier id'>pull_directory</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='rparen token'>)</span>
   <span class='rubyid_template identifier id'>template</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='comma token'>,</span> <span class='string val'>'template'</span><span class='rparen token'>)</span>
@@ -1039,7 +1057,7 @@ Copy a file tree structure and build an application repository
 </div>
 
     <div id="footer">
-  Generated on Thu Feb 28 18:51:36 2013 by
+  Generated on Fri Mar  1 18:28:53 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
