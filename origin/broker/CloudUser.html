@@ -1235,7 +1235,14 @@ oo-admin-user-ctl scripts or when a plan changes.
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -1444,12 +1451,19 @@ oo-admin-user-ctl scripts or when a plan changes.
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -1807,7 +1821,14 @@ Number of gears that are being consumed by applications owned by this user
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -2016,12 +2037,19 @@ Number of gears that are being consumed by applications owned by this user
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -2379,7 +2407,14 @@ Login name for the user.
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -2588,12 +2623,19 @@ Login name for the user.
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -2951,7 +2993,14 @@ ID of the parent user object if this object represents a sub-account.
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -3160,12 +3209,19 @@ ID of the parent user object if this object represents a sub-account.
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -3523,7 +3579,14 @@ List of <span class='object_link'><a href="PendingUserOps.html" title="PendingUs
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -3732,12 +3795,19 @@ List of <span class='object_link'><a href="PendingUserOps.html" title="PendingUs
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -4077,7 +4147,14 @@ capabilities and ssh-keys for the user.
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -4286,12 +4363,19 @@ capabilities and ssh-keys for the user.
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -4631,7 +4715,14 @@ capabilities and ssh-keys for the user.
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -4840,12 +4931,19 @@ capabilities and ssh-keys for the user.
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -5185,7 +5283,14 @@ capabilities and ssh-keys for the user.
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -5394,12 +5499,19 @@ capabilities and ssh-keys for the user.
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -5759,7 +5871,14 @@ SSH keys used to access applications that the user has access to or owns
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -5968,12 +6087,19 @@ SSH keys used to access applications that the user has access to or owns
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -6313,7 +6439,14 @@ capabilities and ssh-keys for the user.
 272
 273
 274
-275</pre>
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -6522,12 +6655,19 @@ capabilities and ssh-keys for the user.
 
   <span class='comment val'># Delete user and all its artifacts like domains, applications associated with the user </span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-      <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+    <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+      <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
         <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+    <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
   <span class='rubyid_end end kw'>end</span>
  
@@ -6939,18 +7079,32 @@ with the user
 227
 228
 229
-230</pre>
+230
+231
+232
+233
+234
+235
+236
+237</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 222</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_force_delete identifier id'>force_delete</span>
-  <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_domain identifier id'>domain</span><span class='bitor op'>|</span>
-    <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
+  <span class='comment val'># will need to read from the primary to make sure we get the latest data</span>
+  <span class='rubyid_while while kw'>while</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+      <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
       <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_destroy_app identifier id'>destroy_app</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
-  <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domains identifier id'>domains</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='comment val'># will need to reload from primary to ensure that mongoid doesn't validate based on its cache</span>
+  <span class='comment val'># and prevent us from deleting this user because of the :dependent :restrict clause</span>
+  <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -7230,13 +7384,6 @@ True on success or false on failure
       <pre class="lines">
 
 
-236
-237
-238
-239
-240
-241
-242
 243
 244
 245
@@ -7268,10 +7415,17 @@ True on success or false on failure
 271
 272
 273
-274</pre>
+274
+275
+276
+277
+278
+279
+280
+281</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 236</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cloud_user.rb', line 243</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_run_jobs identifier id'>run_jobs</span>
   <span class='rubyid_begin begin kw'>begin</span>
@@ -7468,7 +7622,7 @@ user has access to.
 </div>
 
     <div id="footer">
-  Generated on Fri Mar  1 18:11:19 2013 by
+  Generated on Sat Mar  2 18:10:26 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
