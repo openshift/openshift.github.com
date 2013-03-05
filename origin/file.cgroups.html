@@ -105,7 +105,7 @@ cgroup configurations are applied.</p>
 
 <p>The <a href="../node/misc/init/openshift-cgroups">openshift-cgroups</a> service controls
 the initialization of the openshift control groups.  The openshift-cgroups
-service uses the <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a>
+service uses the <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a>
 script to read the configured default values and start cgroups for each
 OpenShift user.</p>
 
@@ -114,7 +114,7 @@ passwd</code> and finding any user that has &quot;OpenShift guest&quot; as the U
 field in /etc/passwd on the node.</p>
 
 <p>Once the service has looked up the list of OpenShift users, a call to startuser
-in <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> on each user
+in <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> on each user
 is made.</p>
 
 <h1>User Creation and Deletion</h1>
@@ -123,13 +123,13 @@ is made.</p>
 values.  The
 <a href="../node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a>
 is invoked, calling after_unix_user_create, which then makes a call to the
-<a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;startuser&#39;.
+<a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;startuser&#39;.
 When a user is deleted, their cgroup controlled resources are &#39;frozen&#39; so they
 won&#39;t be able to start any new processes.  Once the user is removed from a
 node, the cgroup configuration for that user is removed.  The
 <a href="../node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a>
 once again makes a call to
-<a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;stopuser&#39; is made.</p>
+<a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;stopuser&#39; is made.</p>
 
 <h1>Start and Stop a User Control Group</h1>
 
@@ -142,13 +142,13 @@ template.</p>
 <p>Post cgroup initialization, each OpenShift user has a cgroup configuration,
 which can be found in the cgroup path under /openshift/$USER.</p>
 
-<p>The <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> startuser functionality will apply the default resource limits, and will create a
+<p>The <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> startuser functionality will apply the default resource limits, and will create a
 cgroup rule in /etc/cgrules.conf specific to the new user.</p>
 
 <p>Any time the control group rules are altered, the cgred process needs to be
 reloaded.  Our tools use pkill -USR2 to reload the cgred.</p>
 
-<p>The <a href="../node/misc/bin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> stopuser functionality will use cgdelete to remove the cgroup for the user and
+<p>The <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> stopuser functionality will use cgdelete to remove the cgroup for the user and
 remove the user rule in /etc/cgrules.conf.</p>
 
 <h1>Optimizations</h1>
@@ -290,7 +290,7 @@ echo accounts: $ACCOUNTS_CHECKED, processes: $PROCESSES_CHECKED
 </div></div>
 
     <div id="footer">
-  Generated on Mon Mar  4 18:04:51 2013 by
+  Generated on Tue Mar  5 18:06:54 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
