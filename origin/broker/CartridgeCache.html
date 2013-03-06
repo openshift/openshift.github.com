@@ -304,17 +304,17 @@ categories
       <pre class="lines">
 
 
-27
-28
 29
 30
 31
 32
 33
-34</pre>
+34
+35
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 29</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridge_names identifier id'>cartridge_names</span><span class='lparen token'>(</span><span class='rubyid_cart_type identifier id'>cart_type</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_cart_type identifier id'>cart_type</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
@@ -364,14 +364,18 @@ Returns an Array of Cartridge objects
 11
 12
 13
-14</pre>
+14
+15
+16</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 7</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridges identifier id'>cartridges</span>
   <span class='rubyid_CacheHelper constant id'>CacheHelper</span><span class='dot token'>.</span><span class='rubyid_get_cached identifier id'>get_cached</span><span class='lparen token'>(</span><span class='string val'>&quot;all_cartridges&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:expires_in</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='float val'>21600</span><span class='dot token'>.</span><span class='rubyid_seconds identifier id'>seconds</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
-    <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_ApplicationContainerProxy constant id'>ApplicationContainerProxy</span><span class='dot token'>.</span><span class='rubyid_find_one identifier id'>find_one</span><span class='lparen token'>(</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_get_available_cartridges identifier id'>get_available_cartridges</span>
+    <span class='rubyid_carts identifier id'>carts</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_ApplicationContainerProxy constant id'>ApplicationContainerProxy</span><span class='dot token'>.</span><span class='rubyid_find_one identifier id'>find_one</span><span class='lparen token'>(</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_get_available_cartridges identifier id'>get_available_cartridges</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_carts identifier id'>carts</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
+    <span class='rubyid_carts identifier id'>carts</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
   <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='string val'>&quot;In \#{__FILE__} cartridges method:\nError while querying cartridge list. This may be because no node hosts responded.\nPlease ensure you have installed node hosts and they are responding to \&quot;mco ping\&quot;.\nException was: \#{e.inspect}\n&quot;</span>
@@ -426,17 +430,17 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-55
-56
 57
 58
 59
 60
 61
-62</pre>
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 57</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='rparen token'>)</span>
   <span class='rubyid_carts identifier id'>carts</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridges identifier id'>cartridges</span>
@@ -467,12 +471,12 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-45
-46
-47</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 47</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge_by_category identifier id'>find_cartridge_by_category</span><span class='lparen token'>(</span><span class='rubyid_cat identifier id'>cat</span><span class='rparen token'>)</span>
   <span class='rubyid_CacheHelper constant id'>CacheHelper</span><span class='dot token'>.</span><span class='rubyid_get_cached identifier id'>get_cached</span><span class='lparen token'>(</span><span class='dstring node'>&quot;cartridges_by_cat_#{cat}&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:expires_in</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='float val'>1</span><span class='dot token'>.</span><span class='rubyid_day identifier id'>day</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span><span class='rubyid_cartridges identifier id'>cartridges</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_categories identifier id'>categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_cat identifier id'>cat</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span>
@@ -498,17 +502,17 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-36
-37
 38
 39
 40
 41
 42
-43</pre>
+43
+44
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 38</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge_by_component identifier id'>find_cartridge_by_component</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='rparen token'>)</span>
   <span class='rubyid_carts identifier id'>carts</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridges identifier id'>cartridges</span>
@@ -529,7 +533,7 @@ Returns the first cartridge that provides the specified feature.
 </div>
 
     <div id="footer">
-  Generated on Tue Mar  5 18:10:03 2013 by
+  Generated on Wed Mar  6 18:07:34 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

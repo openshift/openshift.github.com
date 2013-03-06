@@ -391,7 +391,7 @@ Unique usage id that can be used to narrow down to specific set of records.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#get_usage_time-instance_method" title="#get_usage_time (instance method)">- (Object) <strong>get_usage_time</strong>(billing_acct_no, urec, begin_time, end_time) </a>
+      <a href="#get_usage_time-instance_method" title="#get_usage_time (instance method)">- (Object) <strong>get_usage_time</strong>(urec) </a>
     
 
     
@@ -911,8 +911,7 @@ For ended usage records: delete from mongo
 105
 106
 107
-108
-109</pre>
+108</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/billing_service.rb', line 96</span>
@@ -928,7 +927,6 @@ For ended usage records: delete from mongo
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='comment val'># Deleting ended usage records</span>
-  <span class='rubyid_user_ids identifier id'>user_ids</span><span class='dot token'>.</span><span class='rubyid_uniq! fid id'>uniq!</span>
   <span class='rubyid_session identifier id'>session</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_safe identifier id'>safe</span><span class='symbol val'>:true</span><span class='rparen token'>)</span><span class='lbrack token'>[</span><span class='symbol val'>:usage_records</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='string val'>&quot;$in&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_user_ids identifier id'>user_ids</span><span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_remove_all identifier id'>remove_all</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_user_ids identifier id'>user_ids</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -1042,7 +1040,7 @@ This will be helpful in debuging.
       <div class="method_details ">
   <h3 class="signature " id="get_usage_time-instance_method">
   
-    - (<tt>Object</tt>) <strong>get_usage_time</strong>(billing_acct_no, urec, begin_time, end_time) 
+    - (<tt>Object</tt>) <strong>get_usage_time</strong>(urec) 
   
 
   
@@ -1065,10 +1063,10 @@ This will be helpful in debuging.
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/billing_service.rb', line 61</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_usage_time identifier id'>get_usage_time</span><span class='lparen token'>(</span><span class='rubyid_billing_acct_no identifier id'>billing_acct_no</span><span class='comma token'>,</span> <span class='rubyid_urec identifier id'>urec</span><span class='comma token'>,</span> <span class='rubyid_begin_time identifier id'>begin_time</span><span class='comma token'>,</span> <span class='rubyid_end_time identifier id'>end_time</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_usage_time identifier id'>get_usage_time</span><span class='lparen token'>(</span><span class='rubyid_urec identifier id'>urec</span><span class='rparen token'>)</span>
   <span class='rubyid_total_time identifier id'>total_time</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_end_time identifier id'>end_time</span> <span class='gt op'>&gt;</span> <span class='rubyid_begin_time identifier id'>begin_time</span>
-    <span class='rubyid_total_time identifier id'>total_time</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_end_time identifier id'>end_time</span> <span class='minus op'>-</span> <span class='rubyid_begin_time identifier id'>begin_time</span><span class='rparen token'>)</span> <span class='div op'>/</span> <span class='integer val'>3600</span> <span class='comment val'>#hours</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_urec identifier id'>urec</span><span class='lbrack token'>[</span><span class='string val'>'end_time'</span><span class='rbrack token'>]</span> <span class='gt op'>&gt;</span> <span class='rubyid_urec identifier id'>urec</span><span class='lbrack token'>[</span><span class='string val'>'time'</span><span class='rbrack token'>]</span>
+    <span class='rubyid_total_time identifier id'>total_time</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_urec identifier id'>urec</span><span class='lbrack token'>[</span><span class='string val'>'end_time'</span><span class='rbrack token'>]</span> <span class='minus op'>-</span> <span class='rubyid_urec identifier id'>urec</span><span class='lbrack token'>[</span><span class='string val'>'time'</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='div op'>/</span> <span class='integer val'>3600</span> <span class='comment val'>#hours</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_total_time identifier id'>total_time</span>
 <span class='rubyid_end end kw'>end</span>
@@ -1235,7 +1233,7 @@ This will be helpful in debuging.
 </div>
 
     <div id="footer">
-  Generated on Tue Mar  5 18:23:53 2013 by
+  Generated on Wed Mar  6 18:19:31 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

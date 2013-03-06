@@ -204,7 +204,11 @@
 22
 23
 24
-25</pre>
+25
+26
+27
+28
+29</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/rest_model_helper.rb', line 14</span>
@@ -216,7 +220,11 @@
   <span class='rubyid_group_instances identifier id'>group_instances</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='bitor op'>|</span>
     <span class='rubyid_component_instances identifier id'>component_instances</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_all_component_instances identifier id'>all_component_instances</span>
     <span class='rubyid_component_instances identifier id'>component_instances</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_component_instance identifier id'>component_instance</span><span class='bitor op'>|</span>
-      <span class='rubyid_cartridges identifier id'>cartridges</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_get_rest_cartridge identifier id'>get_rest_cartridge</span><span class='lparen token'>(</span><span class='rubyid_application identifier id'>application</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_group_instances identifier id'>group_instances</span><span class='comma token'>,</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_requested_api_version identifier id'>requested_api_version</span> <span class='eq op'>==</span> <span class='float val'>1.0</span>
+        <span class='rubyid_cartridges identifier id'>cartridges</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_get_rest_cartridge identifier id'>get_rest_cartridge</span><span class='lparen token'>(</span><span class='rubyid_application identifier id'>application</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_group_instances identifier id'>group_instances</span><span class='comma token'>,</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='dot token'>.</span><span class='rubyid_is_embeddable? fid id'>is_embeddable?</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_cartridges identifier id'>cartridges</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_get_rest_cartridge identifier id'>get_rest_cartridge</span><span class='lparen token'>(</span><span class='rubyid_application identifier id'>application</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_group_instances identifier id'>group_instances</span><span class='comma token'>,</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_cartridges identifier id'>cartridges</span>
@@ -289,10 +297,6 @@
       <pre class="lines">
 
 
-27
-28
-29
-30
 31
 32
 33
@@ -308,10 +312,14 @@
 43
 44
 45
-46</pre>
+46
+47
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/rest_model_helper.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/rest_model_helper.rb', line 31</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_rest_cartridge identifier id'>get_rest_cartridge</span><span class='lparen token'>(</span><span class='rubyid_application identifier id'>application</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_group_instances_with_scale identifier id'>group_instances_with_scale</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='comma token'>,</span> <span class='rubyid_include_status_messages identifier id'>include_status_messages</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_group_instance identifier id'>group_instance</span> <span class='assign token'>=</span> <span class='rubyid_group_instances_with_scale identifier id'>group_instances_with_scale</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_go identifier id'>go</span><span class='bitor op'>|</span> <span class='rubyid_go identifier id'>go</span><span class='dot token'>.</span><span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_component_instance identifier id'>component_instance</span> <span class='rbrace token'>}</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
@@ -344,7 +352,7 @@
 </div>
 
     <div id="footer">
-  Generated on Tue Mar  5 18:09:16 2013 by
+  Generated on Wed Mar  6 18:06:47 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
