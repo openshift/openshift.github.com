@@ -2702,14 +2702,14 @@ Returns nil on Success or raises on Failure
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/unix_user.rb', line 163</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_@uid ivar id'>@uid</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_and and kw'>and</span> <span class='lparen token'>(</span><span class='rubyid_not not kw'>not</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_directory? fid id'>directory?</span><span class='lparen token'>(</span><span class='rubyid_@homedir ivar id'>@homedir</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_@uid ivar id'>@uid</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='lparen token'>(</span><span class='rubyid_@homedir ivar id'>@homedir</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='notop op'>!</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_directory? fid id'>directory?</span><span class='lparen token'>(</span><span class='rubyid_@homedir ivar id'>@homedir</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
     <span class='comment val'># gear seems to have been destroyed already... suppress any error</span>
     <span class='comment val'># TODO : remove remaining stuff if it exists, e.g. .httpd/#{uuid}* etc</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_UserDeletionException constant id'>UserDeletionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
         <span class='dstring node'>&quot;ERROR: unable to destroy user account #{@uuid}&quot;</span>
-        <span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_@uid ivar id'>@uid</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='orop op'>||</span> <span class='rubyid_@homedir ivar id'>@homedir</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='orop op'>||</span> <span class='rubyid_@uuid ivar id'>@uuid</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_@uuid ivar id'>@uuid</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
 
   <span class='comment val'># Don't try to delete a gear that is being scaled-up|created|deleted</span>
   <span class='rubyid_uuid_lock_file identifier id'>uuid_lock_file</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;/var/lock/oo-create.#{@uuid}&quot;</span>
@@ -4021,7 +4021,7 @@ authorized keys with the comment field as the key
 </div>
 
     <div id="footer">
-  Generated on Wed Mar  6 18:29:33 2013 by
+  Generated on Thu Mar  7 18:27:41 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
