@@ -355,13 +355,6 @@ POST /user/keys
       <pre class="lines">
 
 
-27
-28
-29
-30
-31
-32
-33
 34
 35
 36
@@ -385,10 +378,17 @@ POST /user/keys
 54
 55
 56
-57</pre>
+57
+58
+59
+60
+61
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 34</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
   <span class='rubyid_content identifier id'>content</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:content</span><span class='rbrack token'>]</span>
@@ -454,13 +454,6 @@ DELETE /user/keys/&lt;id&gt;
       <pre class="lines">
 
 
-108
-109
-110
-111
-112
-113
-114
 115
 116
 117
@@ -476,10 +469,17 @@ DELETE /user/keys/&lt;id&gt;
 127
 128
 129
-130</pre>
+130
+131
+132
+133
+134
+135
+136
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 115</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
@@ -602,7 +602,14 @@ GET /user/keys/&lt;id&gt;
 21
 22
 23
-24</pre>
+24
+25
+26
+27
+28
+29
+30
+31</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 16</span>
@@ -610,6 +617,13 @@ GET /user/keys/&lt;id&gt;
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_show identifier id'>show</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
   <span class='rubyid_begin begin kw'>begin</span>
+    <span class='comment val'># if the id has a dot, rails breaks up the actual intended id into :id and :format </span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span> <span class='rubyid_or or kw'>or</span><span class='lbrack token'>[</span><span class='string val'>&quot;xml&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;json&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;yml&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;yaml&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;xhtml&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span> 
+      <span class='rubyid_id identifier id'>id</span> <span class='opasgn op'>+=</span> <span class='string val'>&quot;.&quot;</span> <span class='plus op'>+</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span>
+      <span class='comment val'># set the default format</span>
+      <span class='rubyid_request identifier id'>request</span><span class='dot token'>.</span><span class='rubyid_format identifier id'>format</span> <span class='assign token'>=</span> <span class='string val'>&quot;json&quot;</span>
+    <span class='rubyid_end end kw'>end</span>
+
     <span class='rubyid_key identifier id'>key</span> <span class='assign token'>=</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='dot token'>.</span><span class='rubyid_ssh_keys identifier id'>ssh_keys</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='rparen token'>)</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;key&quot;</span><span class='comma token'>,</span> <span class='rubyid_RestKey constant id'>RestKey</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_get_url identifier id'>get_url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='string val'>&quot;SHOW_KEY&quot;</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Found SSH key '#{id}'&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
@@ -649,13 +663,6 @@ PUT /user/keys/&lt;id&gt;
       <pre class="lines">
 
 
-60
-61
-62
-63
-64
-65
-66
 67
 68
 69
@@ -694,10 +701,17 @@ PUT /user/keys/&lt;id&gt;
 102
 103
 104
-105</pre>
+105
+106
+107
+108
+109
+110
+111
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 67</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update identifier id'>update</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
@@ -756,7 +770,7 @@ PUT /user/keys/&lt;id&gt;
 </div>
 
     <div id="footer">
-  Generated on Fri Mar  8 18:17:14 2013 by
+  Generated on Sat Mar  9 17:15:02 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

@@ -1596,7 +1596,20 @@ Public: Adds a ssl certificate for an alias
 717
 718
 719
-720</pre>
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732
+733</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 657</span>
@@ -1614,8 +1627,16 @@ Public: Adds a ssl certificate for an alias
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_priv_key_clean identifier id'>priv_key_clean</span> <span class='assign token'>=</span> <span class='rubyid_OpenSSL constant id'>OpenSSL</span><span class='colon2 op'>::</span><span class='rubyid_PKey constant id'>PKey</span><span class='dot token'>.</span><span class='rubyid_read identifier id'>read</span><span class='lparen token'>(</span><span class='rubyid_priv_key identifier id'>priv_key</span><span class='comma token'>,</span> <span class='rubyid_passphrase identifier id'>passphrase</span><span class='rparen token'>)</span>
-    <span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span> <span class='assign token'>=</span> <span class='rubyid_OpenSSL constant id'>OpenSSL</span><span class='colon2 op'>::</span><span class='rubyid_X509 constant id'>X509</span><span class='colon2 op'>::</span><span class='rubyid_Certificate constant id'>Certificate</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_ssl_cert identifier id'>ssl_cert</span><span class='rparen token'>)</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_AttributeError constant id'>AttributeError</span>
+    <span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+    <span class='rubyid_ssl_cert_unit identifier id'>ssl_cert_unit</span> <span class='assign token'>=</span> <span class='string val'>&quot;&quot;</span>
+    <span class='rubyid_ssl_cert identifier id'>ssl_cert</span><span class='dot token'>.</span><span class='rubyid_each_line identifier id'>each_line</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cert_line identifier id'>cert_line</span><span class='bitor op'>|</span>
+      <span class='rubyid_ssl_cert_unit identifier id'>ssl_cert_unit</span> <span class='opasgn op'>+=</span> <span class='rubyid_cert_line identifier id'>cert_line</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_cert_line identifier id'>cert_line</span><span class='dot token'>.</span><span class='rubyid_start_with? fid id'>start_with?</span><span class='lparen token'>(</span><span class='string val'>'-----END'</span><span class='rparen token'>)</span>
+        <span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_OpenSSL constant id'>OpenSSL</span><span class='colon2 op'>::</span><span class='rubyid_X509 constant id'>X509</span><span class='colon2 op'>::</span><span class='rubyid_Certificate constant id'>Certificate</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_ssl_cert_unit identifier id'>ssl_cert_unit</span><span class='rparen token'>)</span>
+        <span class='rubyid_ssl_cert_unit identifier id'>ssl_cert_unit</span> <span class='assign token'>=</span> <span class='string val'>&quot;&quot;</span>
+      <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_ArgumentError constant id'>ArgumentError</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_FrontendHttpServerException constant id'>FrontendHttpServerException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>&quot;Invalid Private Key or Passphrase&quot;</span><span class='comma token'>,</span>
                                           <span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='comma token'>,</span> <span class='rubyid_@container_name ivar id'>@container_name</span><span class='comma token'>,</span>
                                           <span class='rubyid_@namespace ivar id'>@namespace</span><span class='rparen token'>)</span>
@@ -1629,7 +1650,13 @@ Public: Adds a ssl certificate for an alias
                                           <span class='rubyid_@namespace ivar id'>@namespace</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span><span class='dot token'>.</span><span class='rubyid_check_private_key identifier id'>check_private_key</span><span class='lparen token'>(</span><span class='rubyid_priv_key_clean identifier id'>priv_key_clean</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_FrontendHttpServerException constant id'>FrontendHttpServerException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>&quot;Could not parse certificates&quot;</span><span class='comma token'>,</span>
+                                          <span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='comma token'>,</span> <span class='rubyid_@container_name ivar id'>@container_name</span><span class='comma token'>,</span>
+                                          <span class='rubyid_@namespace ivar id'>@namespace</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_check_private_key identifier id'>check_private_key</span><span class='lparen token'>(</span><span class='rubyid_priv_key_clean identifier id'>priv_key_clean</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_FrontendHttpServerException constant id'>FrontendHttpServerException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>&quot;Key/cert mismatch&quot;</span><span class='comma token'>,</span>
                                           <span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='comma token'>,</span> <span class='rubyid_@container_name ivar id'>@container_name</span><span class='comma token'>,</span>
                                           <span class='rubyid_@namespace ivar id'>@namespace</span><span class='rparen token'>)</span>
@@ -1648,9 +1675,8 @@ Public: Adds a ssl certificate for an alias
   <span class='rubyid_ssl_cert_file_path identifier id'>ssl_cert_file_path</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_alias_conf_dir_path identifier id'>alias_conf_dir_path</span><span class='comma token'>,</span> <span class='rubyid_server_alias_clean identifier id'>server_alias_clean</span> <span class='plus op'>+</span> <span class='string val'>&quot;.crt&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_priv_key_file_path identifier id'>priv_key_file_path</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_alias_conf_dir_path identifier id'>alias_conf_dir_path</span><span class='comma token'>,</span> <span class='rubyid_server_alias_clean identifier id'>server_alias_clean</span> <span class='plus op'>+</span> <span class='string val'>&quot;.key&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkdir_p identifier id'>mkdir_p</span><span class='lparen token'>(</span><span class='rubyid_alias_conf_dir_path identifier id'>alias_conf_dir_path</span><span class='rparen token'>)</span>
-  <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ssl_cert_file_path identifier id'>ssl_cert_file_path</span><span class='comma token'>,</span> <span class='string val'>'w'</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_f identifier id'>f</span><span class='bitor op'>|</span> <span class='rubyid_f identifier id'>f</span><span class='dot token'>.</span><span class='rubyid_write identifier id'>write</span><span class='lparen token'>(</span><span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span><span class='dot token'>.</span><span class='rubyid_to_pem identifier id'>to_pem</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ssl_cert_file_path identifier id'>ssl_cert_file_path</span><span class='comma token'>,</span> <span class='string val'>'w'</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_f identifier id'>f</span><span class='bitor op'>|</span> <span class='rubyid_f identifier id'>f</span><span class='dot token'>.</span><span class='rubyid_write identifier id'>write</span><span class='lparen token'>(</span><span class='rubyid_ssl_cert_clean identifier id'>ssl_cert_clean</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_pem identifier id'>to_pem</span><span class='rbrace token'>}</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
   <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_priv_key_file_path identifier id'>priv_key_file_path</span><span class='comma token'>,</span> <span class='string val'>'w'</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_f identifier id'>f</span><span class='bitor op'>|</span> <span class='rubyid_f identifier id'>f</span><span class='dot token'>.</span><span class='rubyid_write identifier id'>write</span><span class='lparen token'>(</span><span class='rubyid_priv_key_clean identifier id'>priv_key_clean</span><span class='dot token'>.</span><span class='rubyid_to_pem identifier id'>to_pem</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
-
 
   <span class='comment val'>#</span>
   <span class='comment val'># Create configuration for the alias</span>
@@ -1757,19 +1783,6 @@ address.
       <pre class="lines">
 
 
-776
-777
-778
-779
-780
-781
-782
-783
-784
-785
-786
-787
-788
 789
 790
 791
@@ -1781,10 +1794,23 @@ address.
 797
 798
 799
-800</pre>
+800
+801
+802
+803
+804
+805
+806
+807
+808
+809
+810
+811
+812
+813</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 776</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 789</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
   <span class='rubyid_dname identifier id'>dname</span> <span class='assign token'>=</span> <span class='rubyid_name identifier id'>name</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span>
@@ -2663,18 +2689,18 @@ Reload the Apache configuration
       <pre class="lines">
 
 
-803
-804
-805
-806
-807
-808
-809
-810
-811</pre>
+816
+817
+818
+819
+820
+821
+822
+823
+824</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 803</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 816</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload_httpd identifier id'>reload_httpd</span><span class='lparen token'>(</span><span class='rubyid_async identifier id'>async</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_async_opt identifier id'>async_opt</span><span class='assign token'>=</span><span class='string val'>&quot;-b&quot;</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_async identifier id'>async</span>
@@ -2791,29 +2817,29 @@ Public: Removes ssl certificate/private key associated with an alias
       <pre class="lines">
 
 
-750
-751
-752
-753
-754
-755
-756
-757
-758
-759
-760
-761
-762
 763
 764
 765
 766
 767
 768
-769</pre>
+769
+770
+771
+772
+773
+774
+775
+776
+777
+778
+779
+780
+781
+782</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 750</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 763</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_ssl_cert identifier id'>remove_ssl_cert</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
   <span class='rubyid_server_alias_clean identifier id'>server_alias_clean</span> <span class='assign token'>=</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
@@ -3354,7 +3380,7 @@ Public: Update identifier to the new names
 </div>
 
     <div id="footer">
-  Generated on Fri Mar  8 18:28:22 2013 by
+  Generated on Sat Mar  9 17:27:35 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
