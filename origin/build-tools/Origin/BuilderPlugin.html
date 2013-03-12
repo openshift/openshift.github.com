@@ -134,7 +134,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#build_livecd-instance_method" title="#build_livecd (instance method)">- (Object) <strong>build_livecd</strong> </a>
+      <a href="#build_vm_image-instance_method" title="#build_vm_image (instance method)">- (Object) <strong>build_vm_image</strong> </a>
     
 
     
@@ -148,7 +148,10 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>
+Task to build an OpenShift Origin VM image.
+</p>
+</div></span>
   
 </li>
 
@@ -289,26 +292,58 @@ Task to build YARD documentation for all Ruby Code.
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="build_livecd-instance_method">
+  <h3 class="signature first" id="build_vm_image-instance_method">
   
-    - (<tt>Object</tt>) <strong>build_livecd</strong> 
-  
-
+    - (<tt>Object</tt>) <strong>build_vm_image</strong> 
   
 
   
-</h3><table class="source_code">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Task to build an OpenShift Origin VM image
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>
+Thor options hash
+</p>
+<ul>
+<li>--verbose: Enable verbose logging
+
+</li>
+</ul>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-56
-57
-58
-59
-60
-61
 62
 63
 64
@@ -329,37 +364,109 @@ Task to build YARD documentation for all Ruby Code.
 79
 80
 81
-82</pre>
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 56</span>
+      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 62</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_build_livecd identifier id'>build_livecd</span>
-  <span class='rubyid_basedir identifier id'>basedir</span> <span class='assign token'>=</span> <span class='string val'>&quot;/root&quot;</span>
-  <span class='rubyid_remix_dir identifier id'>remix_dir</span> <span class='assign token'>=</span> <span class='string val'>&quot;/root/origin-server/remix&quot;</span>
-  <span class='rubyid_remix_ks identifier id'>remix_ks</span> <span class='assign token'>=</span> <span class='string val'>&quot;openshift-origin-remix.ks&quot;</span>  
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_build_vm_image identifier id'>build_vm_image</span>
+  <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_verbose? fid id'>verbose?</span> <span class='integer val'>? </span><span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_DEBUG constant id'>DEBUG</span> <span class='colon op'>:</span> <span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_ERROR constant id'>ERROR</span>
+  <span class='rubyid_def_constants identifier id'>def_constants</span><span class='lparen token'>(</span><span class='rubyid_guess_os identifier id'>guess_os</span><span class='lparen token'>(</span><span class='string val'>&quot;fedora&quot;</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># Override the machine type to launch if necessary</span>
+  <span class='rubyid_$amz_options gvar id'>$amz_options</span><span class='lbrack token'>[</span><span class='symbol val'>:instance_type</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:instance_type</span><span class='rbrack token'>]</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:instance_type</span><span class='rbrack token'>]</span>
+  <span class='rubyid_$amz_options gvar id'>$amz_options</span><span class='lbrack token'>[</span><span class='symbol val'>:block_device_mappings</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='string val'>&quot;/dev/sdb&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>&quot;ephemeral0&quot;</span><span class='rbrace token'>}</span>
   
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkdir_p identifier id'>mkdir_p</span> <span class='rubyid_remix_dir identifier id'>remix_dir</span>
-  <span class='rubyid_git_rev identifier id'>git_rev</span> <span class='assign token'>=</span> <span class='xstring val'>`git log --pretty=&quot;format:%H %cd&quot; -1`</span>
+  <span class='comment val'># Establish a new connection</span>
+  <span class='rubyid_conn identifier id'>conn</span> <span class='assign token'>=</span> <span class='rubyid_connect identifier id'>connect</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_region identifier id'>region</span><span class='rparen token'>)</span>
   
-  <span class='rubyid_system identifier id'>system</span> <span class='dstring node'>&quot;rm -f #{remix_dir}/#{remix_ks}&quot;</span>
-  <span class='rubyid_ks_data identifier id'>ks_data</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_read identifier id'>read</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/usr/share/openshift/kickstarts/#{remix_ks}&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_gsub identifier id'>gsub</span><span class='lparen token'>(</span><span class='regexp val'>/#ADDITIONAL REPOS/</span><span class='comma token'>,</span> <span class='dstring node'>&quot;repo --name=local-build --baseurl=file://#{basedir}/origin-rpms\n#ADDITIONAL REPOS&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_ks_data identifier id'>ks_data</span><span class='dot token'>.</span><span class='rubyid_gsub! fid id'>gsub!</span><span class='lparen token'>(</span><span class='regexp val'>/#GIT_REV#/</span><span class='comma token'>,</span><span class='rubyid_git_rev identifier id'>git_rev</span><span class='rparen token'>)</span>
-  
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span><span class='lparen token'>(</span><span class='dstring node'>&quot;#{basedir}/extras&quot;</span><span class='rparen token'>)</span>
-    <span class='rubyid_system identifier id'>system</span> <span class='dstring node'>&quot;createrepo #{basedir}/extras&quot;</span>
-    <span class='rubyid_ks_data identifier id'>ks_data</span><span class='dot token'>.</span><span class='rubyid_gsub! fid id'>gsub!</span><span class='lparen token'>(</span><span class='regexp val'>/#ADDITIONAL REPOS/</span><span class='comma token'>,</span> <span class='dstring node'>&quot;repo --name=local-extras --baseurl=file://#{basedir}/extras\n#ADDITIONAL REPOS&quot;</span><span class='rparen token'>)</span>
-    <span class='comment val'>#ks_data.gsub!(/#cartridge/,&quot;cartridge&quot;)</span>
+  <span class='rubyid_image identifier id'>image</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='comment val'># Create a new builder instance</span>
+  <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_region? fid id'>region?</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+    <span class='rubyid_image identifier id'>image</span> <span class='assign token'>=</span> <span class='rubyid_conn identifier id'>conn</span><span class='dot token'>.</span><span class='rubyid_images identifier id'>images</span><span class='lbrack token'>[</span><span class='rubyid_AMI constant id'>AMI</span><span class='lbrack token'>[</span><span class='string val'>&quot;us-east-1&quot;</span><span class='rbrack token'>]</span><span class='rbrack token'>]</span>
+  <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_AMI constant id'>AMI</span><span class='lbrack token'>[</span><span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_region identifier id'>region</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_puts identifier id'>puts</span> <span class='string val'>&quot;No AMI specified for region:&quot;</span> <span class='plus op'>+</span> <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_region identifier id'>region</span>
+    <span class='rubyid_exit identifier id'>exit</span> <span class='integer val'>1</span>
+  <span class='rubyid_else else kw'>else</span>
+    <span class='rubyid_image identifier id'>image</span> <span class='assign token'>=</span> <span class='rubyid_conn identifier id'>conn</span><span class='dot token'>.</span><span class='rubyid_images identifier id'>images</span><span class='lbrack token'>[</span><span class='rubyid_AMI constant id'>AMI</span><span class='lbrack token'>[</span><span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_region identifier id'>region</span><span class='rbrack token'>]</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='dstring node'>&quot;#{remix_dir}/#{remix_ks}&quot;</span><span class='comma token'>,</span> <span class='string val'>'w'</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_out identifier id'>out</span><span class='bitor op'>|</span>
-    <span class='rubyid_out identifier id'>out</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_ks_data identifier id'>ks_data</span>
+
+  <span class='rubyid_puts identifier id'>puts</span> <span class='dstring node'>&quot;Launching AMI: #{image.id} - #{image.name}&quot;</span>
+  <span class='rubyid_instance identifier id'>instance</span> <span class='assign token'>=</span> <span class='rubyid_launch_instance identifier id'>launch_instance</span><span class='lparen token'>(</span><span class='rubyid_image identifier id'>image</span><span class='comma token'>,</span> <span class='string val'>&quot;oso-image-builder&quot;</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_hostname identifier id'>hostname</span> <span class='assign token'>=</span> <span class='rubyid_instance identifier id'>instance</span><span class='dot token'>.</span><span class='rubyid_dns_name identifier id'>dns_name</span>
+  <span class='rubyid_puts identifier id'>puts</span> <span class='string val'>&quot;Done&quot;</span>
+  <span class='rubyid_puts identifier id'>puts</span> <span class='dstring node'>&quot;Hostname: #{hostname}&quot;</span>
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;setenforce 0&quot;'</span> <span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;yum update -y&quot;'</span> <span class='comma token'>,</span> <span class='integer val'>300</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;yum install -y appliance-tools qemu-img&quot;'</span> <span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_scp_to identifier id'>scp_to</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_expand_path identifier id'>expand_path</span><span class='lparen token'>(</span><span class='dstring node'>&quot;#{__FILE__ }/../templates/openshift-origin.ks&quot;</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='string val'>'/home/ec2-user/openshift-origin.ks'</span><span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='integer val'>5</span><span class='comma token'>,</span><span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_scp_to identifier id'>scp_to</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_expand_path identifier id'>expand_path</span><span class='lparen token'>(</span><span class='dstring node'>&quot;#{__FILE__ }/../templates/openshift-origin.vmx&quot;</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='string val'>'/home/ec2-user/openshift-origin.vmx'</span><span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='integer val'>5</span><span class='comma token'>,</span><span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_scp_to identifier id'>scp_to</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_expand_path identifier id'>expand_path</span><span class='lparen token'>(</span><span class='dstring node'>&quot;#{__FILE__ }/../templates/openshift-origin.vbox&quot;</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='string val'>'/home/ec2-user/openshift-origin.vbox'</span><span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='integer val'>5</span><span class='comma token'>,</span><span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>      
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;mv -f /home/ec2-user/openshift-origin.ks /mnt/&quot;'</span> <span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;mkdir -p /mnt/tmp/build &amp;&amp; mkdir -p /mnt/openshift-origin&quot;'</span><span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span><span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;which VBoxManage 2&gt;&amp;1 &gt; /dev/null || yum install -y http://download.virtualbox.org/virtualbox/4.2.8/VirtualBox-4.2-4.2.8_83876_fedora18-1.x86_64.rpm&quot;'</span><span class='comma token'>,</span> <span class='integer val'>60</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;cd /mnt &amp;&amp; appliance-creator -d -n openshift-origin -c openshift-origin.ks '</span> <span class='plus op'>+</span>
+      <span class='string val'>'--format=vmdk --vmem=1024 --checksum --logfile=build.log --tmpdir=/mnt/tmp/build --cache /mnt/tmp/cache/&quot;'</span><span class='comma token'>,</span> <span class='integer val'>2400</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_ssh identifier id'>ssh</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>'su - -c &quot;'</span> <span class='plus op'>+</span> <span class='string val'>%{
+    /bin/cp -f /mnt/openshift-origin.ks /mnt/openshift-origin/ &amp;&amp;
+    /bin/mv -f /home/ec2-user/openshift-origin.v* /mnt/openshift-origin/ &amp;&amp; 
+    mkdir -p /root/.VirtualBox/ &amp;&amp;
+    /bin/cp -f /mnt/openshift-origin/openshift-origin.vbox /root/.VirtualBox/openshift-origin.vbox &amp;&amp;
+    ln -sf /mnt/openshift-origin/openshift-origin-sda.vmdk /root/.VirtualBox/openshift-origin-sda.vmdk &amp;&amp;
+    pushd /root/.VirtualBox/ &amp;&amp;
+    VBoxManage registervm openshift-origin.vbox &amp;&amp;
+    VBoxManage  storageattach \\\&quot;OpenShift Origin\\\&quot; --storagectl SATA --type hdd --port 0 --medium openshift-origin-sda.vmdk &amp;&amp;
+    /bin/cp -f /root/.VirtualBox/openshift-origin.vbox /mnt/openshift-origin/openshift-origin.vbox &amp;&amp; 
+    popd &amp;&amp; 
+    cd /mnt/openshift-origin &amp;&amp; tar zcf openshift-origin.tgz * &amp;&amp;
+    VBoxManage unregistervm \\\&quot;OpenShift Origin\\\&quot;
+  }</span> <span class='plus op'>+</span> <span class='string val'>'&quot;'</span> <span class='comma token'>,</span> <span class='integer val'>2400</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkdir_p identifier id'>mkdir_p</span> <span class='string val'>&quot;vm/&quot;</span>
+  <span class='rubyid_scp_from identifier id'>scp_from</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='comma token'>,</span> <span class='string val'>&quot;/mnt/openshift-origin/openshift-origin.tgz&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;vm/&quot;</span><span class='comma token'>,</span> <span class='integer val'>1200</span><span class='comma token'>,</span> <span class='rubyid_SSH_USER constant id'>SSH_USER</span><span class='rparen token'>)</span>
+  <span class='rubyid_begin begin kw'>begin</span>
+    <span class='rubyid_terminate_instance identifier id'>terminate_instance</span><span class='lparen token'>(</span><span class='rubyid_hostname identifier id'>hostname</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_terminate? fid id'>terminate?</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span>
+    <span class='comment val'># suppress termination errors - they have been logged already</span>
   <span class='rubyid_end end kw'>end</span>
-  
-  <span class='rubyid_run identifier id'>run</span> <span class='string val'>&quot;/sbin/service mongod stop&quot;</span>
-  <span class='rubyid_run identifier id'>run</span> <span class='string val'>&quot;/usr/sbin/setenforce 0&quot;</span>
-  <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;cd #{remix_dir} &amp;&amp; livecd-creator -c openshift-origin-remix.ks -f openshift_origin --cache=cache -d -v --logfile=livecd.log&quot;</span>
-  <span class='rubyid_run identifier id'>run</span> <span class='string val'>&quot;/usr/sbin/setenforce 1&quot;</span>
-  <span class='rubyid_run identifier id'>run</span> <span class='string val'>&quot;/sbin/service mongod start&quot;</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -495,33 +602,33 @@ Thor options hash
       <pre class="lines">
 
 
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111</pre>
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 88</span>
+      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 127</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_install_required_packages identifier id'>install_required_packages</span>
   <span class='rubyid_base_os identifier id'>base_os</span> <span class='assign token'>=</span> <span class='rubyid_guess_os identifier id'>guess_os</span>
@@ -568,45 +675,6 @@ Thor options hash
       <pre class="lines">
 
 
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
 158
 159
 160
@@ -621,10 +689,49 @@ Thor options hash
 169
 170
 171
-172</pre>
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 119</span>
+      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 158</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_local_build identifier id'>local_build</span>
   <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_verbose? fid id'>verbose?</span> <span class='integer val'>? </span><span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_DEBUG constant id'>DEBUG</span> <span class='colon op'>:</span> <span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_ERROR constant id'>ERROR</span>
@@ -691,7 +798,7 @@ retries = 0
 </div>
 
     <div id="footer">
-  Generated on Mon Mar 11 18:36:25 2013 by
+  Generated on Tue Mar 12 18:32:34 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
