@@ -80,6 +80,8 @@
 configured with a DNS resolvable hostname and static IP Address.</p></li>
 </ul>
 
+<h2>Installing Puppet</h2>
+
 <p>You will also need to install the latest puppet and facter RPMS from <a href="https://puppetlabs.com/">PuppetLabs</a>.
 Create the following on each host:</p>
 
@@ -95,6 +97,32 @@ Create the following on each host:</p>
 <span class='rubyid_gpgcheck identifier id'>gpgcheck</span><span class='assign token'>=</span><span class='integer val'>1</span>
 <span class='rubyid_enabled identifier id'>enabled</span><span class='assign token'>=</span><span class='integer val'>1</span>
 </code></pre>
+
+<p>Run the following to install puppet and facter</p>
+
+<pre class="code ruby"><code class="ruby"><span class='rubyid_yum identifier id'>yum</span> <span class='rubyid_install identifier id'>install</span> <span class='minus op'>-</span><span class='rubyid_y identifier id'>y</span> <span class='rubyid_puppet identifier id'>puppet</span> <span class='rubyid_facter identifier id'>facter</span>
+</code></pre>
+
+<p>Install the openshift puppet module:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='rubyid_puppet identifier id'>puppet</span> <span class='rubyid_module module kw'>module</span> <span class='rubyid_install identifier id'>install</span> <span class='rubyid_openshift identifier id'>openshift</span><span class='div op'>/</span><span class='rubyid_openshift_origin identifier id'>openshift_origin</span>
+</code></pre>
+
+<h2>Generating BIND TSIG Key</h2>
+
+<p>Install the BIND package</p>
+
+<pre class="code ruby"><code class="ruby"><span class='rubyid_yum identifier id'>yum</span> <span class='rubyid_install identifier id'>install</span> <span class='minus op'>-</span><span class='rubyid_y identifier id'>y</span> <span class='rubyid_bind identifier id'>bind</span>
+</code></pre>
+
+<p>Generate the TSIG Key</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment val'>#Using example.com as the cloud domain</span>
+<span class='regexp val'>/usr/s</span><span class='rubyid_bin identifier id'>bin</span><span class='div op'>/</span><span class='rubyid_dnssec identifier id'>dnssec</span><span class='minus op'>-</span><span class='rubyid_keygen identifier id'>keygen</span> <span class='minus op'>-</span><span class='rubyid_a identifier id'>a</span> <span class='rubyid_HMAC constant id'>HMAC</span><span class='minus op'>-</span><span class='rubyid_MD5 constant id'>MD5</span> <span class='minus op'>-</span><span class='rubyid_b identifier id'>b</span> <span class='integer val'>512</span> <span class='minus op'>-</span><span class='rubyid_n identifier id'>n</span> <span class='rubyid_USER constant id'>USER</span> <span class='minus op'>-</span><span class='rubyid_r identifier id'>r</span> <span class='regexp val'>/dev/</span><span class='rubyid_urandom identifier id'>urandom</span> <span class='minus op'>-</span><span class='rubyid_K constant id'>K</span> <span class='regexp val'>/var/n</span><span class='rubyid_amed identifier id'>amed</span> <span class='rubyid_example identifier id'>example</span><span class='dot token'>.</span><span class='rubyid_com identifier id'>com</span>
+<span class='rubyid_cat identifier id'>cat</span> <span class='regexp val'>/var/n</span><span class='rubyid_amed identifier id'>amed</span><span class='div op'>/</span><span class='rubyid_Kexample constant id'>Kexample</span><span class='dot token'>.</span><span class='rubyid_com identifier id'>com</span><span class='dot token'>.</span><span class='integer val'>+157</span><span class='plus op'>+</span><span class='float val'>33874</span><span class='dot token'>.</span><span class='rubyid_key identifier id'>key</span>  <span class='bitor op'>|</span> <span class='rubyid_awk identifier id'>awk</span> <span class='string val'>'{print $8}'</span>
+</code></pre>
+
+<p>The TSIG key should look like <code>CNk+wjszKi9da9nL/1gkMY7H+GuUng==</code>. We will use this in the following steps.</p>
 
 <h2>Configuring an all-in-one host</h2>
 
@@ -132,6 +160,12 @@ Create the following on each host:</p>
 
   <span class='comment val'>#Use the nsupdate broker plugin to register application</span>
   <span class='rubyid_broker_dns_plugin identifier id'>broker_dns_plugin</span>          <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'nsupdate'</span><span class='comma token'>,</span>
+
+  <span class='comment val'>#If installing from a local build, specify the path for Origin RPMs</span>
+  <span class='comment val'>#install_repo               =&gt; 'file:///root/origin-rpms',</span>
+
+  <span class='comment val'>#If using BIND, let the broker know what TSIG key to use</span>
+  <span class='rubyid_named_tsig_priv_key identifier id'>named_tsig_priv_key</span>         <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'&lt;tsig key&gt;'</span>
 <span class='rbrace token'>}</span>
 </code></pre>
 
@@ -184,6 +218,12 @@ Create the following on each host:</p>
 
   <span class='comment val'>#Use the nsupdate broker plugin to register application</span>
   <span class='rubyid_broker_dns_plugin identifier id'>broker_dns_plugin</span>          <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'nsupdate'</span><span class='comma token'>,</span>
+
+  <span class='comment val'>#If installing from a local build, specify the path for Origin RPMs</span>
+  <span class='comment val'>#install_repo               =&gt; 'file:///root/origin-rpms',</span>
+
+  <span class='comment val'>#If using BIND, let the broker know what TSIG key to use</span>
+  <span class='rubyid_named_tsig_priv_key identifier id'>named_tsig_priv_key</span>         <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'&lt;tsig key&gt;'</span>
 <span class='rbrace token'>}</span>
 </code></pre>
 
@@ -238,6 +278,9 @@ Create the following on each host:</p>
 
   <span class='comment val'>#Use the nsupdate broker plugin to register application</span>
   <span class='rubyid_broker_dns_plugin identifier id'>broker_dns_plugin</span>          <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'nsupdate'</span><span class='comma token'>,</span>
+
+  <span class='comment val'>#If installing from a local build, specify the path for Origin RPMs</span>
+  <span class='comment val'>#install_repo               =&gt; 'file:///root/origin-rpms',</span>
 <span class='rbrace token'>}</span>
 </code></pre>
 
@@ -248,7 +291,7 @@ Create the following on each host:</p>
 </div></div>
 
     <div id="footer">
-  Generated on Wed Mar 13 18:04:28 2013 by
+  Generated on Thu Mar 14 12:53:41 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
