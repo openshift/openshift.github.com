@@ -110,10 +110,33 @@
 
   <h2>Constant Summary</h2>
   
+    <dl class="constants">
+      
+        <dt id="CART_NAME_COMPATIBILITY_REGEX-constant" class="">CART_NAME_COMPATIBILITY_REGEX =
+          <div class="docstring">
+  <div class="discussion">
+    <p>
+This is the regex for cartridge names We need to ensure backward
+compatibility for fetches
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='regexp val'>/\A([\w\-]+(-)([\d]+(\.[\d]+)*)+)\z/</span>
+</pre></dd>
+      
+    </dl>
+  
 
 
 
-  <h2>Constant Summary</h2>
+  
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html" title="OpenShift::Controller::ApiBehavior (module)">OpenShift::Controller::ApiBehavior</a></span></h3>
@@ -291,7 +314,7 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id].
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html" title="OpenShift::Controller::ApiBehavior (module)">OpenShift::Controller::ApiBehavior</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#check_nolinks (method)">#check_nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_version-instance_method" title="OpenShift::Controller::ApiBehavior#check_version (method)">#check_version</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_bool-instance_method" title="OpenShift::Controller::ApiBehavior#get_bool (method)">#get_bool</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_url-instance_method" title="OpenShift::Controller::ApiBehavior#get_url (method)">#get_url</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#new_rest_reply-instance_method" title="OpenShift::Controller::ApiBehavior#new_rest_reply (method)">#new_rest_reply</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#nolinks (method)">#nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#set_locale-instance_method" title="OpenShift::Controller::ApiBehavior#set_locale (method)">#set_locale</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#check_nolinks (method)">#check_nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_version-instance_method" title="OpenShift::Controller::ApiBehavior#check_version (method)">#check_version</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_actual_id-instance_method" title="OpenShift::Controller::ApiBehavior#get_actual_id (method)">#get_actual_id</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_bool-instance_method" title="OpenShift::Controller::ApiBehavior#get_bool (method)">#get_bool</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_url-instance_method" title="OpenShift::Controller::ApiBehavior#get_url (method)">#get_url</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#new_rest_reply-instance_method" title="OpenShift::Controller::ApiBehavior#new_rest_reply (method)">#new_rest_reply</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#nolinks (method)">#nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#set_locale-instance_method" title="OpenShift::Controller::ApiBehavior#set_locale (method)">#set_locale</a></span></p>
 
   
   
@@ -370,37 +393,6 @@ POST /domains/[domain_id]/applications/[application_id]/cartridges
       <pre class="lines">
 
 
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
 91
 92
 93
@@ -463,10 +455,51 @@ POST /domains/[domain_id]/applications/[application_id]/cartridges
 150
 151
 152
-153</pre>
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 91</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
@@ -481,6 +514,16 @@ POST /domains/[domain_id]/applications/[application_id]/cartridges
   <span class='rubyid_scales_from identifier id'>scales_from</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:scales_from</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:scales_to</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_additional_storage identifier id'>additional_storage</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:additional_storage</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_nil nil kw'>nil</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{domain_id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;EMBED_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='comment val'># validate the application name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Application constant id'>Application</span><span class='colon2 op'>::</span><span class='rubyid_APP_NAME_COMPATIBILITY_REGEX constant id'>APP_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{id}' not found for domain '#{domain_id}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;EMBED_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
@@ -595,54 +638,88 @@ DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <pre class="lines">
 
 
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186
-187
-188
-189
-190
-191
-192
-193
-194
-195</pre>
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 156</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 197</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:application_id</span><span class='rbrack token'>]</span>
   <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{domain_id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;REMOVE_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='comment val'># validate the application name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Application constant id'>Application</span><span class='colon2 op'>::</span><span class='rubyid_APP_NAME_COMPATIBILITY_REGEX constant id'>APP_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{id}' not found for domain '#{domain_id}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;REMOVE_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+  
+  <span class='comment val'># validate the cartridge name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='nmatch op'>!~</span> <span class='rubyid_CART_NAME_COMPATIBILITY_REGEX constant id'>CART_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Cartridge #{cartridge} not embedded within application #{id}&quot;</span><span class='comma token'>,</span> <span class='integer val'>129</span><span class='comma token'>,</span> <span class='string val'>&quot;REMOVE_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
@@ -712,10 +789,6 @@ GET /domains/[domain_id]/applications/[application_id]/cartridges
       <pre class="lines">
 
 
-5
-6
-7
-8
 9
 10
 11
@@ -733,14 +806,38 @@ GET /domains/[domain_id]/applications/[application_id]/cartridges
 23
 24
 25
-26</pre>
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 5</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 9</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_index identifier id'>index</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:application_id</span><span class='rbrack token'>]</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{domain_id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;LIST_APP_CARTRIDGES&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='comment val'># validate the application name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Application constant id'>Application</span><span class='colon2 op'>::</span><span class='rubyid_APP_NAME_COMPATIBILITY_REGEX constant id'>APP_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{id}' not found for domain '#{domain_id}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;LIST_APP_CARTRIDGES&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
@@ -793,20 +890,6 @@ GET /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <pre class="lines">
 
 
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
 43
 44
 45
@@ -821,10 +904,41 @@ GET /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 54
 55
 56
-57</pre>
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 43</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_show identifier id'>show</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
@@ -832,6 +946,23 @@ GET /domains/[domain_id]/applications/[application_id]/cartridges/[id]
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
   <span class='rubyid_status_messages identifier id'>status_messages</span> <span class='assign token'>=</span> <span class='notop op'>!</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:include</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:include</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;,&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>&quot;status_messages&quot;</span><span class='rparen token'>)</span>
 
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{domain_id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;SHOW_APP_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='comment val'># validate the application name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_application_id identifier id'>application_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Application constant id'>Application</span><span class='colon2 op'>::</span><span class='rubyid_APP_NAME_COMPATIBILITY_REGEX constant id'>APP_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{application_id}' not found for domain '#{domain_id}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;SHOW_APP_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+  
+  <span class='comment val'># validate the cartridge name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_CART_NAME_COMPATIBILITY_REGEX constant id'>CART_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Cartridge '#{id}' not found for application '#{application_id}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>129</span><span class='comma token'>,</span> <span class='string val'>&quot;SHOW_APP_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+  
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
     <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -888,64 +1019,6 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <pre class="lines">
 
 
-198
-199
-200
-201
-202
-203
-204
-205
-206
-207
-208
-209
-210
-211
-212
-213
-214
-215
-216
-217
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228
-229
-230
-231
-232
-233
-234
-235
-236
-237
-238
-239
-240
-241
-242
-243
-244
-245
-246
-247
-248
-249
-250
-251
-252
-253
-254
-255
 256
 257
 258
@@ -972,10 +1045,85 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 279
 280
 281
-282</pre>
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 198</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 256</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update identifier id'>update</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
@@ -993,6 +1141,23 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
     <span class='rubyid_additional_storage identifier id'>additional_storage</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_additional_storage identifier id'>additional_storage</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_additional_storage identifier id'>additional_storage</span>
   <span class='rubyid_rescue rescue kw'>rescue</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Invalid storage value provided.&quot;</span><span class='comma token'>,</span> <span class='integer val'>165</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;additional_storage&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{domain_id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='comment val'># validate the application name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_application_id identifier id'>application_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Application constant id'>Application</span><span class='colon2 op'>::</span><span class='rubyid_APP_NAME_COMPATIBILITY_REGEX constant id'>APP_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{application_id}' not found for domain '#{domain_id}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+  
+  <span class='comment val'># validate the cartridge name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_CART_NAME_COMPATIBILITY_REGEX constant id'>CART_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Cartridge #{id} not embedded within application #{application_id}&quot;</span><span class='comma token'>,</span> <span class='integer val'>129</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_begin begin kw'>begin</span>
@@ -1073,7 +1238,7 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 </div>
 
     <div id="footer">
-  Generated on Thu Mar 14 18:16:23 2013 by
+  Generated on Fri Mar 15 18:16:10 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

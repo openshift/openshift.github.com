@@ -132,6 +132,42 @@ Represents a OpenShift Domain. A <span class='object_link'><a href="CloudUser.ht
         <dd><pre class="code"><span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
 </pre></dd>
       
+        <dt id="DOMAIN_NAME_REGEX-constant" class="">DOMAIN_NAME_REGEX =
+          <div class="docstring">
+  <div class="discussion">
+    <p>
+This is the current regex for validations for new domains
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+</pre></dd>
+      
+        <dt id="DOMAIN_NAME_COMPATIBILITY_REGEX-constant" class="">DOMAIN_NAME_COMPATIBILITY_REGEX =
+          <div class="docstring">
+  <div class="discussion">
+    <p>
+This is the regex that ensures backward compatibility for fetches
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
+</pre></dd>
+      
     </dl>
   
 
@@ -765,13 +801,13 @@ A new instance of Domain
       <pre class="lines">
 
 
-51
-52
-53
-54</pre>
+56
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 56</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_attrs identifier id'>attrs</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_super super kw'>super</span>
@@ -1105,7 +1141,12 @@ List of <span class='object_link'><a href="Application.html" title="Application 
 286
 287
 288
-289</pre>
+289
+290
+291
+292
+293
+294</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 20</span>
@@ -1113,6 +1154,11 @@ List of <span class='object_link'><a href="Application.html" title="Application 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_Domain constant id'>Domain</span>
   <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>16</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span>
   <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
+
+  <span class='comment val'># This is the current regex for validations for new domains </span>
+  <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span> <span class='assign token'>=</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+  <span class='comment val'># This is the regex that ensures backward compatibility for fetches</span>
+  <span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span> <span class='assign token'>=</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
   
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Document constant id'>Document</span>
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Timestamps constant id'>Timestamps</span>
@@ -1134,7 +1180,7 @@ List of <span class='object_link'><a href="Application.html" title="Application 
   
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:namespace</span><span class='comma token'>,</span>
     <span class='rubyid_presence identifier id'>presence</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
-    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
+    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_length identifier id'>length</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_maximum identifier id'>maximum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_minimum identifier id'>minimum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='dstring node'>&quot;Must be a minimum of #{NAMESPACE_MIN_LENGTH} and maximum of #{NAMESPACE_MAX_LENGTH} characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_blacklisted identifier id'>blacklisted</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is not allowed.  Please choose another.&quot;</span><span class='rbrace token'>}</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
@@ -1707,7 +1753,12 @@ List of domain wide environment variables to be created on all
 286
 287
 288
-289</pre>
+289
+290
+291
+292
+293
+294</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 20</span>
@@ -1715,6 +1766,11 @@ List of domain wide environment variables to be created on all
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_Domain constant id'>Domain</span>
   <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>16</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span>
   <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
+
+  <span class='comment val'># This is the current regex for validations for new domains </span>
+  <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span> <span class='assign token'>=</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+  <span class='comment val'># This is the regex that ensures backward compatibility for fetches</span>
+  <span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span> <span class='assign token'>=</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
   
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Document constant id'>Document</span>
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Timestamps constant id'>Timestamps</span>
@@ -1736,7 +1792,7 @@ List of domain wide environment variables to be created on all
   
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:namespace</span><span class='comma token'>,</span>
     <span class='rubyid_presence identifier id'>presence</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
-    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
+    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_length identifier id'>length</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_maximum identifier id'>maximum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_minimum identifier id'>minimum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='dstring node'>&quot;Must be a minimum of #{NAMESPACE_MIN_LENGTH} and maximum of #{NAMESPACE_MAX_LENGTH} characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_blacklisted identifier id'>blacklisted</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is not allowed.  Please choose another.&quot;</span><span class='rbrace token'>}</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
@@ -2305,7 +2361,12 @@ Namespace reserved for this domain. @see <span class='object_link'><a href="#upd
 286
 287
 288
-289</pre>
+289
+290
+291
+292
+293
+294</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 20</span>
@@ -2313,6 +2374,11 @@ Namespace reserved for this domain. @see <span class='object_link'><a href="#upd
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_Domain constant id'>Domain</span>
   <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>16</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span>
   <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
+
+  <span class='comment val'># This is the current regex for validations for new domains </span>
+  <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span> <span class='assign token'>=</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+  <span class='comment val'># This is the regex that ensures backward compatibility for fetches</span>
+  <span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span> <span class='assign token'>=</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
   
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Document constant id'>Document</span>
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Timestamps constant id'>Timestamps</span>
@@ -2334,7 +2400,7 @@ Namespace reserved for this domain. @see <span class='object_link'><a href="#upd
   
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:namespace</span><span class='comma token'>,</span>
     <span class='rubyid_presence identifier id'>presence</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
-    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
+    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_length identifier id'>length</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_maximum identifier id'>maximum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_minimum identifier id'>minimum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='dstring node'>&quot;Must be a minimum of #{NAMESPACE_MIN_LENGTH} and maximum of #{NAMESPACE_MAX_LENGTH} characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_blacklisted identifier id'>blacklisted</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is not allowed.  Please choose another.&quot;</span><span class='rbrace token'>}</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
@@ -2903,7 +2969,12 @@ The <span class='object_link'><a href="CloudUser.html" title="CloudUser (class)"
 286
 287
 288
-289</pre>
+289
+290
+291
+292
+293
+294</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 20</span>
@@ -2911,6 +2982,11 @@ The <span class='object_link'><a href="CloudUser.html" title="CloudUser (class)"
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_Domain constant id'>Domain</span>
   <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>16</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span>
   <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
+
+  <span class='comment val'># This is the current regex for validations for new domains </span>
+  <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span> <span class='assign token'>=</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+  <span class='comment val'># This is the regex that ensures backward compatibility for fetches</span>
+  <span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span> <span class='assign token'>=</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
   
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Document constant id'>Document</span>
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Timestamps constant id'>Timestamps</span>
@@ -2932,7 +3008,7 @@ The <span class='object_link'><a href="CloudUser.html" title="CloudUser (class)"
   
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:namespace</span><span class='comma token'>,</span>
     <span class='rubyid_presence identifier id'>presence</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
-    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
+    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_length identifier id'>length</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_maximum identifier id'>maximum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_minimum identifier id'>minimum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='dstring node'>&quot;Must be a minimum of #{NAMESPACE_MIN_LENGTH} and maximum of #{NAMESPACE_MAX_LENGTH} characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_blacklisted identifier id'>blacklisted</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is not allowed.  Please choose another.&quot;</span><span class='rbrace token'>}</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
@@ -3501,7 +3577,12 @@ List of <span class='object_link'><a href="PendingDomainOps.html" title="Pending
 286
 287
 288
-289</pre>
+289
+290
+291
+292
+293
+294</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 20</span>
@@ -3509,6 +3590,11 @@ List of <span class='object_link'><a href="PendingDomainOps.html" title="Pending
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_Domain constant id'>Domain</span>
   <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>16</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span>
   <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
+
+  <span class='comment val'># This is the current regex for validations for new domains </span>
+  <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span> <span class='assign token'>=</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+  <span class='comment val'># This is the regex that ensures backward compatibility for fetches</span>
+  <span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span> <span class='assign token'>=</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
   
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Document constant id'>Document</span>
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Timestamps constant id'>Timestamps</span>
@@ -3530,7 +3616,7 @@ List of <span class='object_link'><a href="PendingDomainOps.html" title="Pending
   
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:namespace</span><span class='comma token'>,</span>
     <span class='rubyid_presence identifier id'>presence</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
-    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
+    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_length identifier id'>length</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_maximum identifier id'>maximum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_minimum identifier id'>minimum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='dstring node'>&quot;Must be a minimum of #{NAMESPACE_MIN_LENGTH} and maximum of #{NAMESPACE_MAX_LENGTH} characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_blacklisted identifier id'>blacklisted</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is not allowed.  Please choose another.&quot;</span><span class='rbrace token'>}</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
@@ -4105,7 +4191,12 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 286
 287
 288
-289</pre>
+289
+290
+291
+292
+293
+294</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 20</span>
@@ -4113,6 +4204,11 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_Domain constant id'>Domain</span>
   <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>16</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span>
   <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
+
+  <span class='comment val'># This is the current regex for validations for new domains </span>
+  <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span> <span class='assign token'>=</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+  <span class='comment val'># This is the regex that ensures backward compatibility for fetches</span>
+  <span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span> <span class='assign token'>=</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
   
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Document constant id'>Document</span>
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Timestamps constant id'>Timestamps</span>
@@ -4134,7 +4230,7 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
   
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:namespace</span><span class='comma token'>,</span>
     <span class='rubyid_presence identifier id'>presence</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
-    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
+    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_length identifier id'>length</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_maximum identifier id'>maximum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_minimum identifier id'>minimum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='dstring node'>&quot;Must be a minimum of #{NAMESPACE_MIN_LENGTH} and maximum of #{NAMESPACE_MAX_LENGTH} characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_blacklisted identifier id'>blacklisted</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is not allowed.  Please choose another.&quot;</span><span class='rbrace token'>}</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
@@ -4705,7 +4801,12 @@ domain.
 286
 287
 288
-289</pre>
+289
+290
+291
+292
+293
+294</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 20</span>
@@ -4713,6 +4814,11 @@ domain.
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_Domain constant id'>Domain</span>
   <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>16</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span>
   <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span> <span class='assign token'>=</span> <span class='integer val'>1</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_defined? defined kw'>defined?</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span>
+
+  <span class='comment val'># This is the current regex for validations for new domains </span>
+  <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span> <span class='assign token'>=</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span>
+  <span class='comment val'># This is the regex that ensures backward compatibility for fetches</span>
+  <span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span> <span class='assign token'>=</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span>
   
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Document constant id'>Document</span>
   <span class='rubyid_include identifier id'>include</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Timestamps constant id'>Timestamps</span>
@@ -4734,7 +4840,7 @@ domain.
   
   <span class='rubyid_validates identifier id'>validates</span> <span class='symbol val'>:namespace</span><span class='comma token'>,</span>
     <span class='rubyid_presence identifier id'>presence</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
-    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='regexp val'>/\A[A-Za-z0-9]+\z/</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
+    <span class='rubyid_format identifier id'>format</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_with identifier id'>with</span><span class='colon op'>:</span> <span class='rubyid_DOMAIN_NAME_REGEX constant id'>DOMAIN_NAME_REGEX</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Invalid namespace. Namespace must only contain alphanumeric characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_length identifier id'>length</span><span class='colon op'>:</span>   <span class='lbrace token'>{</span><span class='rubyid_maximum identifier id'>maximum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MAX_LENGTH constant id'>NAMESPACE_MAX_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_minimum identifier id'>minimum</span><span class='colon op'>:</span> <span class='rubyid_NAMESPACE_MIN_LENGTH constant id'>NAMESPACE_MIN_LENGTH</span><span class='comma token'>,</span> <span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='dstring node'>&quot;Must be a minimum of #{NAMESPACE_MIN_LENGTH} and maximum of #{NAMESPACE_MAX_LENGTH} characters.&quot;</span><span class='rbrace token'>}</span><span class='comma token'>,</span>
     <span class='rubyid_blacklisted identifier id'>blacklisted</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rubyid_message identifier id'>message</span><span class='colon op'>:</span> <span class='string val'>&quot;Namespace is not allowed.  Please choose another.&quot;</span><span class='rbrace token'>}</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
@@ -5008,12 +5114,12 @@ domain.
       <pre class="lines">
 
 
-47
-48
-49</pre>
+52
+53
+54</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 52</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validation_map identifier id'>validation_map</span>
   <span class='lbrace token'>{</span><span class='rubyid_namespace identifier id'>namespace</span><span class='colon op'>:</span> <span class='integer val'>106</span><span class='rbrace token'>}</span>
@@ -5045,11 +5151,6 @@ domain.
       <pre class="lines">
 
 
-193
-194
-195
-196
-197
 198
 199
 200
@@ -5060,10 +5161,15 @@ domain.
 205
 206
 207
-208</pre>
+208
+209
+210
+211
+212
+213</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 193</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 198</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_env_variables identifier id'>add_env_variables</span><span class='lparen token'>(</span><span class='rubyid_variables identifier id'>variables</span><span class='rparen token'>)</span>
   <span class='rubyid_env_vars_to_rm identifier id'>env_vars_to_rm</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -5130,18 +5236,18 @@ Support operation to add additional ssh keys for a user
       <pre class="lines">
 
 
-149
-150
-151
-152
-153
 154
 155
 156
-157</pre>
+157
+158
+159
+160
+161
+162</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 149</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 154</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_ssh_key identifier id'>add_ssh_key</span><span class='lparen token'>(</span><span class='rubyid_user_id identifier id'>user_id</span><span class='comma token'>,</span> <span class='rubyid_key_attr identifier id'>key_attr</span><span class='comma token'>,</span> <span class='rubyid_pending_parent_op identifier id'>pending_parent_op</span><span class='rparen token'>)</span>
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='colon op'>:</span> <span class='rubyid_pending_parent_op identifier id'>pending_parent_op</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
@@ -5173,14 +5279,14 @@ Support operation to add additional ssh keys for a user
       <pre class="lines">
 
 
-181
-182
-183
-184
-185</pre>
+186
+187
+188
+189
+190</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 181</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 186</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_system_ssh_keys identifier id'>add_system_ssh_keys</span><span class='lparen token'>(</span><span class='rubyid_ssh_keys identifier id'>ssh_keys</span><span class='rparen token'>)</span>
   <span class='rubyid_keys_attrs identifier id'>keys_attrs</span> <span class='assign token'>=</span> <span class='rubyid_ssh_keys identifier id'>ssh_keys</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='rubyid_k identifier id'>k</span><span class='bitor op'>|</span> <span class='rubyid_k identifier id'>k</span><span class='dot token'>.</span><span class='rubyid_attributes identifier id'>attributes</span><span class='dot token'>.</span><span class='rubyid_dup identifier id'>dup</span><span class='rbrace token'>}</span>
@@ -5226,20 +5332,20 @@ Adds a user to the access list for this domain.
       <pre class="lines">
 
 
-109
-110
-111
-112
-113
 114
 115
 116
 117
 118
-119</pre>
+119
+120
+121
+122
+123
+124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 109</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 114</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_user identifier id'>add_user</span><span class='lparen token'>(</span><span class='rubyid_user identifier id'>user</span><span class='rparen token'>)</span>
   <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_user_ids identifier id'>user_ids</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span>
@@ -5294,15 +5400,15 @@ Completes the second step of the namespace update. See <span class='object_link'
       <pre class="lines">
 
 
-97
-98
-99
-100
-101
-102</pre>
+102
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 97</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 102</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_complete_namespace_update identifier id'>complete_namespace_update</span><span class='lparen token'>(</span><span class='rubyid_op identifier id'>op</span><span class='rparen token'>)</span>
   <span class='rubyid_pending_op identifier id'>pending_op</span> <span class='assign token'>=</span> <span class='rubyid_PendingDomainOps constant id'>PendingDomainOps</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='colon op'>:</span> <span class='symbol val'>:complete_namespace_update</span><span class='comma token'>,</span> <span class='rubyid_arguments identifier id'>arguments</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='string val'>&quot;old_ns&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_op identifier id'>op</span><span class='dot token'>.</span><span class='rubyid_arguments identifier id'>arguments</span><span class='lbrack token'>[</span><span class='string val'>&quot;old_ns&quot;</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='string val'>&quot;new_ns&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_op identifier id'>op</span><span class='dot token'>.</span><span class='rubyid_arguments identifier id'>arguments</span><span class='lbrack token'>[</span><span class='string val'>&quot;new_ns&quot;</span><span class='rbrack token'>]</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_on_apps identifier id'>on_apps</span><span class='colon op'>:</span> <span class='rubyid_op identifier id'>op</span><span class='dot token'>.</span><span class='rubyid_on_apps identifier id'>on_apps</span><span class='comma token'>,</span> <span class='rubyid_state identifier id'>state</span><span class='colon op'>:</span> <span class='string val'>&quot;init&quot;</span><span class='rparen token'>)</span>
@@ -5331,10 +5437,10 @@ Completes the second step of the namespace update. See <span class='object_link'
       <pre class="lines">
 
 
-26</pre>
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 31</span>
 
 <span class='rubyid_alias_method identifier id'>alias_method</span> <span class='symbol val'>:mongoid_save</span><span class='comma token'>,</span> <span class='symbol val'>:save</span>
 </pre>
@@ -5358,13 +5464,13 @@ Completes the second step of the namespace update. See <span class='object_link'
       <pre class="lines">
 
 
-210
-211
-212
-213</pre>
+215
+216
+217
+218</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 210</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 215</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_env_variables identifier id'>remove_env_variables</span><span class='lparen token'>(</span><span class='rubyid_variables identifier id'>variables</span><span class='rparen token'>)</span>
   <span class='rubyid_pending_op identifier id'>pending_op</span> <span class='assign token'>=</span> <span class='rubyid_PendingDomainOps constant id'>PendingDomainOps</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='colon op'>:</span> <span class='symbol val'>:remove_env_variables</span><span class='comma token'>,</span> <span class='rubyid_arguments identifier id'>arguments</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='string val'>&quot;variables&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_variables identifier id'>variables</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_on_apps identifier id'>on_apps</span><span class='colon op'>:</span> <span class='rubyid_applications identifier id'>applications</span><span class='comma token'>,</span> <span class='rubyid_created_at identifier id'>created_at</span><span class='colon op'>:</span> <span class='rubyid_Time constant id'>Time</span><span class='dot token'>.</span><span class='rubyid_now identifier id'>now</span><span class='comma token'>,</span> <span class='rubyid_state identifier id'>state</span><span class='colon op'>:</span> <span class='string val'>&quot;init&quot;</span><span class='rparen token'>)</span>
@@ -5419,18 +5525,18 @@ Support operation to remove specific ssh keys for a user
       <pre class="lines">
 
 
-171
-172
-173
-174
-175
 176
 177
 178
-179</pre>
+179
+180
+181
+182
+183
+184</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 171</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 176</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_ssh_key identifier id'>remove_ssh_key</span><span class='lparen token'>(</span><span class='rubyid_user_id identifier id'>user_id</span><span class='comma token'>,</span> <span class='rubyid_key_attr identifier id'>key_attr</span><span class='comma token'>,</span> <span class='rubyid_pending_parent_op identifier id'>pending_parent_op</span><span class='rparen token'>)</span>
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='colon op'>:</span> <span class='rubyid_pending_parent_op identifier id'>pending_parent_op</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>    
@@ -5462,14 +5568,14 @@ Support operation to remove specific ssh keys for a user
       <pre class="lines">
 
 
-187
-188
-189
-190
-191</pre>
+192
+193
+194
+195
+196</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 187</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 192</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_system_ssh_keys identifier id'>remove_system_ssh_keys</span><span class='lparen token'>(</span><span class='rubyid_ssh_keys identifier id'>ssh_keys</span><span class='rparen token'>)</span>
   <span class='rubyid_keys_attrs identifier id'>keys_attrs</span> <span class='assign token'>=</span> <span class='rubyid_ssh_keys identifier id'>ssh_keys</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='rubyid_k identifier id'>k</span><span class='bitor op'>|</span> <span class='rubyid_k identifier id'>k</span><span class='dot token'>.</span><span class='rubyid_attributes identifier id'>attributes</span><span class='dot token'>.</span><span class='rubyid_dup identifier id'>dup</span><span class='rbrace token'>}</span>
@@ -5515,19 +5621,19 @@ Removes a user from the access list for this domain.
       <pre class="lines">
 
 
-126
-127
-128
-129
-130
 131
 132
 133
 134
-135</pre>
+135
+136
+137
+138
+139
+140</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 131</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_user identifier id'>remove_user</span><span class='lparen token'>(</span><span class='rubyid_user identifier id'>user</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_user_ids identifier id'>user_ids</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span>
@@ -5576,11 +5682,6 @@ True on success or false on failure
       <pre class="lines">
 
 
-219
-220
-221
-222
-223
 224
 225
 226
@@ -5645,10 +5746,15 @@ True on success or false on failure
 285
 286
 287
-288</pre>
+288
+289
+290
+291
+292
+293</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 219</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 224</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_run_jobs identifier id'>run_jobs</span>
   <span class='rubyid_begin begin kw'>begin</span>
@@ -5741,15 +5847,15 @@ True on success or false on failure
       <pre class="lines">
 
 
-56
-57
-58
-59
-60
-61</pre>
+61
+62
+63
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 61</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_save identifier id'>save</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_notify identifier id'>notify</span> <span class='assign token'>=</span> <span class='notop op'>!</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_persisted? fid id'>persisted?</span>
@@ -5804,17 +5910,17 @@ namespace update happens in 2 steps:
       <pre class="lines">
 
 
-80
-81
-82
-83
-84
 85
 86
-87</pre>
+87
+88
+89
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/domain.rb', line 85</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_namespace identifier id'>update_namespace</span><span class='lparen token'>(</span><span class='rubyid_new_namespace identifier id'>new_namespace</span><span class='rparen token'>)</span>
   <span class='rubyid_old_ns identifier id'>old_ns</span> <span class='assign token'>=</span> <span class='rubyid_namespace identifier id'>namespace</span>
@@ -5835,7 +5941,7 @@ namespace update happens in 2 steps:
 </div>
 
     <div id="footer">
-  Generated on Thu Mar 14 18:09:48 2013 by
+  Generated on Fri Mar 15 18:09:33 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

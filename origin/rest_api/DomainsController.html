@@ -379,14 +379,6 @@ The new domain
       <pre class="lines">
 
 
-50
-51
-52
-53
-54
-55
-56
-57
 58
 59
 60
@@ -409,10 +401,18 @@ The new domain
 77
 78
 79
-80</pre>
+80
+81
+82
+83
+84
+85
+86
+87
+88</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 58</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
   <span class='rubyid_namespace identifier id'>namespace</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
@@ -421,19 +421,19 @@ The new domain
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='comma token'>,</span>
                       <span class='integer val'>106</span><span class='comma token'>,</span> <span class='string val'>&quot;ADD_DOMAIN&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;id&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='notop op'>!</span><span class='rubyid_namespace identifier id'>namespace</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_namespace identifier id'>namespace</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
 
+  <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_namespace identifier id'>namespace</span><span class='colon op'>:</span> <span class='rubyid_namespace identifier id'>namespace</span><span class='comma token'>,</span> <span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_valid? fid id'>valid?</span>
+    <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='string val'>&quot;Domain is not valid&quot;</span>
+    <span class='rubyid_messages identifier id'>messages</span> <span class='assign token'>=</span> <span class='rubyid_get_error_messages identifier id'>get_error_messages</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='string val'>&quot;namespace&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>&quot;id&quot;</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>&quot;ADD_DOMAIN&quot;</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_messages identifier id'>messages</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_namespace identifier id'>namespace</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Namespace '#{namespace}' is already in use. Please choose another.&quot;</span><span class='comma token'>,</span> <span class='integer val'>103</span><span class='comma token'>,</span> <span class='string val'>&quot;ADD_DOMAIN&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;id&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:conflict</span><span class='comma token'>,</span> <span class='string val'>&quot;There is already a namespace associated with this user&quot;</span><span class='comma token'>,</span> <span class='integer val'>103</span><span class='comma token'>,</span> <span class='string val'>&quot;ADD_DOMAIN&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;id&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_end end kw'>end</span>
-
-  <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_namespace identifier id'>namespace</span><span class='colon op'>:</span> <span class='rubyid_namespace identifier id'>namespace</span><span class='comma token'>,</span> <span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='rparen token'>)</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_valid? fid id'>valid?</span>
-    <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='string val'>&quot;Domain is not valid&quot;</span>
-    <span class='rubyid_messages identifier id'>messages</span> <span class='assign token'>=</span> <span class='rubyid_get_error_messages identifier id'>get_error_messages</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='string val'>&quot;namespace&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>&quot;id&quot;</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>&quot;ADD_DOMAIN&quot;</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_messages identifier id'>messages</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -507,21 +507,6 @@ destroy the domain
       <pre class="lines">
 
 
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
 156
 157
 158
@@ -537,19 +522,48 @@ destroy the domain
 168
 169
 170
-171</pre>
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 156</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
   <span class='rubyid_force identifier id'>force</span> <span class='assign token'>=</span> <span class='rubyid_get_bool identifier id'>get_bool</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:force</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
 
+  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_DOMAIN&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span><span class='string val'>&quot;DELETE_DOMAIN&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_DOMAIN&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_force identifier id'>force</span>
@@ -742,7 +756,15 @@ The requested domain
 36
 37
 38
-39</pre>
+39
+40
+41
+42
+43
+44
+45
+46
+47</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 29</span>
@@ -750,6 +772,14 @@ The requested domain
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_show identifier id'>show</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
   <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span> <span class='dstring node'>&quot;Getting domain #{id}&quot;</span>
+
+  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{id} not found.&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;SHOW_DOMAIN&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
     <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -779,7 +809,7 @@ The requested domain
 Create a new domain for the user
 </p>
 <p>
-URL: /domains/:id
+URL: /domains/:existing_id
 </p>
 <p>
 Action: PUT
@@ -854,14 +884,6 @@ The updated domain
       <pre class="lines">
 
 
-92
-93
-94
-95
-96
-97
-98
-99
 100
 101
 102
@@ -894,10 +916,25 @@ The updated domain
 129
 130
 131
-132</pre>
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 92</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 100</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update identifier id'>update</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:existing_id</span><span class='rbrack token'>]</span>
@@ -906,6 +943,13 @@ The updated domain
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Namespace is required and cannot be blank.&quot;</span><span class='comma token'>,</span>
                       <span class='integer val'>106</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_DOMAIN&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;id&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='notop op'>!</span><span class='rubyid_new_namespace identifier id'>new_namespace</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_new_namespace identifier id'>new_namespace</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
   
+  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_DOMAIN&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
     <span class='rubyid_existing_namespace identifier id'>existing_namespace</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -951,7 +995,7 @@ The updated domain
 </div>
 
     <div id="footer">
-  Generated on Thu Mar 14 18:22:09 2013 by
+  Generated on Fri Mar 15 18:21:58 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

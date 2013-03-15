@@ -278,7 +278,7 @@ Retrieve a specific application.
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html" title="OpenShift::Controller::ApiBehavior (module)">OpenShift::Controller::ApiBehavior</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#check_nolinks (method)">#check_nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_version-instance_method" title="OpenShift::Controller::ApiBehavior#check_version (method)">#check_version</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_bool-instance_method" title="OpenShift::Controller::ApiBehavior#get_bool (method)">#get_bool</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_url-instance_method" title="OpenShift::Controller::ApiBehavior#get_url (method)">#get_url</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#new_rest_reply-instance_method" title="OpenShift::Controller::ApiBehavior#new_rest_reply (method)">#new_rest_reply</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#nolinks (method)">#nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#set_locale-instance_method" title="OpenShift::Controller::ApiBehavior#set_locale (method)">#set_locale</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#check_nolinks (method)">#check_nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#check_version-instance_method" title="OpenShift::Controller::ApiBehavior#check_version (method)">#check_version</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_actual_id-instance_method" title="OpenShift::Controller::ApiBehavior#get_actual_id (method)">#get_actual_id</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_bool-instance_method" title="OpenShift::Controller::ApiBehavior#get_bool (method)">#get_bool</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#get_url-instance_method" title="OpenShift::Controller::ApiBehavior#get_url (method)">#get_url</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#new_rest_reply-instance_method" title="OpenShift::Controller::ApiBehavior#new_rest_reply (method)">#new_rest_reply</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#nolinks-instance_method" title="OpenShift::Controller::ApiBehavior#nolinks (method)">#nolinks</a></span>, <span class='object_link'><a href="OpenShift/Controller/ApiBehavior.html#set_locale-instance_method" title="OpenShift::Controller::ApiBehavior#set_locale (method)">#set_locale</a></span></p>
 
   
   
@@ -473,24 +473,6 @@ Application object
       <pre class="lines">
 
 
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
 91
 92
 93
@@ -557,10 +539,33 @@ Application object
 154
 155
 156
-157</pre>
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/applications_controller.rb', line 73</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/applications_controller.rb', line 91</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
@@ -570,6 +575,11 @@ Application object
   <span class='rubyid_init_git_url identifier id'>init_git_url</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:initial_git_url</span><span class='rbrack token'>]</span>
   <span class='rubyid_default_gear_size identifier id'>default_gear_size</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:gear_profile</span><span class='rbrack token'>]</span>
   <span class='rubyid_default_gear_size identifier id'>default_gear_size</span><span class='dot token'>.</span><span class='rubyid_downcase! fid id'>downcase!</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_default_gear_size identifier id'>default_gear_size</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain '#{domain_id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;ADD_APPLICATION&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='comment val'># Use strong consistency to avoid race condition creating domain and app in succession</span>
@@ -686,43 +696,67 @@ Action: DELETE
       <pre class="lines">
 
 
-165
-166
-167
-168
-169
-170
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186
-187
 188
 189
 190
 191
 192
-193</pre>
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/applications_controller.rb', line 165</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/applications_controller.rb', line 188</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>    
   
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain '#{domain_id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_APPLICATION&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># validate the application name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Application constant id'>Application</span><span class='colon2 op'>::</span><span class='rubyid_APP_NAME_COMPATIBILITY_REGEX constant id'>APP_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span><span class='string val'>&quot;DELETE_APPLICATION&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
     <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -736,7 +770,7 @@ Action: DELETE
     <span class='rubyid_@application_name ivar id'>@application_name</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>
     <span class='rubyid_@application_uuid ivar id'>@application_uuid</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application #{id} not found.&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span><span class='string val'>&quot;DELETE_APPLICATION&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application #{id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span><span class='string val'>&quot;DELETE_APPLICATION&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># create tasks to delete gear groups</span>
@@ -838,13 +872,25 @@ List of applications within the domain
 25
 26
 27
-28</pre>
+28
+29
+30
+31
+32
+33
+34</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/applications_controller.rb', line 15</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_index identifier id'>index</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
+
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain '#{domain_id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;LIST_APPLICATIONS&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
     <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -915,12 +961,6 @@ Application object
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
-42
 43
 44
 45
@@ -936,15 +976,45 @@ Application object
 55
 56
 57
-58</pre>
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/applications_controller.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/applications_controller.rb', line 43</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_show identifier id'>show</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
   
+  <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Domain constant id'>Domain</span><span class='colon2 op'>::</span><span class='rubyid_DOMAIN_NAME_COMPATIBILITY_REGEX constant id'>DOMAIN_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain '#{domain_id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;SHOW_APPLICATION&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:format</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># validate the application name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_Application constant id'>Application</span><span class='colon2 op'>::</span><span class='rubyid_APP_NAME_COMPATIBILITY_REGEX constant id'>APP_NAME_COMPATIBILITY_REGEX</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;SHOW_APPLICATION&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span>
     <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -974,7 +1044,7 @@ Application object
 </div>
 
     <div id="footer">
-  Generated on Thu Mar 14 18:16:37 2013 by
+  Generated on Fri Mar 15 18:16:25 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
