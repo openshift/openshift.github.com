@@ -100,13 +100,13 @@
         <dt id="API_VERSION-constant" class="">API_VERSION =
           
         </dt>
-        <dd><pre class="code"><span class='float val'>1.3</span>
+        <dd><pre class="code"><span class='float val'>1.4</span>
 </pre></dd>
       
         <dt id="SUPPORTED_API_VERSIONS-constant" class="">SUPPORTED_API_VERSIONS =
           
         </dt>
-        <dd><pre class="code"><span class='lbrack token'>[</span><span class='float val'>1.0</span><span class='comma token'>,</span> <span class='float val'>1.1</span><span class='comma token'>,</span> <span class='float val'>1.2</span><span class='comma token'>,</span> <span class='float val'>1.3</span><span class='rbrack token'>]</span>
+        <dd><pre class="code"><span class='lbrack token'>[</span><span class='float val'>1.0</span><span class='comma token'>,</span> <span class='float val'>1.1</span><span class='comma token'>,</span> <span class='float val'>1.2</span><span class='comma token'>,</span> <span class='float val'>1.3</span><span class='comma token'>,</span> <span class='float val'>1.4</span><span class='rbrack token'>]</span>
 </pre></dd>
       
     </dl>
@@ -187,28 +187,6 @@ Returns the value of attribute requested_api_version.
   <span class="summary_signature">
     
       <a href="#check_version-instance_method" title="#check_version (instance method)">- (Object) <strong>check_version</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  <span class="note title protected">protected</span>
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="protected ">
-  <span class="summary_signature">
-    
-      <a href="#get_actual_id-instance_method" title="#get_actual_id (instance method)">- (Object) <strong>get_actual_id</strong>(id, format) </a>
     
 
     
@@ -412,14 +390,14 @@ Returns the value of attribute requested_api_version
       <pre class="lines">
 
 
-48
-49
-50
-51
-52</pre>
+53
+54
+55
+56
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 53</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_check_nolinks identifier id'>check_nolinks</span>
   <span class='rubyid_nolinks identifier id'>nolinks</span>
@@ -465,12 +443,18 @@ Returns the value of attribute requested_api_version
 31
 32
 33
-34</pre>
+34
+35
+36
+37
+38
+39</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 16</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_check_version identifier id'>check_version</span>
+
   <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_catch identifier id'>catch</span><span class='lparen token'>(</span><span class='symbol val'>:version</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
     <span class='lparen token'>(</span><span class='rubyid_request identifier id'>request</span><span class='dot token'>.</span><span class='rubyid_accept identifier id'>accept</span> <span class='orop op'>||</span> <span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>','</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_mime_type identifier id'>mime_type</span><span class='bitor op'>|</span>
       <span class='rubyid_values identifier id'>values</span> <span class='assign token'>=</span> <span class='rubyid_mime_type identifier id'>mime_type</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>';'</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lparen token'>(</span><span class='bitand op'>&amp;</span><span class='symbol val'>:strip</span><span class='rparen token'>)</span>
@@ -480,59 +464,18 @@ Returns the value of attribute requested_api_version
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span><span class='dot token'>.</span><span class='rubyid_presence identifier id'>presence</span> <span class='orop op'>||</span> <span class='rubyid_API_VERSION constant id'>API_VERSION</span>
-
+  <span class='rubyid_end end kw'>end</span><span class='dot token'>.</span><span class='rubyid_presence identifier id'>presence</span> 
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_API_VERSION constant id'>API_VERSION</span>
+    <span class='comment val'>#FIXME  this is a hack that should be removed by April</span>
+    <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='float val'>1.3</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_request identifier id'>request</span><span class='dot token'>.</span><span class='rubyid_headers identifier id'>headers</span><span class='lbrack token'>[</span><span class='string val'>'User-Agent'</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_present? fid id'>present?</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_request identifier id'>request</span><span class='dot token'>.</span><span class='rubyid_headers identifier id'>headers</span><span class='lbrack token'>[</span><span class='string val'>'User-Agent'</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_start_with? fid id'>start_with?</span> <span class='string val'>&quot;rhc&quot;</span>
+  <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_SUPPORTED_API_VERSIONS constant id'>SUPPORTED_API_VERSIONS</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_version identifier id'>version</span>
     <span class='rubyid_@requested_api_version ivar id'>@requested_api_version</span> <span class='assign token'>=</span> <span class='rubyid_version identifier id'>version</span>
   <span class='rubyid_else else kw'>else</span>
     <span class='rubyid_@requested_api_version ivar id'>@requested_api_version</span> <span class='assign token'>=</span> <span class='rubyid_API_VERSION constant id'>API_VERSION</span>
     <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_acceptable</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Requested API version #{version} is not supported. Supported versions are #{SUPPORTED_API_VERSIONS.map{|v| v.to_s}.join(&quot;,&quot;)}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="get_actual_id-instance_method">
-  
-    - (<tt>Object</tt>) <strong>get_actual_id</strong>(id, format)  <span class="extras">(protected)</span>
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 54</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_actual_id identifier id'>get_actual_id</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_format identifier id'>format</span><span class='rparen token'>)</span>
-  <span class='comment val'># if the id has a dot, rails breaks up the actual intended id into :id and :format </span>
-  <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_format identifier id'>format</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_format identifier id'>format</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span> <span class='rubyid_or or kw'>or</span> <span class='lbrack token'>[</span><span class='string val'>&quot;xml&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;json&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;yml&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;yaml&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;xhtml&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_format identifier id'>format</span> 
-    <span class='rubyid_id identifier id'>id</span> <span class='opasgn op'>+=</span> <span class='string val'>&quot;.&quot;</span> <span class='plus op'>+</span> <span class='rubyid_format identifier id'>format</span>
-    <span class='comment val'># set the default format</span>
-    <span class='rubyid_format identifier id'>format</span> <span class='assign token'>=</span> <span class='string val'>&quot;json&quot;</span>
-    <span class='rubyid_request identifier id'>request</span><span class='dot token'>.</span><span class='rubyid_format identifier id'>format</span> <span class='assign token'>=</span> <span class='rubyid_format identifier id'>format</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_return return kw'>return</span> <span class='rubyid_id identifier id'>id</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -577,20 +520,20 @@ Returns the value of attribute requested_api_version
       <pre class="lines">
 
 
+59
+60
+61
+62
+63
+64
 65
 66
 67
 68
-69
-70
-71
-72
-73
-74
-75</pre>
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 59</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_bool identifier id'>get_bool</span><span class='lparen token'>(</span><span class='rubyid_param_value identifier id'>param_value</span><span class='rparen token'>)</span>
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_false false kw'>false</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_param_value identifier id'>param_value</span>
@@ -624,12 +567,12 @@ Returns the value of attribute requested_api_version
       <pre class="lines">
 
 
-36
-37
-38</pre>
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 41</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_url identifier id'>get_url</span>
   <span class='rubyid_@rest_url ivar id'>@rest_url</span> <span class='opasgn op'>||=</span> <span class='dstring node'>&quot;#{rest_url}/&quot;</span>
@@ -686,12 +629,12 @@ Returns the value of attribute requested_api_version
       <pre class="lines">
 
 
-44
-45
-46</pre>
+49
+50
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 49</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
   <span class='rubyid_@nolinks ivar id'>@nolinks</span> <span class='opasgn op'>||=</span> <span class='rubyid_get_bool identifier id'>get_bool</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:nolinks</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
@@ -717,12 +660,12 @@ Returns the value of attribute requested_api_version
       <pre class="lines">
 
 
-40
-41
-42</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/controller/api_behavior.rb', line 45</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_locale identifier id'>set_locale</span>
   <span class='rubyid_I18n constant id'>I18n</span><span class='dot token'>.</span><span class='rubyid_locale identifier id'>locale</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
@@ -738,7 +681,7 @@ Returns the value of attribute requested_api_version
 </div>
 
     <div id="footer">
-  Generated on Fri Mar 15 18:07:06 2013 by
+  Generated on Sat Mar 16 18:07:12 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
