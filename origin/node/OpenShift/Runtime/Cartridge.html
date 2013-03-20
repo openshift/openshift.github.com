@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=c" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
   Class: OpenShift::Runtime::Cartridge
   
@@ -185,6 +185,36 @@ Returns the value of attribute cartridge_vendor.
   
     <span class="summary_desc"><div class='inline'><p>
 Returns the value of attribute cartridge_version.
+</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#categories-instance_method" title="#categories (instance method)">- (Object) <strong>categories</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Returns the value of attribute categories.
 </p>
 </div></span>
   
@@ -417,6 +447,28 @@ Returns the value of attribute version.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#framework%3F-instance_method" title="#framework? (instance method)">- (Boolean) <strong>framework?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#initialize-instance_method" title="#initialize (instance method)">- (Cartridge) <strong>initialize</strong>(manifest_path, repository_base_path = '') </a>
     
 
@@ -569,7 +621,6 @@ Cartridge is a wrapper class for cartridge manifests
       <pre class="lines">
 
 
-138
 139
 140
 141
@@ -599,10 +650,13 @@ Cartridge is a wrapper class for cartridge manifests
 165
 166
 167
-168</pre>
+168
+169
+170
+171</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 138</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 139</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_manifest_path identifier id'>manifest_path</span><span class='comma token'>,</span> <span class='rubyid_repository_base_path identifier id'>repository_base_path</span><span class='assign token'>=</span><span class='string val'>''</span><span class='rparen token'>)</span>
   <span class='rubyid_manifest identifier id'>manifest</span> <span class='assign token'>=</span> <span class='rubyid_YAML constant id'>YAML</span><span class='dot token'>.</span><span class='rubyid_load_file identifier id'>load_file</span><span class='lparen token'>(</span><span class='rubyid_manifest_path identifier id'>manifest_path</span><span class='rparen token'>)</span>
@@ -613,6 +667,8 @@ Cartridge is a wrapper class for cartridge manifests
   <span class='rubyid_@name ivar id'>@name</span>              <span class='assign token'>=</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Name'</span><span class='rbrack token'>]</span>
   <span class='rubyid_@short_name ivar id'>@short_name</span>        <span class='assign token'>=</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Cartridge-Short-Name'</span><span class='rbrack token'>]</span>
   <span class='rubyid_@version ivar id'>@version</span>           <span class='assign token'>=</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Version'</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Version'</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
+  <span class='rubyid_@categories ivar id'>@categories</span>        <span class='assign token'>=</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Categories'</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_@is_framework ivar id'>@is_framework</span>      <span class='assign token'>=</span> <span class='rubyid_@categories ivar id'>@categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>'web_framework'</span><span class='rparen token'>)</span>
 
   <span class='comment val'>#FIXME: reinstate code after manifests are updated</span>
   <span class='comment val'>#raise MissingElementError.new(nil, 'Cartridge-Vendor') unless @cartridge_vendor</span>
@@ -729,6 +785,51 @@ Returns the value of attribute cartridge_version
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_cartridge_version identifier id'>cartridge_version</span>
   <span class='rubyid_@cartridge_version ivar id'>@cartridge_version</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="categories-instance_method">
+  
+    - (<tt>Object</tt>) <strong>categories</strong>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Returns the value of attribute categories
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+122
+123
+124</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 122</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_categories identifier id'>categories</span>
+  <span class='rubyid_@categories ivar id'>@categories</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1059,7 +1160,60 @@ Returns the value of attribute version
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="public_endpoints-instance_method">
+  <h3 class="signature first" id="framework?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>framework?</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+186
+187
+188</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 186</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_framework? fid id'>framework?</span>
+  <span class='rubyid_@is_framework ivar id'>@is_framework</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="public_endpoints-instance_method">
   
     - (<tt>Object</tt>) <strong>public_endpoints</strong> 
   
@@ -1086,12 +1240,12 @@ which have a public_port_name specified.
       <pre class="lines">
 
 
-179
-180
-181</pre>
+182
+183
+184</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 179</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 182</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_public_endpoints identifier id'>public_endpoints</span>
   <span class='rubyid_@endpoints ivar id'>@endpoints</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_e identifier id'>e</span><span class='bitor op'>|</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_public_port_name identifier id'>public_port_name</span> <span class='rbrace token'>}</span>
@@ -1117,14 +1271,14 @@ which have a public_port_name specified.
       <pre class="lines">
 
 
-183
-184
-185
-186
-187</pre>
+190
+191
+192
+193
+194</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 183</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 190</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_s identifier id'>to_s</span>
   <span class='rubyid_instance_variables identifier id'>instance_variables</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='string val'>'&lt;Cartridge: '</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_v identifier id'>v</span><span class='comma token'>,</span> <span class='rubyid_a identifier id'>a</span><span class='bitor op'>|</span>
@@ -1164,14 +1318,14 @@ obtain all software versions covered in this manifest
       <pre class="lines">
 
 
-171
-172
-173
 174
-175</pre>
+175
+176
+177
+178</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 171</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 174</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_versions identifier id'>versions</span>
   <span class='rubyid_seed identifier id'>seed</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_@manifest ivar id'>@manifest</span><span class='lbrack token'>[</span><span class='string val'>'Versions'</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_v identifier id'>v</span><span class='bitor op'>|</span> <span class='rubyid_v identifier id'>v</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='rbrace token'>}</span>
@@ -1189,7 +1343,7 @@ obtain all software versions covered in this manifest
 </div>
 
     <div id="footer">
-  Generated on Tue Mar 19 22:31:21 2013 by
+  Generated on Wed Mar 20 19:31:34 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

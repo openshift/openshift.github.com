@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=c" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
   Class: OpenShift::ApplicationContainer
   
@@ -356,7 +356,7 @@ Returns the value of attribute uuid.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#build-instance_method" title="#build (instance method)">- (Object) <strong>build</strong>(cart_name) </a>
+      <a href="#build-instance_method" title="#build (instance method)">- (Object) <strong>build</strong> </a>
     
 
     
@@ -528,7 +528,7 @@ Deletes all public endpoints for the given cart.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#deploy-instance_method" title="#deploy (instance method)">- (Object) <strong>deploy</strong>(cart_name) </a>
+      <a href="#deploy-instance_method" title="#deploy (instance method)">- (Object) <strong>deploy</strong> </a>
     
 
     
@@ -626,7 +626,29 @@ forced termination of all gear processes.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#gear_level_tidy-instance_method" title="#gear_level_tidy (instance method)">- (Object) <strong>gear_level_tidy</strong>(gear_repo_dir, gear_tmp_dir) </a>
+      <a href="#gear_level_tidy_git-instance_method" title="#gear_level_tidy_git (instance method)">- (Object) <strong>gear_level_tidy_git</strong>(gear_repo_dir) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#gear_level_tidy_tmp-instance_method" title="#gear_level_tidy_tmp (instance method)">- (Object) <strong>gear_level_tidy_tmp</strong>(gear_tmp_dir) </a>
     
 
     
@@ -932,7 +954,7 @@ start gear Throws ShellExecutionException on failure.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#start_gear-instance_method" title="#start_gear (instance method)">- (Object) <strong>start_gear</strong>(gear_dir) </a>
+      <a href="#start_gear-instance_method" title="#start_gear (instance method)">- (Object) <strong>start_gear</strong> </a>
     
 
     
@@ -1001,7 +1023,7 @@ stop gear.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#stop_gear-instance_method" title="#stop_gear (instance method)">- (Object) <strong>stop_gear</strong>(gear_dir) </a>
+      <a href="#stop_gear-instance_method" title="#stop_gear (instance method)">- (Object) <strong>stop_gear</strong> </a>
     
 
     
@@ -1566,7 +1588,7 @@ Returns the value of attribute uuid
       <div class="method_details first">
   <h3 class="signature first" id="build-instance_method">
   
-    - (<tt>Object</tt>) <strong>build</strong>(cart_name) 
+    - (<tt>Object</tt>) <strong>build</strong> 
   
 
   
@@ -1590,17 +1612,25 @@ build application
       <pre class="lines">
 
 
-375
-376
-377
-378</pre>
+358
+359
+360
+361
+362
+363
+364
+365</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 375</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 358</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_build identifier id'>build</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_build identifier id'>build</span>
   <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_BUILDING constant id'>BUILDING</span>
-  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;build&quot;</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
+  <span class='rubyid_framework_cart identifier id'>framework_cart</span> <span class='assign token'>=</span> <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_get_framework_cartridge identifier id'>get_framework_cartridge</span>
+
+  <span class='rubyid_raise identifier id'>raise</span> <span class='dstring node'>&quot;No framework cartridge found on gear #{@uuid}&quot;</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_framework_cart identifier id'>framework_cart</span>
+
+  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_build identifier id'>build</span><span class='lparen token'>(</span><span class='rubyid_framework_cart identifier id'>framework_cart</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1697,12 +1727,12 @@ cartridge name
       <pre class="lines">
 
 
-331
-332
-333</pre>
+314
+315
+316</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 331</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 314</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_connector_execute identifier id'>connector_execute</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_connector identifier id'>connector</span><span class='comma token'>,</span> <span class='rubyid_args identifier id'>args</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_connector_execute identifier id'>connector_execute</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_connector identifier id'>connector</span><span class='comma token'>,</span> <span class='rubyid_args identifier id'>args</span><span class='rparen token'>)</span>
@@ -2059,7 +2089,7 @@ skipped.
       <div class="method_details ">
   <h3 class="signature " id="deploy-instance_method">
   
-    - (<tt>Object</tt>) <strong>deploy</strong>(cart_name) 
+    - (<tt>Object</tt>) <strong>deploy</strong> 
   
 
   
@@ -2083,17 +2113,25 @@ deploy application
       <pre class="lines">
 
 
-381
-382
-383
-384</pre>
+368
+369
+370
+371
+372
+373
+374
+375</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 381</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 368</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy identifier id'>deploy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy identifier id'>deploy</span>
   <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_DEPLOYING constant id'>DEPLOYING</span>
-  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_deploy identifier id'>deploy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
+  <span class='rubyid_framework_cart identifier id'>framework_cart</span> <span class='assign token'>=</span> <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_get_framework_cartridge identifier id'>get_framework_cartridge</span>
+
+  <span class='rubyid_raise identifier id'>raise</span> <span class='dstring node'>&quot;No framework cartridge found on gear #{@uuid}&quot;</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_framework_cart identifier id'>framework_cart</span>
+
+  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_deploy identifier id'>deploy</span><span class='lparen token'>(</span><span class='rubyid_framework_cart identifier id'>framework_cart</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2116,12 +2154,12 @@ deploy application
       <pre class="lines">
 
 
-335
-336
-337</pre>
+318
+319
+320</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 335</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 318</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy_httpd_proxy identifier id'>deploy_httpd_proxy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_deploy_httpd_proxy identifier id'>deploy_httpd_proxy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2270,9 +2308,9 @@ TODO: exception handling
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="gear_level_tidy-instance_method">
+  <h3 class="signature " id="gear_level_tidy_git-instance_method">
   
-    - (<tt>Object</tt>) <strong>gear_level_tidy</strong>(gear_repo_dir, gear_tmp_dir) 
+    - (<tt>Object</tt>) <strong>gear_level_tidy_git</strong>(gear_repo_dir) 
   
 
   
@@ -2284,30 +2322,24 @@ TODO: exception handling
       <pre class="lines">
 
 
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
 293
-294
-295
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306
-307
-308
-309
-310
-311</pre>
+294</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 293</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 282</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_gear_level_tidy identifier id'>gear_level_tidy</span><span class='lparen token'>(</span><span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_gear_tmp_dir identifier id'>gear_tmp_dir</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_gear_level_tidy_git identifier id'>gear_level_tidy_git</span><span class='lparen token'>(</span><span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='rparen token'>)</span>
   <span class='comment val'># Git pruning</span>
   <span class='rubyid_tidy_action identifier id'>tidy_action</span> <span class='rubyid_do do kw'>do</span>
     <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExec constant id'>ShellExec</span><span class='dot token'>.</span><span class='rubyid_run_as identifier id'>run_as</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_gid identifier id'>gid</span><span class='comma token'>,</span> <span class='string val'>&quot;git prune&quot;</span><span class='comma token'>,</span> <span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
@@ -2319,7 +2351,40 @@ TODO: exception handling
     <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExec constant id'>ShellExec</span><span class='dot token'>.</span><span class='rubyid_run_as identifier id'>run_as</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_gid identifier id'>gid</span><span class='comma token'>,</span> <span class='string val'>&quot;git gc --aggressive&quot;</span><span class='comma token'>,</span> <span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
     <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Executed git gc for repo #{gear_repo_dir}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="gear_level_tidy_tmp-instance_method">
+  
+    - (<tt>Object</tt>) <strong>gear_level_tidy_tmp</strong>(gear_tmp_dir) 
+  
 
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+274
+275
+276
+277
+278
+279
+280</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 274</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_gear_level_tidy_tmp identifier id'>gear_level_tidy_tmp</span><span class='lparen token'>(</span><span class='rubyid_gear_tmp_dir identifier id'>gear_tmp_dir</span><span class='rparen token'>)</span>
   <span class='comment val'># Temp dir cleanup</span>
   <span class='rubyid_tidy_action identifier id'>tidy_action</span> <span class='rubyid_do do kw'>do</span>
     <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_rf identifier id'>rm_rf</span><span class='lparen token'>(</span><span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_tmp_dir identifier id'>gear_tmp_dir</span><span class='comma token'>,</span> <span class='string val'>&quot;*&quot;</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
@@ -2347,12 +2412,12 @@ TODO: exception handling
       <pre class="lines">
 
 
-347
-348
-349</pre>
+330
+331
+332</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 347</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 330</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_move identifier id'>move</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_idle identifier id'>idle</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_move identifier id'>move</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_idle identifier id'>idle</span><span class='rparen token'>)</span>
@@ -2409,12 +2474,12 @@ TODO: exception handling
       <pre class="lines">
 
 
-355
-356
-357</pre>
+338
+339
+340</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 355</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 338</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_post_move identifier id'>post_move</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_post_move identifier id'>post_move</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2440,12 +2505,12 @@ TODO: exception handling
       <pre class="lines">
 
 
-351
-352
-353</pre>
+334
+335
+336</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 351</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 334</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_pre_move identifier id'>pre_move</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_pre_move identifier id'>pre_move</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2483,12 +2548,12 @@ reload gear as supported by cartridges
       <pre class="lines">
 
 
-392
-393
-394</pre>
+383
+384
+385</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 392</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 383</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload identifier id'>reload</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;reload&quot;</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2514,12 +2579,12 @@ reload gear as supported by cartridges
       <pre class="lines">
 
 
-339
-340
-341</pre>
+322
+323
+324</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 339</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 322</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_httpd_proxy identifier id'>remove_httpd_proxy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_remove_httpd_proxy identifier id'>remove_httpd_proxy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2557,12 +2622,12 @@ restart gear as supported by cartridges
       <pre class="lines">
 
 
-387
-388
-389</pre>
+378
+379
+380</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 387</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 378</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_restart identifier id'>restart</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;restart&quot;</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2588,12 +2653,12 @@ restart gear as supported by cartridges
       <pre class="lines">
 
 
-343
-344
-345</pre>
+326
+327
+328</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 343</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 326</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_restart_httpd_proxy identifier id'>restart_httpd_proxy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_restart_httpd_proxy identifier id'>restart_httpd_proxy</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2644,12 +2709,12 @@ restore gear from tar ball
       <pre class="lines">
 
 
-397
-398
-399</pre>
+388
+389
+390</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 397</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 388</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_restore identifier id'>restore</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_NotImplementedError constant id'>NotImplementedError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>&quot;restore&quot;</span><span class='rparen token'>)</span>
@@ -2700,12 +2765,12 @@ write gear to tar ball
       <pre class="lines">
 
 
-402
-403
-404</pre>
+393
+394
+395</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 402</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 393</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_snapshot identifier id'>snapshot</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_NotImplementedError constant id'>NotImplementedError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>&quot;snapshot&quot;</span><span class='rparen token'>)</span>
@@ -2743,13 +2808,13 @@ start gear Throws ShellExecutionException on failure
       <pre class="lines">
 
 
-363
-364
-365
-366</pre>
+346
+347
+348
+349</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 363</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 346</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_start identifier id'>start</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_STARTED constant id'>STARTED</span>
@@ -2764,7 +2829,7 @@ start gear Throws ShellExecutionException on failure
       <div class="method_details ">
   <h3 class="signature " id="start_gear-instance_method">
   
-    - (<tt>Object</tt>) <strong>start_gear</strong>(gear_dir) 
+    - (<tt>Object</tt>) <strong>start_gear</strong> 
   
 
   
@@ -2776,41 +2841,17 @@ start gear Throws ShellExecutionException on failure
       <pre class="lines">
 
 
-276
-277
-278
-279
-280
-281
-282
-283
-284
-285
-286
-287
-288
-289
-290
-291</pre>
+269
+270
+271
+272</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 276</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 269</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_start_gear identifier id'>start_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='rparen token'>)</span>
-  <span class='comment val'># TODO: remove shell command</span>
-  <span class='rubyid_begin begin kw'>begin</span>
-    <span class='comment val'># Start the gear, and if that fails raise an exception, as the app is now</span>
-    <span class='comment val'># in a bad state.</span>
-    <span class='rubyid_out identifier id'>out</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span><span class='comma token'>,</span> <span class='rubyid_rc identifier id'>rc</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExec constant id'>ShellExec</span><span class='dot token'>.</span><span class='rubyid_shellCmd identifier id'>shellCmd</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/usr/sbin/oo-admin-ctl-gears startgear #{@user.uuid}&quot;</span><span class='comma token'>,</span> <span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='rparen token'>)</span>
-    <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Started gear #{@uuid}. Output:\n#{out}&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
-    <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='dstring node'>%Q{
-      Failed to restart gear #{@uuid} following tidy: #{e.message}
-      --- stdout ---\n#{e.stdout}
-      --- stderr ---\n#{e.stderr}
-                 }</span><span class='rparen token'>)</span>
-    <span class='rubyid_raise identifier id'>raise</span> <span class='dstring node'>&quot;Tidy of gear #{@uuid} failed, and the gear was not successfuly restarted&quot;</span>
-  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_start_gear identifier id'>start_gear</span>
+  <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_STARTED constant id'>STARTED</span>
+  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control_gear identifier id'>do_control_gear</span><span class='lparen token'>(</span><span class='string val'>'start'</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2833,12 +2874,12 @@ start gear Throws ShellExecutionException on failure
       <pre class="lines">
 
 
-406
-407
-408</pre>
+397
+398
+399</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 406</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 397</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_status identifier id'>status</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;status&quot;</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -2876,13 +2917,13 @@ stop gear
       <pre class="lines">
 
 
-369
-370
-371
-372</pre>
+352
+353
+354
+355</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 369</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 352</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_stop identifier id'>stop</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_STOPPED constant id'>STOPPED</span>
@@ -2897,7 +2938,7 @@ stop gear
       <div class="method_details ">
   <h3 class="signature " id="stop_gear-instance_method">
   
-    - (<tt>Object</tt>) <strong>stop_gear</strong>(gear_dir) 
+    - (<tt>Object</tt>) <strong>stop_gear</strong> 
   
 
   
@@ -2909,39 +2950,17 @@ stop gear
       <pre class="lines">
 
 
-260
-261
-262
-263
 264
 265
 266
-267
-268
-269
-270
-271
-272
-273
-274</pre>
+267</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 260</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 264</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_gear identifier id'>stop_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='rparen token'>)</span>
-  <span class='comment val'># TODO: remove shell command</span>
-  <span class='rubyid_begin begin kw'>begin</span>
-    <span class='comment val'># Stop the gear. If this fails, consider the tidy a failure.</span>
-    <span class='rubyid_out identifier id'>out</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span><span class='comma token'>,</span> <span class='rubyid_rc identifier id'>rc</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExec constant id'>ShellExec</span><span class='dot token'>.</span><span class='rubyid_shellCmd identifier id'>shellCmd</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/usr/sbin/oo-admin-ctl-gears stopgear #{@user.uuid}&quot;</span><span class='comma token'>,</span> <span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
-    <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Stopped gear #{@uuid}. Output:\n#{out}&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
-    <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='dstring node'>%Q{
-      Couldn't stop gear #{@uuid} for tidy: #{e.message}
-      --- stdout ---\n#{e.stdout}
-      --- stderr ---\n#{e.stderr}
-                 }</span><span class='rparen token'>)</span>
-    <span class='rubyid_raise identifier id'>raise</span> <span class='dstring node'>&quot;Tidy failed on gear #{@uuid}; the gear couldn't be stopped successfully&quot;</span>
-  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_gear identifier id'>stop_gear</span>
+  <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_STOPPED constant id'>STOPPED</span>
+  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control_gear identifier id'>do_control_gear</span><span class='lparen token'>(</span><span class='string val'>'stop'</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2964,12 +2983,12 @@ stop gear
       <pre class="lines">
 
 
-410
-411
-412</pre>
+401
+402
+403</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 410</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 401</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_threaddump identifier id'>threaddump</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;threaddump&quot;</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -3002,13 +3021,13 @@ The generic gear-level cleanup flow is:
 <li>Stop the gear
 
 </li>
-<li>Git cleanup
-
-</li>
 <li>Gear temp dir cleanup
 
 </li>
 <li>Cartridge tidy hook executions
+
+</li>
+<li>Git cleanup
 
 </li>
 <li>Start the gear
@@ -3058,7 +3077,11 @@ cartridge tidy hook executions.
 255
 256
 257
-258</pre>
+258
+259
+260
+261
+262</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 232</span>
@@ -3073,19 +3096,23 @@ cartridge tidy hook executions.
   <span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='comma token'>,</span> <span class='dstring node'>&quot;#{app_name}.git&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_gear_tmp_dir identifier id'>gear_tmp_dir</span>  <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.tmp'</span><span class='rparen token'>)</span>
 
-  <span class='rubyid_stop_gear identifier id'>stop_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='rparen token'>)</span>
+  <span class='rubyid_stop_gear identifier id'>stop_gear</span>
 
   <span class='comment val'># Perform the gear- and cart- level tidy actions.  At this point, the gear has</span>
   <span class='comment val'># been stopped; we'll attempt to start the gear no matter what tidy operations fail.</span>
   <span class='rubyid_begin begin kw'>begin</span>
-    <span class='rubyid_gear_level_tidy identifier id'>gear_level_tidy</span><span class='lparen token'>(</span><span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_gear_tmp_dir identifier id'>gear_tmp_dir</span><span class='rparen token'>)</span>
+    <span class='comment val'># clear out the tmp dir</span>
+    <span class='rubyid_gear_level_tidy_tmp identifier id'>gear_level_tidy_tmp</span><span class='lparen token'>(</span><span class='rubyid_gear_tmp_dir identifier id'>gear_tmp_dir</span><span class='rparen token'>)</span>
 
     <span class='comment val'># Delegate to cartridge model to perform cart-level tidy operations for all installed carts.</span>
     <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_tidy identifier id'>tidy</span>
+
+    <span class='comment val'># git gc - do this last to maximize room  for git to write changes</span>
+    <span class='rubyid_gear_level_tidy_git identifier id'>gear_level_tidy_git</span><span class='lparen token'>(</span><span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
     <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_warn identifier id'>warn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;An unknown exception occured during tidy for gear #{@uuid}: #{e.message}\n#{e.backtrace}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_ensure ensure kw'>ensure</span>
-    <span class='rubyid_start_gear identifier id'>start_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='rparen token'>)</span>
+    <span class='rubyid_start_gear identifier id'>start_gear</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Completed tidy for gear #{@uuid}&quot;</span><span class='rparen token'>)</span>
@@ -3124,20 +3151,20 @@ warnings. Any other exceptions are unexpected and will bubble out.
       <pre class="lines">
 
 
-315
-316
-317
-318
-319
-320
-321
-322
-323
-324
-325</pre>
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 315</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 298</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_tidy_action identifier id'>tidy_action</span>
   <span class='rubyid_begin begin kw'>begin</span>
@@ -3171,12 +3198,12 @@ warnings. Any other exceptions are unexpected and will bubble out.
       <pre class="lines">
 
 
-327
-328
-329</pre>
+310
+311
+312</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 327</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 310</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_namespace identifier id'>update_namespace</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_old_namespace identifier id'>old_namespace</span><span class='comma token'>,</span> <span class='rubyid_new_namespace identifier id'>new_namespace</span><span class='rparen token'>)</span>
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_update_namespace identifier id'>update_namespace</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_old_namespace identifier id'>old_namespace</span><span class='comma token'>,</span> <span class='rubyid_new_namespace identifier id'>new_namespace</span><span class='rparen token'>)</span>
@@ -3192,7 +3219,7 @@ warnings. Any other exceptions are unexpected and will bubble out.
 </div>
 
     <div id="footer">
-  Generated on Tue Mar 19 22:31:16 2013 by
+  Generated on Wed Mar 20 19:31:25 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
