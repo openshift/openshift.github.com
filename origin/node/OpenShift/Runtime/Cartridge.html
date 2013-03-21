@@ -438,7 +438,7 @@ Returns the value of attribute version.
 
   
     <h2>
-      Instance Method Summary
+      Class Method Summary
       <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
     </h2>
 
@@ -447,7 +447,7 @@ Returns the value of attribute version.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#framework%3F-instance_method" title="#framework? (instance method)">- (Boolean) <strong>framework?</strong> </a>
+      <a href="#build_ident-class_method" title="build_ident (class method)">+ (Object) <strong>build_ident</strong>(vendor, software, software_version, cartridge_version) </a>
     
 
     
@@ -465,6 +465,37 @@ Returns the value of attribute version.
   
 </li>
 
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parse_ident-class_method" title="parse_ident (class method)">+ (Object) <strong>parse_ident</strong>(ident) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
       
         <li class="public ">
   <span class="summary_signature">
@@ -489,6 +520,28 @@ Returns the value of attribute version.
 :call-seq:.
 </p>
 </div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#primary%3F-instance_method" title="#primary? (instance method)">- (Boolean) <strong>primary?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -668,7 +721,7 @@ Cartridge is a wrapper class for cartridge manifests
   <span class='rubyid_@short_name ivar id'>@short_name</span>        <span class='assign token'>=</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Cartridge-Short-Name'</span><span class='rbrack token'>]</span>
   <span class='rubyid_@version ivar id'>@version</span>           <span class='assign token'>=</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Version'</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Version'</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
   <span class='rubyid_@categories ivar id'>@categories</span>        <span class='assign token'>=</span> <span class='rubyid_manifest identifier id'>manifest</span><span class='lbrack token'>[</span><span class='string val'>'Categories'</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_@is_framework ivar id'>@is_framework</span>      <span class='assign token'>=</span> <span class='rubyid_@categories ivar id'>@categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>'web_framework'</span><span class='rparen token'>)</span>
+  <span class='rubyid_@is_primary ivar id'>@is_primary</span>        <span class='assign token'>=</span> <span class='rubyid_@categories ivar id'>@categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>'web_framework'</span><span class='rparen token'>)</span>
 
   <span class='comment val'>#FIXME: reinstate code after manifests are updated</span>
   <span class='comment val'>#raise MissingElementError.new(nil, 'Cartridge-Vendor') unless @cartridge_vendor</span>
@@ -1155,14 +1208,110 @@ Returns the value of attribute version
   </div>
 
 
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="build_ident-class_method">
+  
+    + (<tt>Object</tt>) <strong>build_ident</strong>(vendor, software, software_version, cartridge_version) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+190
+191
+192
+193</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 190</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_build_ident identifier id'>build_ident</span><span class='lparen token'>(</span><span class='rubyid_vendor identifier id'>vendor</span><span class='comma token'>,</span> <span class='rubyid_software identifier id'>software</span><span class='comma token'>,</span> <span class='rubyid_software_version identifier id'>software_version</span><span class='comma token'>,</span> <span class='rubyid_cartridge_version identifier id'>cartridge_version</span><span class='rparen token'>)</span>
+  <span class='rubyid_vendor identifier id'>vendor</span> <span class='assign token'>=</span> <span class='rubyid_vendor identifier id'>vendor</span><span class='dot token'>.</span><span class='rubyid_gsub identifier id'>gsub</span><span class='lparen token'>(</span><span class='regexp val'>/\s+/</span><span class='comma token'>,</span> <span class='string val'>''</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span>
+  <span class='dstring node'>&quot;#{vendor}:#{software}:#{software_version}:#{cartridge_version}&quot;</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parse_ident-class_method">
+  
+    + (<tt>Object</tt>) <strong>parse_ident</strong>(ident) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+195
+196
+197
+198
+199</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 195</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parse_ident identifier id'>parse_ident</span><span class='lparen token'>(</span><span class='rubyid_ident identifier id'>ident</span><span class='rparen token'>)</span>
+  <span class='rubyid_ident identifier id'>ident</span> <span class='assign token'>=</span> <span class='rubyid_ident identifier id'>ident</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>':'</span><span class='rparen token'>)</span>
+  <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_ArgumentError constant id'>ArgumentError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;#{ident} is not a legal cartridge identifier&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='integer val'>4</span> <span class='neq op'>!=</span> <span class='rubyid_ident identifier id'>ident</span><span class='dot token'>.</span><span class='rubyid_size identifier id'>size</span>
+  <span class='rubyid_ident identifier id'>ident</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="framework?-instance_method">
+  <h3 class="signature first" id="primary?-instance_method">
   
-    - (<tt>Boolean</tt>) <strong>framework?</strong> 
+    - (<tt>Boolean</tt>) <strong>primary?</strong> 
   
 
   
@@ -1203,8 +1352,8 @@ Returns the value of attribute version
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 186</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_framework? fid id'>framework?</span>
-  <span class='rubyid_@is_framework ivar id'>@is_framework</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_primary? fid id'>primary?</span>
+  <span class='rubyid_@is_primary ivar id'>@is_primary</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1271,14 +1420,14 @@ which have a public_port_name specified.
       <pre class="lines">
 
 
-190
-191
-192
-193
-194</pre>
+201
+202
+203
+204
+205</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 190</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/cartridge.rb', line 201</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_s identifier id'>to_s</span>
   <span class='rubyid_instance_variables identifier id'>instance_variables</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='string val'>'&lt;Cartridge: '</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_v identifier id'>v</span><span class='comma token'>,</span> <span class='rubyid_a identifier id'>a</span><span class='bitor op'>|</span>
@@ -1343,7 +1492,7 @@ obtain all software versions covered in this manifest
 </div>
 
     <div id="footer">
-  Generated on Wed Mar 20 19:31:34 2013 by
+  Generated on Thu Mar 21 18:32:33 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

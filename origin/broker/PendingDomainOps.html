@@ -438,28 +438,6 @@ Operation state.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#parent_op-instance_method" title="#parent_op (instance method)">- (Object) <strong>parent_op</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#pending_apps-instance_method" title="#pending_apps (instance method)">- (Object) <strong>pending_apps</strong> </a>
     
 
@@ -616,10 +594,6 @@ Arguments hash.
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -630,8 +604,12 @@ Arguments hash.
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -800,10 +778,6 @@ IDs of the <span class='object_link'><a href="Application.html" title="Applicati
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -814,8 +788,12 @@ IDs of the <span class='object_link'><a href="Application.html" title="Applicati
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -982,10 +960,6 @@ The <span class='object_link'><a href="Domain.html" title="Domain (class)">Domai
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -996,8 +970,12 @@ The <span class='object_link'><a href="Domain.html" title="Domain (class)">Domai
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -1164,10 +1142,6 @@ IDs of the <span class='object_link'><a href="Application.html" title="Applicati
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -1178,8 +1152,12 @@ IDs of the <span class='object_link'><a href="Application.html" title="Applicati
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -1346,10 +1324,6 @@ Method to call on the <span class='object_link'><a href="Domain.html" title="Dom
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -1360,8 +1334,12 @@ Method to call on the <span class='object_link'><a href="Domain.html" title="Dom
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -1528,10 +1506,6 @@ Operation type.
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -1542,8 +1516,12 @@ Operation type.
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -1710,10 +1688,6 @@ ID of the <span class='object_link'><a href="PendingUserOps.html" title="Pending
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -1724,8 +1698,12 @@ ID of the <span class='object_link'><a href="PendingUserOps.html" title="Pending
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -1892,10 +1870,6 @@ Operation state. One of init, queued or completed.
   <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_apps</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-  <span class='rubyid_end end kw'>end</span>
-  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
     <span class='rubyid_pending_apps identifier id'>pending_apps</span>
@@ -1906,8 +1880,12 @@ Operation state. One of init, queued or completed.
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+        <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+        <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
@@ -2047,6 +2025,10 @@ Operation state. One of init, queued or completed.
       <pre class="lines">
 
 
+42
+43
+44
+45
 46
 47
 48
@@ -2055,11 +2037,15 @@ Operation state. One of init, queued or completed.
 51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_domain_ops.rb', line 46</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_domain_ops.rb', line 42</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span> 
-    <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+      <span class='rubyid_user identifier id'>user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner_id identifier id'>owner_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_parent_op identifier id'>parent_op</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_parent_op identifier id'>parent_op</span><span class='dot token'>.</span><span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_send identifier id'>send</span><span class='lparen token'>(</span><span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_on_completion_method identifier id'>on_completion_method</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
@@ -2106,46 +2092,15 @@ Operation state. One of init, queued or completed.
       <pre class="lines">
 
 
-42
-43
-44</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_domain_ops.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_domain_ops.rb', line 38</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
   <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='lparen token'>(</span><span class='rubyid_on_apps identifier id'>on_apps</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span> <span class='eq op'>==</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="parent_op-instance_method">
-  
-    - (<tt>Object</tt>) <strong>parent_op</strong> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-33
-34
-35</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_domain_ops.rb', line 33</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_parent_op identifier id'>parent_op</span>
-  <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_parent_op_id identifier id'>parent_op_id</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2168,13 +2123,13 @@ Operation state. One of init, queued or completed.
       <pre class="lines">
 
 
-37
-38
-39
-40</pre>
+33
+34
+35
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_domain_ops.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_domain_ops.rb', line 33</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_apps identifier id'>pending_apps</span>
   <span class='rubyid_pending_apps identifier id'>pending_apps</span> <span class='assign token'>=</span> <span class='rubyid_on_apps identifier id'>on_apps</span> <span class='minus op'>-</span> <span class='rubyid_completed_apps identifier id'>completed_apps</span>
@@ -2191,7 +2146,7 @@ Operation state. One of init, queued or completed.
 </div>
 
     <div id="footer">
-  Generated on Wed Mar 20 19:09:27 2013 by
+  Generated on Thu Mar 21 18:12:04 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

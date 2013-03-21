@@ -204,15 +204,16 @@ module OpenShift
   module NodeLogger
     def self.logger
        unless @logger
-          @logger = Logger.new(STDOUT)
+          @logger = Logger.new(File.open(File::NULL, &quot;w&quot;))
+          @logger.level = Logger::Severity::FATAL
        end
        @logger
     end
 
     def self.trace_logger
        unless @trace_logger
-         @trace_logger = Logger.new(STDOUT)
-         @trace_logger.level = Logger::Severity::ERROR
+         @trace_logger = Logger.new(File.open(File::NULL, &quot;w&quot;))
+         @trace_logger.level = Logger::Severity::FATAL
        end
        @trace_logger
     end
@@ -240,6 +241,7 @@ require 'openshift-origin-node/utils/node_logger'
                             &quot;&lt;%= @user.container_name %&gt;&quot;,
                             &quot;&lt;%= @user.namespace %&gt;&quot;)
 
+puts &quot;Stopping application...&quot;
 @container.stop_gear
 }</span>
 </pre></dd>
@@ -278,12 +280,19 @@ require 'openshift-origin-node/utils/node_logger'
                             &quot;&lt;%= @user.namespace %&gt;&quot;)
 
 begin
+  puts &quot;Building application...&quot;
   builder_output = @container.build
+  puts &quot;Build output:&quot;
   puts builder_output
+
+  puts &quot;Deploying application...&quot;
   deploy_output = @container.deploy
+  puts &quot;Deploy output:&quot;
   puts deploy_output
 ensure
+  puts &quot;Starting application...&quot;
   @container.start_gear
+  puts &quot;Build complete.&quot;
 end
 }</span>
 </pre></dd>
@@ -1089,7 +1098,7 @@ Copy a file tree structure and build an application repository
 </div>
 
     <div id="footer">
-  Generated on Wed Mar 20 19:29:55 2013 by
+  Generated on Thu Mar 21 18:31:38 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
