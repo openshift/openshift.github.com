@@ -540,7 +540,28 @@ Arguments hash
 52
 53
 54
-55</pre>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 16</span>
@@ -553,8 +574,8 @@ Arguments hash
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:op_type</span><span class='comma token'>,</span>   <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:state</span><span class='comma token'>,</span>    <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span><span class='comma token'>,</span> <span class='symbol val'>:default</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:init</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:arguments</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Hash constant id'>Hash</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:on_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
   <span class='comment val'># List of domains that are still pending</span>
@@ -562,13 +583,13 @@ Arguments hash
   <span class='comment val'># == Returns:</span>
   <span class='comment val'># Array of {Domain}s</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># Returns true if all domains have been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
@@ -579,10 +600,31 @@ Arguments hash
 
   <span class='comment val'># Callback from {PendingDomainOps} to indicate that a domain has been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+    <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+    <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+    <span class='comment val'># find the op index and do an atomic update</span>
+    <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+      <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+      <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+      <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+        <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+        <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+        <span class='rubyid_break break kw'>break</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+        <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># log the details in case we cannot update the pending_op</span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+      <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+    <span class='rubyid_end end kw'>end</span>  
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -678,7 +720,28 @@ The <span class='object_link'><a href="CloudUser.html" title="CloudUser (class)"
 52
 53
 54
-55</pre>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 16</span>
@@ -691,8 +754,8 @@ The <span class='object_link'><a href="CloudUser.html" title="CloudUser (class)"
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:op_type</span><span class='comma token'>,</span>   <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:state</span><span class='comma token'>,</span>    <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span><span class='comma token'>,</span> <span class='symbol val'>:default</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:init</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:arguments</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Hash constant id'>Hash</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:on_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
   <span class='comment val'># List of domains that are still pending</span>
@@ -700,13 +763,13 @@ The <span class='object_link'><a href="CloudUser.html" title="CloudUser (class)"
   <span class='comment val'># == Returns:</span>
   <span class='comment val'># Array of {Domain}s</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># Returns true if all domains have been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
@@ -717,10 +780,31 @@ The <span class='object_link'><a href="CloudUser.html" title="CloudUser (class)"
 
   <span class='comment val'># Callback from {PendingDomainOps} to indicate that a domain has been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+    <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+    <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+    <span class='comment val'># find the op index and do an atomic update</span>
+    <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+      <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+      <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+      <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+        <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+        <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+        <span class='rubyid_break break kw'>break</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+        <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># log the details in case we cannot update the pending_op</span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+      <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+    <span class='rubyid_end end kw'>end</span>  
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -816,7 +900,28 @@ Ids for domains on which this operation has been completed
 52
 53
 54
-55</pre>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 16</span>
@@ -829,8 +934,8 @@ Ids for domains on which this operation has been completed
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:op_type</span><span class='comma token'>,</span>   <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:state</span><span class='comma token'>,</span>    <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span><span class='comma token'>,</span> <span class='symbol val'>:default</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:init</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:arguments</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Hash constant id'>Hash</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:on_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
   <span class='comment val'># List of domains that are still pending</span>
@@ -838,13 +943,13 @@ Ids for domains on which this operation has been completed
   <span class='comment val'># == Returns:</span>
   <span class='comment val'># Array of {Domain}s</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># Returns true if all domains have been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
@@ -855,10 +960,31 @@ Ids for domains on which this operation has been completed
 
   <span class='comment val'># Callback from {PendingDomainOps} to indicate that a domain has been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+    <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+    <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+    <span class='comment val'># find the op index and do an atomic update</span>
+    <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+      <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+      <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+      <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+        <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+        <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+        <span class='rubyid_break break kw'>break</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+        <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># log the details in case we cannot update the pending_op</span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+      <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+    <span class='rubyid_end end kw'>end</span>  
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -954,7 +1080,28 @@ Optional method to call on the User object after operation has completed
 52
 53
 54
-55</pre>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 16</span>
@@ -967,8 +1114,8 @@ Optional method to call on the User object after operation has completed
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:op_type</span><span class='comma token'>,</span>   <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:state</span><span class='comma token'>,</span>    <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span><span class='comma token'>,</span> <span class='symbol val'>:default</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:init</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:arguments</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Hash constant id'>Hash</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:on_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
   <span class='comment val'># List of domains that are still pending</span>
@@ -976,13 +1123,13 @@ Optional method to call on the User object after operation has completed
   <span class='comment val'># == Returns:</span>
   <span class='comment val'># Array of {Domain}s</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># Returns true if all domains have been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
@@ -993,10 +1140,31 @@ Optional method to call on the User object after operation has completed
 
   <span class='comment val'># Callback from {PendingDomainOps} to indicate that a domain has been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+    <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+    <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+    <span class='comment val'># find the op index and do an atomic update</span>
+    <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+      <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+      <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+      <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+        <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+        <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+        <span class='rubyid_break break kw'>break</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+        <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># log the details in case we cannot update the pending_op</span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+      <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+    <span class='rubyid_end end kw'>end</span>  
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -1092,7 +1260,28 @@ Ids for domains on which this operation needs to be run
 52
 53
 54
-55</pre>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 16</span>
@@ -1105,8 +1294,8 @@ Ids for domains on which this operation needs to be run
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:op_type</span><span class='comma token'>,</span>   <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:state</span><span class='comma token'>,</span>    <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span><span class='comma token'>,</span> <span class='symbol val'>:default</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:init</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:arguments</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Hash constant id'>Hash</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:on_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
   <span class='comment val'># List of domains that are still pending</span>
@@ -1114,13 +1303,13 @@ Ids for domains on which this operation needs to be run
   <span class='comment val'># == Returns:</span>
   <span class='comment val'># Array of {Domain}s</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># Returns true if all domains have been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
@@ -1131,10 +1320,31 @@ Ids for domains on which this operation needs to be run
 
   <span class='comment val'># Callback from {PendingDomainOps} to indicate that a domain has been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+    <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+    <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+    <span class='comment val'># find the op index and do an atomic update</span>
+    <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+      <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+      <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+      <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+        <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+        <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+        <span class='rubyid_break break kw'>break</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+        <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># log the details in case we cannot update the pending_op</span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+      <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+    <span class='rubyid_end end kw'>end</span>  
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -1230,7 +1440,28 @@ Operation type.
 52
 53
 54
-55</pre>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 16</span>
@@ -1243,8 +1474,8 @@ Operation type.
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:op_type</span><span class='comma token'>,</span>   <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:state</span><span class='comma token'>,</span>    <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span><span class='comma token'>,</span> <span class='symbol val'>:default</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:init</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:arguments</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Hash constant id'>Hash</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:on_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
   <span class='comment val'># List of domains that are still pending</span>
@@ -1252,13 +1483,13 @@ Operation type.
   <span class='comment val'># == Returns:</span>
   <span class='comment val'># Array of {Domain}s</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># Returns true if all domains have been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
@@ -1269,10 +1500,31 @@ Operation type.
 
   <span class='comment val'># Callback from {PendingDomainOps} to indicate that a domain has been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+    <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+    <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+    <span class='comment val'># find the op index and do an atomic update</span>
+    <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+      <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+      <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+      <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+        <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+        <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+        <span class='rubyid_break break kw'>break</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+        <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># log the details in case we cannot update the pending_op</span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+      <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+    <span class='rubyid_end end kw'>end</span>  
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -1368,7 +1620,28 @@ Operation state. One of init, queued or completed
 52
 53
 54
-55</pre>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 16</span>
@@ -1381,8 +1654,8 @@ Operation state. One of init, queued or completed
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:op_type</span><span class='comma token'>,</span>   <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:state</span><span class='comma token'>,</span>    <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span><span class='comma token'>,</span> <span class='symbol val'>:default</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='symbol val'>:init</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:arguments</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Hash constant id'>Hash</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Array constant id'>Array</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:on_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_has_and_belongs_to_many identifier id'>has_and_belongs_to_many</span> <span class='symbol val'>:completed_domains</span><span class='comma token'>,</span> <span class='rubyid_class_name identifier id'>class_name</span><span class='colon op'>:</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_inverse_of identifier id'>inverse_of</span><span class='colon op'>:</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_field identifier id'>field</span> <span class='symbol val'>:on_completion_method</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_Symbol constant id'>Symbol</span>
   
   <span class='comment val'># List of domains that are still pending</span>
@@ -1390,13 +1663,13 @@ Operation state. One of init, queued or completed
   <span class='comment val'># == Returns:</span>
   <span class='comment val'># Array of {Domain}s</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-    <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+    <span class='rubyid_pending_domains identifier id'>pending_domains</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='comment val'># Returns true if all domains have been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+    <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_close_op identifier id'>close_op</span>
@@ -1407,10 +1680,31 @@ Operation state. One of init, queued or completed
 
   <span class='comment val'># Callback from {PendingDomainOps} to indicate that a domain has been processed</span>
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+    <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+    <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+    <span class='comment val'># find the op index and do an atomic update</span>
+    <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+    <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+      <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+      <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+      <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+        <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+        <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+        <span class='rubyid_break break kw'>break</span>
+      <span class='rubyid_else else kw'>else</span>
+        <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+        <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
+    
+    <span class='comment val'># log the details in case we cannot update the pending_op</span>
+    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+      <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+    <span class='rubyid_end end kw'>end</span>  
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -1459,16 +1753,58 @@ processed
 51
 52
 53
-54</pre>
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 49</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_child_completed identifier id'>child_completed</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='rparen token'>)</span>
-  <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='symbol val'>:completed_domain_ids</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_completed? fid id'>completed?</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span>
+  <span class='rubyid_retries identifier id'>retries</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
+  <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
+
+  <span class='comment val'># find the op index and do an atomic update</span>
+  <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> 
+  <span class='rubyid_while while kw'>while</span> <span class='rubyid_retries identifier id'>retries</span> <span class='lt op'>&lt;</span> <span class='integer val'>5</span>
+    <span class='rubyid_retval identifier id'>retval</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;_id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='comma token'>,</span> <span class='dstring node'>&quot;pending_ops.#{op_index}._id&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$addToSet&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;pending_ops.#{op_index}.completed_domain_ids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
+    <span class='comment val'># the op needs to be reloaded to either set the :state or to find the updated index</span>
+    <span class='rubyid_reloaded_user identifier id'>reloaded_user</span> <span class='assign token'>=</span> <span class='rubyid_CloudUser constant id'>CloudUser</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+    <span class='rubyid_current_op identifier id'>current_op</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid__id identifier id'>_id</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_retval identifier id'>retval</span><span class='lbrack token'>[</span><span class='string val'>&quot;updatedExisting&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_set identifier id'>set</span><span class='lparen token'>(</span><span class='symbol val'>:state</span><span class='comma token'>,</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_op identifier id'>current_op</span><span class='dot token'>.</span><span class='rubyid_completed? fid id'>completed?</span>
+      <span class='rubyid_success identifier id'>success</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+      <span class='rubyid_break break kw'>break</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_op_index identifier id'>op_index</span> <span class='assign token'>=</span> <span class='rubyid_reloaded_user identifier id'>reloaded_user</span><span class='dot token'>.</span><span class='rubyid_pending_ops identifier id'>pending_ops</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='rubyid_current_op identifier id'>current_op</span><span class='rparen token'>)</span>
+      <span class='rubyid_retries identifier id'>retries</span> <span class='opasgn op'>+=</span> <span class='integer val'>1</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
+  
+  <span class='comment val'># log the details in case we cannot update the pending_op</span>
+  <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_success identifier id'>success</span>
+    <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='dstring node'>&quot;Failed to add domain #{domain._id} to the completed_domains for pending_op #{self._id} for user #{self.cloud_user.login}&quot;</span>
+  <span class='rubyid_end end kw'>end</span>  
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1559,7 +1895,7 @@ Returns true if all domains have been processed
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 38</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_completed? fid id'>completed?</span>
-  <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
+  <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_state identifier id'>state</span> <span class='eq op'>==</span> <span class='symbol val'>:completed</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_on_domains identifier id'>on_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1607,8 +1943,8 @@ Array of <span class='object_link'><a href="Domain.html" title="Domain (class)">
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/pending_user_ops.rb', line 32</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_pending_domains identifier id'>pending_domains</span>
-  <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span> <span class='assign token'>=</span> <span class='rubyid_on_domain_ids identifier id'>on_domain_ids</span> <span class='minus op'>-</span> <span class='rubyid_completed_domain_ids identifier id'>completed_domain_ids</span>
-  <span class='rubyid_pending_domain_ids identifier id'>pending_domain_ids</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_did identifier id'>did</span><span class='bitor op'>|</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_did identifier id'>did</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_pending_domains identifier id'>pending_domains</span> <span class='assign token'>=</span> <span class='rubyid_on_domains identifier id'>on_domains</span> <span class='minus op'>-</span> <span class='rubyid_completed_domains identifier id'>completed_domains</span>
+  <span class='rubyid_pending_domains identifier id'>pending_domains</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1621,7 +1957,7 @@ Array of <span class='object_link'><a href="Domain.html" title="Domain (class)">
 </div>
 
     <div id="footer">
-  Generated on Thu Mar 21 18:10:22 2013 by
+  Generated on Fri Mar 22 18:09:24 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

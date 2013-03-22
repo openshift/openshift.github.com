@@ -196,53 +196,11 @@ git archive --format=tar HEAD | (cd &lt;%= @user_homedir %&gt;/app-root/runtime/
 }</span>
 </pre></dd>
       
-        <dt id="LOGGER_SETUP-constant" class="">LOGGER_SETUP =
-          
-        </dt>
-        <dd><pre class="code"><span class='string val'>%Q{\
-module OpenShift
-  module NodeLogger
-    def self.logger
-       unless @logger
-          @logger = Logger.new(File.open(File::NULL, &quot;w&quot;))
-          @logger.level = Logger::Severity::FATAL
-       end
-       @logger
-    end
-
-    def self.trace_logger
-       unless @trace_logger
-         @trace_logger = Logger.new(File.open(File::NULL, &quot;w&quot;))
-         @trace_logger.level = Logger::Severity::FATAL
-       end
-       @trace_logger
-    end
-  end
-end
-}</span>
-</pre></dd>
-      
         <dt id="PRE_RECEIVE-constant" class="">PRE_RECEIVE =
           
         </dt>
         <dd><pre class="code"><span class='string val'>%Q{\
-#!/bin/env oo-ruby
-require 'rubygems'
-require 'openshift-origin-node/model/application_container'
-require 'openshift-origin-node/utils/node_logger'
-
-&lt;%= LOGGER_SETUP %&gt;
-
-@container = OpenShift::ApplicationContainer.new(
-                            &quot;&lt;%= @user.application_uuid %&gt;&quot;,
-                            &quot;&lt;%= @user.container_uuid %&gt;&quot;,
-                            &quot;&lt;%= @user.uid %&gt;&quot;,
-                            &quot;&lt;%= @user.app_name %&gt;&quot;,
-                            &quot;&lt;%= @user.container_name %&gt;&quot;,
-                            &quot;&lt;%= @user.namespace %&gt;&quot;)
-
-puts &quot;Stopping application...&quot;
-@container.stop_gear
+gear prereceive
 }</span>
 </pre></dd>
       
@@ -250,7 +208,7 @@ puts &quot;Stopping application...&quot;
           <div class="docstring">
   <div class="discussion">
     <p>
-FIXME: Broker host should not be defined here, rather nuture script should
+FIXME: Broker host should not be defined here, rather nurture script should
 look it up currently broker_host is tagged at the end of all the build
 scripts. Kinda like an egg race!
 </p>
@@ -264,36 +222,7 @@ scripts. Kinda like an egg race!
 </div>
         </dt>
         <dd><pre class="code"><span class='string val'>%Q{\
-#!/bin/env oo-ruby
-require 'rubygems'
-require 'openshift-origin-node/model/application_container'
-require 'openshift-origin-node/utils/node_logger'
-
-&lt;%= LOGGER_SETUP %&gt;
-
-@container = OpenShift::ApplicationContainer.new(
-                            &quot;&lt;%= @user.application_uuid %&gt;&quot;,
-                            &quot;&lt;%= @user.container_uuid %&gt;&quot;,
-                            &quot;&lt;%= @user.uid %&gt;&quot;,
-                            &quot;&lt;%= @user.app_name %&gt;&quot;,
-                            &quot;&lt;%= @user.container_name %&gt;&quot;,
-                            &quot;&lt;%= @user.namespace %&gt;&quot;)
-
-begin
-  puts &quot;Building application...&quot;
-  builder_output = @container.build
-  puts &quot;Build output:&quot;
-  puts builder_output
-
-  puts &quot;Deploying application...&quot;
-  deploy_output = @container.deploy
-  puts &quot;Deploy output:&quot;
-  puts deploy_output
-ensure
-  puts &quot;Starting application...&quot;
-  @container.start_gear
-  puts &quot;Build complete.&quot;
-end
+gear postreceive
 }</span>
 </pre></dd>
       
@@ -1098,7 +1027,7 @@ Copy a file tree structure and build an application repository
 </div>
 
     <div id="footer">
-  Generated on Thu Mar 21 18:31:38 2013 by
+  Generated on Fri Mar 22 18:29:26 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
