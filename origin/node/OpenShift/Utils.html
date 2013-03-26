@@ -310,20 +310,23 @@ options: hash
 128
 129
 130
-131</pre>
+131
+132</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 72</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_command identifier id'>command</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+
   <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:env</span><span class='rbrack token'>]</span>         <span class='opasgn op'>||=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
   <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:timeout</span><span class='rbrack token'>]</span>     <span class='opasgn op'>||=</span> <span class='integer val'>3600</span>
   <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:buffer_size</span><span class='rbrack token'>]</span> <span class='opasgn op'>||=</span> <span class='integer val'>32768</span>
 
   <span class='rubyid_opts identifier id'>opts</span>                   <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_opts identifier id'>opts</span><span class='lbrack token'>[</span><span class='symbol val'>:unsetenv_others</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:unsetenv_others</span><span class='rbrack token'>]</span> <span class='opasgn op'>||=</span> <span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
+  <span class='rubyid_opts identifier id'>opts</span><span class='lbrack token'>[</span><span class='symbol val'>:unsetenv_others</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:unsetenv_others</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_opts identifier id'>opts</span><span class='lbrack token'>[</span><span class='symbol val'>:close_others</span><span class='rbrack token'>]</span>    <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
-  <span class='rubyid_opts identifier id'>opts</span><span class='lbrack token'>[</span><span class='symbol val'>:chdir</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:chdir</span><span class='rbrack token'>]</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:chdir</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+  <span class='rubyid_opts identifier id'>opts</span><span class='lbrack token'>[</span><span class='symbol val'>:in</span><span class='rbrack token'>]</span>              <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:in</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'/dev/null'</span><span class='rparen token'>)</span>
+  <span class='rubyid_opts identifier id'>opts</span><span class='lbrack token'>[</span><span class='symbol val'>:chdir</span><span class='rbrack token'>]</span>           <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:chdir</span><span class='rbrack token'>]</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:chdir</span><span class='rbrack token'>]</span>
 
   <span class='rubyid_IO constant id'>IO</span><span class='dot token'>.</span><span class='rubyid_pipe identifier id'>pipe</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_read_stderr identifier id'>read_stderr</span><span class='comma token'>,</span> <span class='rubyid_write_stderr identifier id'>write_stderr</span><span class='bitor op'>|</span>
     <span class='rubyid_IO constant id'>IO</span><span class='dot token'>.</span><span class='rubyid_pipe identifier id'>pipe</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_read_stdout identifier id'>read_stdout</span><span class='comma token'>,</span> <span class='rubyid_write_stdout identifier id'>write_stdout</span><span class='bitor op'>|</span>
@@ -340,12 +343,11 @@ options: hash
         <span class='comment val'># Only switch contexts if necessary</span>
         <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_current_context identifier id'>current_context</span> <span class='neq op'>!=</span> <span class='rubyid_target_context identifier id'>target_context</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span> <span class='neq op'>!=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:uid</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
           <span class='rubyid_target_name identifier id'>target_name</span> <span class='assign token'>=</span> <span class='rubyid_Etc constant id'>Etc</span><span class='dot token'>.</span><span class='rubyid_getpwuid identifier id'>getpwuid</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:uid</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>
-          <span class='rubyid_opts identifier id'>opts</span><span class='lbrack token'>[</span><span class='symbol val'>:in</span><span class='rbrack token'>]</span>   <span class='assign token'>=</span> <span class='string val'>'/dev/null'</span>
           <span class='rubyid_command identifier id'>command</span>     <span class='assign token'>=</span> <span class='dstring node'>%Q{/sbin/runuser -m -s /bin/sh #{target_name} -c &quot;exec /usr/bin/runcon '#{target_context}' /bin/sh -c \\&quot;#{command}\\&quot;&quot;}</span>
         <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_end end kw'>end</span>
 
-      <span class='rubyid_NodeLogger constant id'>NodeLogger</span><span class='dot token'>.</span><span class='rubyid_trace_logger identifier id'>trace_logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;oo_spawn running #{command}&quot;</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_NodeLogger constant id'>NodeLogger</span><span class='dot token'>.</span><span class='rubyid_trace_logger identifier id'>trace_logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;oo_spawn running #{command}: #{opts}&quot;</span> <span class='rbrace token'>}</span>
       <span class='rubyid_pid identifier id'>pid</span> <span class='assign token'>=</span> <span class='rubyid_Kernel constant id'>Kernel</span><span class='dot token'>.</span><span class='rubyid_spawn identifier id'>spawn</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:env</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_command identifier id'>command</span><span class='comma token'>,</span> <span class='rubyid_opts identifier id'>opts</span><span class='rparen token'>)</span>
 
       <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_pid identifier id'>pid</span>
@@ -419,7 +421,6 @@ options: hash
       <pre class="lines">
 
 
-141
 142
 143
 144
@@ -458,15 +459,18 @@ options: hash
 177
 178
 179
-180</pre>
+180
+181
+182
+183</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 142</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_read_results identifier id'>read_results</span><span class='lparen token'>(</span><span class='rubyid_pid identifier id'>pid</span><span class='comma token'>,</span> <span class='rubyid_stdout identifier id'>stdout</span><span class='comma token'>,</span> <span class='rubyid_stderr identifier id'>stderr</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='rparen token'>)</span>
   <span class='comment val'># TODO: Are these variables thread safe...?</span>
-  <span class='rubyid_out identifier id'>out</span>     <span class='assign token'>=</span> <span class='string val'>''</span>
-  <span class='rubyid_err identifier id'>err</span>     <span class='assign token'>=</span> <span class='string val'>''</span>
+  <span class='rubyid_out identifier id'>out</span>     <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:out</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>''</span><span class='rparen token'>)</span>
+  <span class='rubyid_err identifier id'>err</span>     <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:err</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>''</span><span class='rparen token'>)</span>
   <span class='rubyid_status identifier id'>status</span>  <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_readers identifier id'>readers</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rubyid_stdout identifier id'>stdout</span><span class='comma token'>,</span> <span class='rubyid_stderr identifier id'>stderr</span><span class='rbrack token'>]</span>
 
@@ -475,16 +479,18 @@ options: hash
       <span class='rubyid_while while kw'>while</span> <span class='rubyid_readers identifier id'>readers</span><span class='dot token'>.</span><span class='rubyid_any? fid id'>any?</span>
         <span class='rubyid_ready identifier id'>ready</span> <span class='assign token'>=</span> <span class='rubyid_IO constant id'>IO</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lparen token'>(</span><span class='rubyid_readers identifier id'>readers</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='integer val'>10</span><span class='rparen token'>)</span>
 
-        <span class='comment val'># If there is no IO to process check if child has exited...</span>
         <span class='rubyid_if if kw'>if</span> <span class='rubyid_ready identifier id'>ready</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+          <span class='comment val'># If there is no IO to process check if child has exited...</span>
           <span class='rubyid__ identifier id'>_</span><span class='comma token'>,</span> <span class='rubyid_status identifier id'>status</span> <span class='assign token'>=</span> <span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_wait2 identifier id'>wait2</span><span class='lparen token'>(</span><span class='rubyid_pid identifier id'>pid</span><span class='comma token'>,</span> <span class='rubyid_Process constant id'>Process</span><span class='colon2 op'>::</span><span class='rubyid_WNOHANG constant id'>WNOHANG</span><span class='rparen token'>)</span>
         <span class='rubyid_else else kw'>else</span>
           <span class='comment val'># Otherwise, process us some IO...</span>
           <span class='rubyid_ready identifier id'>ready</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_fd identifier id'>fd</span><span class='bitor op'>|</span>
             <span class='rubyid_buffer identifier id'>buffer</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_fd identifier id'>fd</span> <span class='eq op'>==</span> <span class='rubyid_stdout identifier id'>stdout</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_out identifier id'>out</span> <span class='colon op'>:</span> <span class='rubyid_err identifier id'>err</span>
             <span class='rubyid_begin begin kw'>begin</span>
-              <span class='rubyid_buffer identifier id'>buffer</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_fd identifier id'>fd</span><span class='dot token'>.</span><span class='rubyid_readpartial identifier id'>readpartial</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:buffer_size</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
-              <span class='rubyid_NodeLogger constant id'>NodeLogger</span><span class='dot token'>.</span><span class='rubyid_trace_logger identifier id'>trace_logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;oo_spawn buffer(#{fd.fileno}/#{fd.pid}) #{buffer}&quot;</span> <span class='rbrace token'>}</span>
+              <span class='rubyid_partial identifier id'>partial</span> <span class='assign token'>=</span> <span class='rubyid_fd identifier id'>fd</span><span class='dot token'>.</span><span class='rubyid_readpartial identifier id'>readpartial</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:buffer_size</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+              <span class='rubyid_buffer identifier id'>buffer</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_partial identifier id'>partial</span>
+
+              <span class='rubyid_NodeLogger constant id'>NodeLogger</span><span class='dot token'>.</span><span class='rubyid_trace_logger identifier id'>trace_logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;oo_spawn buffer(#{fd.fileno}/#{fd.pid}) #{partial}&quot;</span> <span class='rbrace token'>}</span>
             <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Errno constant id'>Errno</span><span class='colon2 op'>::</span><span class='rubyid_EAGAIN constant id'>EAGAIN</span><span class='comma token'>,</span> <span class='rubyid_Errno constant id'>Errno</span><span class='colon2 op'>::</span><span class='rubyid_EINTR constant id'>EINTR</span>
             <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_EOFError constant id'>EOFError</span>
               <span class='rubyid_readers identifier id'>readers</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_fd identifier id'>fd</span><span class='rparen token'>)</span>
@@ -514,7 +520,7 @@ options: hash
 </div>
 
     <div id="footer">
-  Generated on Mon Mar 25 18:44:17 2013 by
+  Generated on Tue Mar 26 18:58:49 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

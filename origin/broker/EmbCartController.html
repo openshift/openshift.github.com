@@ -1110,7 +1110,11 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 348
 349
 350
-351</pre>
+351
+352
+353
+354
+355</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 252</span>
@@ -1168,11 +1172,7 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Invalid scales_from factor #{scales_from} provided&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;scales_from&quot;</span><span class='rparen token'>)</span> 
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='eq op'>==</span> <span class='integer val'>0</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Invalid scales_to factor #{scales_to} provided&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;scales_to&quot;</span><span class='rparen token'>)</span> 
-    <span class='rubyid_end end kw'>end</span>
-
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='lt op'>&lt;</span> <span class='integer val'>-1</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='rubyid_and and kw'>and</span> <span class='lparen token'>(</span><span class='rubyid_scales_to identifier id'>scales_to</span> <span class='eq op'>==</span> <span class='integer val'>0</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='lt op'>&lt;</span> <span class='integer val'>-1</span><span class='rparen token'>)</span>
       <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Invalid scales_to factor #{scales_to} provided&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;scales_to&quot;</span><span class='rparen token'>)</span> 
     <span class='rubyid_end end kw'>end</span>
 
@@ -1186,6 +1186,18 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Cartridge #{id} not embedded within application #{application_id}&quot;</span><span class='comma token'>,</span> <span class='integer val'>129</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
     <span class='rubyid_end end kw'>end</span>
 
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+      <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Invalid cartridge #{id} for application #{application.name}&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;cartridge&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='dot token'>.</span><span class='rubyid_is_singleton? fid id'>is_singleton?</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='neq op'>!=</span> <span class='integer val'>1</span>
+        <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;The cartridge #{id} cannot be scaled.&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;scales_to&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_scales_from identifier id'>scales_from</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_from identifier id'>scales_from</span> <span class='neq op'>!=</span> <span class='integer val'>1</span>
+        <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;The cartridge #{id} cannot be scaled.&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;scales_from&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_end end kw'>end</span>
+    
     <span class='rubyid_group_instance identifier id'>group_instance</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_instances_with_scale identifier id'>group_instances_with_scale</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_go identifier id'>go</span><span class='bitor op'>|</span> <span class='rubyid_go identifier id'>go</span><span class='dot token'>.</span><span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_component_instance identifier id'>component_instance</span> <span class='rbrace token'>}</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
 
     <span class='rubyid_if if kw'>if</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_from identifier id'>scales_from</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='geq op'>&gt;=</span> <span class='integer val'>1</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='lt op'>&lt;</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_min identifier id'>min</span>
@@ -1194,10 +1206,6 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 
     <span class='rubyid_if if kw'>if</span> <span class='rubyid_scales_from identifier id'>scales_from</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_scales_to identifier id'>scales_to</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_max identifier id'>max</span> <span class='geq op'>&gt;=</span> <span class='integer val'>1</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_max identifier id'>max</span> <span class='lt op'>&lt;</span> <span class='rubyid_scales_from identifier id'>scales_from</span>
       <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;The scales_from factor currently provided cannot be higher than the scales_to factor previously provided. Please specify both scales_(from|to) factors together to override.&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;scales_from&quot;</span><span class='rparen token'>)</span> 
-    <span class='rubyid_end end kw'>end</span>
-
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Invalid cartridge #{id} for application #{application.name}&quot;</span><span class='comma token'>,</span> <span class='integer val'>168</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;cartridge&quot;</span><span class='rparen token'>)</span>
     <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_update_component_limits identifier id'>update_component_limits</span><span class='lparen token'>(</span><span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_scales_from identifier id'>scales_from</span><span class='comma token'>,</span> <span class='rubyid_scales_to identifier id'>scales_to</span><span class='comma token'>,</span> <span class='rubyid_additional_storage identifier id'>additional_storage</span><span class='rparen token'>)</span>
@@ -1226,7 +1234,7 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 </div>
 
     <div id="footer">
-  Generated on Mon Mar 25 18:32:35 2013 by
+  Generated on Tue Mar 26 18:44:38 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
