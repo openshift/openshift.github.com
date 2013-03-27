@@ -476,7 +476,11 @@ the event.
 129
 130
 131
-132</pre>
+132
+133
+134
+135
+136</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/app_events_controller.rb', line 26</span>
@@ -531,7 +535,11 @@ the event.
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{id} has added alias&quot;</span>
         <span class='comment val'># msg += &quot;: #{r.resultIO.string.chomp}&quot; if !r.resultIO.string.empty?</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;remove-alias&quot;</span>
-        <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_remove_alias identifier id'>remove_alias</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
+        <span class='rubyid_begin begin kw'>begin</span>
+          <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_remove_alias identifier id'>remove_alias</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
+        <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
+          <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Alias #{server_alias} not found for application #{application.name}&quot;</span><span class='comma token'>,</span> <span class='integer val'>173</span><span class='comma token'>,</span> <span class='dstring node'>&quot;#{event.sub('-', '_').upcase}_APPLICATION&quot;</span><span class='rparen token'>)</span>
+        <span class='rubyid_end end kw'>end</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{id} has removed alias&quot;</span>
         <span class='comment val'># msg += &quot;: #{r.resultIO.string.chomp}&quot; if !r.resultIO.string.empty?</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;scale-up&quot;</span>
@@ -599,7 +607,7 @@ the event.
 </div>
 
     <div id="footer">
-  Generated on Tue Mar 26 23:10:42 2013 by
+  Generated on Wed Mar 27 18:36:48 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

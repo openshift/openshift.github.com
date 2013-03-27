@@ -100,7 +100,7 @@ Create the following on each host:</p>
 
 <p>Run the following to install puppet and facter</p>
 
-<pre class="code ruby"><code class="ruby"><span class='rubyid_yum identifier id'>yum</span> <span class='rubyid_install identifier id'>install</span> <span class='minus op'>-</span><span class='rubyid_y identifier id'>y</span> <span class='rubyid_puppet identifier id'>puppet</span> <span class='rubyid_facter identifier id'>facter</span>
+<pre class="code ruby"><code class="ruby"><span class='rubyid_yum identifier id'>yum</span> <span class='rubyid_install identifier id'>install</span> <span class='minus op'>-</span><span class='rubyid_y identifier id'>y</span> <span class='rubyid_puppet identifier id'>puppet</span> <span class='rubyid_facter identifier id'>facter</span> <span class='rubyid_tar identifier id'>tar</span>
 </code></pre>
 
 <p>Install the openshift puppet module:</p>
@@ -119,10 +119,28 @@ Create the following on each host:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment val'>#Using example.com as the cloud domain</span>
 <span class='regexp val'>/usr/s</span><span class='rubyid_bin identifier id'>bin</span><span class='div op'>/</span><span class='rubyid_dnssec identifier id'>dnssec</span><span class='minus op'>-</span><span class='rubyid_keygen identifier id'>keygen</span> <span class='minus op'>-</span><span class='rubyid_a identifier id'>a</span> <span class='rubyid_HMAC constant id'>HMAC</span><span class='minus op'>-</span><span class='rubyid_MD5 constant id'>MD5</span> <span class='minus op'>-</span><span class='rubyid_b identifier id'>b</span> <span class='integer val'>512</span> <span class='minus op'>-</span><span class='rubyid_n identifier id'>n</span> <span class='rubyid_USER constant id'>USER</span> <span class='minus op'>-</span><span class='rubyid_r identifier id'>r</span> <span class='regexp val'>/dev/</span><span class='rubyid_urandom identifier id'>urandom</span> <span class='minus op'>-</span><span class='rubyid_K constant id'>K</span> <span class='regexp val'>/var/n</span><span class='rubyid_amed identifier id'>amed</span> <span class='rubyid_example identifier id'>example</span><span class='dot token'>.</span><span class='rubyid_com identifier id'>com</span>
-<span class='rubyid_cat identifier id'>cat</span> <span class='regexp val'>/var/n</span><span class='rubyid_amed identifier id'>amed</span><span class='div op'>/</span><span class='rubyid_Kexample constant id'>Kexample</span><span class='dot token'>.</span><span class='rubyid_com identifier id'>com</span><span class='dot token'>.</span><span class='integer val'>+157</span><span class='plus op'>+</span><span class='float val'>33874</span><span class='dot token'>.</span><span class='rubyid_key identifier id'>key</span>  <span class='bitor op'>|</span> <span class='rubyid_awk identifier id'>awk</span> <span class='string val'>'{print $8}'</span>
+<span class='rubyid_cat identifier id'>cat</span> <span class='regexp val'>/var/n</span><span class='rubyid_amed identifier id'>amed</span><span class='div op'>/</span><span class='rubyid_Kexample constant id'>Kexample</span><span class='dot token'>.</span><span class='rubyid_com identifier id'>com</span><span class='dot token'>.</span><span class='mult op'>*</span><span class='dot token'>.</span><span class='rubyid_key identifier id'>key</span>  <span class='bitor op'>|</span> <span class='rubyid_awk identifier id'>awk</span> <span class='string val'>'{print $8}'</span>
 </code></pre>
 
 <p>The TSIG key should look like <code>CNk+wjszKi9da9nL/1gkMY7H+GuUng==</code>. We will use this in the following steps.</p>
+
+<h2>Add /etc/hosts entry (optional)</h2>
+
+<p>If your machines hostname does not resolve to its public IP address, do the following:</p>
+
+<ol>
+<li><p>Add an entry in <code>/etc/hosts</code> mapping the machines hostname to its public IP. Eg:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='float val'>127.0</span><span class='float val'>.0.1</span>   <span class='rubyid_localhost identifier id'>localhost</span> <span class='rubyid_localhost identifier id'>localhost</span><span class='dot token'>.</span><span class='rubyid_localdomain identifier id'>localdomain</span> <span class='rubyid_localhost4 identifier id'>localhost4</span> <span class='rubyid_localhost4 identifier id'>localhost4</span><span class='dot token'>.</span><span class='rubyid_localdomain4 identifier id'>localdomain4</span>
+<span class='colon3 op'>::</span><span class='integer val'>1</span>         <span class='rubyid_localhost identifier id'>localhost</span> <span class='rubyid_localhost identifier id'>localhost</span><span class='dot token'>.</span><span class='rubyid_localdomain identifier id'>localdomain</span> <span class='rubyid_localhost6 identifier id'>localhost6</span> <span class='rubyid_localhost6 identifier id'>localhost6</span><span class='dot token'>.</span><span class='rubyid_localdomain6 identifier id'>localdomain6</span>
+<span class='float val'>10.211</span><span class='float val'>.55.3</span> <span class='rubyid_thishost identifier id'>thishost</span><span class='dot token'>.</span><span class='rubyid_thisdomain identifier id'>thisdomain</span><span class='dot token'>.</span><span class='rubyid_com identifier id'>com</span>
+</code></pre></li>
+<li><p>Update the <code>/etc/hostname</code> file. Eg:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='rubyid_echo identifier id'>echo</span> <span class='string val'>&quot;thishost.thisdomain.com&quot;</span> <span class='gt op'>&gt;</span> <span class='regexp val'>/etc/</span><span class='rubyid_hostname identifier id'>hostname</span>
+<span class='rubyid_hostname identifier id'>hostname</span> <span class='rubyid_thishost identifier id'>thishost</span><span class='dot token'>.</span><span class='rubyid_thisdomain identifier id'>thisdomain</span><span class='dot token'>.</span><span class='rubyid_com identifier id'>com</span>
+</code></pre></li>
+</ol>
 
 <h2>Configuring an all-in-one host</h2>
 
@@ -291,7 +309,7 @@ Create the following on each host:</p>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Mar 26 22:54:51 2013 by
+  Generated on Wed Mar 27 18:19:51 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

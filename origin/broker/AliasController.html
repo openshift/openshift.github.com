@@ -456,8 +456,6 @@ GET /domains/[domain_id]/applications/&lt;id&gt;.
       <pre class="lines">
 
 
-150
-151
 152
 153
 154
@@ -483,10 +481,14 @@ GET /domains/[domain_id]/applications/&lt;id&gt;.
 174
 175
 176
-177</pre>
+177
+178
+179
+180
+181</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/alias_controller.rb', line 150</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/alias_controller.rb', line 152</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
@@ -509,6 +511,8 @@ GET /domains/[domain_id]/applications/&lt;id&gt;.
      
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_remove_alias identifier id'>remove_alias</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Alias #{server_alias} not found for application #{application_id}&quot;</span><span class='comma token'>,</span> <span class='integer val'>173</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_ALIAS&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_code identifier id'>code</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_ALIAS&quot;</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_field identifier id'>field</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
@@ -763,7 +767,9 @@ GET /domains/[domain_id]/applications/&lt;id&gt;
 145
 146
 147
-148</pre>
+148
+149
+150</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/alias_controller.rb', line 106</span>
@@ -804,6 +810,8 @@ GET /domains/[domain_id]/applications/&lt;id&gt;
     <span class='rubyid_messages identifier id'>messages</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='rubyid_Message constant id'>Message</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='symbol val'>:info</span><span class='comma token'>,</span> <span class='rubyid_log_msg identifier id'>log_msg</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
     <span class='rubyid_messages identifier id'>messages</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='rubyid_Message constant id'>Message</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='symbol val'>:info</span><span class='comma token'>,</span> <span class='rubyid_reply identifier id'>reply</span><span class='dot token'>.</span><span class='rubyid_resultIO identifier id'>resultIO</span><span class='dot token'>.</span><span class='rubyid_string identifier id'>string</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='comma token'>,</span> <span class='symbol val'>:result</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;alias&quot;</span><span class='comma token'>,</span> <span class='rubyid_rest_alias identifier id'>rest_alias</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_ALIAS&quot;</span><span class='comma token'>,</span> <span class='rubyid_log_msg identifier id'>log_msg</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_messages identifier id'>messages</span><span class='rparen token'>)</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Alias #{server_alias} not found for application #{application_id}&quot;</span><span class='comma token'>,</span> <span class='integer val'>173</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_ALIAS&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_code identifier id'>code</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_ALIAS&quot;</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_field identifier id'>field</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
@@ -822,7 +830,7 @@ GET /domains/[domain_id]/applications/&lt;id&gt;
 </div>
 
     <div id="footer">
-  Generated on Tue Mar 26 23:11:51 2013 by
+  Generated on Wed Mar 27 18:37:46 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
