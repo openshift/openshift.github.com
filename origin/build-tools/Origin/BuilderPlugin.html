@@ -344,12 +344,6 @@ Thor options hash
       <pre class="lines">
 
 
-62
-63
-64
-65
-66
-67
 68
 69
 70
@@ -397,10 +391,16 @@ Thor options hash
 112
 113
 114
-115</pre>
+115
+116
+117
+118
+119
+120
+121</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 62</span>
+      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 68</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_build_vm_image identifier id'>build_vm_image</span>
   <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_verbose? fid id'>verbose?</span> <span class='integer val'>? </span><span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_DEBUG constant id'>DEBUG</span> <span class='colon op'>:</span> <span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_ERROR constant id'>ERROR</span>
@@ -539,7 +539,13 @@ Thor options hash
 50
 51
 52
-53</pre>
+53
+54
+55
+56
+57
+58
+59</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 29</span>
@@ -558,14 +564,20 @@ Thor options hash
   <span class='rubyid_inside identifier id'>inside</span><span class='lparen token'>(</span><span class='rubyid_repo_parent_dir identifier id'>repo_parent_dir</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
     <span class='rubyid_doc_files identifier id'>doc_files</span> <span class='assign token'>=</span> <span class='rubyid_Dir constant id'>Dir</span><span class='lbrack token'>[</span><span class='dstring node'>&quot;#{repo_parent_dir}/origin-server/documentation/*.md&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='string val'>&quot;,&quot;</span><span class='rparen token'>)</span>
     <span class='rubyid_inside identifier id'>inside</span><span class='lparen token'>(</span><span class='string val'>&quot;origin-server/documentation&quot;</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --markup=markdown --output-dir '#{repo_parent_dir}/origin-docs' --files #{doc_files}&quot;</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>%{yardoc --output-dir '#{repo_parent_dir}/origin-docs/broker' --main origin-server/documentation/broker.md --private --protected --exclude test \
+    
+    <span class='rubyid_doc_files identifier id'>doc_files</span> <span class='assign token'>=</span> <span class='rubyid_Dir constant id'>Dir</span><span class='lbrack token'>[</span><span class='dstring node'>&quot;#{repo_parent_dir}/origin-server/controller/*.md&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='string val'>&quot;,&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>%{yardoc --output-dir '#{repo_parent_dir}/origin-docs/broker' --files #{doc_files} --main origin-server/controller/README.md --private --protected --exclude test \
       #{Dir[&quot;origin-server/broker/**/*.rb&quot;].join(' ')} \
       #{Dir[&quot;origin-server/controller/**/*.rb&quot;].join(' ')}}</span>
-    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>%{yardoc --output-dir '#{repo_parent_dir}/origin-docs/rest_api' --main origin-server/documentation/rest_api.md --api REST \
+      
+    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>%{yardoc --output-dir '#{repo_parent_dir}/origin-docs/rest_api' --main origin-server/controller/README.rest_api.md --api REST \
       #{Dir[&quot;origin-server/controller/**/*.rb&quot;].join(' ')}}</span>
-    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --output-dir '#{repo_parent_dir}/origin-docs/broker_models' --main origin-server/documentation/broker_models.md --private --protected --api model #{Dir[&quot;origin-server/controller/**/*.rb&quot;].join(' ')}&quot;</span>
-    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --output-dir '#{repo_parent_dir}/origin-docs/node' --main origin-server/documentation/node.md --private --protected --exclude test #{Dir[&quot;origin-server/node/**/*.rb&quot;].join(' ')}&quot;</span>
-    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --output-dir '#{repo_parent_dir}/origin-docs/common' --main origin-server/documentation/common.md --private --protected --exclude test #{Dir[&quot;origin-server/common/**/*.rb&quot;].join(' ')}&quot;</span>
+    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --output-dir '#{repo_parent_dir}/origin-docs/broker_models' --main origin-server/controller/README.models.md --private --protected --api model #{Dir[&quot;origin-server/controller/**/*.rb&quot;].join(' ')}
+    
+    doc_files = Dir[&quot;</span><span class='comment val'>#{repo_parent_dir}/origin-server/node/*.md&quot;].join(&quot;,&quot;)</span>
+    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --output-dir '#{repo_parent_dir}/origin-docs/node' --main origin-server/node/README.md --private --protected --files #{doc_files} --exclude test #{Dir[&quot;origin-server/node/**/*.rb&quot;].join(' ')}&quot;</span>
+    
+    <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --output-dir '#{repo_parent_dir}/origin-docs/common' --main origin-server/common/README.md --private --protected --exclude test #{Dir[&quot;origin-server/common/**/*.rb&quot;].join(' ')}&quot;</span>
     <span class='rubyid_run identifier id'>run</span> <span class='dstring node'>&quot;yardoc --output-dir '#{repo_parent_dir}/origin-docs/build-tools' --main origin-dev-tools/README.md --private --protected --exclude test #{Dir[&quot;origin-dev-tools/build/*&quot;].join(' ')}&quot;</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
@@ -590,12 +602,6 @@ Thor options hash
       <pre class="lines">
 
 
-121
-122
-123
-124
-125
-126
 127
 128
 129
@@ -613,10 +619,16 @@ Thor options hash
 141
 142
 143
-144</pre>
+144
+145
+146
+147
+148
+149
+150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 121</span>
+      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 127</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_install_required_packages identifier id'>install_required_packages</span>
   <span class='rubyid_base_os identifier id'>base_os</span> <span class='assign token'>=</span> <span class='rubyid_guess_os identifier id'>guess_os</span>
@@ -663,12 +675,6 @@ Thor options hash
       <pre class="lines">
 
 
-152
-153
-154
-155
-156
-157
 158
 159
 160
@@ -716,10 +722,16 @@ Thor options hash
 202
 203
 204
-205</pre>
+205
+206
+207
+208
+209
+210
+211</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 152</span>
+      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/devenv', line 158</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_local_build identifier id'>local_build</span>
   <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_verbose? fid id'>verbose?</span> <span class='integer val'>? </span><span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_DEBUG constant id'>DEBUG</span> <span class='colon op'>:</span> <span class='rubyid_@@log ivar id'>@@log</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_ERROR constant id'>ERROR</span>
@@ -786,7 +798,7 @@ retries = 0
 </div>
 
     <div id="footer">
-  Generated on Tue Mar 26 19:02:46 2013 by
+  Generated on Tue Mar 26 23:29:55 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

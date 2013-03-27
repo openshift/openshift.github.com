@@ -326,6 +326,28 @@ cartridge_teardown(cartridge_name) -&gt; buffer.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#cleanpwd-instance_method" title="#cleanpwd (instance method)">- (Object) <strong>cleanpwd</strong>(arg) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#configure-instance_method" title="#configure (instance method)">- (Object) <strong>configure</strong>(cartridge_name, template_git_url = nil) </a>
     
 
@@ -565,7 +587,7 @@ destroy() -&gt; nil.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#do_action_hook-instance_method" title="#do_action_hook (instance method)">- (Object) <strong>do_action_hook</strong>(action, env = nil) </a>
+      <a href="#do_action_hook-instance_method" title="#do_action_hook (instance method)">- (Object) <strong>do_action_hook</strong>(action, env) </a>
     
 
     
@@ -1421,9 +1443,6 @@ otherwise <tt>nil</tt>.
       <pre class="lines">
 
 
-832
-833
-834
 835
 836
 837
@@ -1432,10 +1451,13 @@ otherwise <tt>nil</tt>.
 840
 841
 842
-843</pre>
+843
+844
+845
+846</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 832</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 835</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_cartridge_hooks identifier id'>cartridge_hooks</span><span class='lparen token'>(</span><span class='rubyid_action_hooks identifier id'>action_hooks</span><span class='comma token'>,</span> <span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span><span class='rparen token'>)</span>
   <span class='rubyid_hooks identifier id'>hooks</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rubyid_pre identifier id'>pre</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_post identifier id'>post</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rbrace token'>}</span>
@@ -1624,6 +1646,37 @@ stdout = cartridge_teardown(&#8216;php-5.3&#8217;)
   <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_cartridge_home identifier id'>cartridge_home</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Ran teardown for #{@user.uuid}/#{cartridge_name}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_out identifier id'>out</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="cleanpwd-instance_method">
+  
+    - (<tt>Object</tt>) <strong>cleanpwd</strong>(arg) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+892
+893
+894</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 892</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_cleanpwd identifier id'>cleanpwd</span><span class='lparen token'>(</span><span class='rubyid_arg identifier id'>arg</span><span class='rparen token'>)</span>
+  <span class='rubyid_arg identifier id'>arg</span><span class='dot token'>.</span><span class='rubyid_gsub identifier id'>gsub</span><span class='lparen token'>(</span><span class='regexp val'>/(passwo?r?d\s*[:=]+\s*)\S+/i</span><span class='comma token'>,</span> <span class='string val'>'\\1[HIDDEN]'</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_gsub identifier id'>gsub</span><span class='lparen token'>(</span><span class='regexp val'>/(usern?a?m?e?\s*[:=]+\s*)\S+/i</span><span class='comma token'>,</span><span class='string val'>'\\1[HIDDEN]'</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1825,6 +1878,19 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
 </div>
 <div class="tags">
   
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Utils/ShellExecutionException.html" title="OpenShift::Utils::ShellExecutionException (class)">OpenShift::Utils::ShellExecutionException</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1850,7 +1916,15 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
 736
 737
 738
-739</pre>
+739
+740
+741
+742
+743
+744
+745
+746
+747</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 721</span>
@@ -1859,20 +1933,28 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
   <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
 
   <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_get_cartridge identifier id'>get_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
-  <span class='rubyid_connector identifier id'>connector</span> <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_directory identifier id'>directory</span><span class='comma token'>,</span> <span class='string val'>'hooks'</span><span class='comma token'>,</span> <span class='rubyid_connector identifier id'>connector</span><span class='rparen token'>)</span>
-  <span class='rubyid_return return kw'>return</span> <span class='integer val'>0</span><span class='comma token'>,</span> <span class='string val'>''</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_executable? fid id'>executable?</span><span class='lparen token'>(</span><span class='rubyid_connector identifier id'>connector</span><span class='rparen token'>)</span>
+  <span class='rubyid_script identifier id'>script</span>    <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_directory identifier id'>directory</span><span class='comma token'>,</span> <span class='string val'>'hooks'</span><span class='comma token'>,</span> <span class='rubyid_connector identifier id'>connector</span><span class='rparen token'>)</span>
 
-  <span class='rubyid_command identifier id'>command</span> <span class='assign token'>=</span> <span class='rubyid_connector identifier id'>connector</span> <span class='lshft op'>&lt;&lt;</span> <span class='string val'>&quot; &quot;</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_args identifier id'>args</span>
+  <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_executable? fid id'>executable?</span><span class='lparen token'>(</span><span class='rubyid_script identifier id'>script</span><span class='rparen token'>)</span>
+    <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;ERROR: action '#{connector}' not found.&quot;</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_msg identifier id'>msg</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='rubyid_msg identifier id'>msg</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_command identifier id'>command</span>      <span class='assign token'>=</span> <span class='rubyid_script identifier id'>script</span> <span class='lshft op'>&lt;&lt;</span> <span class='string val'>&quot; &quot;</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_args identifier id'>args</span>
   <span class='rubyid_out identifier id'>out</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span><span class='comma token'>,</span> <span class='rubyid_rc identifier id'>rc</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_command identifier id'>command</span><span class='comma token'>,</span>
                                 <span class='rubyid_env identifier id'>env</span><span class='colon op'>:</span>             <span class='rubyid_env identifier id'>env</span><span class='comma token'>,</span>
                                 <span class='rubyid_unsetenv_others identifier id'>unsetenv_others</span><span class='colon op'>:</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span>
                                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>           <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span>
+                                <span class='rubyid_timeout identifier id'>timeout</span><span class='colon op'>:</span>         <span class='integer val'>60</span><span class='comma token'>,</span>
                                 <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>             <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='integer val'>0</span> <span class='eq op'>==</span> <span class='rubyid_rc identifier id'>rc</span>
-    <span class='rubyid_return return kw'>return</span> <span class='integer val'>0</span><span class='comma token'>,</span> <span class='rubyid_out identifier id'>out</span>
-  <span class='rubyid_else else kw'>else</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_rc identifier id'>rc</span><span class='comma token'>,</span> <span class='rubyid_out identifier id'>out</span> <span class='plus op'>+</span> <span class='rubyid_err identifier id'>err</span>
+    <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='dstring node'>&quot;(#{rc})\n------\n#{cleanpwd(out)}\n------)&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_out identifier id'>out</span>
   <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='dstring node'>&quot;ERROR: (#{rc})\n------\n#{cleanpwd(out)}\n------)&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
+            <span class='dstring node'>&quot;Control action '#{connector}' returned an error. rc=#{rc}\n#{out}&quot;</span><span class='comma token'>,</span> <span class='rubyid_rc identifier id'>rc</span><span class='comma token'>,</span> <span class='rubyid_out identifier id'>out</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2413,7 +2495,7 @@ destroy()
       <div class="method_details ">
   <h3 class="signature " id="do_action_hook-instance_method">
   
-    - (<tt>Object</tt>) <strong>do_action_hook</strong>(action, env = nil) 
+    - (<tt>Object</tt>) <strong>do_action_hook</strong>(action, env) 
   
 
   
@@ -2426,10 +2508,6 @@ Executes the named <tt>action</tt> from the user repo <tt>action_hooks</tt>
 directory and returns the stdout of the execution, or raises a
 <tt>ShellExecutionException</tt> if the action returns a non-zero return
 code.
-</p>
-<p>
-If <tt>env</tt> is not specified, the environment from
-<tt>Environment.for_gear</tt> will be used for the execution.
 </p>
 
 
@@ -2444,11 +2522,6 @@ If <tt>env</tt> is not specified, the environment from
       <pre class="lines">
 
 
-810
-811
-812
-813
-814
 815
 816
 817
@@ -2464,14 +2537,15 @@ If <tt>env</tt> is not specified, the environment from
 827
 828
 829
-830</pre>
+830
+831
+832
+833</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 810</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 815</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_do_action_hook identifier id'>do_action_hook</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_env identifier id'>env</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-  <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_env identifier id'>env</span> <span class='opasgn op'>||=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
-
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_do_action_hook identifier id'>do_action_hook</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_env identifier id'>env</span><span class='rparen token'>)</span>
   <span class='rubyid_action_hooks_dir identifier id'>action_hooks_dir</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='dstring node'>%w{app-root runtime repo .openshift action_hooks}</span><span class='rparen token'>)</span>
   <span class='rubyid_action_hook identifier id'>action_hook</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_action_hooks_dir identifier id'>action_hooks_dir</span><span class='comma token'>,</span> <span class='rubyid_action identifier id'>action</span><span class='rparen token'>)</span>
   <span class='rubyid_out identifier id'>out</span> <span class='assign token'>=</span> <span class='string val'>''</span>
@@ -2484,7 +2558,7 @@ If <tt>env</tt> is not specified, the environment from
                                   <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>             <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
               <span class='dstring node'>&quot;Failed to execute action hook '#{action}' for #{@user.uuid} application #{@user.app_name}&quot;</span><span class='comma token'>,</span>
-              <span class='rubyid_rc identifier id'>rc</span><span class='comma token'>,</span> <span class='rubyid_buffer identifier id'>buffer</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span>
+              <span class='rubyid_rc identifier id'>rc</span><span class='comma token'>,</span> <span class='rubyid_out identifier id'>out</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span>
           <span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_rc identifier id'>rc</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
   <span class='rubyid_end end kw'>end</span>
 
@@ -2594,14 +2668,6 @@ found.
       <pre class="lines">
 
 
-753
-754
-755
-756
-757
-758
-759
-760
 761
 762
 763
@@ -2642,16 +2708,24 @@ found.
 798
 799
 800
-801</pre>
+801
+802
+803
+804
+805
+806
+807
+808
+809</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 753</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 761</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_do_control_with_directory identifier id'>do_control_with_directory</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span>             <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:cartridge_dir</span><span class='rbrack token'>]</span>
-  <span class='rubyid_pre_action_hooks_enabled identifier id'>pre_action_hooks_enabled</span>  <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:pre_action_hooks_enabled</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='rubyid_true true kw'>true</span>
-  <span class='rubyid_post_action_hooks_enabled identifier id'>post_action_hooks_enabled</span> <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:post_action_hooks_enabled</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='rubyid_true true kw'>true</span>
-  <span class='rubyid_prefix_action_hooks identifier id'>prefix_action_hooks</span>       <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:prefix_action_hooks</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='rubyid_true true kw'>true</span>
+  <span class='rubyid_pre_action_hooks_enabled identifier id'>pre_action_hooks_enabled</span>  <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span><span class='lparen token'>(</span><span class='symbol val'>:pre_action_hooks_enabled</span><span class='rparen token'>)</span>  <span class='question op'>?</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:pre_action_hooks_enabled</span><span class='rbrack token'>]</span>  <span class='colon op'>:</span> <span class='rubyid_true true kw'>true</span>
+  <span class='rubyid_post_action_hooks_enabled identifier id'>post_action_hooks_enabled</span> <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span><span class='lparen token'>(</span><span class='symbol val'>:post_action_hooks_enabled</span><span class='rparen token'>)</span> <span class='question op'>?</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:post_action_hooks_enabled</span><span class='rbrack token'>]</span> <span class='colon op'>:</span> <span class='rubyid_true true kw'>true</span>
+  <span class='rubyid_prefix_action_hooks identifier id'>prefix_action_hooks</span>       <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span><span class='lparen token'>(</span><span class='symbol val'>:prefix_action_hooks</span><span class='rparen token'>)</span>       <span class='question op'>?</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:prefix_action_hooks</span><span class='rbrack token'>]</span>       <span class='colon op'>:</span> <span class='rubyid_true true kw'>true</span>
 
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;#{@user.uuid} #{action} against '#{cartridge_dir}'&quot;</span> <span class='rbrace token'>}</span>
   <span class='rubyid_buffer identifier id'>buffer</span>       <span class='assign token'>=</span> <span class='string val'>''</span>
@@ -3748,9 +3822,6 @@ Returns the combined output of all <tt>start</tt> action executions as a
       <pre class="lines">
 
 
-873
-874
-875
 876
 877
 878
@@ -3762,10 +3833,13 @@ Returns the combined output of all <tt>start</tt> action executions as a
 884
 885
 886
-887</pre>
+887
+888
+889
+890</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 873</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 876</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_start_gear identifier id'>start_gear</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:primary_only</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:secondary_only</span><span class='rbrack token'>]</span>
@@ -3820,17 +3894,17 @@ Returns the combined output of all <tt>stop</tt> action executions as a
       <pre class="lines">
 
 
-850
-851
-852
 853
 854
 855
 856
-857</pre>
+857
+858
+859
+860</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 850</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 853</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_gear identifier id'>stop_gear</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_buffer identifier id'>buffer</span> <span class='assign token'>=</span> <span class='string val'>''</span>
@@ -4028,7 +4102,7 @@ Write out cartridge environment variables
 </div>
 
     <div id="footer">
-  Generated on Tue Mar 26 18:59:08 2013 by
+  Generated on Tue Mar 26 23:26:21 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
-  File: cgroups
+  File: Control Groups in OpenShift
   
     &mdash; Documentation by YARD 0.8.5.2
   
@@ -32,7 +32,7 @@
       <div id="menu">
   
     <a href="_index.html">Index</a> &raquo; 
-    <span class="title">File: cgroups</span>
+    <span class="title">File: Control Groups in OpenShift</span>
   
 
   <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
@@ -63,234 +63,196 @@
 
     <div id="content"><div id='filecontents'><h1>Control Groups in OpenShift</h1>
 
-<p>Cgroups are used to throttle the use of resources on each OpenShift node.
-Cgroups are a kernel feature that allow restricting the resource utilization in
-number of subsystems.  You can read more on that
-<a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch-Subsystems_and_Tunable_Parameters.html">here</a>.</p>
+<p>Cgroups are used to throttle the use of resources on each OpenShift node. Cgroups are a kernel feature that allow restricting the resource utilization in number of subsystems.  You can read more on that <a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch-Subsystems_and_Tunable_Parameters.html">here</a>.</p>
 
-<p>Cgroups are a kernel feature.  Every process is assigned to a group
-when the process is created.  Processes can be moved from one group to another.
-Subsystems are kernel modules that manage different resources.  Each
-subsystem can have different settings for every group.</p>
+<p>Cgroups are a kernel feature.  Every process is assigned to a group when the process is created.  Processes can be moved from one group to another. Subsystems are kernel modules that manage different resources.  Each subsystem can have different settings for every group.</p>
 
-<h1>Cgroup Services</h1>
+<h2>Cgroup Services</h2>
 
-<p>The cgroup mechanism uses two services to set the initial group of a
-new process.  the Cgroup Rules Daemon (cgred) assigns new processes to
-a group using a set of matching rules defined in /etc/cgrules.conf.
-Pam_cgroup is used to assign shell processes to a cgroup after
-authentication.</p>
+<p>The cgroup mechanism uses two services to set the initial group of a new process:</p>
 
-<p>A third service provides the filesystem interface to cgroups.  The
-cgconfig service mounts a virtual filesystem which presents the
-cgroups and subsystem settings as files within a directory tree.  On
-Linux hosts which use systemd as the init process (Fedora &gt;= 15 and
-RHEL7) there is no need of a separate cgconfig service, as cgroups are
-integrated into the systemd process.</p>
+<ul>
+<li>The Cgroup Rules Daemon (cgred) assigns new processes to a group using a set of matching rules defined in /etc/cgrules.conf.</li>
+<li>Pam_cgroup is used to assign shell processes to a cgroup after authentication.</li>
+</ul>
 
-<h1>Cgroup Management</h1>
+<p>A third service provides the filesystem interface to cgroups:</p>
 
-<p>Cgroups have two primary control interfaces.  There is a set of
-command line tools (cgclassify, cgget, cgset) which are used to assign
-processes to a group, and to read and write the subsystem settings.
-There is also a filesystem interface which allows cgroup control using
-only ordinary file read and write operation.  </p>
+<ul>
+<li><p>The cgconfig service mounts a virtual filesystem which presents the cgroups and subsystem settings as files within a directory tree.  </p>
+
+<p>Note: On Linux hosts which use systemd as the init process (Fedora &gt;= 15 and RHEL7)
+there is no need of a separate cgconfig service, as cgroups are integrated into the
+systemd process.</p></li>
+</ul>
+
+<h2>Cgroup Management</h2>
+
+<p>Cgroups have two primary control interfaces.  There is a set of command line tools (cgclassify, cgget, cgset) which are used to assign processes to a group, and to read and write the subsystem settings. There is also a filesystem interface which allows cgroup control using only ordinary file read and write operation.  </p>
 
 <p>Openshift uses the command line interface.</p>
 
-<h1>Node Startup</h1>
+<h2>Node Startup</h2>
 
-<p>When an OpenShift node starts up, it needs to make sure all user
-cgroup configurations are applied.</p>
+<p>When an OpenShift node starts up, it needs to make sure all user cgroup configurations are applied.</p>
 
-<p>The <a href="../node/misc/init/openshift-cgroups">openshift-cgroups</a> service controls
-the initialization of the openshift control groups.  The openshift-cgroups
-service uses the <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a>
-script to read the configured default values and start cgroups for each
-OpenShift user.</p>
+<p>The <a href="https://github.com/openshift/origin-server/blob/master/node/misc/init/openshift-cgroups">openshift-cgroups</a> on RHEL and <a href="https://github.com/openshift/origin-server/blob/master/node/misc/services/openshift-cgroups.service">openshift-cgroups</a> on F18 controls the initialization of the openshift control groups.  The openshift-cgroups service uses the <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> script to read the configured default values and start cgroups for each OpenShift user.</p>
 
-<p>The list of users for which cgroups are started is established from <code>getent
-passwd</code> and finding any user that has &quot;OpenShift guest&quot; as the User ID Info
-field in /etc/passwd on the node.</p>
+<p>The list of users for which cgroups are started is established from <code>getent passwd</code> and finding any user that has &quot;OpenShift guest&quot; as the User ID Info field in /etc/passwd on the node.</p>
 
-<p>Once the service has looked up the list of OpenShift users, a call to startuser
-in <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> on each user
-is made.</p>
+<p>Once the service has looked up the list of OpenShift users, a call to startuser in <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> on each user is made.</p>
 
-<h1>User Creation and Deletion</h1>
+<h2>User Creation and Deletion</h2>
 
 <p>When an OpenShift user is created, their cgroup configuration is applied using the default resource limit
-values.  The
-<a href="../node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a>
-is invoked, calling after_unix_user_create, which then makes a call to the
-<a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;startuser&#39;.
-When a user is deleted, their cgroup controlled resources are &#39;frozen&#39; so they
-won&#39;t be able to start any new processes.  Once the user is removed from a
-node, the cgroup configuration for that user is removed.  The
-<a href="../node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a>
-once again makes a call to
-<a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;stopuser&#39; is made.</p>
+values.  The <a href="https://github.com/openshift/origin-server/blob/master/node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a> is invoked, calling after_unix_user_create, which then makes a call to the <a href="https://github.com/openshift/origin-server/blob/master/node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;startuser&#39;. When a user is deleted, their cgroup controlled resources are &#39;frozen&#39; so they won&#39;t be able to start any new processes.  Once the user is removed from a node, the cgroup configuration for that user is removed.  The <a href="https://github.com/openshift/origin-server/blob/master/node/lib/openshift-origin-node/plugins/unix_user_observer.rb">unix_user_observer</a> once again makes a call to <a href="https://github.com/openshift/origin-server/blob/master/node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> to &#39;stopuser&#39; is made.</p>
 
-<h1>Start and Stop a User Control Group</h1>
+<h2>Start and Stop a User Control Group</h2>
 
-<p>Default resource limit settings  are configured in
-/etc/openshift/resource_limits.conf which is installed by the
-<a href="../node/rubygem-openshift-origin-node.spec">rubygem-openshift-origin-node rpm</a>
-based upon the <a href="../node/conf/resource_limits.template">resource_limits</a>
-template.</p>
+<p>Default resource limit settings  are configured in <code>/etc/openshift/resource_limits.conf</code> which is installed by the <a href="https://github.com/openshift/origin-server/blob/master/node/rubygem-openshift-origin-node.spec">rubygem-openshift-origin-node rpm</a> based upon the <a href="https://github.com/openshift/origin-server/blob/master/node/conf/resource_limits.template">resource_limits</a> template.</p>
 
-<p>Post cgroup initialization, each OpenShift user has a cgroup configuration,
-which can be found in the cgroup path under /openshift/$USER.</p>
+<p>Post cgroup initialization, each OpenShift user has a cgroup configuration, which can be found in the cgroup path under <code>/openshift/$USER</code>.</p>
 
-<p>The <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> startuser functionality will apply the default resource limits, and will create a
-cgroup rule in /etc/cgrules.conf specific to the new user.</p>
+<p>The <a href="https://github.com/openshift/origin-server/blob/master/node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> startuser functionality will apply the default resource limits, and will create a cgroup rule in <code>/etc/cgrules.conf</code> specific to the new user.</p>
 
-<p>Any time the control group rules are altered, the cgred process needs to be
-reloaded.  Our tools use pkill -USR2 to reload the cgred.</p>
+<p>Any time the control group rules are altered, the cgred process needs to be reloaded.  Our tools use <code>pkill -USR2</code> to reload the cgred.</p>
 
-<p>The <a href="../node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> stopuser functionality will use cgdelete to remove the cgroup for the user and
-remove the user rule in /etc/cgrules.conf.</p>
+<p>The <a href="https://github.com/openshift/origin-server/blob/master/node/misc/sbin/oo-admin-ctl-cgroups">oo-admin-ctl-cgroups</a> stopuser functionality will use cgdelete to remove the cgroup for the user and remove the user rule in <code>/etc/cgrules.conf</code>.</p>
 
-<h1>Optimizations</h1>
+<h2>Optimizations</h2>
 
-<p>The configure hook on all cartridges increases the cpu quota as an
-optimization, allowing the configure hook to finish more quickly.  You&#39;ll
-notice every cartridge we ship has a configure hook that disables and enables
-cgroups.  The call to disable_cgroups in the configure hooks only lifts the
-cpu.cfs_quota_us resource restriction, and does not in fact disable all
-cgroups.  The disable_cgroups function will set the cpu.cfs_quota_us to
-whatever value is in cpu.cfs_period_us.  Once the configure hook is done doing
-its work, the original setting to cpu.cfs_quota_us is restored.</p>
+<p>The configure hook on all cartridges increases the cpu quota as an optimization, allowing the configure hook to finish more quickly.  You&#39;ll
+notice every cartridge we ship has a configure hook that disables and enables cgroups.  The call to <code>disable_cgroups</code> in the configure hooks only lifts the <code>cpu.cfs_quota_us</code> resource restriction, and does not in fact disable all cgroups.  The <code>disable_cgroups</code> function will set the <code>cpu.cfs_quota_us</code> to whatever value is in <code>cpu.cfs_period_us</code>.  Once the configure hook is done doing its work, the original setting to <code>cpu.cfs_quota_us</code> is restored.</p>
 
-<h1>Check the Control Groups Configuration</h1>
+<h2>Check the Control Groups Configuration</h2>
 
-<p><a href="../node-util/bin/oo-accept-node">oo-accept-node</a> can be used to make sure all
-the cgroups are configured properly.  You can also use &#39;lscgroup
-cpu,cpuacct,memory,freezer,net_cls:/openshift&#39; to see what cgroups are
+<p><a href="https://github.com/openshift/origin-server/blob/master/node-util/bin/oo-accept-node">oo-accept-node</a> can be used to make sure all
+the cgroups are configured properly.  You can also use <code>lscgroup cpu,cpuacct,memory,freezer,net_cls:/openshift</code> to see what cgroups are
 configured.</p>
 
 <p><a href="https://access.redhat.com/knowledge/docs/en-US/Red_Hat_Enterprise_Linux/6/html-single/Resource_Management_Guide/#ex-cgsnapshot-usage">cgsnapshot</a>
 can be used to see the current current rules the kernel is operating under.</p>
 
-<p>All gear accounts must have a cgroup for each subsystem
-  search /etc/passwd for gear accounts
-   verify that /openshift/<acctname> exists for each subsystem</p>
+<p>All gear accounts must have a cgroup for each subsystem:</p>
 
-<pre class="code bash"><code class="bash">SUBSYSTEMS=&quot;cpu cpuacct freezer memory net_cls&quot;
-for ACCT in $(grep guest /etc/passwd | cut -d: -f1)
-do
-  ACCTSS=$(lscgroup | grep /openshift/$ACCT | cut -d: -f1 | tr &quot;,\n&quot; &quot; &quot; | sort)
-  for SUBSYSTEM in $SUBSYSTEMS
-  do
-    if ! echo &quot;$ACCTSS&quot; | grep -q -s &quot;$SUBSYSTEM &quot;
-    then
-      echo &quot;account $ACCT is missing cgroup subsystem $SUBSYSTEM&quot;
-    fi
-  done
-  test -d /cgroup/all/openshift/${ACCT} || echo &quot;$ACCT is missing cgroup directory&quot;  
-done
+<pre class="code ruby"><code class="ruby"><span class='comment val'>#search /etc/passwd for gear accounts</span>
+<span class='comment val'>#  verify that /openshift/&lt;acctname&gt; exists for each subsystem</span>
+
+<span class='rubyid_SUBSYSTEMS constant id'>SUBSYSTEMS</span><span class='assign token'>=</span><span class='string val'>&quot;cpu cpuacct freezer memory net_cls&quot;</span>
+<span class='rubyid_for for kw'>for</span> <span class='rubyid_ACCT constant id'>ACCT</span> <span class='rubyid_in in kw'>in</span> $<span class='lparen token'>(</span><span class='rubyid_grep identifier id'>grep</span> <span class='rubyid_guest identifier id'>guest</span> <span class='div op'>/</span><span class='rubyid_etc identifier id'>etc</span><span class='div op'>/</span><span class='rubyid_passwd identifier id'>passwd</span> <span class='bitor op'>|</span> <span class='rubyid_cut identifier id'>cut</span> <span class='minus op'>-</span><span class='rubyid_d identifier id'>d</span><span class='colon op'>:</span> <span class='minus op'>-</span><span class='rubyid_f1 identifier id'>f1</span><span class='rparen token'>)</span>
+<span class='rubyid_do do kw'>do</span>
+  <span class='rubyid_ACCTSS constant id'>ACCTSS</span><span class='assign token'>=</span>$<span class='lparen token'>(</span><span class='rubyid_lscgroup identifier id'>lscgroup</span> <span class='bitor op'>|</span> <span class='rubyid_grep identifier id'>grep</span> <span class='regexp val'>/openshift/</span><span class='rubyid_$ACCT gvar id'>$ACCT</span> <span class='bitor op'>|</span> <span class='rubyid_cut identifier id'>cut</span> <span class='minus op'>-</span><span class='rubyid_d identifier id'>d</span><span class='colon op'>:</span> <span class='minus op'>-</span><span class='rubyid_f1 identifier id'>f1</span> <span class='bitor op'>|</span> <span class='rubyid_tr identifier id'>tr</span> <span class='string val'>&quot;,\n&quot;</span> <span class='string val'>&quot; &quot;</span> <span class='bitor op'>|</span> <span class='rubyid_sort identifier id'>sort</span><span class='rparen token'>)</span>
+  <span class='rubyid_for for kw'>for</span> <span class='rubyid_SUBSYSTEM constant id'>SUBSYSTEM</span> <span class='rubyid_in in kw'>in</span> <span class='rubyid_$SUBSYSTEMS gvar id'>$SUBSYSTEMS</span>
+  <span class='rubyid_do do kw'>do</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span> <span class='rubyid_echo identifier id'>echo</span> <span class='string val'>&quot;$ACCTSS&quot;</span> <span class='bitor op'>|</span> <span class='rubyid_grep identifier id'>grep</span> <span class='minus op'>-</span><span class='rubyid_q identifier id'>q</span> <span class='minus op'>-</span><span class='rubyid_s identifier id'>s</span> <span class='string val'>&quot;$SUBSYSTEM &quot;</span>
+    <span class='rubyid_then then kw'>then</span>
+      <span class='rubyid_echo identifier id'>echo</span> <span class='string val'>&quot;account $ACCT is missing cgroup subsystem $SUBSYSTEM&quot;</span>
+    <span class='rubyid_fi identifier id'>fi</span>
+  <span class='rubyid_done identifier id'>done</span>
+  <span class='rubyid_test identifier id'>test</span> <span class='minus op'>-</span><span class='rubyid_d identifier id'>d</span> <span class='regexp val'>/cgroup/</span><span class='rubyid_all identifier id'>all</span><span class='div op'>/</span><span class='rubyid_openshift identifier id'>openshift</span><span class='div op'>/</span>$<span class='lbrace token'>{</span><span class='rubyid_ACCT constant id'>ACCT</span><span class='rbrace token'>}</span> <span class='orop op'>||</span> <span class='rubyid_echo identifier id'>echo</span> <span class='string val'>&quot;$ACCT is missing cgroup directory&quot;</span>  
+<span class='rubyid_done identifier id'>done</span>
 </code></pre>
 
 <p>All gear accounts must have a cgrules.conf entry:</p>
 
-<pre class="code bash"><code class="bash">for ACCTNAME in $(grep guest /etc/passwd | cut -d: -f1)
-do 
-  if ! grep -s -q $ACCTNAME /etc/cgrules.conf
-  then 
-    echo &quot;$ACCTNAME does not have a cgrules.conf entry&quot;
-  fi
-done
+<pre class="code ruby"><code class="ruby"><span class='rubyid_for for kw'>for</span> <span class='rubyid_ACCTNAME constant id'>ACCTNAME</span> <span class='rubyid_in in kw'>in</span> $<span class='lparen token'>(</span><span class='rubyid_grep identifier id'>grep</span> <span class='rubyid_guest identifier id'>guest</span> <span class='div op'>/</span><span class='rubyid_etc identifier id'>etc</span><span class='div op'>/</span><span class='rubyid_passwd identifier id'>passwd</span> <span class='bitor op'>|</span> <span class='rubyid_cut identifier id'>cut</span> <span class='minus op'>-</span><span class='rubyid_d identifier id'>d</span><span class='colon op'>:</span> <span class='minus op'>-</span><span class='rubyid_f1 identifier id'>f1</span><span class='rparen token'>)</span>
+<span class='rubyid_do do kw'>do</span> 
+  <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span> <span class='rubyid_grep identifier id'>grep</span> <span class='minus op'>-</span><span class='rubyid_s identifier id'>s</span> <span class='minus op'>-</span><span class='rubyid_q identifier id'>q</span> <span class='rubyid_$ACCTNAME gvar id'>$ACCTNAME</span> <span class='div op'>/</span><span class='rubyid_etc identifier id'>etc</span><span class='div op'>/</span><span class='rubyid_cgrules identifier id'>cgrules</span><span class='dot token'>.</span><span class='rubyid_conf identifier id'>conf</span>
+  <span class='rubyid_then then kw'>then</span> 
+    <span class='rubyid_echo identifier id'>echo</span> <span class='string val'>&quot;$ACCTNAME does not have a cgrules.conf entry&quot;</span>
+  <span class='rubyid_fi identifier id'>fi</span>
+<span class='rubyid_done identifier id'>done</span>
 </code></pre>
 
-<p>All gear processes must be assigned to their cgroups
-  For all processes owned by the account UID, verify that the process
-  is a member of each of the subsystems used by Openshift</p>
+<p>All gear processes must be assigned to their cgroups:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='rubyid_For constant id'>For</span> <span class='rubyid_all identifier id'>all</span> <span class='rubyid_processes identifier id'>processes</span> <span class='rubyid_owned identifier id'>owned</span> <span class='rubyid_by identifier id'>by</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_account identifier id'>account</span> <span class='rubyid_UID constant id'>UID</span>
+  <span class='rubyid_verify identifier id'>verify</span> <span class='rubyid_that identifier id'>that</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_process identifier id'>process</span> <span class='rubyid_is identifier id'>is</span> <span class='rubyid_a identifier id'>a</span> <span class='rubyid_member identifier id'>member</span> <span class='rubyid_of identifier id'>of</span> <span class='rubyid_each identifier id'>each</span> <span class='rubyid_of identifier id'>of</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_subsystems identifier id'>subsystems</span> <span class='rubyid_used identifier id'>used</span> <span class='rubyid_by identifier id'>by</span> <span class='rubyid_Openshift constant id'>Openshift</span>
+</code></pre>
 
 <p>You can determine the cgroup of a process with <em>ps</em>.</p>
 
 <p><code>ps -o cgroup &lt;pid&gt;</code></p>
 
-<p>Using this and some clever <em>sed</em> operations you can check each user process
-  to be sure it is properly contained.</p>
+<p>Using this and some clever <em>sed</em> operations you can check each user process to be sure it is properly contained.
+This is a more exhaustive and complex test:</p>
 
-<p>This is a more exhaustive and complex test.</p>
+<pre class="code ruby"><code class="ruby"><span class='comment val'>#!/bin/sh</span>
+<span class='comment val'>#</span>
+<span class='comment val'># Check that all user processes are contained by their cgroup</span>
+<span class='comment val'>#</span>
+<span class='comment val'># This is horribly inefficient.  It uses repeated calls to ps to get different</span>
+<span class='comment val'># cgroup elements rather than re-using a single call.</span>
+<span class='comment val'># This is for ease of coding and clarity of reading.</span>
+<span class='comment val'># Use oo-accept-node or the openshift-cgroups service status in the real world.</span>
+<span class='comment val'>#</span>
+<span class='rubyid_PROCESSES_CHECKED constant id'>PROCESSES_CHECKED</span><span class='assign token'>=</span><span class='integer val'>0</span>
+<span class='rubyid_ACCOUNTS_CHECKED constant id'>ACCOUNTS_CHECKED</span><span class='assign token'>=</span><span class='integer val'>0</span>
+<span class='rubyid_FAIL constant id'>FAIL</span><span class='assign token'>=</span><span class='integer val'>0</span>
 
-<pre class="code bash"><code class="bash">#!/bin/sh
-#
-# Check that all user processes are contained by their cgroup
-#
-# This is horribly inefficient.  It uses repeated calls to ps to get different
-# cgroup elements rather than re-using a single call.
-# This is for ease of coding and clarity of reading.
-# Use oo-accept-node or the openshift-cgroups service status in the real world.
-#
-PROCESSES_CHECKED=0
-ACCOUNTS_CHECKED=0
-FAIL=0
+<span class='comment val'># return the cgroups for a process, one per line</span>
+<span class='rubyid_function identifier id'>function</span> <span class='rubyid_process_cgroups identifier id'>process_cgroups</span><span class='lparen token'>(</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span>
+    <span class='comment val'># PID=$1</span>
+    <span class='rubyid_ps identifier id'>ps</span> <span class='minus op'>-</span><span class='rubyid_o identifier id'>o</span> <span class='rubyid_cgroup identifier id'>cgroup</span> <span class='minus op'>-</span><span class='minus op'>-</span><span class='rubyid_no identifier id'>no</span><span class='minus op'>-</span><span class='rubyid_header identifier id'>header</span> <span class='rubyid_$1 nth_ref id'>$1</span> <span class='bitor op'>|</span> <span class='rubyid_sed identifier id'>sed</span> <span class='string val'>'s/^[0-9]*:// ; s/,\([0-9]\):/;/g'</span>
+<span class='rbrace token'>}</span>
 
-# return the cgroups for a process, one per line
-function process_cgroups() {
-    # PID=$1
-    ps -o cgroup --no-header $1 | sed 's/^[0-9]*:// ; s/,\([0-9]\):/;/g'
-}
+<span class='comment val'># True if the given process is contained by the subsystem in the group path</span>
+<span class='rubyid_function identifier id'>function</span> <span class='rubyid_process_is_member identifier id'>process_is_member</span><span class='lparen token'>(</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span>
+    <span class='comment val'># PID=$1</span>
+    <span class='comment val'># SUBSYSTEM=$2</span>
+    <span class='comment val'># GPATH=$3</span>
+    <span class='comment val'># PROC_CGROUPS=$4</span>
+    <span class='rubyid_ACTUAL_PATH constant id'>ACTUAL_PATH</span><span class='assign token'>=</span>$<span class='lparen token'>(</span><span class='rubyid_echo identifier id'>echo</span> <span class='string val'>&quot;$4&quot;</span> <span class='bitor op'>|</span> <span class='rubyid_sed identifier id'>sed</span> <span class='minus op'>-</span><span class='rubyid_e identifier id'>e</span> <span class='string val'>'s/;/\n/g'</span> <span class='bitor op'>|</span> <span class='rubyid_grep identifier id'>grep</span> <span class='minus op'>-</span><span class='rubyid_e identifier id'>e</span> <span class='rubyid_$2 nth_ref id'>$2</span><span class='lbrack token'>[</span><span class='comma token'>,</span><span class='symbol val'>:]</span> <span class='bitor op'>|</span> <span class='rubyid_cut identifier id'>cut</span> <span class='minus op'>-</span><span class='rubyid_d identifier id'>d</span><span class='colon op'>:</span> <span class='minus op'>-</span><span class='rubyid_f2 identifier id'>f2</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='lbrack token'>[</span> <span class='string val'>&quot;$ACTUAL_PATH&quot;</span> <span class='neq op'>!=</span> <span class='rubyid_$3 nth_ref id'>$3</span> <span class='rbrack token'>]</span> <span class='semicolon token'>;</span> <span class='rubyid_then then kw'>then</span>
+    <span class='rubyid_return return kw'>return</span> <span class='integer val'>1</span>
+    <span class='rubyid_fi identifier id'>fi</span>
+    <span class='rubyid_return return kw'>return</span> <span class='integer val'>0</span>
+<span class='rbrace token'>}</span>
 
-# True if the given process is contained by the subsystem in the group path
-function process_is_member() {
-    # PID=$1
-    # SUBSYSTEM=$2
-    # GPATH=$3
-    # PROC_CGROUPS=$4
-    ACTUAL_PATH=$(echo &quot;$4&quot; | sed -e 's/;/\n/g' | grep -e $2[,:] | cut -d: -f2)
-    if [ &quot;$ACTUAL_PATH&quot; != $3 ] ; then
-    return 1
-    fi
-    return 0
-}
+<span class='comment val'>#</span>
+<span class='comment val'># Is the process a member of the provided group path for all subsystems</span>
+<span class='comment val'>#</span>
+<span class='rubyid_OPENSHIFT_SUBSYSTEMS constant id'>OPENSHIFT_SUBSYSTEMS</span><span class='assign token'>=</span><span class='string val'>&quot;cpu cpuacct freezer memory net_cls&quot;</span>
+<span class='rubyid_function identifier id'>function</span> <span class='rubyid_process_contained identifier id'>process_contained</span><span class='lparen token'>(</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span>
+    <span class='comment val'># PID=$1</span>
+    <span class='comment val'># CGROUP_PATH=$2</span>
+    <span class='comment val'># PROC_CGROUPS=$3</span>
+    <span class='rubyid_PROCESSES_CHECKED constant id'>PROCESSES_CHECKED</span><span class='assign token'>=</span>$<span class='lparen token'>(</span><span class='lparen token'>(</span><span class='rubyid_PROCESSES_CHECKED constant id'>PROCESSES_CHECKED</span> <span class='plus op'>+</span> <span class='integer val'>1</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+    <span class='rubyid_for for kw'>for</span> <span class='rubyid_SUBSYSTEM constant id'>SUBSYSTEM</span> <span class='rubyid_in in kw'>in</span> <span class='rubyid_$OPENSHIFT_SUBSYSTEMS gvar id'>$OPENSHIFT_SUBSYSTEMS</span> <span class='semicolon token'>;</span> <span class='rubyid_do do kw'>do</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span> <span class='rubyid_process_is_member identifier id'>process_is_member</span> <span class='rubyid_$1 nth_ref id'>$1</span> <span class='rubyid_$SUBSYSTEM gvar id'>$SUBSYSTEM</span> <span class='rubyid_$2 nth_ref id'>$2</span> <span class='string val'>&quot;$3&quot;</span> <span class='semicolon token'>;</span> <span class='rubyid_then then kw'>then</span>
+        <span class='rubyid_return return kw'>return</span> <span class='integer val'>1</span>
+    <span class='rubyid_fi identifier id'>fi</span>
+    <span class='rubyid_done identifier id'>done</span>
+    <span class='rubyid_return return kw'>return</span> <span class='integer val'>0</span>
+<span class='rbrace token'>}</span>
 
-#
-# Is the process a member of the provided group path for all subsystems
-#
-OPENSHIFT_SUBSYSTEMS=&quot;cpu cpuacct freezer memory net_cls&quot;
-function process_contained() {
-    # PID=$1
-    # CGROUP_PATH=$2
-    # PROC_CGROUPS=$3
-    PROCESSES_CHECKED=$((PROCESSES_CHECKED + 1))
-    for SUBSYSTEM in $OPENSHIFT_SUBSYSTEMS ; do
-    if ! process_is_member $1 $SUBSYSTEM $2 &quot;$3&quot; ; then
-        return 1
-    fi
-    done
-    return 0
-}
+<span class='comment val'># Check that all processes for an account are contained in the subsystem cgroup</span>
+<span class='rubyid_function identifier id'>function</span> <span class='rubyid_account_contained identifier id'>account_contained</span><span class='lparen token'>(</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span>
+    <span class='comment val'># ACCOUNT=$1</span>
+    <span class='rubyid_ACCOUNTS_CHECKED constant id'>ACCOUNTS_CHECKED</span><span class='assign token'>=</span>$<span class='lparen token'>(</span><span class='lparen token'>(</span><span class='rubyid_$ACCOUNTS_CHECKED gvar id'>$ACCOUNTS_CHECKED</span> <span class='plus op'>+</span> <span class='integer val'>1</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+    <span class='rubyid_for for kw'>for</span> <span class='rubyid_PID constant id'>PID</span> <span class='rubyid_in in kw'>in</span> $<span class='lparen token'>(</span><span class='rubyid_ps identifier id'>ps</span> <span class='minus op'>-</span><span class='minus op'>-</span><span class='rubyid_no identifier id'>no</span><span class='minus op'>-</span><span class='rubyid_headers identifier id'>headers</span> <span class='minus op'>-</span><span class='rubyid_o identifier id'>o</span> <span class='rubyid_pid identifier id'>pid</span> <span class='minus op'>-</span><span class='rubyid_u identifier id'>u</span> <span class='rubyid_$1 nth_ref id'>$1</span><span class='rparen token'>)</span> <span class='semicolon token'>;</span>  <span class='rubyid_do do kw'>do</span>
+      <span class='rubyid_PROC_CGROUPS constant id'>PROC_CGROUPS</span><span class='assign token'>=</span>$<span class='lparen token'>(</span><span class='rubyid_ps identifier id'>ps</span> <span class='minus op'>-</span><span class='rubyid_o identifier id'>o</span> <span class='rubyid_cgroup identifier id'>cgroup</span> <span class='minus op'>-</span><span class='minus op'>-</span><span class='rubyid_no identifier id'>no</span><span class='minus op'>-</span><span class='rubyid_header identifier id'>header</span> <span class='rubyid_$PID gvar id'>$PID</span> <span class='bitor op'>|</span> <span class='rubyid_sed identifier id'>sed</span> <span class='string val'>'s/^[0-9]*:// ; s/,\([0-9]\):/;/g'</span><span class='rparen token'>)</span>
+      <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span> <span class='rubyid_process_contained identifier id'>process_contained</span> <span class='rubyid_$PID gvar id'>$PID</span> <span class='div op'>/</span><span class='rubyid_openshift identifier id'>openshift</span><span class='div op'>/</span><span class='rubyid_$1 nth_ref id'>$1</span> <span class='string val'>&quot;$PROC_CGROUPS&quot;</span> <span class='semicolon token'>;</span><span class='rubyid_then then kw'>then</span>
+      <span class='rubyid_return return kw'>return</span> <span class='integer val'>1</span>
+      <span class='rubyid_fi identifier id'>fi</span>
+  <span class='rubyid_done identifier id'>done</span>
+  <span class='rubyid_return return kw'>return</span> <span class='integer val'>0</span>
+<span class='rbrace token'>}</span>
 
-# Check that all processes for an account are contained in the subsystem cgroup
-function account_contained() {
-    # ACCOUNT=$1
-    ACCOUNTS_CHECKED=$(($ACCOUNTS_CHECKED + 1))
-    for PID in $(ps --no-headers -o pid -u $1) ;  do
-      PROC_CGROUPS=$(ps -o cgroup --no-header $PID | sed 's/^[0-9]*:// ; s/,\([0-9]\):/;/g')
-      if ! process_contained $PID /openshift/$1 &quot;$PROC_CGROUPS&quot; ;then
-      return 1
-      fi
-  done
-  return 0
-}
+<span class='comment val'># Check that all user processes are contained by their subsystem cgroups</span>
+<span class='rubyid_for for kw'>for</span> <span class='rubyid_ACCOUNT constant id'>ACCOUNT</span> <span class='rubyid_in in kw'>in</span> $<span class='lparen token'>(</span><span class='rubyid_grep identifier id'>grep</span> <span class='string val'>'guest'</span> <span class='div op'>/</span><span class='rubyid_etc identifier id'>etc</span><span class='div op'>/</span><span class='rubyid_passwd identifier id'>passwd</span> <span class='bitor op'>|</span> <span class='rubyid_cut identifier id'>cut</span> <span class='minus op'>-</span><span class='rubyid_d identifier id'>d</span><span class='colon op'>:</span> <span class='minus op'>-</span><span class='rubyid_f1 identifier id'>f1</span><span class='rparen token'>)</span> <span class='semicolon token'>;</span> <span class='rubyid_do do kw'>do</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span> <span class='rubyid_account_contained identifier id'>account_contained</span> <span class='rubyid_$ACCOUNT gvar id'>$ACCOUNT</span> <span class='semicolon token'>;</span> <span class='rubyid_then then kw'>then</span>
+    <span class='rubyid_echo identifier id'>echo</span> <span class='rubyid_ERROR constant id'>ERROR</span><span class='colon op'>:</span> <span class='rubyid_$1 nth_ref id'>$1</span> <span class='semicolon token'>;</span>  <span class='rubyid_FAIL constant id'>FAIL</span><span class='assign token'>=</span>$<span class='lparen token'>(</span><span class='lparen token'>(</span><span class='rubyid_$FAIL gvar id'>$FAIL</span> <span class='plus op'>+</span> <span class='integer val'>1</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+    <span class='rubyid_fi identifier id'>fi</span>
+<span class='rubyid_done identifier id'>done</span>
 
-# Check that all user processes are contained by their subsystem cgroups
-for ACCOUNT in $(grep 'guest' /etc/passwd | cut -d: -f1) ; do
-    if ! account_contained $ACCOUNT ; then
-    echo ERROR: $1 ;  FAIL=$(($FAIL + 1))
-    fi
-done
-
-if [ $FAIL -eq 0 ] ; then echo PASS ; else echo FAIL ; fi
-echo accounts: $ACCOUNTS_CHECKED, processes: $PROCESSES_CHECKED
+<span class='rubyid_if if kw'>if</span> <span class='lbrack token'>[</span> <span class='rubyid_$FAIL gvar id'>$FAIL</span> <span class='minus op'>-</span><span class='rubyid_eq identifier id'>eq</span> <span class='integer val'>0</span> <span class='rbrack token'>]</span> <span class='semicolon token'>;</span> <span class='rubyid_then then kw'>then</span> <span class='rubyid_echo identifier id'>echo</span> <span class='rubyid_PASS constant id'>PASS</span> <span class='semicolon token'>;</span> <span class='rubyid_else else kw'>else</span> <span class='rubyid_echo identifier id'>echo</span> <span class='rubyid_FAIL constant id'>FAIL</span> <span class='semicolon token'>;</span> <span class='rubyid_fi identifier id'>fi</span>
+<span class='rubyid_echo identifier id'>echo</span> <span class='rubyid_accounts identifier id'>accounts</span><span class='colon op'>:</span> <span class='rubyid_$ACCOUNTS_CHECKED gvar id'>$ACCOUNTS_CHECKED</span><span class='comma token'>,</span> <span class='rubyid_processes identifier id'>processes</span><span class='colon op'>:</span> <span class='rubyid_$PROCESSES_CHECKED gvar id'>$PROCESSES_CHECKED</span>
 </code></pre>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Mar 26 18:32:32 2013 by
+  Generated on Tue Mar 26 22:54:52 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
