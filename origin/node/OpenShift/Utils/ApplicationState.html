@@ -271,15 +271,15 @@ A new instance of ApplicationState
       <pre class="lines">
 
 
-41
 42
 43
 44
 45
-46</pre>
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 42</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rparen token'>)</span>
   <span class='rubyid_@uuid ivar id'>@uuid</span> <span class='assign token'>=</span> <span class='rubyid_uuid identifier id'>uuid</span>
@@ -327,12 +327,12 @@ Returns the value of attribute uuid
       <pre class="lines">
 
 
-39
 40
-41</pre>
+41
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 40</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_uuid identifier id'>uuid</span>
   <span class='rubyid_@uuid ivar id'>@uuid</span>
@@ -396,21 +396,43 @@ application state or State::UNKNOWN on failure
       <pre class="lines">
 
 
-76
 77
 78
 79
 80
 81
-82</pre>
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 76</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 77</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_value identifier id'>value</span>
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_@state_file ivar id'>@state_file</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_input identifier id'>input</span><span class='bitor op'>|</span> <span class='rubyid_input identifier id'>input</span><span class='dot token'>.</span><span class='rubyid_read identifier id'>read</span><span class='dot token'>.</span><span class='rubyid_chomp identifier id'>chomp</span> <span class='rbrace token'>}</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Failed to get state: #{@uuid} [#{@state_file}]: &quot;</span>
+    <span class='rubyid_case case kw'>case</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='rubyid_when when kw'>when</span> <span class='rubyid_SystemCallError constant id'>SystemCallError</span>
+      <span class='comment val'># This catches filesystem level errors</span>
+      <span class='comment val'># We split the message because it contains the filename</span>
+      <span class='rubyid_msg identifier id'>msg</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>' - '</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_msg identifier id'>msg</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_NodeLogger constant id'>NodeLogger</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span> <span class='rubyid_msg identifier id'>msg</span> <span class='rparen token'>)</span>
+
     <span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_UNKNOWN constant id'>UNKNOWN</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
@@ -489,7 +511,6 @@ self for chaining calls
       <pre class="lines">
 
 
-52
 53
 54
 55
@@ -507,10 +528,11 @@ self for chaining calls
 67
 68
 69
-70</pre>
+70
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 52</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/application_state.rb', line 53</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_value= identifier id'>value=</span><span class='lparen token'>(</span><span class='rubyid_new_state identifier id'>new_state</span><span class='rparen token'>)</span>
   <span class='rubyid_new_state_val identifier id'>new_state_val</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
@@ -542,7 +564,7 @@ self for chaining calls
 </div>
 
     <div id="footer">
-  Generated on Thu Mar 28 18:54:05 2013 by
+  Generated on Fri Mar 29 18:32:33 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
