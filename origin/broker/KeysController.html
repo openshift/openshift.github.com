@@ -468,8 +468,6 @@ DELETE /user/keys/&lt;id&gt;
       <pre class="lines">
 
 
-111
-112
 113
 114
 115
@@ -484,10 +482,12 @@ DELETE /user/keys/&lt;id&gt;
 124
 125
 126
-127</pre>
+127
+128
+129</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 113</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
@@ -499,7 +499,7 @@ DELETE /user/keys/&lt;id&gt;
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='dot token'>.</span><span class='rubyid_remove_ssh_key identifier id'>remove_ssh_key</span><span class='lparen token'>(</span><span class='rubyid_id identifier id'>id</span><span class='rparen token'>)</span>
-     <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:no_content</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_KEY&quot;</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Deleted SSH key #{id}&quot;</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+    <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:no_content</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_KEY&quot;</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Deleted SSH key #{id}&quot;</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_LockUnavailableException constant id'>LockUnavailableException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:service_unavailable</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_message identifier id'>message</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_code identifier id'>code</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_KEY&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
@@ -698,7 +698,9 @@ PUT /user/keys/&lt;id&gt;
 105
 106
 107
-108</pre>
+108
+109
+110</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/keys_controller.rb', line 73</span>
@@ -709,15 +711,17 @@ PUT /user/keys/&lt;id&gt;
   <span class='rubyid_type identifier id'>type</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:type</span><span class='rbrack token'>]</span>
   
   <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span> <span class='dstring node'>&quot;Updating key name:#{id} type:#{type} for user #{@cloud_user.login}&quot;</span>
+  
+  <span class='comment val'># validate the key name using regex to avoid a mongo call, if it is malformed</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_SshKey constant id'>SshKey</span><span class='colon2 op'>::</span><span class='rubyid_KEY_NAME_COMPATIBILITY_REGEX constant id'>KEY_NAME_COMPATIBILITY_REGEX</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='dot token'>.</span><span class='rubyid_ssh_keys identifier id'>ssh_keys</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='eq op'>==</span> <span class='integer val'>0</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;SSH key '#{id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>118</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_KEY&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  
   <span class='rubyid_key identifier id'>key</span> <span class='assign token'>=</span> <span class='rubyid_UserSshKey constant id'>UserSshKey</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='colon op'>:</span> <span class='rubyid_type identifier id'>type</span><span class='comma token'>,</span> <span class='rubyid_content identifier id'>content</span><span class='colon op'>:</span> <span class='rubyid_content identifier id'>content</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span><span class='dot token'>.</span><span class='rubyid_invalid? fid id'>invalid?</span>
     <span class='rubyid_messages identifier id'>messages</span> <span class='assign token'>=</span> <span class='rubyid_get_error_messages identifier id'>get_error_messages</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_KEY&quot;</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_messages identifier id'>messages</span><span class='rparen token'>)</span>
-  <span class='rubyid_end end kw'>end</span>
-
-  <span class='comment val'># validate the key name using regex to avoid a mongo call, if it is malformed</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_id identifier id'>id</span> <span class='nmatch op'>!~</span> <span class='rubyid_SshKey constant id'>SshKey</span><span class='colon2 op'>::</span><span class='rubyid_KEY_NAME_COMPATIBILITY_REGEX constant id'>KEY_NAME_COMPATIBILITY_REGEX</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='dot token'>.</span><span class='rubyid_ssh_keys identifier id'>ssh_keys</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='eq op'>==</span> <span class='integer val'>0</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;SSH key '#{id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>118</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_KEY&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_begin begin kw'>begin</span>
@@ -750,7 +754,7 @@ PUT /user/keys/&lt;id&gt;
 </div>
 
     <div id="footer">
-  Generated on Sun Mar 31 18:19:28 2013 by
+  Generated on Mon Apr  1 18:45:30 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

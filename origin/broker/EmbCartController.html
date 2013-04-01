@@ -692,7 +692,8 @@ DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 246
 247
 248
-249</pre>
+249
+250</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 195</span>
@@ -734,7 +735,8 @@ DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_comp identifier id'>comp</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_component_instances identifier id'>component_instances</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='colon op'>:</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
-    <span class='rubyid_feature identifier id'>feature</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_get_feature identifier id'>get_feature</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_comp identifier id'>comp</span><span class='dot token'>.</span><span class='rubyid_component_name identifier id'>component_name</span><span class='rparen token'>)</span>     
+    <span class='rubyid_feature identifier id'>feature</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_get_feature identifier id'>get_feature</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_comp identifier id'>comp</span><span class='dot token'>.</span><span class='rubyid_component_name identifier id'>component_name</span><span class='rparen token'>)</span>  
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Cartridge '#{cartridge}' not found for application '#{application.name}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;REMOVE_CARTRIDGE&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_feature identifier id'>feature</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>   
     <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_remove_features identifier id'>remove_features</span><span class='lparen token'>(</span><span class='lbrack token'>[</span><span class='rubyid_feature identifier id'>feature</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
 
     <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_if if kw'>if</span> <span class='rubyid_requested_api_version identifier id'>requested_api_version</span> <span class='eq op'>==</span> <span class='float val'>1.0</span>
@@ -742,8 +744,8 @@ DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <span class='rubyid_else else kw'>else</span>
         <span class='rubyid_RestApplication constant id'>RestApplication</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_application identifier id'>application</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_get_url identifier id'>get_url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
       <span class='rubyid_end end kw'>end</span>
-
-    <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;application&quot;</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='string val'>&quot;REMOVE_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Removed #{cartridge} from application #{id}&quot;</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+    <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:no_content</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>&quot;REMOVE_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Removed #{cartridge} from application #{id}&quot;</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+    <span class='comment val'>#render_success(:ok, &quot;application&quot;, app, &quot;REMOVE_CARTRIDGE&quot;, &quot;Removed #{cartridge} from application #{id}&quot;, true)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_LockUnavailableException constant id'>LockUnavailableException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:service_unavailable</span><span class='comma token'>,</span> <span class='string val'>&quot;Application is currently busy performing another operation. Please try again in a minute.&quot;</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_code identifier id'>code</span><span class='comma token'>,</span> <span class='string val'>&quot;REMOVE_CARTRIDGE&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
@@ -1011,7 +1013,6 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <pre class="lines">
 
 
-252
 253
 254
 255
@@ -1114,10 +1115,11 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 352
 353
 354
-355</pre>
+355
+356</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 252</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 253</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update identifier id'>update</span>
   <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
@@ -1133,8 +1135,8 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_additional_storage identifier id'>additional_storage</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_additional_storage identifier id'>additional_storage</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_additional_storage identifier id'>additional_storage</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Invalid storage value provided.&quot;</span><span class='comma token'>,</span> <span class='integer val'>165</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;additional_storage&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Invalid storage value provided: #{e.message}&quot;</span><span class='comma token'>,</span> <span class='integer val'>165</span><span class='comma token'>,</span> <span class='string val'>&quot;PATCH_APP_CARTRIDGE&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;additional_storage&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='comment val'># validate the domain name using regex to avoid a mongo call, if it is malformed</span>
@@ -1234,7 +1236,7 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 </div>
 
     <div id="footer">
-  Generated on Sun Mar 31 18:19:42 2013 by
+  Generated on Mon Apr  1 18:45:51 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

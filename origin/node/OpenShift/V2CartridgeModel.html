@@ -114,6 +114,24 @@
         <dd><pre class="code"><span class='dstring node'>%W{.ssh .sandbox .tmp .env}</span>
 </pre></dd>
       
+        <dt id="ERB_BINARY-constant" class="">ERB_BINARY =
+          <div class="docstring">
+  <div class="discussion">
+    <p>
+FIXME: need to determine path to correct erb. oo-ruby?
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='string val'>'/usr/bin/oo-ruby /opt/rh/ruby193/root/usr/bin/erb'</span>
+</pre></dd>
+      
     </dl>
   
 
@@ -159,28 +177,6 @@ Returns true if the given IP and port are currently bound according to
 lsof, otherwise false.
 </p>
 </div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#build-instance_method" title="#build (instance method)">- (Object) <strong>build</strong>(cartridge) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -453,6 +449,32 @@ endpoint metadata for the cartridge.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#create_stop_lock-instance_method" title="#create_stop_lock (instance method)">- (Object) <strong>create_stop_lock</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Writes the <tt>stop_lock</tt> file and changes its ownership to the gear
+user.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#deconfigure-instance_method" title="#deconfigure (instance method)">- (Object) <strong>deconfigure</strong>(cartridge_name) </a>
     
 
@@ -501,28 +523,6 @@ deconfigure(cartridge_name) -&gt; nil.
   <span class="summary_signature">
     
       <a href="#delete_private_endpoints-instance_method" title="#delete_private_endpoints (instance method)">- (Object) <strong>delete_private_endpoints</strong>(cartridge) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#deploy-instance_method" title="#deploy (instance method)">- (Object) <strong>deploy</strong>(cartridge) </a>
     
 
     
@@ -823,7 +823,7 @@ Load cartridge&#8217;s local manifest from cartridge directory name.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">- (V2CartridgeModel) <strong>initialize</strong>(config, user) </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (V2CartridgeModel) <strong>initialize</strong>(config, user, state) </a>
     
 
     
@@ -1024,6 +1024,31 @@ render_erbs(program environment as a hash, erb_path_glob) -&gt; nil.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#start_cartridge-instance_method" title="#start_cartridge (instance method)">- (Object) <strong>start_cartridge</strong>(cartridge, user_initiated = true) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Starts a cartridge.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#start_gear-instance_method" title="#start_gear (instance method)">- (Object) <strong>start_gear</strong>(options = {}) </a>
     
 
@@ -1041,6 +1066,31 @@ render_erbs(program environment as a hash, erb_path_glob) -&gt; nil.
     <span class="summary_desc"><div class='inline'><p>
 Starts up the gear by running the cartridge <tt>start</tt> control action
 for each cartridge in the gear.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#stop_cartridge-instance_method" title="#stop_cartridge (instance method)">- (Object) <strong>stop_cartridge</strong>(cartridge, user_initiated = true) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Stops a cartridge.
 </p>
 </div></span>
   
@@ -1069,6 +1119,28 @@ Shuts down the gear by running the cartridge <tt>stop</tt> control action
 for each cartridge in the gear.
 </p>
 </div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#stop_lock-instance_method" title="#stop_lock (instance method)">- (Object) <strong>stop_lock</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -1168,7 +1240,7 @@ Write out cartridge environment variables.
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    - (<tt><span class='object_link'><a href="" title="OpenShift::V2CartridgeModel (class)">V2CartridgeModel</a></span></tt>) <strong>initialize</strong>(config, user) 
+    - (<tt><span class='object_link'><a href="" title="OpenShift::V2CartridgeModel (class)">V2CartridgeModel</a></span></tt>) <strong>initialize</strong>(config, user, state) 
   
 
   
@@ -1192,19 +1264,21 @@ A new instance of V2CartridgeModel
       <pre class="lines">
 
 
-53
-54
-55
 56
 57
-58</pre>
+58
+59
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 56</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_config identifier id'>config</span><span class='comma token'>,</span> <span class='rubyid_user identifier id'>user</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_config identifier id'>config</span><span class='comma token'>,</span> <span class='rubyid_user identifier id'>user</span><span class='comma token'>,</span> <span class='rubyid_state identifier id'>state</span><span class='rparen token'>)</span>
   <span class='rubyid_@config ivar id'>@config</span>     <span class='assign token'>=</span> <span class='rubyid_config identifier id'>config</span>
   <span class='rubyid_@user ivar id'>@user</span>       <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span>
+  <span class='rubyid_@state ivar id'>@state</span>      <span class='assign token'>=</span> <span class='rubyid_state identifier id'>state</span>
   <span class='rubyid_@timeout ivar id'>@timeout</span>    <span class='assign token'>=</span> <span class='integer val'>30</span>
   <span class='rubyid_@cartridges ivar id'>@cartridges</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
 <span class='rubyid_end end kw'>end</span>
@@ -1262,50 +1336,17 @@ lsof, otherwise false.
       <pre class="lines">
 
 
-621
-622
-623
-624</pre>
+629
+630
+631
+632</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 621</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 629</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_address_bound? fid id'>address_bound?</span><span class='lparen token'>(</span><span class='rubyid_ip identifier id'>ip</span><span class='comma token'>,</span> <span class='rubyid_port identifier id'>port</span><span class='rparen token'>)</span>
   <span class='rubyid__ identifier id'>_</span><span class='comma token'>,</span> <span class='rubyid__ identifier id'>_</span><span class='comma token'>,</span> <span class='rubyid_rc identifier id'>rc</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/usr/sbin/lsof -i @#{ip}:#{port}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_rc identifier id'>rc</span> <span class='eq op'>==</span> <span class='integer val'>0</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="build-instance_method">
-  
-    - (<tt>Object</tt>) <strong>build</strong>(cartridge) 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-691
-692
-693
-694</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 691</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_build identifier id'>build</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
-  <span class='rubyid_ApplicationRepository constant id'>ApplicationRepository</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_deploy_repository identifier id'>deploy_repository</span>
-  <span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;build&quot;</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1341,19 +1382,19 @@ otherwise <tt>nil</tt>.
       <pre class="lines">
 
 
-83
-84
-85
-86
-87
-88
-89
-90
 91
-92</pre>
+92
+93
+94
+95
+96
+97
+98
+99
+100</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 91</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_builder_cartridge identifier id'>builder_cartridge</span>
   <span class='rubyid_builder_cart identifier id'>builder_cart</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
@@ -1386,16 +1427,16 @@ otherwise <tt>nil</tt>.
       <pre class="lines">
 
 
-101
-102
-103
-104
-105
-106
-107</pre>
+109
+110
+111
+112
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 101</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 109</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_cartridge_directory identifier id'>cartridge_directory</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid__ identifier id'>_</span>  <span class='assign token'>=</span> <span class='rubyid_map_cartridge_name identifier id'>map_cartridge_name</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
@@ -1425,6 +1466,7 @@ otherwise <tt>nil</tt>.
       <pre class="lines">
 
 
+831
 832
 833
 834
@@ -1435,11 +1477,10 @@ otherwise <tt>nil</tt>.
 839
 840
 841
-842
-843</pre>
+842</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 832</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 831</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_cartridge_hooks identifier id'>cartridge_hooks</span><span class='lparen token'>(</span><span class='rubyid_action_hooks identifier id'>action_hooks</span><span class='comma token'>,</span> <span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span><span class='rparen token'>)</span>
   <span class='rubyid_hooks identifier id'>hooks</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rubyid_pre identifier id'>pre</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_post identifier id'>post</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rbrace token'>}</span>
@@ -1493,14 +1534,6 @@ cartridge_setup(cartridge, software_version) -&gt; buffer
       <pre class="lines">
 
 
-453
-454
-455
-456
-457
-458
-459
-460
 461
 462
 463
@@ -1516,10 +1549,18 @@ cartridge_setup(cartridge, software_version) -&gt; buffer
 473
 474
 475
-476</pre>
+476
+477
+478
+479
+480
+481
+482
+483
+484</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 453</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 461</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_cartridge_setup identifier id'>cartridge_setup</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_software_version identifier id'>software_version</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span> <span class='dstring node'>&quot;Running setup for #{@user.uuid}/#{cartridge.directory}&quot;</span>
@@ -1587,14 +1628,6 @@ stdout = cartridge_teardown(&#8216;php-5.3&#8217;)
       <pre class="lines">
 
 
-509
-510
-511
-512
-513
-514
-515
-516
 517
 518
 519
@@ -1605,10 +1638,18 @@ stdout = cartridge_teardown(&#8216;php-5.3&#8217;)
 524
 525
 526
-527</pre>
+527
+528
+529
+530
+531
+532
+533
+534
+535</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 509</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 517</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_cartridge_teardown identifier id'>cartridge_teardown</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_cartridge_home identifier id'>cartridge_home</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
@@ -1650,12 +1691,12 @@ stdout = cartridge_teardown(&#8216;php-5.3&#8217;)
       <pre class="lines">
 
 
-889
-890
-891</pre>
+844
+845
+846</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 889</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 844</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_cleanpwd identifier id'>cleanpwd</span><span class='lparen token'>(</span><span class='rubyid_arg identifier id'>arg</span><span class='rparen token'>)</span>
   <span class='rubyid_arg identifier id'>arg</span><span class='dot token'>.</span><span class='rubyid_gsub identifier id'>gsub</span><span class='lparen token'>(</span><span class='regexp val'>/(passwo?r?d\s*[:=]+\s*)\S+/i</span><span class='comma token'>,</span> <span class='string val'>'\\1[HIDDEN]'</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_gsub identifier id'>gsub</span><span class='lparen token'>(</span><span class='regexp val'>/(usern?a?m?e?\s*[:=]+\s*)\S+/i</span><span class='comma token'>,</span><span class='string val'>'\\1[HIDDEN]'</span><span class='rparen token'>)</span>
@@ -1700,14 +1741,6 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
       <pre class="lines">
 
 
-189
-190
-191
-192
-193
-194
-195
-196
 197
 198
 199
@@ -1728,10 +1761,18 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
 214
 215
 216
-217</pre>
+217
+218
+219
+220
+221
+222
+223
+224
+225</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 189</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 197</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_configure identifier id'>configure</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_template_git_url identifier id'>template_git_url</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_output identifier id'>output</span> <span class='assign token'>=</span> <span class='string val'>''</span>
@@ -1754,7 +1795,7 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
 
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_output identifier id'>output</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_do_control_with_directory identifier id'>do_control_with_directory</span><span class='lparen token'>(</span><span class='string val'>'start'</span><span class='comma token'>,</span> <span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span><span class='colon op'>:</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_directory identifier id'>directory</span><span class='rparen token'>)</span>
+    <span class='rubyid_output identifier id'>output</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_start_cartridge identifier id'>start_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_connect_frontend identifier id'>connect_frontend</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
@@ -1783,14 +1824,6 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
       <pre class="lines">
 
 
-650
-651
-652
-653
-654
-655
-656
-657
 658
 659
 660
@@ -1804,10 +1837,18 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
 668
 669
 670
-671</pre>
+671
+672
+673
+674
+675
+676
+677
+678
+679</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 650</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 658</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_connect_frontend identifier id'>connect_frontend</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_frontend identifier id'>frontend</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_FrontendHttpServer constant id'>FrontendHttpServer</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span><span class='rparen token'>)</span>
@@ -1880,6 +1921,7 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
       <pre class="lines">
 
 
+717
 718
 719
 720
@@ -1905,11 +1947,10 @@ configure(&#8216;php-5.3&#8217;) configure(&#8216;php-5.3&#8217;,
 740
 741
 742
-743
-744</pre>
+743</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 718</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 717</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_connector_execute identifier id'>connector_execute</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_connector identifier id'>connector</span><span class='comma token'>,</span> <span class='rubyid_args identifier id'>args</span><span class='rparen token'>)</span>
   <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
@@ -1977,14 +2018,6 @@ Create the cartridges home directory
       <pre class="lines">
 
 
-353
-354
-355
-356
-357
-358
-359
-360
 361
 362
 363
@@ -2026,10 +2059,18 @@ Create the cartridges home directory
 399
 400
 401
-402</pre>
+402
+403
+404
+405
+406
+407
+408
+409
+410</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 353</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 361</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create_cartridge_directory identifier id'>create_cartridge_directory</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_software_version identifier id'>software_version</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Creating cartridge directory #{@user.uuid}/#{cartridge.directory}&quot;</span><span class='rparen token'>)</span>
@@ -2119,14 +2160,6 @@ errors here are considered fatal.
       <pre class="lines">
 
 
-534
-535
-536
-537
-538
-539
-540
-541
 542
 543
 544
@@ -2156,10 +2189,18 @@ errors here are considered fatal.
 568
 569
 570
-571</pre>
+571
+572
+573
+574
+575
+576
+577
+578
+579</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 534</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 542</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create_private_endpoints identifier id'>create_private_endpoints</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span> <span class='dstring node'>&quot;Creating private endpoints for #{@user.uuid}/#{cartridge.directory}&quot;</span>
@@ -2206,6 +2247,66 @@ errors here are considered fatal.
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="create_stop_lock-instance_method">
+  
+    - (<tt>Object</tt>) <strong>create_stop_lock</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Writes the <tt>stop_lock</tt> file and changes its ownership to the gear
+user.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+957
+958
+959
+960
+961
+962
+963
+964
+965
+966
+967</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 957</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_create_stop_lock identifier id'>create_stop_lock</span>
+  <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span><span class='lparen token'>(</span><span class='rubyid_stop_lock identifier id'>stop_lock</span><span class='rparen token'>)</span>
+    <span class='rubyid_mcs_label identifier id'>mcs_label</span> <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_get_mcs_label identifier id'>get_mcs_label</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='rparen token'>)</span>
+    <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_stop_lock identifier id'>stop_lock</span><span class='comma token'>,</span> <span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_CREAT constant id'>CREAT</span><span class='bitor op'>|</span><span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_TRUNC constant id'>TRUNC</span><span class='bitor op'>|</span><span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_WRONLY constant id'>WRONLY</span><span class='comma token'>,</span> <span class='integer val'>0644</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_close identifier id'>close</span><span class='lparen token'>(</span><span class='rparen token'>)</span>
+    <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span>
+        <span class='dstring node'>&quot;chown #{@user.uid}:#{@user.gid} #{stop_lock};
+         chcon unconfined_u:object_r:openshift_var_lib_t:#{mcs_label} #{stop_lock}&quot;</span><span class='comma token'>,</span>
+        <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span>
+    <span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="deconfigure-instance_method">
   
     - (<tt>Object</tt>) <strong>deconfigure</strong>(cartridge_name) 
@@ -2238,26 +2339,26 @@ deconfigure(&#8216;php-5.3&#8217;)
       <pre class="lines">
 
 
-224
-225
-226
-227
-228
-229
-230
-231
 232
 233
-234</pre>
+234
+235
+236
+237
+238
+239
+240
+241
+242</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 224</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 232</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_deconfigure identifier id'>deconfigure</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_get_cartridge identifier id'>get_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_delete_private_endpoints identifier id'>delete_private_endpoints</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Cgroups constant id'>Cgroups</span><span class='colon2 op'>::</span><span class='rubyid_with_cgroups_disabled identifier id'>with_cgroups_disabled</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
-    <span class='rubyid_do_control_with_directory identifier id'>do_control_with_directory</span><span class='lparen token'>(</span><span class='string val'>'stop'</span><span class='comma token'>,</span> <span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span><span class='colon op'>:</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_directory identifier id'>directory</span><span class='rparen token'>)</span>
+    <span class='rubyid_stop_cartridge identifier id'>stop_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
     <span class='rubyid_unlock_gear identifier id'>unlock_gear</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_cartridge_teardown identifier id'>cartridge_teardown</span><span class='lparen token'>(</span><span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_directory identifier id'>directory</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
     <span class='rubyid_delete_cartridge_directory identifier id'>delete_cartridge_directory</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
@@ -2285,15 +2386,15 @@ deconfigure(&#8216;php-5.3&#8217;)
       <pre class="lines">
 
 
-418
-419
-420
-421
-422
-423</pre>
+426
+427
+428
+429
+430
+431</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 418</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 426</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_delete_cartridge_directory identifier id'>delete_cartridge_directory</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Deleting cartridge directory for #{@user.uuid}/#{cartridge.directory}&quot;</span><span class='rparen token'>)</span>
@@ -2322,19 +2423,19 @@ deconfigure(&#8216;php-5.3&#8217;)
       <pre class="lines">
 
 
-573
-574
-575
-576
-577
-578
-579
-580
 581
-582</pre>
+582
+583
+584
+585
+586
+587
+588
+589
+590</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 573</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 581</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_delete_private_endpoints identifier id'>delete_private_endpoints</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span> <span class='dstring node'>&quot;Deleting private endpoints for #{@user.uuid}/#{cartridge.directory}&quot;</span>
@@ -2345,37 +2446,6 @@ deconfigure(&#8216;php-5.3&#8217;)
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span> <span class='dstring node'>&quot;Deleted private endpoints for #{@user.uuid}#{cartridge.directory}&quot;</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="deploy-instance_method">
-  
-    - (<tt>Object</tt>) <strong>deploy</strong>(cartridge) 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-696
-697
-698</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 696</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy identifier id'>deploy</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
-  <span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;deploy&quot;</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2418,14 +2488,6 @@ destroy()
       <pre class="lines">
 
 
-146
-147
-148
-149
-150
-151
-152
-153
 154
 155
 156
@@ -2440,10 +2502,18 @@ destroy()
 165
 166
 167
-168</pre>
+168
+169
+170
+171
+172
+173
+174
+175
+176</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 146</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 154</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='string val'>'V2 destroy'</span><span class='rparen token'>)</span>
@@ -2504,6 +2574,7 @@ code.
       <pre class="lines">
 
 
+811
 812
 813
 814
@@ -2521,11 +2592,10 @@ code.
 826
 827
 828
-829
-830</pre>
+829</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 812</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 811</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_do_action_hook identifier id'>do_action_hook</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_env identifier id'>env</span><span class='rparen token'>)</span>
   <span class='rubyid_action_hooks_dir identifier id'>action_hooks_dir</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='dstring node'>%w{app-root runtime repo .openshift action_hooks}</span><span class='rparen token'>)</span>
@@ -2567,6 +2637,7 @@ code.
       <pre class="lines">
 
 
+699
 700
 701
 702
@@ -2579,11 +2650,10 @@ code.
 709
 710
 711
-712
-713</pre>
+712</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 700</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 699</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_case case kw'>case</span> <span class='rubyid_cartridge identifier id'>cartridge</span>
@@ -2650,6 +2720,7 @@ found.
       <pre class="lines">
 
 
+757
 758
 759
 760
@@ -2697,11 +2768,10 @@ found.
 802
 803
 804
-805
-806</pre>
+805</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 758</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 757</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_do_control_with_directory identifier id'>do_control_with_directory</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span>             <span class='assign token'>=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:cartridge_dir</span><span class='rbrack token'>]</span>
@@ -2792,14 +2862,6 @@ application developer
       <pre class="lines">
 
 
-322
-323
-324
-325
-326
-327
-328
-329
 330
 331
 332
@@ -2816,10 +2878,18 @@ application developer
 343
 344
 345
-346</pre>
+346
+347
+348
+349
+350
+351
+352
+353
+354</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 322</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 330</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_do_lock identifier id'>do_lock</span><span class='lparen token'>(</span><span class='rubyid_entries identifier id'>entries</span><span class='rparen token'>)</span>
   <span class='rubyid_mcs_label identifier id'>mcs_label</span> <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_get_mcs_label identifier id'>get_mcs_label</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='rparen token'>)</span>
@@ -2886,14 +2956,6 @@ cartridge author
       <pre class="lines">
 
 
-283
-284
-285
-286
-287
-288
-289
-290
 291
 292
 293
@@ -2919,10 +2981,18 @@ cartridge author
 313
 314
 315
-316</pre>
+316
+317
+318
+319
+320
+321
+322
+323
+324</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 283</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 291</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_do_unlock identifier id'>do_unlock</span><span class='lparen token'>(</span><span class='rubyid_entries identifier id'>entries</span><span class='rparen token'>)</span>
   <span class='rubyid_mcs_label identifier id'>mcs_label</span> <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_get_mcs_label identifier id'>get_mcs_label</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='rparen token'>)</span>
@@ -2991,15 +3061,15 @@ Yields a <tt>Cartridge</tt> instance for each cartridge in the gear.
       <pre class="lines">
 
 
-62
-63
-64
-65
-66
-67</pre>
+70
+71
+72
+73
+74
+75</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 62</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 70</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_each_cartridge identifier id'>each_cartridge</span>
   <span class='rubyid_process_cartridges identifier id'>process_cartridges</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span><span class='bitor op'>|</span>
@@ -3050,14 +3120,6 @@ the given port, or returns nil if IP is available.
       <pre class="lines">
 
 
-593
-594
-595
-596
-597
-598
-599
-600
 601
 602
 603
@@ -3074,10 +3136,18 @@ the given port, or returns nil if IP is available.
 614
 615
 616
-617</pre>
+617
+618
+619
+620
+621
+622
+623
+624
+625</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 593</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 601</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_find_open_ip identifier id'>find_open_ip</span><span class='lparen token'>(</span><span class='rubyid_port identifier id'>port</span><span class='rparen token'>)</span>
   <span class='rubyid_allocated_ips identifier id'>allocated_ips</span> <span class='assign token'>=</span> <span class='rubyid_get_allocated_private_ips identifier id'>get_allocated_private_ips</span>
@@ -3139,14 +3209,6 @@ none are currently defined.
       <pre class="lines">
 
 
-629
-630
-631
-632
-633
-634
-635
-636
 637
 638
 639
@@ -3158,10 +3220,18 @@ none are currently defined.
 645
 646
 647
-648</pre>
+648
+649
+650
+651
+652
+653
+654
+655
+656</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 629</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 637</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_allocated_private_ips identifier id'>get_allocated_private_ips</span>
   <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='colon2 op'>::</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
@@ -3217,23 +3287,23 @@ Load the cartridge&#8217;s local manifest from the Broker token
       <pre class="lines">
 
 
-110
-111
-112
-113
-114
-115
-116
-117
 118
 119
 120
 121
 122
-123</pre>
+123
+124
+125
+126
+127
+128
+129
+130
+131</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 118</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_cartridge identifier id'>get_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
   <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_@cartridges ivar id'>@cartridges</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span> <span class='rubyid_cart_name identifier id'>cart_name</span>
@@ -3282,19 +3352,19 @@ Load cartridge&#8217;s local manifest from cartridge directory name
       <pre class="lines">
 
 
-128
-129
-130
-131
-132
-133
-134
-135
 136
-137</pre>
+137
+138
+139
+140
+141
+142
+143
+144
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 128</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 136</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_cartridge_from_directory identifier id'>get_cartridge_from_directory</span><span class='lparen token'>(</span><span class='rubyid_directory identifier id'>directory</span><span class='rparen token'>)</span>
   <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_@cartridges ivar id'>@cartridges</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span> <span class='rubyid_directory identifier id'>directory</span>
@@ -3346,14 +3416,6 @@ author wishes to manipulate
       <pre class="lines">
 
 
-257
-258
-259
-260
-261
-262
-263
-264
 265
 266
 267
@@ -3365,10 +3427,18 @@ author wishes to manipulate
 273
 274
 275
-276</pre>
+276
+277
+278
+279
+280
+281
+282
+283
+284</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 257</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 265</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_lock_files identifier id'>lock_files</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_locked_files identifier id'>locked_files</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_directory identifier id'>directory</span><span class='comma token'>,</span> <span class='string val'>'metadata'</span><span class='comma token'>,</span> <span class='string val'>'locked_files.txt'</span><span class='rparen token'>)</span>
@@ -3424,14 +3494,14 @@ this hack must go away
       <pre class="lines">
 
 
-95
-96
-97
-98
-99</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 95</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 103</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_map_cartridge_name identifier id'>map_cartridge_name</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_results identifier id'>results</span> <span class='assign token'>=</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='dot token'>.</span><span class='rubyid_scan identifier id'>scan</span><span class='lparen token'>(</span><span class='regexp val'>/([a-zA-Z\d-]+)-([\d\.]+)/</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
@@ -3459,20 +3529,20 @@ this hack must go away
       <pre class="lines">
 
 
-425
-426
-427
-428
-429
-430
-431
-432
 433
 434
-435</pre>
+435
+436
+437
+438
+439
+440
+441
+442
+443</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 425</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 433</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_populate_gear_repo identifier id'>populate_gear_repo</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_template_git_url identifier id'>template_git_url</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span> <span class='dstring node'>&quot;Creating gear repo for #{@user.uuid}/#{cartridge_name} from `#{template_git_url}`&quot;</span>
@@ -3522,16 +3592,16 @@ Raises an exception if no such cartridge is present.
       <pre class="lines">
 
 
-73
-74
-75
-76
-77
-78
-79</pre>
+81
+82
+83
+84
+85
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 73</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 81</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_primary_cartridge identifier id'>primary_cartridge</span>
   <span class='rubyid_each_cartridge identifier id'>each_cartridge</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='bitor op'>|</span>
@@ -3594,22 +3664,22 @@ block to process cartridge
       <pre class="lines">
 
 
-677
-678
-679
-680
-681
-682
-683
-684
 685
 686
 687
 688
-689</pre>
+689
+690
+691
+692
+693
+694
+695
+696
+697</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 677</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 685</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_process_cartridges identifier id'>process_cartridges</span><span class='lparen token'>(</span><span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span> <span class='comment val'># : yields cartridge_path</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span>
@@ -3660,14 +3730,14 @@ Search cartridge for any remaining <tt>erb</tt> files render them
       <pre class="lines">
 
 
-440
-441
-442
-443
-444</pre>
+448
+449
+450
+451
+452</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 440</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 448</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_process_erb_templates identifier id'>process_erb_templates</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span> <span class='dstring node'>&quot;Processing ERB templates for #{cartridge_name}&quot;</span>
@@ -3715,14 +3785,6 @@ against each template tile. See <tt>Dir.glob</tt> and
       <pre class="lines">
 
 
-484
-485
-486
-487
-488
-489
-490
-491
 492
 493
 494
@@ -3732,10 +3794,18 @@ against each template tile. See <tt>Dir.glob</tt> and
 498
 499
 500
-501</pre>
+501
+502
+503
+504
+505
+506
+507
+508
+509</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 484</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 492</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_render_erbs identifier id'>render_erbs</span><span class='lparen token'>(</span><span class='rubyid_env identifier id'>env</span><span class='comma token'>,</span> <span class='rubyid_path_glob identifier id'>path_glob</span><span class='rparen token'>)</span>
   <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_path_glob identifier id'>path_glob</span> <span class='plus op'>+</span> <span class='string val'>'/*.erb'</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_f identifier id'>f</span><span class='bitor op'>|</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_file? fid id'>file?</span><span class='lparen token'>(</span><span class='rubyid_f identifier id'>f</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_file identifier id'>file</span><span class='bitor op'>|</span>
@@ -3754,6 +3824,84 @@ against each template tile. See <tt>Dir.glob</tt> and
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_nil nil kw'>nil</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="start_cartridge-instance_method">
+  
+    - (<tt>Object</tt>) <strong>start_cartridge</strong>(cartridge, user_initiated = true) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Starts a cartridge.
+</p>
+<p>
+Both application state and the stop lock are managed during the operation.
+If start of the primary cartridge is invoked and <tt>user_initiated</tt> is
+true, the stop lock is created.
+</p>
+<p>
+<tt>cartridge</tt> : A <tt>Cartridge</tt> instance or <tt>String</tt> name
+of a cartridge.
+</p>
+<p>
+Returns the output of the operation as a <tt>String</tt> or raises a
+<tt>ShellExecutionException</tt> if the cartridge script fails.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+914
+915
+916
+917
+918
+919
+920
+921
+922
+923
+924
+925
+926
+927</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 914</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_start_cartridge identifier id'>start_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_user_initiated identifier id'>user_initiated</span><span class='assign token'>=</span><span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_user_initiated identifier id'>user_initiated</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exists? fid id'>exists?</span><span class='lparen token'>(</span><span class='rubyid_stop_lock identifier id'>stop_lock</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='dstring node'>&quot;Not starting cartridge #{cartridge.name} because the application was explicitly stopped by the user&quot;</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_get_cartridge identifier id'>get_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_is_a? fid id'>is_a?</span><span class='lparen token'>(</span><span class='rubyid_String constant id'>String</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_primary? fid id'>primary?</span>
+    <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_f identifier id'>rm_f</span><span class='lparen token'>(</span><span class='rubyid_stop_lock identifier id'>stop_lock</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_user_initiated identifier id'>user_initiated</span>
+    <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_STARTED constant id'>STARTED</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'start'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3781,13 +3929,15 @@ By default, all cartridges in the gear are started. The selection of
 cartridges to be started is configurable via <tt>options</tt>.
 </p>
 <p>
-# <tt>options</tt>: hash
+<tt>options</tt>: hash
 </p>
 <pre class="code ruby18"><code class="ruby18">
   :primary_only   =&gt; [boolean]  : If +true+, only the primary cartridge will be started.
                                   Mutually exclusive with +secondary_only+.
   :secondary_only =&gt; [boolean]  : If +true+, all cartridges except the primary cartridge
                                   will be started. Mutually exclusive with +primary_only+.
+  :user_unitiated =&gt; [boolean]  : Indicates whether the operation was user initated.
+                                  Default is +true+.
 </code></pre>
 <p>
 Returns the combined output of all <tt>start</tt> action executions as a
@@ -3806,39 +3956,121 @@ Returns the combined output of all <tt>start</tt> action executions as a
       <pre class="lines">
 
 
-873
-874
-875
-876
-877
-878
-879
-880
-881
-882
-883
-884
 885
 886
-887</pre>
+887
+888
+889
+890
+891
+892
+893
+894
+895
+896
+897
+898
+899
+900
+901</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 873</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 885</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_start_gear identifier id'>start_gear</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:primary_only</span><span class='rbrack token'>]</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:secondary_only</span><span class='rbrack token'>]</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='string val'>&quot;The primary_only and secondary_only options are mutually exclusive&quot;</span>
   <span class='rubyid_end end kw'>end</span>
 
+  <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:user_initiated</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span><span class='lparen token'>(</span><span class='symbol val'>:user_initiated</span><span class='rparen token'>)</span>
+
   <span class='rubyid_buffer identifier id'>buffer</span> <span class='assign token'>=</span> <span class='string val'>''</span>
   <span class='rubyid_each_cartridge identifier id'>each_cartridge</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='bitor op'>|</span>
     <span class='rubyid_next next kw'>next</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:primary_only</span><span class='rbrack token'>]</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_primary? fid id'>primary?</span>
     <span class='rubyid_next next kw'>next</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:secondary_only</span><span class='rbrack token'>]</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_primary? fid id'>primary?</span>
 
-    <span class='rubyid_buffer identifier id'>buffer</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'start'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
+    <span class='rubyid_buffer identifier id'>buffer</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_start_cartridge identifier id'>start_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:user_initiated</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_buffer identifier id'>buffer</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="stop_cartridge-instance_method">
+  
+    - (<tt>Object</tt>) <strong>stop_cartridge</strong>(cartridge, user_initiated = true) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Stops a cartridge.
+</p>
+<p>
+Both application state and the stop lock are managed during the operation.
+If stop of the primary cartridge is invoked and <tt>user_initiated</tt> is
+true, the stop lock is removed.
+</p>
+<p>
+<tt>cartridge</tt> : A <tt>Cartridge</tt> instance or <tt>String</tt> name
+of a cartridge.
+</p>
+<p>
+Returns the output of the operation as a <tt>String</tt> or raises a
+<tt>ShellExecutionException</tt> if the cartridge script fails.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+940
+941
+942
+943
+944
+945
+946
+947
+948
+949
+950
+951
+952
+953</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 940</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_cartridge identifier id'>stop_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_user_initiated identifier id'>user_initiated</span><span class='assign token'>=</span><span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_user_initiated identifier id'>user_initiated</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exists? fid id'>exists?</span><span class='lparen token'>(</span><span class='rubyid_stop_lock identifier id'>stop_lock</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='dstring node'>&quot;Not stopping cartridge #{cartridge.name} because the application was explicitly stopped by the user&quot;</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_get_cartridge identifier id'>get_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_is_a? fid id'>is_a?</span><span class='lparen token'>(</span><span class='rubyid_String constant id'>String</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_primary? fid id'>primary?</span>
+    <span class='rubyid_create_stop_lock identifier id'>create_stop_lock</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_user_initiated identifier id'>user_initiated</span>
+    <span class='rubyid_@state ivar id'>@state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_STOPPED constant id'>STOPPED</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'stop'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3862,6 +4094,13 @@ Shuts down the gear by running the cartridge <tt>stop</tt> control action
 for each cartridge in the gear.
 </p>
 <p>
+<tt>options</tt>: hash
+</p>
+<pre class="code ruby18"><code class="ruby18">
+  :user_unitiated =&gt; [boolean]  : Indicates whether the operation was user initated.
+                                  Default is +true+.
+</code></pre>
+<p>
 Returns the combined output of all <tt>stop</tt> action executions as a
 <tt>String</tt>.
 </p>
@@ -3878,25 +4117,62 @@ Returns the combined output of all <tt>stop</tt> action executions as a
       <pre class="lines">
 
 
-850
-851
-852
-853
-854
-855
-856
-857</pre>
+857
+858
+859
+860
+861
+862
+863
+864
+865
+866
+867</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 850</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 857</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_gear identifier id'>stop_gear</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:user_initiated</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_options identifier id'>options</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span><span class='lparen token'>(</span><span class='symbol val'>:user_initiated</span><span class='rparen token'>)</span>
+
   <span class='rubyid_buffer identifier id'>buffer</span> <span class='assign token'>=</span> <span class='string val'>''</span>
+  
   <span class='rubyid_each_cartridge identifier id'>each_cartridge</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='bitor op'>|</span>
-    <span class='rubyid_buffer identifier id'>buffer</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'stop'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
+    <span class='rubyid_buffer identifier id'>buffer</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_stop_cartridge identifier id'>stop_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:user_initiated</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_buffer identifier id'>buffer</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="stop_lock-instance_method">
+  
+    - (<tt>Object</tt>) <strong>stop_lock</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+64
+65
+66</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 64</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_lock identifier id'>stop_lock</span>
+  <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'app-root'</span><span class='comma token'>,</span> <span class='string val'>'runtime'</span><span class='comma token'>,</span> <span class='string val'>'.stop_lock'</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3937,16 +4213,16 @@ tidy()
       <pre class="lines">
 
 
-175
-176
-177
-178
-179
-180
-181</pre>
+183
+184
+185
+186
+187
+188
+189</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 175</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 183</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_tidy identifier id'>tidy</span>
   <span class='rubyid_begin begin kw'>begin</span>
@@ -3994,19 +4270,19 @@ Prepare the given cartridge for the cartridge author
       <pre class="lines">
 
 
-241
-242
-243
-244
-245
-246
-247
-248
 249
-250</pre>
+250
+251
+252
+253
+254
+255
+256
+257
+258</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 241</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 249</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_unlock_gear identifier id'>unlock_gear</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_files identifier id'>files</span> <span class='assign token'>=</span> <span class='rubyid_lock_files identifier id'>lock_files</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
@@ -4051,19 +4327,19 @@ Write out cartridge environment variables
       <pre class="lines">
 
 
-406
-407
-408
-409
-410
-411
-412
-413
 414
-415</pre>
+415
+416
+417
+418
+419
+420
+421
+422
+423</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 406</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 414</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_write_environment_variable identifier id'>write_environment_variable</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_path identifier id'>path</span><span class='comma token'>,</span> <span class='mult op'>*</span><span class='rubyid_hash identifier id'>hash</span><span class='rparen token'>)</span>
   <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkpath identifier id'>mkpath</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_path identifier id'>path</span>
@@ -4086,7 +4362,7 @@ Write out cartridge environment variables
 </div>
 
     <div id="footer">
-  Generated on Sun Mar 31 18:32:36 2013 by
+  Generated on Mon Apr  1 19:00:29 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
