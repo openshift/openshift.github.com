@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=c" />
 <title>
   Class: OpenShift::ApplicationRepository
   
@@ -91,7 +91,7 @@
   
     
       <dt class="r2">Includes:</dt>
-      <dd class="r2"><span class='object_link'><a href="Utils.html" title="OpenShift::Utils (module)">Utils</a></span></dd>
+      <dd class="r2"><span class='object_link'><a href="NodeLogger.html" title="OpenShift::NodeLogger (module)">NodeLogger</a></span>, <span class='object_link'><a href="Utils.html" title="OpenShift::Utils (module)">Utils</a></span></dd>
       
     
   
@@ -119,6 +119,12 @@ This class represents an Application&#8217;s Git repository
   <h2>Constant Summary</h2>
   
     <dl class="constants">
+      
+        <dt id="SUPPORTED_PROTOCOLS-constant" class="">SUPPORTED_PROTOCOLS =
+          
+        </dt>
+        <dd><pre class="code"><span class='dstring node'>%w{git:// http:// https:// file:// ftp:// ftps:// rsync://}</span>
+</pre></dd>
       
         <dt id="GIT_INIT-constant" class="">GIT_INIT =
           <div class="docstring">
@@ -152,35 +158,49 @@ git commit -a -m &quot;Creating template&quot;
         <dd><pre class="code"><span class='string val'>%Q{\
 set -xe;
 git clone --bare --no-hardlinks template &lt;%= @application_name %&gt;.git;
-GIT_DIR=&quot;./&lt;%= @application_name %&gt;.git&quot; git repack
+GIT_DIR=./&lt;%= @application_name %&gt;.git git repack
+}</span>
+</pre></dd>
+      
+        <dt id="GIT_URL_CLONE-constant" class="">GIT_URL_CLONE =
+          
+        </dt>
+        <dd><pre class="code"><span class='string val'>%Q{\
+set -xe;
+git clone --bare --no-hardlinks &lt;%= @url %&gt; &lt;%= @application_name %&gt;.git;
+GIT_DIR=./&lt;%= @application_name %&gt;.git git repack
 }</span>
 </pre></dd>
       
         <dt id="GIT_DEPLOY-constant" class="">GIT_DEPLOY =
-          <div class="docstring">
-  <div class="discussion">
-    <p>
-TODO: submodule support
-</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
+          
         </dt>
         <dd><pre class="code"><span class='string val'>%Q{\
 set -xe;
-git archive --format=tar HEAD | (cd &lt;%= @user_homedir %&gt;/app-root/runtime/repo &amp;&amp; tar --warning=no-timestamp -xf -);
+shopt -s dotglob;
+rm -rf &lt;%= @target_dir %&gt;/*;
+git archive --format=tar HEAD | (cd &lt;%= @target_dir %&gt; &amp;&amp; tar --warning=no-timestamp -xf -);
+}</span>
+</pre></dd>
+      
+        <dt id="GIT_DEPLOY_SUBMODULES-constant" class="">GIT_DEPLOY_SUBMODULES =
+          
+        </dt>
+        <dd><pre class="code"><span class='string val'>%Q{\
+set -xe;
+cd $OPENSHIFT_TMP_DIR;
+git clone &lt;%= @path %&gt; git_cache;
+pushd git_cache;
+git submodule update --init --recursive;
+git submodule foreach --recursive 'git archive --format=tar HEAD | (cd &lt;%= @target_dir %&gt;/\\\\\\$path &amp;&amp; tar --warning=no-timestamp -xf -)';
+popd;
 }</span>
 </pre></dd>
       
         <dt id="GIT_DESCRIPTION-constant" class="">GIT_DESCRIPTION =
           
         </dt>
-        <dd><pre class="code"><span class='string val'>%Q{\
+        <dd><pre class="code"><span class='string val'>%Q{
 &lt;%= @cartridge_name %&gt; application &lt;%= @application_name %&gt;
 }</span>
 </pre></dd>
@@ -205,21 +225,7 @@ gear prereceive
 </pre></dd>
       
         <dt id="POST_RECEIVE-constant" class="">POST_RECEIVE =
-          <div class="docstring">
-  <div class="discussion">
-    <p>
-FIXME: Broker host should not be defined here, rather nurture script should
-look it up currently broker_host is tagged at the end of all the build
-scripts. Kinda like an egg race!
-</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
+          
         </dt>
         <dd><pre class="code"><span class='string val'>%Q{\
 gear postreceive
@@ -287,7 +293,32 @@ Returns the value of attribute path.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#configure_repository-instance_method" title="#configure_repository (instance method)">- (Object) <strong>configure_repository</strong> </a>
+      <a href="#build_bare-instance_method" title="#build_bare (instance method)">- (Object) <strong>build_bare</strong>(path) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Copy a file tree structure and build an application repository.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configure-instance_method" title="#configure (instance method)">- (Object) <strong>configure</strong> </a>
     
 
     
@@ -312,7 +343,29 @@ Install Git repository hooks and set permissions.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#deploy_repository-instance_method" title="#deploy_repository (instance method)">- (Object) <strong>deploy_repository</strong> </a>
+      <a href="#deploy-instance_method" title="#deploy (instance method)">- (Object) <strong>deploy</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#destroy-instance_method" title="#destroy (instance method)">- (Object) <strong>destroy</strong> </a>
     
 
     
@@ -411,7 +464,7 @@ to install a template application for the gear.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#pull_bare_repository-instance_method" title="#pull_bare_repository (instance method)">- (Object) <strong>pull_bare_repository</strong>(path) </a>
+      <a href="#populate_from_url-instance_method" title="#populate_from_url (instance method)">- (Object) <strong>populate_from_url</strong>(cartridge_name, url) </a>
     
 
     
@@ -426,32 +479,8 @@ to install a template application for the gear.
 
   
     <span class="summary_desc"><div class='inline'><p>
-Copy bare git repository to be used as application repository.
-</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#pull_directory-instance_method" title="#pull_directory (instance method)">- (Object) <strong>pull_directory</strong>(path) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>
-Copy a file tree structure and build an application repository.
+<tt>populate_from_url</tt> uses the provided <tt>cartridge_url</tt> to
+install a template application for the gear.
 </p>
 </div></span>
   
@@ -470,8 +499,8 @@ Copy a file tree structure and build an application repository.
   
   
   
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="Utils.html" title="OpenShift::Utils (module)">Utils</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Utils.html#oo_spawn-class_method" title="OpenShift::Utils.oo_spawn (method)">oo_spawn</a></span>, <span class='object_link'><a href="Utils.html#read_results-class_method" title="OpenShift::Utils.read_results (method)">read_results</a></span></p>
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="NodeLogger.html" title="OpenShift::NodeLogger (module)">NodeLogger</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="NodeLogger.html#build_logger-class_method" title="OpenShift::NodeLogger.build_logger (method)">build_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-instance_method" title="OpenShift::NodeLogger#logger (method)">#logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-class_method" title="OpenShift::NodeLogger.logger (method)">logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-instance_method" title="OpenShift::NodeLogger#trace_logger (method)">#trace_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-class_method" title="OpenShift::NodeLogger.trace_logger (method)">trace_logger</a></span></p>
 
   
   
@@ -481,8 +510,8 @@ Copy a file tree structure and build an application repository.
   
   
   
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="NodeLogger.html" title="OpenShift::NodeLogger (module)">NodeLogger</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="NodeLogger.html#build_logger-class_method" title="OpenShift::NodeLogger.build_logger (method)">build_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-instance_method" title="OpenShift::NodeLogger#logger (method)">#logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-class_method" title="OpenShift::NodeLogger.logger (method)">logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-instance_method" title="OpenShift::NodeLogger#trace_logger (method)">#trace_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-class_method" title="OpenShift::NodeLogger.trace_logger (method)">trace_logger</a></span></p>
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Utils.html" title="OpenShift::Utils (module)">Utils</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Utils.html#oo_spawn-class_method" title="OpenShift::Utils.oo_spawn (method)">oo_spawn</a></span>, <span class='object_link'><a href="Utils.html#read_results-class_method" title="OpenShift::Utils.read_results (method)">read_results</a></span></p>
 <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
@@ -516,17 +545,17 @@ Creates a new application Git repository from a template
       <pre class="lines">
 
 
-36
-37
-38
-39</pre>
+42
+43
+44
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 42</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_user identifier id'>user</span><span class='rparen token'>)</span>
   <span class='rubyid_@user ivar id'>@user</span> <span class='assign token'>=</span> <span class='rubyid_user identifier id'>user</span>
-  <span class='rubyid_@path ivar id'>@path</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='comma token'>,</span> <span class='dstring node'>&quot;#{@user.app_name}.git&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_@path ivar id'>@path</span> <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='comma token'>,</span> <span class='dstring node'>&quot;#{@user.app_name}.git&quot;</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -568,12 +597,12 @@ Returns the value of attribute path
       <pre class="lines">
 
 
-30
-31
-32</pre>
+36
+37
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 36</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_path identifier id'>path</span>
   <span class='rubyid_@path ivar id'>@path</span>
@@ -592,9 +621,96 @@ Returns the value of attribute path
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="configure_repository-instance_method">
+  <h3 class="signature first" id="build_bare-instance_method">
   
-    - (<tt>Object</tt>) <strong>configure_repository</strong> 
+    - (<tt>Object</tt>) <strong>build_bare</strong>(path) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Copy a file tree structure and build an application repository
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 183</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_build_bare identifier id'>build_bare</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='rparen token'>)</span>
+  <span class='rubyid_template identifier id'>template</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='comma token'>,</span> <span class='string val'>'template'</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_template identifier id'>template</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_template identifier id'>template</span>
+
+  <span class='rubyid_git_path identifier id'>git_path</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_cp_r identifier id'>cp_r</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='comma token'>,</span> <span class='rubyid_git_path identifier id'>git_path</span><span class='comma token'>,</span> <span class='rubyid_preserve identifier id'>preserve</span><span class='colon op'>:</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_INIT constant id'>GIT_INIT</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_template identifier id'>template</span><span class='comma token'>,</span>
+                 <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+  <span class='rubyid_begin begin kw'>begin</span>
+    <span class='comment val'># trying to clone as the user proved to be painful as git managed to &quot;lose&quot; the selinux context</span>
+    <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_LOCAL_CLONE constant id'>GIT_LOCAL_CLONE</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+                   <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_git_path identifier id'>git_path</span><span class='comma token'>,</span>
+                   <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_@path ivar id'>@path</span>
+
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
+              <span class='string val'>'Failed to clone application git repository from template repository'</span><span class='comma token'>,</span>
+              <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_rc identifier id'>rc</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_stdout identifier id'>stdout</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_stderr identifier id'>stderr</span><span class='rparen token'>)</span>
+  <span class='rubyid_ensure ensure kw'>ensure</span>
+    <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_template identifier id'>template</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="configure-instance_method">
+  
+    - (<tt>Object</tt>) <strong>configure</strong> 
   
 
   
@@ -618,29 +734,31 @@ Install Git repository hooks and set permissions
       <pre class="lines">
 
 
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153</pre>
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 137</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 162</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_configure_repository identifier id'>configure_repository</span>
-  <span class='rubyid_UnixUser constant id'>UnixUser</span><span class='dot token'>.</span><span class='rubyid_match_ownership identifier id'>match_ownership</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_configure identifier id'>configure</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_chown_R identifier id'>chown_R</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span>
+  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;restorecon -R #{@path}; chcon -R -l #{UnixUser.get_mcs_label(@user.uid)} #{@path}&quot;</span><span class='rparen token'>)</span>
 
   <span class='comment val'># application developer cannot change git hooks</span>
   <span class='rubyid_hooks identifier id'>hooks</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@path ivar id'>@path</span><span class='comma token'>,</span> <span class='string val'>'hooks'</span><span class='rparen token'>)</span>
@@ -663,9 +781,9 @@ Install Git repository hooks and set permissions
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="deploy_repository-instance_method">
+  <h3 class="signature " id="deploy-instance_method">
   
-    - (<tt>Object</tt>) <strong>deploy_repository</strong> 
+    - (<tt>Object</tt>) <strong>deploy</strong> 
   
 
   
@@ -677,10 +795,6 @@ Install Git repository hooks and set permissions
       <pre class="lines">
 
 
-121
-122
-123
-124
 125
 126
 127
@@ -689,23 +803,92 @@ Install Git repository hooks and set permissions
 130
 131
 132
-133</pre>
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 121</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 125</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy_repository identifier id'>deploy_repository</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy identifier id'>deploy</span>
   <span class='comment val'># expose variables for ERB processing</span>
   <span class='rubyid_@application_name ivar id'>@application_name</span> <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span>
   <span class='rubyid_@user_homedir ivar id'>@user_homedir</span>     <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span>
+  <span class='rubyid_@target_dir ivar id'>@target_dir</span>       <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'app-root'</span><span class='comma token'>,</span> <span class='string val'>'runtime'</span><span class='comma token'>,</span> <span class='string val'>'repo'</span><span class='rparen token'>)</span>
 
-  <span class='comment val'># FIXME: See below</span>
-  <span class='rubyid_@broker_host ivar id'>@broker_host</span>      <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Config constant id'>Config</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='dot token'>.</span><span class='rubyid_get identifier id'>get</span><span class='lparen token'>(</span><span class='string val'>'BROKER_HOST'</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_rf identifier id'>rm_rf</span> <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_rf identifier id'>rm_rf</span> <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'.[^\.]*'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
 
   <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_DEPLOY constant id'>GIT_DEPLOY</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
                  <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_@path ivar id'>@path</span><span class='comma token'>,</span>
                  <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>                 <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
                  <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'.gitmodules'</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_cache identifier id'>cache</span> <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'OPENSHIFT_TMP_DIR'</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='string val'>'git_cache'</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkpath identifier id'>mkpath</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_DEPLOY_SUBMODULES constant id'>GIT_DEPLOY_SUBMODULES</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span>
+                 <span class='rubyid_env identifier id'>env</span><span class='colon op'>:</span>                 <span class='rubyid_env identifier id'>env</span><span class='comma token'>,</span>
+                 <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>                 <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
+                 <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/bin/rm -rf #{cache} &amp;&quot;</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="destroy-instance_method">
+  
+    - (<tt>Object</tt>) <strong>destroy</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+156
+157
+158</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 156</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_@path ivar id'>@path</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -754,12 +937,12 @@ Install Git repository hooks and set permissions
       <pre class="lines">
 
 
-41
-42
-43</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 47</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_exist? fid id'>exist?</span>
   <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_directory? fid id'>directory?</span><span class='lparen token'>(</span><span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span>
@@ -816,13 +999,6 @@ will be cloned as the application&#8217;s repository.
       <pre class="lines">
 
 
-53
-54
-55
-56
-57
-58
-59
 60
 61
 62
@@ -848,10 +1024,14 @@ will be cloned as the application&#8217;s repository.
 82
 83
 84
-85</pre>
+85
+86
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 60</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_populate_from_cartridge identifier id'>populate_from_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_exists? fid id'>exists?</span>
@@ -874,17 +1054,14 @@ will be cloned as the application&#8217;s repository.
   <span class='rubyid_@cartridge_name ivar id'>@cartridge_name</span>   <span class='assign token'>=</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span>
   <span class='rubyid_@user_homedir ivar id'>@user_homedir</span>     <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span>
 
-  <span class='comment val'># FIXME: See below</span>
-  <span class='rubyid_@broker_host ivar id'>@broker_host</span>      <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Config constant id'>Config</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='dot token'>.</span><span class='rubyid_get identifier id'>get</span><span class='lparen token'>(</span><span class='string val'>'BROKER_HOST'</span><span class='rparen token'>)</span>
-
   <span class='rubyid_case case kw'>case</span>
     <span class='rubyid_when when kw'>when</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exists? fid id'>exists?</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template identifier id'>cartridge_template</span><span class='rparen token'>)</span>
-      <span class='rubyid_pull_directory identifier id'>pull_directory</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template identifier id'>cartridge_template</span><span class='rparen token'>)</span>
+      <span class='rubyid_build_bare identifier id'>build_bare</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template identifier id'>cartridge_template</span><span class='rparen token'>)</span>
     <span class='rubyid_when when kw'>when</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template_git identifier id'>cartridge_template_git</span><span class='rparen token'>)</span>
-      <span class='rubyid_pull_bare_repository identifier id'>pull_bare_repository</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template_git identifier id'>cartridge_template_git</span><span class='rparen token'>)</span>
+      <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_cp_r identifier id'>cp_r</span><span class='lparen token'>(</span><span class='rubyid_cartridge_template_git identifier id'>cartridge_template_git</span><span class='comma token'>,</span> <span class='rubyid_@path ivar id'>@path</span><span class='comma token'>,</span> <span class='rubyid_preserve identifier id'>preserve</span><span class='colon op'>:</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
-  <span class='rubyid_configure_repository identifier id'>configure_repository</span>
+  <span class='rubyid_configure identifier id'>configure</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -893,52 +1070,9 @@ will be cloned as the application&#8217;s repository.
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="pull_bare_repository-instance_method">
+  <h3 class="signature " id="populate_from_url-instance_method">
   
-    - (<tt>Object</tt>) <strong>pull_bare_repository</strong>(path) 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>
-Copy bare git repository to be used as application repository
-</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-89
-90
-91</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 89</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_pull_bare_repository identifier id'>pull_bare_repository</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='rparen token'>)</span>
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_cp_r identifier id'>cp_r</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='comma token'>,</span> <span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="pull_directory-instance_method">
-  
-    - (<tt>Object</tt>) <strong>pull_directory</strong>(path) 
+    - (<tt>Object</tt>) <strong>populate_from_url</strong>(cartridge_name, url) 
   
 
   
@@ -947,7 +1081,8 @@ Copy bare git repository to be used as application repository
 </h3><div class="docstring">
   <div class="discussion">
     <p>
-Copy a file tree structure and build an application repository
+<tt>populate_from_url</tt> uses the provided <tt>cartridge_url</tt> to
+install a template application for the gear
 </p>
 
 
@@ -955,6 +1090,19 @@ Copy a file tree structure and build an application repository
 </div>
 <div class="tags">
   
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Utils/ShellExecutionException.html" title="OpenShift::Utils::ShellExecutionException (class)">Utils::ShellExecutionException</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -986,35 +1134,43 @@ Copy a file tree structure and build an application repository
 116
 117
 118
-119</pre>
+119
+120
+121
+122
+123</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 95</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_pull_directory identifier id'>pull_directory</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='rparen token'>)</span>
-  <span class='rubyid_template identifier id'>template</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='comma token'>,</span> <span class='string val'>'template'</span><span class='rparen token'>)</span>
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_template identifier id'>template</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_template identifier id'>template</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_populate_from_url identifier id'>populate_from_url</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='rparen token'>)</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_exists? fid id'>exists?</span>
 
-  <span class='rubyid_git_path identifier id'>git_path</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='rparen token'>)</span>
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_cp_r identifier id'>cp_r</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='comma token'>,</span> <span class='rubyid_git_path identifier id'>git_path</span><span class='rparen token'>)</span>
+  <span class='rubyid_supported identifier id'>supported</span> <span class='assign token'>=</span> <span class='rubyid_SUPPORTED_PROTOCOLS constant id'>SUPPORTED_PROTOCOLS</span><span class='dot token'>.</span><span class='rubyid_any? fid id'>any?</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_k identifier id'>k</span><span class='bitor op'>|</span> <span class='rubyid_url identifier id'>url</span><span class='dot token'>.</span><span class='rubyid_start_with? fid id'>start_with?</span><span class='lparen token'>(</span><span class='rubyid_k identifier id'>k</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
+            <span class='dstring node'>&quot;CLIENT_ERROR: Source Code repository URL type must be one of: #{SUPPORTED_PROTOCOLS.join(', ')}&quot;</span><span class='comma token'>,</span> <span class='integer val'>130</span>
+        <span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_supported identifier id'>supported</span>
 
-  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_INIT constant id'>GIT_INIT</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
-                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_template identifier id'>template</span><span class='comma token'>,</span>
-                 <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkpath identifier id'>mkpath</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'git'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># expose variables for ERB processing</span>
+  <span class='rubyid_@application_name ivar id'>@application_name</span> <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span>
+  <span class='rubyid_@cartridge_name ivar id'>@cartridge_name</span>   <span class='assign token'>=</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span>
+  <span class='rubyid_@user_homedir ivar id'>@user_homedir</span>     <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span>
+  <span class='rubyid_@url ivar id'>@url</span>              <span class='assign token'>=</span> <span class='rubyid_url identifier id'>url</span>
+
   <span class='rubyid_begin begin kw'>begin</span>
-    <span class='comment val'># trying to clone as the user proved to be painful as git managed to &quot;lose&quot; the selinux context</span>
-    <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_LOCAL_CLONE constant id'>GIT_LOCAL_CLONE</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+    <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_URL_CLONE constant id'>GIT_URL_CLONE</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
                    <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_git_path identifier id'>git_path</span><span class='comma token'>,</span>
                    <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
-    <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_@path ivar id'>@path</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_@path ivar id'>@path</span>
-
-    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
-              <span class='string val'>'Failed to clone application git repository from template repository'</span><span class='comma token'>,</span>
-              <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_rc identifier id'>rc</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_stdout identifier id'>stdout</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_stderr identifier id'>stderr</span><span class='rparen token'>)</span>
-  <span class='rubyid_ensure ensure kw'>ensure</span>
-    <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_template identifier id'>template</span><span class='rparen token'>)</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExecutionException constant id'>ShellExecutionException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
+              <span class='dstring node'>&quot;CLIENT_ERROR: Source Code repository could not be cloned: '#{url}'.  Please verify the repository is correct and contact support.&quot;</span><span class='comma token'>,</span>
+              <span class='integer val'>131</span>
+          <span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
+
+  <span class='rubyid_configure identifier id'>configure</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1027,7 +1183,7 @@ Copy a file tree structure and build an application repository
 </div>
 
     <div id="footer">
-  Generated on Tue Apr  2 18:35:18 2013 by
+  Generated on Wed Apr  3 19:39:24 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

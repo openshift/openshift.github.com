@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=c" />
 <title>
   Module: OpenShift::Utils
   
@@ -237,7 +237,18 @@ options: hash
   :timeout                   : Maximum number of seconds to wait for command to finish. default: 3600
   :uid                       : spawn command as given user in a SELinux context using runuser/runcon,
                              : stdin for the command is /dev/null
+  :out                       : If specified, STDOUT from the child process will be redirected to the
+                               provided +IO+ object.
+  :err                       : If specified, STDERR from the child process will be redirected to the
+                               provided +IO+ object.
 </code></pre>
+<p>
+NOTE: If the <tt>out</tt> or <tt>err</tt> options are specified, the
+corresponding return value from <tt>oo_spawn</tt> will be the
+incoming/provided <tt>IO</tt> objects instead of the buffered
+<tt>String</tt> output. It&#8217;s the responsibility of the caller to
+correctly handle the resulting data type.
+</p>
 
 
   </div>
@@ -251,14 +262,6 @@ options: hash
       <pre class="lines">
 
 
-72
-73
-74
-75
-76
-77
-78
-79
 80
 81
 82
@@ -311,10 +314,18 @@ options: hash
 129
 130
 131
-132</pre>
+132
+133
+134
+135
+136
+137
+138
+139
+140</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 80</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_command identifier id'>command</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
 
@@ -421,14 +432,6 @@ options: hash
       <pre class="lines">
 
 
-142
-143
-144
-145
-146
-147
-148
-149
 150
 151
 152
@@ -462,10 +465,18 @@ options: hash
 180
 181
 182
-183</pre>
+183
+184
+185
+186
+187
+188
+189
+190
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 142</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 150</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_read_results identifier id'>read_results</span><span class='lparen token'>(</span><span class='rubyid_pid identifier id'>pid</span><span class='comma token'>,</span> <span class='rubyid_stdout identifier id'>stdout</span><span class='comma token'>,</span> <span class='rubyid_stderr identifier id'>stderr</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='rparen token'>)</span>
   <span class='comment val'># TODO: Are these variables thread safe...?</span>
@@ -520,7 +531,7 @@ options: hash
 </div>
 
     <div id="footer">
-  Generated on Tue Apr  2 18:34:55 2013 by
+  Generated on Wed Apr  3 19:38:54 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
