@@ -507,10 +507,6 @@ destroy the domain
       <pre class="lines">
 
 
-152
-153
-154
-155
 156
 157
 158
@@ -543,10 +539,18 @@ destroy the domain
 185
 186
 187
-188</pre>
+188
+189
+190
+191
+192
+193
+194
+195
+196</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 152</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 156</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
@@ -572,7 +576,11 @@ destroy the domain
       <span class='rubyid_apps identifier id'>apps</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain_id identifier id'>domain_id</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain_id identifier id'>domain_id</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:bad_request</span><span class='comma token'>,</span> <span class='string val'>&quot;Domain contains applications. Delete applications first or set force to true.&quot;</span><span class='comma token'>,</span> <span class='integer val'>128</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_DOMAIN&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_requested_api_version identifier id'>requested_api_version</span> <span class='leq op'>&lt;=</span> <span class='float val'>1.3</span>
+      <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:bad_request</span><span class='comma token'>,</span> <span class='string val'>&quot;Domain contains applications. Delete applications first or set force to true.&quot;</span><span class='comma token'>,</span> <span class='integer val'>128</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_DOMAIN&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Domain contains applications. Delete applications first or set force to true.&quot;</span><span class='comma token'>,</span> <span class='integer val'>128</span><span class='comma token'>,</span> <span class='string val'>&quot;DELETE_DOMAIN&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
@@ -923,7 +931,11 @@ The updated domain
 140
 141
 142
-143</pre>
+143
+144
+145
+146
+147</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/domains_controller.rb', line 98</span>
@@ -946,6 +958,10 @@ The updated domain
     <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain '#{id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;UPDATE_DOMAIN&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_domain_id identifier id'>domain_id</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Domain contains applications. Delete applications first before changing the domain namespace.&quot;</span><span class='comma token'>,</span> <span class='integer val'>128</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_new_namespace identifier id'>new_namespace</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_count identifier id'>count</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
@@ -985,7 +1001,7 @@ The updated domain
 </div>
 
     <div id="footer">
-  Generated on Wed Apr  3 19:32:44 2013 by
+  Generated on Fri Apr  5 13:35:21 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
