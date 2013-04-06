@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=c" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
   Class: OpenShift::ApplicationContainer
   
@@ -3543,14 +3543,14 @@ client on STDERR.
   <span class='rubyid_stop_gear identifier id'>stop_gear</span>
 
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_each_cartridge identifier id'>each_cartridge</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='bitor op'>|</span>
-    <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'pre-snapshot'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
+    <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'pre-snapshot'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span><span class='colon op'>:</span> <span class='rubyid_$stderr gvar id'>$stderr</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_exclusions identifier id'>exclusions</span> <span class='assign token'>=</span> <span class='rubyid_snapshot_exclusions identifier id'>snapshot_exclusions</span>
   <span class='rubyid_write_snapshot_archive identifier id'>write_snapshot_archive</span><span class='lparen token'>(</span><span class='rubyid_exclusions identifier id'>exclusions</span><span class='rparen token'>)</span>
 
   <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_each_cartridge identifier id'>each_cartridge</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='bitor op'>|</span>
-    <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'post-snapshot'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
+    <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'post-snapshot'</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='rubyid_err identifier id'>err</span><span class='colon op'>:</span> <span class='rubyid_$stderr gvar id'>$stderr</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>      
 
   <span class='rubyid_start_gear identifier id'>start_gear</span>
@@ -4129,7 +4129,7 @@ warnings. Any other exceptions are unexpected and will bubble out.
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_write_snapshot_archive identifier id'>write_snapshot_archive</span><span class='lparen token'>(</span><span class='rubyid_exclusions identifier id'>exclusions</span><span class='rparen token'>)</span>
   <span class='rubyid_gear_env identifier id'>gear_env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
 
-  <span class='rubyid_exclusions identifier id'>exclusions</span> <span class='assign token'>=</span> <span class='rubyid_exclusions identifier id'>exclusions</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_x identifier id'>x</span><span class='bitor op'>|</span> <span class='dstring node'>&quot;--exclude=#{x}&quot;</span> <span class='rbrace token'>}</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='string val'>' '</span><span class='rparen token'>)</span>
+  <span class='rubyid_exclusions identifier id'>exclusions</span> <span class='assign token'>=</span> <span class='rubyid_exclusions identifier id'>exclusions</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_x identifier id'>x</span><span class='bitor op'>|</span> <span class='dstring node'>&quot;--exclude=./$OPENSHIFT_GEAR_UUID/#{x}&quot;</span> <span class='rbrace token'>}</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='string val'>' '</span><span class='rparen token'>)</span>
 
   <span class='rubyid_tar_cmd identifier id'>tar_cmd</span> <span class='assign token'>=</span> <span class='dstring node'>%Q{
 /bin/tar --ignore-failed-read -czf - \
@@ -4165,7 +4165,7 @@ warnings. Any other exceptions are unexpected and will bubble out.
 </div>
 
     <div id="footer">
-  Generated on Fri Apr  5 18:33:54 2013 by
+  Generated on Sat Apr  6 18:33:35 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
