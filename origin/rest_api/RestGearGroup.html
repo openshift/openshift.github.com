@@ -146,6 +146,7 @@ Example:
     &lt;scales-to&gt;-1&lt;/scales-to&gt;
     &lt;base-gear-storage&gt;1&lt;/base-gear-storage&gt;
     &lt;additional-gear-storage&gt;0&lt;/additional-gear-storage&gt;
+    &lt;ssh-url&gt;ssh://5124897d6892dfe819000005@testapp-localns.example.com&lt;/ssh-url&gt;
   &lt;/gear-group&gt;
   `</span><span class='xstring val'>``</span>
 </code></pre>
@@ -432,7 +433,7 @@ UUID that identified the gear group.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">- (RestGearGroup) <strong>initialize</strong>(group_instance, gear_states = {}, url, nolinks) </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (RestGearGroup) <strong>initialize</strong>(group_instance, gear_states = {}, app, domain, url, nolinks) </a>
     
 
     
@@ -488,7 +489,7 @@ A new instance of RestGearGroup.
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    - (<tt><span class='object_link'><a href="" title="RestGearGroup (class)">RestGearGroup</a></span></tt>) <strong>initialize</strong>(group_instance, gear_states = {}, url, nolinks) 
+    - (<tt><span class='object_link'><a href="" title="RestGearGroup (class)">RestGearGroup</a></span></tt>) <strong>initialize</strong>(group_instance, gear_states = {}, app, domain, url, nolinks) 
   
 
   
@@ -512,9 +513,6 @@ A new instance of RestGearGroup
       <pre class="lines">
 
 
-67
-68
-69
 70
 71
 72
@@ -542,18 +540,23 @@ A new instance of RestGearGroup
 94
 95
 96
-97</pre>
+97
+98
+99
+100
+101</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 70</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
     <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
       <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+      <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
     <span class='rbrace token'>}</span> 
   <span class='rbrace token'>}</span>
   
@@ -639,9 +642,6 @@ profile)
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -678,21 +678,26 @@ profile)
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -777,9 +782,6 @@ Number of GB of disk space assoicated with gear profile
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -816,21 +818,26 @@ Number of GB of disk space assoicated with gear profile
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -915,9 +922,6 @@ List of cartridges running on the gears within this gear group.
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -954,21 +958,26 @@ List of cartridges running on the gears within this gear group.
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -1053,9 +1062,6 @@ The profile of all gears in the gear group
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -1092,21 +1098,26 @@ The profile of all gears in the gear group
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -1191,9 +1202,6 @@ List of gears running within this gear group.
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -1230,21 +1238,26 @@ List of gears running within this gear group.
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -1329,9 +1342,6 @@ UUID that identified the gear group
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -1368,21 +1378,26 @@ UUID that identified the gear group
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -1467,9 +1482,6 @@ Minimum number of gears within this gear group
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -1506,21 +1518,26 @@ Minimum number of gears within this gear group
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -1605,9 +1622,6 @@ Maximum number of gears within this gear group
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -1644,21 +1658,26 @@ Maximum number of gears within this gear group
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -1743,9 +1762,6 @@ UUID that identified the gear group
       <pre class="lines">
 
 
-64
-65
-66
 67
 68
 69
@@ -1782,21 +1798,26 @@ UUID that identified the gear group
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 67</span>
 
 <span class='rubyid_class class kw'>class</span> <span class='rubyid_RestGearGroup constant id'>RestGearGroup</span> <span class='lt op'>&lt;</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Model constant id'>Model</span>
   <span class='rubyid_attr_accessor identifier id'>attr_accessor</span> <span class='symbol val'>:uuid</span><span class='comma token'>,</span> <span class='symbol val'>:name</span><span class='comma token'>,</span> <span class='symbol val'>:gear_profile</span><span class='comma token'>,</span> <span class='symbol val'>:cartridges</span><span class='comma token'>,</span> <span class='symbol val'>:gears</span><span class='comma token'>,</span> <span class='symbol val'>:scales_from</span><span class='comma token'>,</span> <span class='symbol val'>:scales_to</span><span class='comma token'>,</span> <span class='symbol val'>:base_gear_storage</span><span class='comma token'>,</span> <span class='symbol val'>:additional_gear_storage</span>
 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_nolinks identifier id'>nolinks</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>         <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>         <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gear_profile identifier id'>gear_profile</span> <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span>        <span class='assign token'>=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> 
       <span class='lbrace token'>{</span> <span class='symbol val'>:id</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> 
         <span class='symbol val'>:state</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_gear_states identifier id'>gear_states</span><span class='lbrack token'>[</span><span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='string val'>'unknown'</span><span class='comma token'>,</span> 
+        <span class='symbol val'>:ssh_url</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='dstring node'>&quot;ssh://#{app.ssh_uri(domain, gear.uuid)}&quot;</span>
       <span class='rbrace token'>}</span> 
     <span class='rbrace token'>}</span>
     
@@ -1864,13 +1885,13 @@ UUID that identified the gear group
       <pre class="lines">
 
 
-99
-100
-101
-102</pre>
+103
+104
+105
+106</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 99</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_gear_group.rb', line 103</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_xml identifier id'>to_xml</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:tag_name</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='string val'>&quot;gear_group&quot;</span>
@@ -1887,7 +1908,7 @@ UUID that identified the gear group
 </div>
 
     <div id="footer">
-  Generated on Sun Apr  7 18:50:23 2013 by
+  Generated on Tue Apr  9 16:37:58 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
