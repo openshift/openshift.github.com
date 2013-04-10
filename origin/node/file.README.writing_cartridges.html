@@ -322,30 +322,33 @@ application developer while the cartridge is locked.</p>
 
 <p>Any non-existent files that are included in the list will be created
 before your <code>setup</code> script is called.  Any missing parent directories will be
-created as needed. The list is anchored at the gear&#39;s home directory.
+created as needed. The list is anchored at the cartridge&#39;s directory.
 An entry ending in slash is processed as a directory.  Entries ending
 in asterisk are a list of files.  Entries ending in an other character
 are considered files.  OpenShift will not attempt to change files to
 directories or vice versa, and your cartridge may fail to operate if
 files are miscatergorized and you depend on OpenShift to create them.</p>
 
+<p>Any lines starting with <code>~/</code> will be anchored at the gear directory rather
+than the cartridge directory.</p>
+
 <h4>Lock configuration example</h4>
 
 <p>Here is a <code>locked_files.txt</code> for a PHP cartridge:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='dot token'>.</span><span class='rubyid_pearrc identifier id'>pearrc</span>
-<span class='rubyid_php identifier id'>php</span><span class='minus op'>-</span><span class='float val'>5.3</span><span class='div op'>/</span><span class='rubyid_bin identifier id'>bin</span><span class='div op'>/</span>
-<span class='rubyid_php identifier id'>php</span><span class='minus op'>-</span><span class='float val'>5.3</span><span class='div op'>/</span><span class='rubyid_conf identifier id'>conf</span><span class='div op'>/</span><span class='mult op'>*</span>
+<pre class="code ruby"><code class="ruby"><span class='bitnot op'>~</span><span class='regexp val'>/.pearrc
+bin/</span>
+<span class='rubyid_conf identifier id'>conf</span><span class='div op'>/</span><span class='mult op'>*</span>
 </code></pre>
 
 <p>In the above list:
-  * the file <code>.pearrc</code> will be created, if it does not exists, and be made editable by you.
-  * the directory <code>php-5.3/bin</code> is locked but not the files it contains. While you can add files, both you
+  * the file <code>~/.pearrc</code> will be created, if it does not exists, and be made editable by you.
+  * the directory <code>php/bin</code> is locked but not the files it contains. While you can add files, both you
     and the application developer can edit any files contained.
-  * the files in <code>php-5.3/conf</code> are locked but the directory itself is not.
+  * the files in <code>php/conf</code> are locked but the directory itself is not.
     So you or the application developer can add files, but only you can edit them.</p>
 
-<p>Directories like <code>.node-gyp</code> and <code>.npm</code> in nodejs are <strong>NOT</strong> candidates
+<p>Directories like <code>~/.node-gyp</code> and <code>~/.npm</code> in nodejs are <strong>NOT</strong> candidates
 to be created in this manner as they require the application developer to have read
 and write access while the application is deploying and running. These
 directories would need to be created by the nodejs <code>setup</code> script.</p>
@@ -353,10 +356,10 @@ directories would need to be created by the nodejs <code>setup</code> script.</p
 <p>The following list is reserved by OpenShift in the the gear&#39;s home
 directory:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='dot token'>.</span><span class='rubyid_ssh identifier id'>ssh</span>
-<span class='dot token'>.</span><span class='rubyid_sandbox identifier id'>sandbox</span>
-<span class='dot token'>.</span><span class='rubyid_tmp identifier id'>tmp</span>
-<span class='dot token'>.</span><span class='rubyid_env identifier id'>env</span>
+<pre class="code ruby"><code class="ruby"><span class='bitnot op'>~</span><span class='regexp val'>/.ssh
+~/</span><span class='dot token'>.</span><span class='rubyid_sandbox identifier id'>sandbox</span>
+<span class='bitnot op'>~</span><span class='regexp val'>/.tmp
+~/</span><span class='dot token'>.</span><span class='rubyid_env identifier id'>env</span>
 <span class='rubyid_any identifier id'>any</span> <span class='rubyid_not not kw'>not</span> <span class='rubyid_hidden identifier id'>hidden</span> <span class='rubyid_directory identifier id'>directory</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_file identifier id'>file</span>
 </code></pre>
 
@@ -1163,7 +1166,7 @@ authors should take care to be as conservative as possible.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Apr  9 18:35:08 2013 by
+  Generated on Wed Apr 10 19:17:09 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

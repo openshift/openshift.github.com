@@ -236,7 +236,7 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#reserve_uid-class_method" title="reserve_uid (class method)">+ (Object) <strong>reserve_uid</strong>(uuid) </a>
+      <a href="#reserve_uid-class_method" title="reserve_uid (class method)">+ (Object) <strong>reserve_uid</strong>(uuid, preferred_uid = nil) </a>
     
 
     
@@ -760,12 +760,12 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
       <pre class="lines">
 
 
-211
-212
-213</pre>
+217
+218
+219</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 211</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 217</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_inc_externally_reserved_uids_size identifier id'>inc_externally_reserved_uids_size</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rparen token'>)</span>
   <span class='rubyid_District constant id'>District</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='string val'>&quot;uuid&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_uuid identifier id'>uuid</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span> <span class='string val'>&quot;$inc&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;externally_reserved_uids_size&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span><span class='rbrace token'>}</span> <span class='rbrace token'>}</span><span class='rparen token'>)</span>
@@ -779,7 +779,7 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
       <div class="method_details ">
   <h3 class="signature " id="reserve_uid-class_method">
   
-    + (<tt>Object</tt>) <strong>reserve_uid</strong>(uuid) 
+    + (<tt>Object</tt>) <strong>reserve_uid</strong>(uuid, preferred_uid = nil) 
   
 
   
@@ -795,15 +795,27 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
 165
 166
 167
-168</pre>
+168
+169
+170
+171
+172
+173
+174</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 164</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_reserve_uid identifier id'>reserve_uid</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rparen token'>)</span>
-  <span class='rubyid_obj identifier id'>obj</span> <span class='assign token'>=</span> <span class='rubyid_District constant id'>District</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='symbol val'>:uuid</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='symbol val'>:available_capacity</span><span class='dot token'>.</span><span class='rubyid_gt identifier id'>gt</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>0</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_and_modify identifier id'>find_and_modify</span><span class='lparen token'>(</span> <span class='lbrace token'>{</span><span class='string val'>&quot;$pop&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_uids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>-1</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='string val'>&quot;$inc&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_capacity&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>-1</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
-  <span class='rubyid_return return kw'>return</span> <span class='rubyid_obj identifier id'>obj</span><span class='dot token'>.</span><span class='rubyid_available_uids identifier id'>available_uids</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_obj identifier id'>obj</span>
-  <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_reserve_uid identifier id'>reserve_uid</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='rubyid_preferred_uid identifier id'>preferred_uid</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+  <span class='rubyid_uid identifier id'>uid</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_preferred_uid identifier id'>preferred_uid</span>
+    <span class='rubyid_obj identifier id'>obj</span> <span class='assign token'>=</span> <span class='rubyid_District constant id'>District</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='symbol val'>:uuid</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='symbol val'>:available_capacity</span><span class='dot token'>.</span><span class='rubyid_gt identifier id'>gt</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>0</span><span class='comma token'>,</span> <span class='symbol val'>:available_uids</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_preferred_uid identifier id'>preferred_uid</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_and_modify identifier id'>find_and_modify</span><span class='lparen token'>(</span> <span class='lbrace token'>{</span><span class='string val'>&quot;$pull&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_uids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_preferred_uid identifier id'>preferred_uid</span> <span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='string val'>&quot;$inc&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_capacity&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>-1</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+    <span class='rubyid_uid identifier id'>uid</span> <span class='assign token'>=</span> <span class='rubyid_preferred_uid identifier id'>preferred_uid</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_obj identifier id'>obj</span>
+  <span class='rubyid_else else kw'>else</span>
+    <span class='rubyid_obj identifier id'>obj</span> <span class='assign token'>=</span> <span class='rubyid_District constant id'>District</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='symbol val'>:uuid</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='symbol val'>:available_capacity</span><span class='dot token'>.</span><span class='rubyid_gt identifier id'>gt</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>0</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_and_modify identifier id'>find_and_modify</span><span class='lparen token'>(</span> <span class='lbrace token'>{</span><span class='string val'>&quot;$pop&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_uids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>-1</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='string val'>&quot;$inc&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_capacity&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>-1</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+    <span class='rubyid_uid identifier id'>uid</span> <span class='assign token'>=</span> <span class='rubyid_obj identifier id'>obj</span><span class='dot token'>.</span><span class='rubyid_available_uids identifier id'>available_uids</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_obj identifier id'>obj</span>
+  <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_uid identifier id'>uid</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -826,12 +838,12 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
       <pre class="lines">
 
 
-170
-171
-172</pre>
+176
+177
+178</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 170</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 176</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_unreserve_uid identifier id'>unreserve_uid</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='rubyid_uid identifier id'>uid</span><span class='rparen token'>)</span>
   <span class='rubyid_District constant id'>District</span><span class='dot token'>.</span><span class='rubyid_where identifier id'>where</span><span class='lparen token'>(</span><span class='symbol val'>:uuid</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='symbol val'>:available_uids</span><span class='dot token'>.</span><span class='rubyid_nin identifier id'>nin</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrack token'>[</span><span class='rubyid_uid identifier id'>uid</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='string val'>&quot;$push&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_uids&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_uid identifier id'>uid</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='string val'>&quot;$inc&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;available_capacity&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='integer val'>1</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
@@ -918,12 +930,6 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
       <pre class="lines">
 
 
-174
-175
-176
-177
-178
-179
 180
 181
 182
@@ -932,10 +938,16 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
 185
 186
 187
-188</pre>
+188
+189
+190
+191
+192
+193
+194</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 174</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 180</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_capacity identifier id'>add_capacity</span><span class='lparen token'>(</span><span class='rubyid_num_uids identifier id'>num_uids</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_num_uids identifier id'>num_uids</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
@@ -1150,12 +1162,6 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
       <pre class="lines">
 
 
-190
-191
-192
-193
-194
-195
 196
 197
 198
@@ -1169,10 +1175,16 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
 206
 207
 208
-209</pre>
+209
+210
+211
+212
+213
+214
+215</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 190</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/district.rb', line 196</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_capacity identifier id'>remove_capacity</span><span class='lparen token'>(</span><span class='rubyid_num_uids identifier id'>num_uids</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_num_uids identifier id'>num_uids</span> <span class='gt op'>&gt;</span> <span class='integer val'>0</span>
@@ -1344,7 +1356,7 @@ attr_accessor :server_identities, :active_server_identities_size, :uuid,
 </div>
 
     <div id="footer">
-  Generated on Tue Apr  9 18:08:19 2013 by
+  Generated on Wed Apr 10 18:46:10 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
