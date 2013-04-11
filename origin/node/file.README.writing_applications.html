@@ -63,19 +63,112 @@
 
     <div id="content"><div id='filecontents'><h1>How To Write An Application To Host on OpenShift 2.0</h1>
 
-<ul>
-<li>[ ] hooks</li>
-<li><p>[ ] git</p>
+<p>OpenShift applications are tightly integrated with Git. The application&#39;s Git
+repository contains not only the code and configuration for the application, but
+also special files which help integrate the application OpenShift itself.</p>
 
-<p>.openshift/action-hooks/pre-start-
-.openshift/action-hooks/post-start-
-.openshift/action-hooks/build
-.openshift/action-hooks/deploy</p></li>
+<h2>Action Hooks</h2>
+
+<p>OpenShift provides application developers entry points into various application
+and platform lifecycle operations. These entry points are referred to as
+&quot;action hooks&quot;, and have a special location within the application&#39;s Git
+repository:</p>
+
+<p><code>&lt;repository&gt;/.openshift/action_hooks</code></p>
+
+<p>During any OpenShift process which supports an action hook, the application 
+action hook directory will be checked for an executable file matching the
+specified name. If such a file is present, it will be executed before returning
+control to the process.</p>
+
+<h3>Cartridge Control Action Hooks</h3>
+
+<p>Cartridges implement a standard set of named control actions which allow them to
+function within OpenShift. Each time OpenShift invokes one of these cartridge
+actions, a standard set of application action hooks are executed to give the
+application developer an opportunity to integrate more closely with specific
+cartridges.</p>
+
+<p>The following is a list of all possible action hooks executed in association
+with a single cartridge control action. For each control action, a set of <code>pre</code>
+and <code>post</code> action hooks surround the control action.</p>
+
+<ul>
+<li><p><code>start</code> control action:</p>
+
+<ul>
+<li><code>pre_start</code></li>
+<li><code>pre_start_{cartridge}</code></li>
+<li><code>post_start</code></li>
+<li><code>post_start_{cartridge}</code></li>
+</ul></li>
+<li><p><code>stop</code> control action:</p>
+
+<ul>
+<li><code>pre_stop</code></li>
+<li><code>pre_stop_{cartridge}</code></li>
+<li><code>post_stop</code></li>
+<li><code>post_stop_{cartridge}</code></li>
+</ul></li>
+<li><p><code>reload</code> control action:</p>
+
+<ul>
+<li><code>pre_reload</code></li>
+<li><code>pre_reload_{cartridge}</code></li>
+<li><code>post_reload</code></li>
+<li><code>post_reload_{cartridge}</code></li>
+</ul></li>
+<li><p><code>restart</code> control action:</p>
+
+<ul>
+<li><code>pre_restart</code></li>
+<li><code>pre_restart_{cartridge}</code></li>
+<li><code>post_restart</code></li>
+<li><code>post_restart_{cartridge}</code></li>
+</ul></li>
+<li><p><code>tidy</code> control action:</p>
+
+<ul>
+<li><code>pre_tidy</code></li>
+<li><code>pre_tidy_{cartridge}</code></li>
+<li><code>post_tidy</code></li>
+<li><code>post_tidy_{cartridge}</code></li>
+</ul></li>
 </ul>
+
+<p>For details about the control actions (including what they represent and when
+they are called), refer to the <a href="README.writing_cartridges.md#bincontrol">control script documentation</a>
+in the <a href="README.writing_cartridges.md">Writing Cartridges</a> guide.</p>
+
+<h3>Build Action Hooks</h3>
+
+<p>During a Git push, applications using the default OpenShift build lifecycle 
+are given an opportunity to participate in the build/deploy workflow via another
+set of action hooks. The workflow and sequence of actions for the build lifecycle
+is described in detail in the <a href="README.writing_cartridges.md#openshift-builds">OpenShift Builds</a>
+section of the <a href="README.writing_cartridges.md">Writing Cartridges</a> guide.</p>
+
+<p>The list of action hooks supported during the default build lifecycle are:</p>
+
+<ul>
+<li><code>pre-build</code></li>
+<li><code>build</code></li>
+<li><code>deploy</code></li>
+<li><code>post-deploy</code></li>
+</ul>
+
+<p>Refer to the <a href="README.writing_cartridges.md#openshift-builds">OpenShift Builds</a>
+guide for details about when these action hooks are invoked.</p>
+
+<h3>Custom Cartridge Action Hooks</h3>
+
+<p>Cartridges may support custom action hooks available to application developers.
+Consult the documentation for individual cartridges to learn which hooks are
+supported and how to correctly implement them.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Wed Apr 10 19:17:06 2013 by
+  Generated on Thu Apr 11 18:35:14 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
