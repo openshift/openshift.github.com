@@ -88,7 +88,7 @@
   
     <dt class="r1 last">Defined in:</dt>
     <dd class="r1 last">origin-server/node/lib/openshift-origin-node/utils/cgroups.rb<span class="defines">,<br />
-  origin-server/node/lib/openshift-origin-node/utils/sdk.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/application_state.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/environ.rb</span>
+  origin-server/node/lib/openshift-origin-node/utils/sdk.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/application_state.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/selinux.rb,<br /> origin-server/node/lib/openshift-origin-node/utils/environ.rb</span>
 </dd>
   
 </dl>
@@ -102,7 +102,7 @@
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Utils/ApplicationState.html" title="OpenShift::Utils::ApplicationState (class)">ApplicationState</a></span>, <span class='object_link'><a href="Utils/Cgroups.html" title="OpenShift::Utils::Cgroups (class)">Cgroups</a></span>, <span class='object_link'><a href="Utils/Environ.html" title="OpenShift::Utils::Environ (class)">Environ</a></span>, <span class='object_link'><a href="Utils/Sdk.html" title="OpenShift::Utils::Sdk (class)">Sdk</a></span>, <span class='object_link'><a href="Utils/ShellExecutionException.html" title="OpenShift::Utils::ShellExecutionException (class)">ShellExecutionException</a></span>, <span class='object_link'><a href="Utils/TimeoutExceeded.html" title="OpenShift::Utils::TimeoutExceeded (class)">TimeoutExceeded</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Utils/ApplicationState.html" title="OpenShift::Utils::ApplicationState (class)">ApplicationState</a></span>, <span class='object_link'><a href="Utils/Cgroups.html" title="OpenShift::Utils::Cgroups (class)">Cgroups</a></span>, <span class='object_link'><a href="Utils/Environ.html" title="OpenShift::Utils::Environ (class)">Environ</a></span>, <span class='object_link'><a href="Utils/SELinux.html" title="OpenShift::Utils::SELinux (class)">SELinux</a></span>, <span class='object_link'><a href="Utils/Sdk.html" title="OpenShift::Utils::Sdk (class)">Sdk</a></span>, <span class='object_link'><a href="Utils/ShellExecutionException.html" title="OpenShift::Utils::ShellExecutionException (class)">ShellExecutionException</a></span>, <span class='object_link'><a href="Utils/TimeoutExceeded.html" title="OpenShift::Utils::TimeoutExceeded (class)">TimeoutExceeded</a></span>
     
   
 </p>
@@ -346,10 +346,10 @@ correctly handle the resulting data type.
 
       <span class='rubyid_if if kw'>if</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:uid</span><span class='rbrack token'>]</span>
         <span class='comment val'># lazy init otherwise we end up with a cyclic require...</span>
-        <span class='rubyid_require identifier id'>require</span> <span class='string val'>'openshift-origin-node/model/unix_user'</span>
+        <span class='rubyid_require identifier id'>require</span> <span class='string val'>'openshift-origin-node/utils/selinux'</span>
 
-        <span class='rubyid_current_context identifier id'>current_context</span>  <span class='assign token'>=</span> <span class='dstring node'>%Q{unconfined_u:system_r:openshift_t:#{UnixUser.get_mcs_label(Process.uid)}}</span>
-        <span class='rubyid_target_context identifier id'>target_context</span>   <span class='assign token'>=</span> <span class='dstring node'>%Q{unconfined_u:system_r:openshift_t:#{UnixUser.get_mcs_label(options[:uid])}}</span>
+        <span class='rubyid_current_context identifier id'>current_context</span>  <span class='assign token'>=</span> <span class='rubyid_SELinux constant id'>SELinux</span><span class='dot token'>.</span><span class='rubyid_getcon identifier id'>getcon</span>
+        <span class='rubyid_target_context identifier id'>target_context</span>   <span class='assign token'>=</span> <span class='rubyid_SELinux constant id'>SELinux</span><span class='dot token'>.</span><span class='rubyid_context_from_defaults identifier id'>context_from_defaults</span><span class='lparen token'>(</span><span class='rubyid_SELinux constant id'>SELinux</span><span class='dot token'>.</span><span class='rubyid_get_mcs_label identifier id'>get_mcs_label</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:uid</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
         
         <span class='comment val'># Only switch contexts if necessary</span>
         <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_current_context identifier id'>current_context</span> <span class='neq op'>!=</span> <span class='rubyid_target_context identifier id'>target_context</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span> <span class='neq op'>!=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:uid</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
@@ -531,7 +531,7 @@ options: hash
 </div>
 
     <div id="footer">
-  Generated on Thu Apr 11 18:35:18 2013 by
+  Generated on Fri Apr 12 19:03:04 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

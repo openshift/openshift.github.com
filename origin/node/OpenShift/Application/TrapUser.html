@@ -196,7 +196,6 @@ A new instance of TrapUser
       <pre class="lines">
 
 
-29
 30
 31
 32
@@ -220,10 +219,11 @@ A new instance of TrapUser
 50
 51
 52
-53</pre>
+53
+54</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/misc/bin/oo-trap-user.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/misc/bin/oo-trap-user.rb', line 30</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span>
   <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_$0 gvar id'>$0</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_PID constant id'>LOG_PID</span> <span class='bitor op'>|</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_CONS constant id'>LOG_CONS</span><span class='comma token'>,</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='colon2 op'>::</span><span class='rubyid_LOG_USER constant id'>LOG_USER</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_Syslog constant id'>Syslog</span><span class='dot token'>.</span><span class='rubyid_opened? fid id'>opened?</span>
@@ -278,7 +278,6 @@ A new instance of TrapUser
       <pre class="lines">
 
 
-55
 56
 57
 58
@@ -429,10 +428,11 @@ A new instance of TrapUser
 203
 204
 205
-206</pre>
+206
+207</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/misc/bin/oo-trap-user.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/misc/bin/oo-trap-user.rb', line 56</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_apply identifier id'>apply</span>
   <span class='rubyid_env identifier id'>env</span>          <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='string val'>'~'</span><span class='rparen token'>)</span>
@@ -568,9 +568,9 @@ A new instance of TrapUser
       <span class='rubyid_canon_argv identifier id'>canon_argv</span><span class='dot token'>.</span><span class='rubyid_concat identifier id'>concat</span><span class='lparen token'>(</span><span class='rubyid_orig_argv identifier id'>orig_argv</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
-  <span class='rubyid_target_context identifier id'>target_context</span> <span class='assign token'>=</span> <span class='dxstring node'>%x(/usr/bin/oo-get-mcs-level #{Process.uid})</span><span class='dot token'>.</span><span class='rubyid_chomp identifier id'>chomp</span>
-  <span class='rubyid_target_context identifier id'>target_context</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;unconfined_u:system_r:openshift_t:#{target_context}&quot;</span>
-  <span class='rubyid_actual_context identifier id'>actual_context</span> <span class='assign token'>=</span> <span class='xstring val'>%x(/usr/bin/runcon)</span><span class='dot token'>.</span><span class='rubyid_chomp identifier id'>chomp</span>
+  <span class='rubyid_mcs_label identifier id'>mcs_label</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_SELinux constant id'>SELinux</span><span class='dot token'>.</span><span class='rubyid_get_mcs_label identifier id'>get_mcs_label</span><span class='lparen token'>(</span><span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='rparen token'>)</span>
+  <span class='rubyid_target_context identifier id'>target_context</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_SELinux constant id'>SELinux</span><span class='dot token'>.</span><span class='rubyid_context_from_defaults identifier id'>context_from_defaults</span><span class='lparen token'>(</span><span class='rubyid_mcs_label identifier id'>mcs_label</span><span class='rparen token'>)</span>
+  <span class='rubyid_actual_context identifier id'>actual_context</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_SELinux constant id'>SELinux</span><span class='dot token'>.</span><span class='rubyid_getcon identifier id'>getcon</span>
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_target_context identifier id'>target_context</span> <span class='neq op'>!=</span> <span class='rubyid_actual_context identifier id'>actual_context</span>
     <span class='rubyid_$stderr gvar id'>$stderr</span><span class='dot token'>.</span><span class='rubyid_puts identifier id'>puts</span> <span class='dstring node'>&quot;Invalid context: #{actual_context}, expected #{target_context}&quot;</span>
@@ -597,7 +597,7 @@ A new instance of TrapUser
 </div>
 
     <div id="footer">
-  Generated on Thu Apr 11 18:35:24 2013 by
+  Generated on Fri Apr 12 19:03:10 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

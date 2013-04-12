@@ -325,6 +325,58 @@ Returns the value of attribute uuid.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#all_containers-class_method" title="all_containers (class method)">+ (Object) <strong>all_containers</strong>(logger = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Public: Return an enumerator which provides an ApplicationContainer object
+for every OpenShift gear in the system.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_uuid-class_method" title="from_uuid (class method)">+ (Object) <strong>from_uuid</strong>(container_uuid, logger = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Public: Return an ApplicationContainer object loaded from the
+container_uuid on the system.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#get_build_model-class_method" title="get_build_model (class method)">+ (Object) <strong>get_build_model</strong>(user, config) </a>
     
 
@@ -1159,6 +1211,28 @@ Sets the application state to <tt>STOPPED</tt> and stops the gear.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#stop_lock%3F-instance_method" title="#stop_lock? (instance method)">- (Boolean) <strong>stop_lock?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#threaddump-instance_method" title="#threaddump (instance method)">- (Object) <strong>threaddump</strong>(cart_name) </a>
     
 
@@ -1667,7 +1741,121 @@ Returns the value of attribute uuid
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="get_build_model-class_method">
+  <h3 class="signature first" id="all_containers-class_method">
+  
+    + (<tt>Object</tt>) <strong>all_containers</strong>(logger = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Public: Return an enumerator which provides an ApplicationContainer object
+for every OpenShift gear in the system.
+</p>
+<p>
+Caveat: the quota information will not be populated.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 719</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_all_containers identifier id'>all_containers</span><span class='lparen token'>(</span><span class='rubyid_logger identifier id'>logger</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+  <span class='rubyid_Enumerator constant id'>Enumerator</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_yielder identifier id'>yielder</span><span class='bitor op'>|</span>
+    <span class='rubyid_UnixUser constant id'>UnixUser</span><span class='dot token'>.</span><span class='rubyid_all_users identifier id'>all_users</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_u identifier id'>u</span><span class='bitor op'>|</span>
+      <span class='rubyid_a identifier id'>a</span><span class='assign token'>=</span><span class='rubyid_ApplicationContainer constant id'>ApplicationContainer</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_application_uuid identifier id'>application_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_user_uid identifier id'>user_uid</span><span class='comma token'>,</span>
+                                 <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span><span class='comma token'>,</span>
+                                 <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_logger identifier id'>logger</span><span class='rparen token'>)</span>
+      <span class='rubyid_yielder identifier id'>yielder</span><span class='dot token'>.</span><span class='rubyid_yield identifier id'>yield</span><span class='lparen token'>(</span><span class='rubyid_a identifier id'>a</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_uuid-class_method">
+  
+    + (<tt>Object</tt>) <strong>from_uuid</strong>(container_uuid, logger = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Public: Return an ApplicationContainer object loaded from the
+container_uuid on the system
+</p>
+<p>
+Caveat: the quota information will not be populated.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+706
+707
+708
+709
+710
+711</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 706</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_from_uuid identifier id'>from_uuid</span><span class='lparen token'>(</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_logger identifier id'>logger</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+  <span class='rubyid_u identifier id'>u</span> <span class='assign token'>=</span> <span class='rubyid_UnixUser constant id'>UnixUser</span><span class='dot token'>.</span><span class='rubyid_from_uuid identifier id'>from_uuid</span><span class='lparen token'>(</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='rparen token'>)</span>
+  <span class='rubyid_ApplicationContainer constant id'>ApplicationContainer</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_application_uuid identifier id'>application_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_user_uid identifier id'>user_uid</span><span class='comma token'>,</span>
+                           <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span><span class='comma token'>,</span>
+                           <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_logger identifier id'>logger</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_build_model-class_method">
   
     + (<tt>Object</tt>) <strong>get_build_model</strong>(user, config) 
   
@@ -2648,13 +2836,13 @@ TODO: exception handling
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_gear_level_tidy_git identifier id'>gear_level_tidy_git</span><span class='lparen token'>(</span><span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='rparen token'>)</span>
   <span class='comment val'># Git pruning</span>
   <span class='rubyid_tidy_action identifier id'>tidy_action</span> <span class='rubyid_do do kw'>do</span>
-    <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExec constant id'>ShellExec</span><span class='dot token'>.</span><span class='rubyid_run_as identifier id'>run_as</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_gid identifier id'>gid</span><span class='comma token'>,</span> <span class='string val'>&quot;git prune&quot;</span><span class='comma token'>,</span> <span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+    <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='string val'>&quot;git prune&quot;</span><span class='comma token'>,</span> <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span> <span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
     <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Pruned git directory at #{gear_repo_dir}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='comment val'># Git GC</span>
   <span class='rubyid_tidy_action identifier id'>tidy_action</span> <span class='rubyid_do do kw'>do</span>
-    <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_ShellExec constant id'>ShellExec</span><span class='dot token'>.</span><span class='rubyid_run_as identifier id'>run_as</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_gid identifier id'>gid</span><span class='comma token'>,</span> <span class='string val'>&quot;git gc --aggressive&quot;</span><span class='comma token'>,</span> <span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+    <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='string val'>&quot;git gc --aggressive&quot;</span><span class='comma token'>,</span> <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span> <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span> <span class='rubyid_gear_repo_dir identifier id'>gear_repo_dir</span><span class='comma token'>,</span> <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
     <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Executed git gc for repo #{gear_repo_dir}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
@@ -2991,7 +3179,7 @@ reload gear as supported by cartridges
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 488</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload identifier id'>reload</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
-  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>&quot;reload&quot;</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span>
+  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_do_control identifier id'>do_control</span><span class='lparen token'>(</span><span class='string val'>'reload'</span><span class='comma token'>,</span> <span class='rubyid_cart_name identifier id'>cart_name</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_State constant id'>State</span><span class='colon2 op'>::</span><span class='rubyid_STARTED constant id'>STARTED</span> <span class='eq op'>==</span> <span class='rubyid_state identifier id'>state</span><span class='dot token'>.</span><span class='rubyid_value identifier id'>value</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3709,6 +3897,59 @@ the implementation.
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="stop_lock?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>stop_lock?</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+697
+698
+699</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 697</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_lock? fid id'>stop_lock?</span>
+  <span class='rubyid_@cartridge_model ivar id'>@cartridge_model</span><span class='dot token'>.</span><span class='rubyid_stop_lock? fid id'>stop_lock?</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="threaddump-instance_method">
   
     - (<tt>Object</tt>) <strong>threaddump</strong>(cart_name) 
@@ -4040,7 +4281,7 @@ warnings. Any other exceptions are unexpected and will bubble out.
 </div>
 
     <div id="footer">
-  Generated on Thu Apr 11 18:36:46 2013 by
+  Generated on Fri Apr 12 19:04:15 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

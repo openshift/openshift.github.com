@@ -254,13 +254,13 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
       <pre class="lines">
 
 
-154
-155
-156
-157</pre>
+157
+158
+159
+160</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 154</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 157</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_system_messages identifier id'>find_system_messages</span><span class='lparen token'>(</span><span class='rubyid_pattern identifier id'>pattern</span><span class='rparen token'>)</span>
   <span class='rubyid_regex identifier id'>regex</span> <span class='assign token'>=</span> <span class='rubyid_Regexp constant id'>Regexp</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_pattern identifier id'>pattern</span><span class='rparen token'>)</span>
@@ -299,9 +299,6 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
       <pre class="lines">
 
 
-89
-90
-91
 92
 93
 94
@@ -340,10 +337,13 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
 127
 128
 129
-130</pre>
+130
+131
+132
+133</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 92</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_get_cartridge_info identifier id'>get_cartridge_info</span><span class='lparen token'>(</span><span class='rubyid_cart_name identifier id'>cart_name</span><span class='comma token'>,</span> <span class='rubyid_porcelain identifier id'>porcelain</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='rubyid_oo_debug identifier id'>oo_debug</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_output identifier id'>output</span> <span class='assign token'>=</span> <span class='string val'>&quot;&quot;</span>
@@ -467,7 +467,10 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
 83
 84
 85
-86</pre>
+86
+87
+88
+89</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 27</span>
@@ -494,9 +497,12 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
     <span class='rubyid_CartridgeRepository constant id'>CartridgeRepository</span><span class='dot token'>.</span><span class='rubyid_instance identifier id'>instance</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='bitor op'>|</span>
       <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_versions identifier id'>versions</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_version identifier id'>version</span><span class='bitor op'>|</span>
         <span class='rubyid_begin begin kw'>begin</span>
-          <span class='rubyid_v1_manifest identifier id'>v1_manifest</span>         <span class='assign token'>=</span> <span class='rubyid_Marshal constant id'>Marshal</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_Marshal constant id'>Marshal</span><span class='dot token'>.</span><span class='rubyid_dump identifier id'>dump</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_manifest identifier id'>manifest</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
-          <span class='rubyid_v1_manifest identifier id'>v1_manifest</span><span class='lbrack token'>[</span><span class='string val'>'Name'</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;#{cartridge.name}-#{version}&quot;</span>
-          <span class='comment val'># FIXME Add overridges per version</span>
+          <span class='rubyid_cooked identifier id'>cooked</span> <span class='assign token'>=</span> <span class='rubyid_Runtime constant id'>Runtime</span><span class='colon2 op'>::</span><span class='rubyid_Cartridge constant id'>Cartridge</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_source identifier id'>source</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span><span class='comma token'>,</span> <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_repository_path identifier id'>repository_path</span><span class='rparen token'>)</span>
+          <span class='rubyid_print identifier id'>print</span> <span class='dstring node'>&quot;Loading #{cooked.name}-#{cooked.version}...&quot;</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_oo_debug identifier id'>oo_debug</span>
+
+          <span class='rubyid_v1_manifest identifier id'>v1_manifest</span>            <span class='assign token'>=</span> <span class='rubyid_Marshal constant id'>Marshal</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_Marshal constant id'>Marshal</span><span class='dot token'>.</span><span class='rubyid_dump identifier id'>dump</span><span class='lparen token'>(</span><span class='rubyid_cooked identifier id'>cooked</span><span class='dot token'>.</span><span class='rubyid_manifest identifier id'>manifest</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+          <span class='rubyid_v1_manifest identifier id'>v1_manifest</span><span class='lbrack token'>[</span><span class='string val'>'Name'</span><span class='rbrack token'>]</span>    <span class='assign token'>=</span> <span class='dstring node'>&quot;#{cooked.name}-#{cooked.version}&quot;</span>
+          <span class='rubyid_v1_manifest identifier id'>v1_manifest</span><span class='lbrack token'>[</span><span class='string val'>'Version'</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_cooked identifier id'>cooked</span><span class='dot token'>.</span><span class='rubyid_version identifier id'>version</span>
           <span class='rubyid_carts identifier id'>carts</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Cartridge constant id'>Cartridge</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='dot token'>.</span><span class='rubyid_from_descriptor identifier id'>from_descriptor</span><span class='lparen token'>(</span><span class='rubyid_v1_manifest identifier id'>v1_manifest</span><span class='rparen token'>)</span>
           <span class='rubyid_print identifier id'>print</span> <span class='string val'>&quot;OK\n&quot;</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_oo_debug identifier id'>oo_debug</span>
         <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
@@ -553,9 +559,6 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
       <pre class="lines">
 
 
-132
-133
-134
 135
 136
 137
@@ -563,10 +566,13 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
 139
 140
 141
-142</pre>
+142
+143
+144
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 132</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 135</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_get_quota identifier id'>get_quota</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rparen token'>)</span>
   <span class='rubyid_cmd identifier id'>cmd</span> <span class='assign token'>=</span> <span class='dstring node'>%&amp;quota --always-resolve -w #{uuid} | awk '/^.*\\/dev/ {print $1&quot;:&quot;$2&quot;:&quot;$3&quot;:&quot;$4&quot;:&quot;$5&quot;:&quot;$6&quot;:&quot;$7}'; exit ${PIPESTATUS[0]}&amp;</span>
@@ -622,18 +628,18 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
       <pre class="lines">
 
 
-144
-145
-146
 147
 148
 149
 150
 151
-152</pre>
+152
+153
+154
+155</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 144</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/node.rb', line 147</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_set_quota identifier id'>set_quota</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='comma token'>,</span> <span class='rubyid_blocksmax identifier id'>blocksmax</span><span class='comma token'>,</span> <span class='rubyid_inodemax identifier id'>inodemax</span><span class='rparen token'>)</span>
   <span class='rubyid_cur_quota identifier id'>cur_quota</span> <span class='assign token'>=</span> <span class='rubyid_get_quota identifier id'>get_quota</span><span class='lparen token'>(</span><span class='rubyid_uuid identifier id'>uuid</span><span class='rparen token'>)</span>
@@ -655,7 +661,7 @@ This won&#8217;t be updated for v2 because it&#8217;s going away soon.
 </div>
 
     <div id="footer">
-  Generated on Thu Apr 11 18:36:31 2013 by
+  Generated on Fri Apr 12 19:04:05 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
