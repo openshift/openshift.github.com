@@ -1465,7 +1465,7 @@ warnings.
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="NodeLogger.html" title="OpenShift::NodeLogger (module)">NodeLogger</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="NodeLogger.html#build_logger-class_method" title="OpenShift::NodeLogger.build_logger (method)">build_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-instance_method" title="OpenShift::NodeLogger#logger (method)">#logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-class_method" title="OpenShift::NodeLogger.logger (method)">logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-instance_method" title="OpenShift::NodeLogger#trace_logger (method)">#trace_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-class_method" title="OpenShift::NodeLogger.trace_logger (method)">trace_logger</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="NodeLogger.html#build_logger-class_method" title="OpenShift::NodeLogger.build_logger (method)">build_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-instance_method" title="OpenShift::NodeLogger#logger (method)">#logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-class_method" title="OpenShift::NodeLogger.logger (method)">logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger_rebuild-class_method" title="OpenShift::NodeLogger.logger_rebuild (method)">logger_rebuild</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-instance_method" title="OpenShift::NodeLogger#trace_logger (method)">#trace_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_logger-class_method" title="OpenShift::NodeLogger.trace_logger (method)">trace_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#trace_rebuild-class_method" title="OpenShift::NodeLogger.trace_rebuild (method)">trace_rebuild</a></span></p>
 
   
   
@@ -1884,7 +1884,17 @@ Caveat: the quota information will not be populated.
 847
 848
 849
-850</pre>
+850
+851
+852
+853
+854
+855
+856
+857
+858
+859
+860</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_container.rb', line 841</span>
@@ -1892,10 +1902,20 @@ Caveat: the quota information will not be populated.
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_all_containers identifier id'>all_containers</span><span class='lparen token'>(</span><span class='rubyid_logger identifier id'>logger</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_Enumerator constant id'>Enumerator</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_yielder identifier id'>yielder</span><span class='bitor op'>|</span>
     <span class='rubyid_UnixUser constant id'>UnixUser</span><span class='dot token'>.</span><span class='rubyid_all_users identifier id'>all_users</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_u identifier id'>u</span><span class='bitor op'>|</span>
-      <span class='rubyid_a identifier id'>a</span><span class='assign token'>=</span><span class='rubyid_ApplicationContainer constant id'>ApplicationContainer</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_application_uuid identifier id'>application_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_user_uid identifier id'>user_uid</span><span class='comma token'>,</span>
-                                 <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span><span class='comma token'>,</span>
-                                 <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_logger identifier id'>logger</span><span class='rparen token'>)</span>
-      <span class='rubyid_yielder identifier id'>yielder</span><span class='dot token'>.</span><span class='rubyid_yield identifier id'>yield</span><span class='lparen token'>(</span><span class='rubyid_a identifier id'>a</span><span class='rparen token'>)</span>
+      <span class='rubyid_begin begin kw'>begin</span>
+        <span class='rubyid_a identifier id'>a</span><span class='assign token'>=</span><span class='rubyid_ApplicationContainer constant id'>ApplicationContainer</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_application_uuid identifier id'>application_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
+                                   <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span><span class='comma token'>,</span>
+                                   <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_logger identifier id'>logger</span><span class='rparen token'>)</span>
+        <span class='rubyid_yielder identifier id'>yielder</span><span class='dot token'>.</span><span class='rubyid_yield identifier id'>yield</span><span class='lparen token'>(</span><span class='rubyid_a identifier id'>a</span><span class='rparen token'>)</span>
+      <span class='rubyid_rescue rescue kw'>rescue</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_logger identifier id'>logger</span>
+          <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Failed to instantiate ApplicationContainer for #{u.application_uuid}: #{e}&quot;</span><span class='rparen token'>)</span>
+          <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Backtrace: #{e.backtrace}&quot;</span><span class='rparen token'>)</span>
+        <span class='rubyid_else else kw'>else</span>
+          <span class='rubyid_NodeLogger constant id'>NodeLogger</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Failed to instantiate ApplicationContainer for #{u.application_uuid}: #{e}&quot;</span><span class='rparen token'>)</span>
+          <span class='rubyid_NodeLogger constant id'>NodeLogger</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Backtrace: #{e.backtrace}&quot;</span><span class='rparen token'>)</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
@@ -1948,7 +1968,7 @@ Caveat: the quota information will not be populated.
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_from_uuid identifier id'>from_uuid</span><span class='lparen token'>(</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_logger identifier id'>logger</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_u identifier id'>u</span> <span class='assign token'>=</span> <span class='rubyid_UnixUser constant id'>UnixUser</span><span class='dot token'>.</span><span class='rubyid_from_uuid identifier id'>from_uuid</span><span class='lparen token'>(</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='rparen token'>)</span>
-  <span class='rubyid_ApplicationContainer constant id'>ApplicationContainer</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_application_uuid identifier id'>application_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_user_uid identifier id'>user_uid</span><span class='comma token'>,</span>
+  <span class='rubyid_ApplicationContainer constant id'>ApplicationContainer</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_application_uuid identifier id'>application_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_uuid identifier id'>container_uuid</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
                            <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_u identifier id'>u</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span><span class='comma token'>,</span>
                            <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_logger identifier id'>logger</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
@@ -4728,7 +4748,7 @@ warnings. Any other exceptions are unexpected and will bubble out.
 </div>
 
     <div id="footer">
-  Generated on Sun Apr 14 18:33:08 2013 by
+  Generated on Tue Apr 16 13:31:44 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
