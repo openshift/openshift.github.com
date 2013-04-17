@@ -122,6 +122,18 @@
         <dd><pre class="code"><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_CONF_DIR constant id'>CONF_DIR</span><span class='comma token'>,</span> <span class='string val'>'node.conf'</span><span class='rparen token'>)</span>
 </pre></dd>
       
+        <dt id="conf_parsed-classvariable" class="">@@conf_parsed =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace token'>{</span><span class='rbrace token'>}</span>
+</pre></dd>
+      
+        <dt id="conf_mtime-classvariable" class="">@@conf_mtime =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace token'>{</span><span class='rbrace token'>}</span>
+</pre></dd>
+      
     </dl>
   
 
@@ -243,21 +255,31 @@ A new instance of Config
       <pre class="lines">
 
 
-26
-27
-28
 29
 30
 31
 32
-33</pre>
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/config.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/config.rb', line 29</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='assign token'>=</span><span class='rubyid_NODE_CONF_FILE constant id'>NODE_CONF_FILE</span><span class='rparen token'>)</span>
   <span class='rubyid_begin begin kw'>begin</span>
-    <span class='rubyid_@conf ivar id'>@conf</span> <span class='assign token'>=</span> <span class='rubyid_ParseConfig constant id'>ParseConfig</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rparen token'>)</span>
+    <span class='rubyid_conf_mtime identifier id'>conf_mtime</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_stat identifier id'>stat</span><span class='lparen token'>(</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_mtime identifier id'>mtime</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_@@conf_parsed ivar id'>@@conf_parsed</span><span class='lbrack token'>[</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='lparen token'>(</span><span class='rubyid_conf_mtime identifier id'>conf_mtime</span> <span class='neq op'>!=</span> <span class='rubyid_@@conf_mtime ivar id'>@@conf_mtime</span><span class='lbrack token'>[</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+      <span class='rubyid_@@conf_parsed ivar id'>@@conf_parsed</span><span class='lbrack token'>[</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_ParseConfig constant id'>ParseConfig</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rparen token'>)</span>
+      <span class='rubyid_@@conf_mtime ivar id'>@@conf_mtime</span><span class='lbrack token'>[</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_conf_mtime identifier id'>conf_mtime</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_@conf ivar id'>@conf</span> <span class='assign token'>=</span> <span class='rubyid_@@conf_parsed ivar id'>@@conf_parsed</span><span class='lbrack token'>[</span><span class='rubyid_conf_path identifier id'>conf_path</span><span class='rbrack token'>]</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Errno constant id'>Errno</span><span class='colon2 op'>::</span><span class='rubyid_EACCES constant id'>EACCES</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
     <span class='rubyid_puts identifier id'>puts</span> <span class='dstring node'>&quot;Could not open config file #{conf_path}: #{e.message}&quot;</span>
     <span class='rubyid_exit identifier id'>exit</span> <span class='integer val'>253</span>
@@ -291,17 +313,17 @@ A new instance of Config
       <pre class="lines">
 
 
-35
-36
-37
-38
-39
-40
-41
-42</pre>
+43
+44
+45
+46
+47
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/config.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/config.rb', line 43</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get identifier id'>get</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_val identifier id'>val</span> <span class='assign token'>=</span> <span class='rubyid_@conf ivar id'>@conf</span><span class='lbrack token'>[</span><span class='rubyid_name identifier id'>name</span><span class='rbrack token'>]</span>
@@ -332,13 +354,13 @@ A new instance of Config
       <pre class="lines">
 
 
-44
-45
-46
-47</pre>
+52
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/config.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/config.rb', line 52</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_bool identifier id'>get_bool</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_default identifier id'>default</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='comment val'># !! is used to normalise the value to either a 1 (true) or a 0 (false).</span>
@@ -355,7 +377,7 @@ A new instance of Config
 </div>
 
     <div id="footer">
-  Generated on Tue Apr 16 18:35:54 2013 by
+  Generated on Wed Apr 17 18:43:26 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

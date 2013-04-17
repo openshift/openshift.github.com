@@ -154,12 +154,12 @@ user about your cartridge.</p>
 <pre class="code yaml"><code class="yaml">Name: PHP
 Cartridge-Short-Name: PHP
 Cartridge-Version: '1.0.1'
-Cartridge-Versions: [1.0.1]
+Cartridge-Versions: ['1.0.1']
 Cartridge-Vendor: Red Hat
 Display-Name: PHP 5.3
 Description: &quot;PHP is a general-purpose server-side scripting language...&quot;
 Version: '5.3'
-Versions: [5.3]
+Versions: ['5.3']
 License: &quot;The PHP License, version 3.0&quot;
 License-Url: http://www.php.net/license/3_0.txt
 Vendor: PHP Group
@@ -216,7 +216,6 @@ Endpoints:
     Mappings:
       - Frontend:      &quot;/front&quot;
         Backend:       &quot;/back&quot;
-        Options:       { websocket: true }
 </code></pre>
 
 <p>Additional-Control-Actions:
@@ -252,7 +251,7 @@ be sure to enclose it in quotes so it is read as a string.</p>
 To be <strong>compatible</strong> with a previous version, the code changes you made in this version do not require
 the cartridge to be re-started or the application developer&#39;s application to be restarted.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='rubyid_Cartridge constant id'>Cartridge</span><span class='minus op'>-</span><span class='rubyid_Versions constant id'>Versions</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='float val'>1.0</span><span class='integer val'>.1</span><span class='rbrack token'>]</span>
+<pre class="code ruby"><code class="ruby"><span class='rubyid_Cartridge constant id'>Cartridge</span><span class='minus op'>-</span><span class='rubyid_Versions constant id'>Versions</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='string val'>'1.0.1'</span><span class='rbrack token'>]</span>
 </code></pre>
 
 <p>By not requiring a restart, you improve the application user&#39;s experience since no downtime will
@@ -280,7 +279,7 @@ otherwise use your company name.</p>
 
 <p><code>Versions</code> is the list of the versions of the software packaged by this cartridge.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='rubyid_Versions constant id'>Versions</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='float val'>5.3</span><span class='rbrack token'>]</span>
+<pre class="code ruby"><code class="ruby"><span class='rubyid_Versions constant id'>Versions</span><span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='string val'>'5.3'</span><span class='rbrack token'>]</span>
 </code></pre>
 
 <h3>Additional-Control-Actions Element</h3>
@@ -447,7 +446,8 @@ variable names to describe:</p>
 <li>Any IP addresses necessary for binding</li>
 <li>The gear-local ports to which the cartridge services will bind</li>
 <li>(Optional) Publicly proxied ports which expose gear-local ports for use by the
-application&#39;s users or across application gears</li>
+application&#39;s users or intra-gear. These endpoint ports are only created when the
+application is scalable.</li>
 </ul>
 
 <p>In addition to IP and port definitions, Endpoints are where frontend httpd mappings
@@ -594,35 +594,12 @@ be run from the home directory of the gear.</p>
 <h3>Exit Status Codes</h3>
 
 <p>OpenShift follows the convention that your scripts should return zero
-for success, and non-zero success. Additionally, OpenShift follows the
-conventions from sysexit.h below:</p>
+for success, and non-zero for failure. Additionally, OpenShift supports
+special handling of the following non-zero exit codes:</p>
 
-<pre class="code ruby"><code class="ruby">    <span class='integer val'>0</span><span class='dot token'>.</span> <span class='rubyid_Success constant id'>Success</span>
-   <span class='float val'>64</span><span class='dot token'>.</span> <span class='rubyid_Usage constant id'>Usage</span><span class='colon op'>:</span> <span class='rubyid_The constant id'>The</span> <span class='rubyid_command identifier id'>command</span> <span class='rubyid_was identifier id'>was</span> <span class='rubyid_used identifier id'>used</span> <span class='rubyid_incorrectly identifier id'>incorrectly</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_g identifier id'>g</span><span class='dot token'>.</span><span class='comma token'>,</span> <span class='rubyid_with identifier id'>with</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_wrong identifier id'>wrong</span> <span class='rubyid_number identifier id'>number</span> <span class='rubyid_of identifier id'>of</span> <span class='rubyid_arguments identifier id'>arguments</span><span class='comma token'>,</span> <span class='rubyid_a identifier id'>a</span> <span class='rubyid_bad identifier id'>bad</span> <span class='rubyid_flag identifier id'>flag</span><span class='comma token'>,</span> <span class='rubyid_a identifier id'>a</span> <span class='rubyid_bad identifier id'>bad</span> <span class='rubyid_syntax identifier id'>syntax</span> <span class='rubyid_in in kw'>in</span> <span class='rubyid_a identifier id'>a</span> <span class='rubyid_parameter identifier id'>parameter</span><span class='comma token'>,</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_whatever identifier id'>whatever</span><span class='dot token'>.</span>
-   <span class='float val'>65</span><span class='dot token'>.</span> <span class='rubyid_Data constant id'>Data</span> <span class='rubyid_Error constant id'>Error</span><span class='colon op'>:</span> <span class='rubyid_The constant id'>The</span> <span class='rubyid_input identifier id'>input</span> <span class='rubyid_data identifier id'>data</span> <span class='rubyid_was identifier id'>was</span> <span class='rubyid_incorrect identifier id'>incorrect</span> <span class='rubyid_in in kw'>in</span> <span class='rubyid_some identifier id'>some</span> <span class='rubyid_way identifier id'>way</span><span class='dot token'>.</span>  <span class='rubyid_This constant id'>This</span> <span class='rubyid_should identifier id'>should</span> <span class='rubyid_only identifier id'>only</span> <span class='rubyid_be identifier id'>be</span> <span class='rubyid_used identifier id'>used</span> <span class='rubyid_for for kw'>for</span> <span class='rubyid_user identifier id'>user</span><span class='string val'>'s data and not system files.
-   66. No Input: An input file (not a system file) did not exist or was not readable.  This could also include errors like &quot;No message&quot; to a mailer.
-   67. No User: The user specified did not exist.  This might be used for mail addresses or remote logins.
-   68. No Host: The host specified did not exist.  This is used in mail addresses or network requests.
-   69. A service is unavailable.  This can occur if a support program or file does not exist.
-       This can also be used as a catchall message when something you wanted to do doesn'</span><span class='rubyid_t identifier id'>t</span> <span class='rubyid_work identifier id'>work</span><span class='comma token'>,</span> <span class='rubyid_but identifier id'>but</span> <span class='rubyid_you identifier id'>you</span> <span class='rubyid_don identifier id'>don</span><span class='string val'>'t know why.
-   70. Software Error: An internal software error has been detected.  This should be limited to non-operating system related errors as possible.
-   71. OS Error: An operating system error has been detected.  This is intended to be used for such things as &quot;cannot fork&quot;,
-       &quot;cannot create pipe&quot;, or the like.  It includes things like getuid returning a user that does not exist in the passwd file.
-   72. OS File: Some system file (e.g., /etc/passwd, /etc/utmp, etc.) does not exist, cannot be opened, or has some sort of error (e.g., syntax error).
-   73. Cannot Create: A (user specified) output file cannot be created.
-   74. IO Error: An error occurred while doing I/O on some file.
-   75. Temporary Failure: Failure is something that is not really an error.  In sendmail, this means that a mailer (e.g.) could not create a connection,
-        and the request should be reattempted later.
-   76. Protocol: the remote system returned something that was &quot;not possible&quot; during a protocol exchange.
-   77. No Permission: You did not have sufficient permission to perform the operation.  This is not intended for file system problems,
-       which should use NOINPUT or CANTCREAT, but rather for higher level permissions.
-   78. Configuration Error: A fatal configuration problem was found, but this does not necessarily mean that
-       the problem was found while reading the configuration file.
-   80-128. reserved for OpenShift usage
-   128 + n. Where N is the signal that killed your script
-
-Copyright (c) 1987, 1993 The Regents of the University of California.  All rights reserved.
-</span></code></pre>
+<pre class="code ruby"><code class="ruby"><span class='float val'>127</span><span class='dot token'>.</span> <span class='rubyid_TODO constant id'>TODO</span>
+<span class='float val'>131</span><span class='dot token'>.</span> <span class='rubyid_TODO constant id'>TODO</span>
+</code></pre>
 
 <p>These exit status codes will allow OpenShift to refine it&#39;s behavior
 when returning HTTP status codes for the REST API, whether an internal
@@ -834,6 +811,12 @@ to be used for all cartridge entry points.</p>
 <li><code>OPENSHIFT_TMP_DIR</code>   the directory where your cartridge may store temporary data</li>
 <li><code>TMPDIR</code>              alias for <code>OPENSHIFT_TMP_DIR</code></li>
 <li><code>TMP</code>                 alias for <code>OPENSHIFT_TMP_DIR</code></li>
+</ul>
+
+<h3>System Provided Cartridge Variables (Read Only)</h3>
+
+<ul>
+<li><code>OPENSHIFT_{Cartridge-Short-Name}_DIR</code></li>
 </ul>
 
 <h3>Examples of Cartridge Variables</h3>
@@ -1170,7 +1153,7 @@ authors should take care to be as conservative as possible.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Apr 16 18:33:10 2013 by
+  Generated on Wed Apr 17 18:40:26 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

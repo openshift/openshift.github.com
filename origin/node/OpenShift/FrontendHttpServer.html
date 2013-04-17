@@ -1050,7 +1050,19 @@ A new instance of FrontendHttpServer
 144
 145
 146
-147</pre>
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 113</span>
@@ -1068,7 +1080,19 @@ A new instance of FrontendHttpServer
 
   <span class='rubyid_@fqdn ivar id'>@fqdn</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
 
-  <span class='comment val'># Attempt to infer from the gear itself</span>
+  <span class='comment val'># Did we save the old information?</span>
+  <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_@container_name ivar id'>@container_name</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='eq op'>==</span> <span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span> <span class='lparen token'>(</span><span class='rubyid_@namespace ivar id'>@namespace</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='eq op'>==</span> <span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_begin begin kw'>begin</span>
+      <span class='rubyid_GearDB constant id'>GearDB</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_GearDB constant id'>GearDB</span><span class='colon2 op'>::</span><span class='rubyid_READER constant id'>READER</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
+        <span class='rubyid_@container_name ivar id'>@container_name</span> <span class='assign token'>=</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_fetch identifier id'>fetch</span><span class='lparen token'>(</span><span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_fetch identifier id'>fetch</span><span class='lparen token'>(</span><span class='string val'>'container_name'</span><span class='rparen token'>)</span>
+        <span class='rubyid_@namespace ivar id'>@namespace</span> <span class='assign token'>=</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_fetch identifier id'>fetch</span><span class='lparen token'>(</span><span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_fetch identifier id'>fetch</span><span class='lparen token'>(</span><span class='string val'>'namespace'</span><span class='rparen token'>)</span>
+        <span class='rubyid_@fqdn ivar id'>@fqdn</span> <span class='assign token'>=</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_fetch identifier id'>fetch</span><span class='lparen token'>(</span><span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_fetch identifier id'>fetch</span><span class='lparen token'>(</span><span class='string val'>'fqdn'</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_rescue rescue kw'>rescue</span>
+    <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_end end kw'>end</span>
+
+  <span class='comment val'># Last ditch, attempt to infer from the gear itself</span>
   <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_@container_name ivar id'>@container_name</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='eq op'>==</span> <span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span> <span class='lparen token'>(</span><span class='rubyid_@namespace ivar id'>@namespace</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='eq op'>==</span> <span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span>
     <span class='rubyid_begin begin kw'>begin</span>
       <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@config ivar id'>@config</span><span class='dot token'>.</span><span class='rubyid_get identifier id'>get</span><span class='lparen token'>(</span><span class='string val'>&quot;GEAR_BASE_DIR&quot;</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
@@ -1315,21 +1339,6 @@ Public: Load from json
       <pre class="lines">
 
 
-216
-217
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228
-229
-230
 231
 232
 233
@@ -1355,10 +1364,25 @@ Public: Load from json
 253
 254
 255
-256</pre>
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 216</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 231</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_json_create identifier id'>json_create</span><span class='lparen token'>(</span><span class='rubyid_obj identifier id'>obj</span><span class='rparen token'>)</span>
   <span class='rubyid_data identifier id'>data</span> <span class='assign token'>=</span> <span class='rubyid_obj identifier id'>obj</span><span class='lbrack token'>[</span><span class='string val'>'data'</span><span class='rbrack token'>]</span>
@@ -1450,30 +1474,30 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-608
-609
-610
-611
-612
-613
-614
-615
-616
-617
-618
-619
-620
-621
-622
-623
-624
-625
-626
 627
-628</pre>
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 608</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 627</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_alias identifier id'>add_alias</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
   <span class='rubyid_dname identifier id'>dname</span> <span class='assign token'>=</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
@@ -1529,25 +1553,6 @@ Public: Adds a ssl certificate for an alias
       <pre class="lines">
 
 
-673
-674
-675
-676
-677
-678
-679
-680
-681
-682
-683
-684
-685
-686
-687
-688
-689
-690
-691
 692
 693
 694
@@ -1607,10 +1612,29 @@ Public: Adds a ssl certificate for an alias
 748
 749
 750
-751</pre>
+751
+752
+753
+754
+755
+756
+757
+758
+759
+760
+761
+762
+763
+764
+765
+766
+767
+768
+769
+770</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 673</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 692</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_ssl_cert identifier id'>add_ssl_cert</span><span class='lparen token'>(</span><span class='rubyid_ssl_cert identifier id'>ssl_cert</span><span class='comma token'>,</span> <span class='rubyid_priv_key identifier id'>priv_key</span><span class='comma token'>,</span> <span class='rubyid_server_alias identifier id'>server_alias</span><span class='comma token'>,</span> <span class='rubyid_passphrase identifier id'>passphrase</span><span class='assign token'>=</span><span class='string val'>''</span><span class='rparen token'>)</span>
   <span class='rubyid_server_alias_clean identifier id'>server_alias_clean</span> <span class='assign token'>=</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
@@ -1731,14 +1755,14 @@ Examples
       <pre class="lines">
 
 
-594
-595
-596
-597
-598</pre>
+613
+614
+615
+616
+617</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 594</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 613</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_aliases identifier id'>aliases</span>
   <span class='rubyid_ApacheDBAliases constant id'>ApacheDBAliases</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBAliases constant id'>ApacheDBAliases</span><span class='colon2 op'>::</span><span class='rubyid_READER constant id'>READER</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -1783,34 +1807,34 @@ address.
       <pre class="lines">
 
 
-809
-810
-811
-812
-813
-814
-815
-816
-817
-818
-819
-820
-821
-822
-823
-824
-825
-826
-827
 828
 829
 830
 831
 832
-833</pre>
+833
+834
+835
+836
+837
+838
+839
+840
+841
+842
+843
+844
+845
+846
+847
+848
+849
+850
+851
+852</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 809</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 828</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
   <span class='rubyid_dname identifier id'>dname</span> <span class='assign token'>=</span> <span class='rubyid_name identifier id'>name</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span>
@@ -1894,25 +1918,6 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-359
-360
-361
-362
-363
-364
-365
-366
-367
-368
-369
-370
-371
-372
-373
-374
-375
-376
-377
 378
 379
 380
@@ -1926,10 +1931,29 @@ Returns nil on Success or raises on Failure
 388
 389
 390
-391</pre>
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 359</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 378</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_connect identifier id'>connect</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_elements identifier id'>elements</span><span class='rparen token'>)</span>
 
@@ -1985,25 +2009,6 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-393
-394
-395
-396
-397
-398
-399
-400
-401
-402
-403
-404
-405
-406
-407
-408
-409
-410
-411
 412
 413
 414
@@ -2015,10 +2020,29 @@ Returns nil on Success or raises on Failure
 420
 421
 422
-423</pre>
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 393</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 412</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_connect_websocket identifier id'>connect_websocket</span><span class='lparen token'>(</span><span class='rubyid_path identifier id'>path</span><span class='comma token'>,</span> <span class='rubyid_uri identifier id'>uri</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='rparen token'>)</span>
 
@@ -2085,25 +2109,6 @@ options], &#8230;]
       <pre class="lines">
 
 
-427
-428
-429
-430
-431
-432
-433
-434
-435
-436
-437
-438
-439
-440
-441
-442
-443
-444
-445
 446
 447
 448
@@ -2118,10 +2123,29 @@ options], &#8230;]
 457
 458
 459
-460</pre>
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 427</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 446</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_connections identifier id'>connections</span>
   <span class='comment val'># We can't simply rely on the open returning the block's value in unit testing.</span>
@@ -2200,15 +2224,19 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-157
-158
-159</pre>
+169
+170
+171
+172
+173</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 157</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 169</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
-  <span class='comment val'># Reserved for future use.</span>
+  <span class='rubyid_GearDB constant id'>GearDB</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_GearDB constant id'>GearDB</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
+    <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_store identifier id'>store</span><span class='lparen token'>(</span><span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='string val'>'fqdn'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_@fqdn ivar id'>@fqdn</span><span class='comma token'>,</span>  <span class='string val'>'container_name'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_@container_name ivar id'>@container_name</span><span class='comma token'>,</span> <span class='string val'>'namespace'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_@namespace ivar id'>@namespace</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2253,20 +2281,6 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-169
-170
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181
-182
 183
 184
 185
@@ -2275,10 +2289,25 @@ Returns nil on Success or raises on Failure
 188
 189
 190
-191</pre>
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 169</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 183</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_ApacheDBNodes constant id'>ApacheDBNodes</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBNodes constant id'>ApacheDBNodes</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span>     <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_delete_if identifier id'>delete_if</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_k identifier id'>k</span><span class='comma token'>,</span> <span class='rubyid_v identifier id'>v</span><span class='bitor op'>|</span> <span class='rubyid_k identifier id'>k</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>'/'</span><span class='rparen token'>)</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span> <span class='eq op'>==</span> <span class='rubyid_@fqdn ivar id'>@fqdn</span> <span class='rbrace token'>}</span> <span class='rbrace token'>}</span>
@@ -2286,6 +2315,7 @@ Returns nil on Success or raises on Failure
   <span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span>     <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_@fqdn ivar id'>@fqdn</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
   <span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span>         <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_@fqdn ivar id'>@fqdn</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
   <span class='rubyid_NodeJSDBRoutes constant id'>NodeJSDBRoutes</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_NodeJSDBRoutes constant id'>NodeJSDBRoutes</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span>   <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_delete_if identifier id'>delete_if</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_k identifier id'>k</span><span class='comma token'>,</span> <span class='rubyid_v identifier id'>v</span><span class='bitor op'>|</span> <span class='lparen token'>(</span><span class='rubyid_k identifier id'>k</span> <span class='eq op'>==</span> <span class='rubyid_@fqdn ivar id'>@fqdn</span><span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span> <span class='lparen token'>(</span><span class='rubyid_v identifier id'>v</span><span class='lbrack token'>[</span><span class='string val'>&quot;alias&quot;</span><span class='rbrack token'>]</span> <span class='eq op'>==</span> <span class='rubyid_@fqdn ivar id'>@fqdn</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_GearDB constant id'>GearDB</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_GearDB constant id'>GearDB</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span>                   <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span> <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
 
   <span class='comment val'># Clean up SSL certs and legacy node configuration</span>
   <span class='rubyid_ApacheDBAliases constant id'>ApacheDBAliases</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBAliases constant id'>ApacheDBAliases</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -2350,17 +2380,17 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-474
-475
-476
-477
-478
-479
-480
-481</pre>
+493
+494
+495
+496
+497
+498
+499
+500</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 474</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 493</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_disconnect identifier id'>disconnect</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_paths identifier id'>paths</span><span class='rparen token'>)</span>
   <span class='rubyid_ApacheDBNodes constant id'>ApacheDBNodes</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBNodes constant id'>ApacheDBNodes</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -2391,16 +2421,16 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-483
-484
-485
-486
-487
-488
-489</pre>
+502
+503
+504
+505
+506
+507
+508</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 483</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 502</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_disconnect_websocket identifier id'>disconnect_websocket</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_paths identifier id'>paths</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_paths identifier id'>paths</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span>
@@ -2453,17 +2483,17 @@ Returns true if the gear is idled
       <pre class="lines">
 
 
-578
-579
-580
-581
-582
-583
-584
-585</pre>
+597
+598
+599
+600
+601
+602
+603
+604</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 578</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 597</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_sts identifier id'>get_sts</span>
   <span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='colon2 op'>::</span><span class='rubyid_READER constant id'>READER</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -2517,14 +2547,14 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-500
-501
-502
-503
-504</pre>
+519
+520
+521
+522
+523</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 500</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 519</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_idle identifier id'>idle</span>
   <span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -2588,14 +2618,14 @@ Returns true if the gear is idled
       <pre class="lines">
 
 
-529
-530
-531
-532
-533</pre>
+548
+549
+550
+551
+552</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 529</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 548</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_idle? fid id'>idle?</span>
   <span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='colon2 op'>::</span><span class='rubyid_READER constant id'>READER</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -2646,14 +2676,14 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-564
-565
-566
-567
-568</pre>
+583
+584
+585
+586
+587</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 564</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 583</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_no_sts identifier id'>no_sts</span>
   <span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -2693,18 +2723,18 @@ Reload the Apache configuration
       <pre class="lines">
 
 
-836
-837
-838
-839
-840
-841
-842
-843
-844</pre>
+855
+856
+857
+858
+859
+860
+861
+862
+863</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 836</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 855</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload_httpd identifier id'>reload_httpd</span><span class='lparen token'>(</span><span class='rubyid_async identifier id'>async</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_async_opt identifier id'>async_opt</span><span class='assign token'>=</span><span class='string val'>&quot;-b&quot;</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_async identifier id'>async</span>
@@ -2758,22 +2788,22 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-638
-639
-640
-641
-642
-643
-644
-645
-646
-647
-648
-649
-650</pre>
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 638</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 657</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_alias identifier id'>remove_alias</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
   <span class='rubyid_dname identifier id'>dname</span> <span class='assign token'>=</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
@@ -2821,31 +2851,31 @@ Public: Removes ssl certificate/private key associated with an alias
       <pre class="lines">
 
 
-781
-782
-783
-784
-785
-786
-787
-788
-789
-790
-791
-792
-793
-794
-795
-796
-797
-798
-799
 800
 801
-802</pre>
+802
+803
+804
+805
+806
+807
+808
+809
+810
+811
+812
+813
+814
+815
+816
+817
+818
+819
+820
+821</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 781</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 800</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_ssl_cert identifier id'>remove_ssl_cert</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
   <span class='rubyid_server_alias_clean identifier id'>server_alias_clean</span> <span class='assign token'>=</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
@@ -2902,27 +2932,27 @@ Public: List aliases with SSL certs and unencrypted private keys
       <pre class="lines">
 
 
-653
-654
-655
-656
-657
-658
-659
-660
-661
-662
-663
-664
-665
-666
-667
-668
-669
-670</pre>
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 653</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 672</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_ssl_certs identifier id'>ssl_certs</span>
   <span class='rubyid_aliases identifier id'>aliases</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_a identifier id'>a</span><span class='bitor op'>|</span>
@@ -2986,18 +3016,18 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-545
-546
-547
-548
-549
-550
-551
-552
-553</pre>
+564
+565
+566
+567
+568
+569
+570
+571
+572</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 545</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 564</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_sts identifier id'>sts</span><span class='lparen token'>(</span><span class='rubyid_max_age identifier id'>max_age</span><span class='assign token'>=</span><span class='integer val'>15768000</span><span class='rparen token'>)</span>
   <span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBSTS constant id'>ApacheDBSTS</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -3041,21 +3071,21 @@ Public: extract hash version of complete data for this gear
       <pre class="lines">
 
 
-194
-195
-196
-197
-198
-199
-200
-201
-202
-203
-204
-205</pre>
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 194</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 209</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_hash identifier id'>to_hash</span>
   <span class='lbrace token'>{</span>
@@ -3102,15 +3132,15 @@ Public: Generate json
       <pre class="lines">
 
 
-208
-209
-210
-211
-212
-213</pre>
+223
+224
+225
+226
+227
+228</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 208</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 223</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_json identifier id'>to_json</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='rparen token'>)</span>
   <span class='lbrace token'>{</span>
@@ -3162,14 +3192,14 @@ Returns nil on Success or raises on Failure
       <pre class="lines">
 
 
-515
-516
-517
-518
-519</pre>
+534
+535
+536
+537
+538</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 515</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 534</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_unidle identifier id'>unidle</span>
   <span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBIdler constant id'>ApacheDBIdler</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -3209,21 +3239,6 @@ Public: Update identifier to the new names
       <pre class="lines">
 
 
-260
-261
-262
-263
-264
-265
-266
-267
-268
-269
-270
-271
-272
-273
-274
 275
 276
 277
@@ -3275,10 +3290,29 @@ Public: Update identifier to the new names
 323
 324
 325
-326</pre>
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 260</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 275</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_namespace identifier id'>namespace</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_container_name identifier id'>container_name</span> <span class='eq op'>==</span> <span class='rubyid_@container_name ivar id'>@container_name</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='lparen token'>(</span><span class='rubyid_namespace identifier id'>namespace</span> <span class='eq op'>==</span> <span class='rubyid_@namespace ivar id'>@namespace</span><span class='rparen token'>)</span>
@@ -3333,6 +3367,10 @@ Public: Update identifier to the new names
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
+  <span class='rubyid_GearDB constant id'>GearDB</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_GearDB constant id'>GearDB</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
+    <span class='rubyid_d identifier id'>d</span><span class='dot token'>.</span><span class='rubyid_store identifier id'>store</span><span class='lparen token'>(</span><span class='rubyid_@container_uuid ivar id'>@container_uuid</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='string val'>'fqdn'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_new_fqdn identifier id'>new_fqdn</span><span class='comma token'>,</span>  <span class='string val'>'container_name'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='string val'>'namespace'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_namespace identifier id'>namespace</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+
   <span class='rubyid_old_namespace identifier id'>old_namespace</span> <span class='assign token'>=</span> <span class='rubyid_@namespace ivar id'>@namespace</span>
 
   <span class='rubyid_@container_name ivar id'>@container_name</span> <span class='assign token'>=</span> <span class='rubyid_container_name identifier id'>container_name</span>
@@ -3368,12 +3406,12 @@ Public: Update identifier to the new names
       <pre class="lines">
 
 
-328
-329
-330</pre>
+347
+348
+349</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 328</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 347</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_name identifier id'>update_name</span><span class='lparen token'>(</span><span class='rubyid_container_name identifier id'>container_name</span><span class='rparen token'>)</span>
   <span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='rubyid_container_name identifier id'>container_name</span><span class='comma token'>,</span> <span class='rubyid_@namespace ivar id'>@namespace</span><span class='rparen token'>)</span>
@@ -3399,12 +3437,12 @@ Public: Update identifier to the new names
       <pre class="lines">
 
 
-332
-333
-334</pre>
+351
+352
+353</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 332</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 351</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_namespace identifier id'>update_namespace</span><span class='lparen token'>(</span><span class='rubyid_namespace identifier id'>namespace</span><span class='rparen token'>)</span>
   <span class='rubyid_update identifier id'>update</span><span class='lparen token'>(</span><span class='rubyid_@container_name ivar id'>@container_name</span><span class='comma token'>,</span> <span class='rubyid_namespace identifier id'>namespace</span><span class='rparen token'>)</span>
@@ -3420,7 +3458,7 @@ Public: Update identifier to the new names
 </div>
 
     <div id="footer">
-  Generated on Tue Apr 16 18:34:02 2013 by
+  Generated on Wed Apr 17 18:41:35 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
