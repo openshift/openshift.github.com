@@ -133,6 +133,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#set_log_tag-instance_method" title="#set_log_tag (instance method)">- (Object) <strong>set_log_tag</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#show-instance_method" title="#show (instance method)">- (RestReply&lt;Boolean&gt;) <strong>show</strong> </a>
     
 
@@ -207,7 +229,47 @@ Support API to check if application DNS entry is available.
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="show-instance_method">
+  <h3 class="signature first" id="set_log_tag-instance_method">
+  
+    - (<tt>Object</tt>) <strong>set_log_tag</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/dns_resolvable_controller.rb', line 32</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_set_log_tag identifier id'>set_log_tag</span>
+  <span class='rubyid_@log_tag ivar id'>@log_tag</span> <span class='assign token'>=</span> <span class='string val'>&quot;DNS_RESOLVABLE&quot;</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="show-instance_method">
   
     - (<tt><span class='object_link'><a href="RestReply.html" title="RestReply (class)">RestReply</a></span>&lt;Boolean&gt;</tt>) <strong>show</strong> 
   
@@ -258,7 +320,6 @@ Returns true when DNS entry is resolvable
       <pre class="lines">
 
 
-14
 15
 16
 17
@@ -274,48 +335,13 @@ Returns true when DNS entry is resolvable
 27
 28
 29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47</pre>
+30</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/dns_resolvable_controller.rb', line 14</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/dns_resolvable_controller.rb', line 15</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_show identifier id'>show</span>
-  <span class='rubyid_domain_id identifier id'>domain_id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:domain_id</span><span class='rbrack token'>]</span>
-  <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:application_id</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:application_id</span><span class='rbrack token'>]</span>
-
-  <span class='rubyid_begin begin kw'>begin</span>
-    <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_Domain constant id'>Domain</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:eventual</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_owner identifier id'>owner</span><span class='colon op'>:</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='comma token'>,</span> <span class='rubyid_canonical_namespace identifier id'>canonical_namespace</span><span class='colon op'>:</span> <span class='rubyid_domain_id identifier id'>domain_id</span><span class='rparen token'>)</span>
-    <span class='rubyid_@domain_name ivar id'>@domain_name</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_namespace identifier id'>namespace</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Domain #{domain_id} not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>127</span><span class='comma token'>,</span> <span class='string val'>&quot;DNS_RESOLVABLE&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_end end kw'>end</span>
-
-  <span class='rubyid_begin begin kw'>begin</span>
-    <span class='rubyid_application identifier id'>application</span> <span class='assign token'>=</span> <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:eventual</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='colon op'>:</span> <span class='rubyid_domain identifier id'>domain</span><span class='comma token'>,</span> <span class='rubyid_canonical_name identifier id'>canonical_name</span><span class='colon op'>:</span> <span class='rubyid_id identifier id'>id</span><span class='rparen token'>)</span>
-    <span class='rubyid_@application_name ivar id'>@application_name</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>
-    <span class='rubyid_@application_uuid ivar id'>@application_uuid</span> <span class='assign token'>=</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_uuid identifier id'>uuid</span>
-  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Errors constant id'>Errors</span><span class='colon2 op'>::</span><span class='rubyid_DocumentNotFound constant id'>DocumentNotFound</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application '#{id}' not found&quot;</span><span class='comma token'>,</span> <span class='integer val'>101</span><span class='comma token'>,</span> <span class='string val'>&quot;DNS_RESOLVABLE&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_end end kw'>end</span>
-
-  <span class='rubyid_name identifier id'>name</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;#{application.name}-#{domain.namespace}.#{Rails.configuration.openshift[:domain_suffix]}&quot;</span> 
+  <span class='rubyid_name identifier id'>name</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;#{@application.name}-#{@domain.namespace}.#{Rails.configuration.openshift[:domain_suffix]}&quot;</span> 
   <span class='rubyid_begin begin kw'>begin</span>
    <span class='rubyid_nameservers identifier id'>nameservers</span> <span class='assign token'>=</span> <span class='rubyid_NameServerCache constant id'>NameServerCache</span><span class='dot token'>.</span><span class='rubyid_get_name_servers identifier id'>get_name_servers</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
@@ -325,9 +351,9 @@ Returns true when DNS entry is resolvable
   <span class='rubyid_dns identifier id'>dns</span> <span class='assign token'>=</span> <span class='rubyid_Dnsruby constant id'>Dnsruby</span><span class='colon2 op'>::</span><span class='rubyid_Resolver constant id'>Resolver</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='symbol val'>:nameserver</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_nameservers identifier id'>nameservers</span><span class='lbrack token'>[</span><span class='rubyid_rand identifier id'>rand</span><span class='lparen token'>(</span><span class='rubyid_nameservers identifier id'>nameservers</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='rparen token'>)</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_nameservers identifier id'>nameservers</span>
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_dns identifier id'>dns</span><span class='dot token'>.</span><span class='rubyid_query identifier id'>query</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_Dnsruby constant id'>Dnsruby</span><span class='colon2 op'>::</span><span class='rubyid_Types constant id'>Types</span><span class='dot token'>.</span><span class='rubyid_A constant id'>A</span><span class='rparen token'>)</span>
-    <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;boolean&quot;</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='string val'>&quot;DNS_RESOLVABLE&quot;</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Resolved DNS #{name}&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;boolean&quot;</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Resolved DNS #{name}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
-    <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Could not resolve DNS #{name}: #{e.message}&quot;</span><span class='comma token'>,</span> <span class='integer val'>170</span><span class='comma token'>,</span> <span class='string val'>&quot;DNS_RESOLVABLE&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Could not resolve DNS #{name}: #{e.message}&quot;</span><span class='comma token'>,</span> <span class='integer val'>170</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -341,7 +367,7 @@ Returns true when DNS entry is resolvable
 </div>
 
     <div id="footer">
-  Generated on Tue Apr 23 18:36:43 2013 by
+  Generated on Wed Apr 24 18:32:55 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

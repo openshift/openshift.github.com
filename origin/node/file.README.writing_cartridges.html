@@ -85,7 +85,10 @@ using your cartridge.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='xstring val'>`vendor name`</span><span class='minus op'>-</span><span class='xstring val'>`cartridge name`</span>
  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_bin identifier id'>bin</span>                        <span class='lparen token'>(</span><span class='rubyid_required identifier id'>required</span><span class='rparen token'>)</span>
- <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_setup identifier id'>setup</span>                   <span class='lparen token'>(</span><span class='rubyid_required identifier id'>required</span><span class='rparen token'>)</span>
+ <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_setup identifier id'>setup</span>                   <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
+ <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_install identifier id'>install</span>                 <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
+ <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_post identifier id'>post</span><span class='minus op'>-</span><span class='rubyid_setup identifier id'>setup</span>              <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
+ <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_post identifier id'>post</span><span class='minus op'>-</span><span class='rubyid_install identifier id'>install</span>            <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_teardown identifier id'>teardown</span>                <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_control identifier id'>control</span>                 <span class='lparen token'>(</span><span class='rubyid_required identifier id'>required</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span><span class='minus op'>-</span> <span class='rubyid_hooks identifier id'>hooks</span>                      <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
@@ -128,7 +131,7 @@ using your cartridge.</p>
     <code>conf.d</code> is the usual name for where a web framework would install it&#39;s <code>httpd</code> configuration.</p>
 
 <p>To support multiple software versions within one cartridge,
-you may create symlinks between the bin/control and the setup
+you may create symlinks between the bin/control and the 
 versions/version/bin/control file. Or, you may choose
 to use the bin/control file as a shim to call the correct versioned
 control file.</p>
@@ -255,8 +258,8 @@ the cartridge to be re-started or the application developer&#39;s application to
 
 <p>By not requiring a restart, you improve the application user&#39;s experience since no downtime will
 be incurred from your changes. If the cartridge&#39;s current version is not in the list when upgraded,
-the cartridge will be stopped, the new code will be installed, <code>setup</code> will be run, and the cartridge
-started.</p>
+the cartridge will be stopped, the new code will be installed, <code>setup</code> will be run, the cartridge
+started and <code>post-setup</code> will be run.</p>
 
 <p>Today this is a simple list and string matching is used to determine compatible versions.
 If this list proves to be unmanageable, future versions of OpenShift may implement maven dependency range style checking.</p>
@@ -352,7 +355,7 @@ bin/</span>
 <p>Directories like <code>~/.node-gyp</code> and <code>~/.npm</code> in nodejs are <strong>NOT</strong> candidates
 to be created in this manner as they require the application developer to have read
 and write access while the application is deploying and running. These
-directories would need to be created by the nodejs <code>setup</code> script.</p>
+directories would need to be created by the nodejs <code>setup</code> or <code>install</code> scripts.</p>
 
 <p>The following list is reserved by OpenShift in the the gear&#39;s home
 directory:</p>
@@ -376,11 +379,11 @@ Your application should welcome the application developer to
 your cartridge and let them see that your cartridge has indeed been installed and operating.
 If you provide a <code>template</code> directory, OpenShift will transform it into a bare git repository
 for use by the application developer. If you provide a <code>template.git</code> directory, OpenShift will
-copy the directory for use by the application developer. Your <code>setup</code> script should assume that
-<code>template</code> directories may be converted to <code>template.git</code> during the packaging of your cartridge
-for use by OpenShift. The PaaS operator may choose to convert all <code>template</code> directories to bare
-git repositories <code>template.git</code> to obtain the performance gain when adding your cartridge to gear.
-One good workflow point to make this change is when your cartridge is packaged into an RPM.</p>
+copy the directory for use by the application developer. Your <code>setup</code> and <code>install</code> scripts should
+assume that <code>template</code> directories may be converted to <code>template.git</code> during the packaging of your 
+cartridge for use by OpenShift. The PaaS operator may choose to convert all <code>template</code> directories 
+to bare git repositories <code>template.git</code> to obtain the performance gain when adding your cartridge 
+to gear.  One good workflow point to make this change is when your cartridge is packaged into an RPM.</p>
 
 <p>A <code>ruby 1.8</code> with <code>Passenger</code> support would have a <code>public</code> sub-directory and
 a <code>config.ru</code> file to define the web application.</p>
@@ -583,12 +586,15 @@ be run from the home directory of the gear.</p>
 <p>A cartridge must implement the following scripts:</p>
 
 <ul>
-<li><code>setup</code>: prepare this instance of cartridge to be operational</li>
+<li><code>setup</code> and/or <code>install</code>: prepare this instance of cartridge to be operational for the initial install and each upgrade</li>
 <li><code>control</code>: command cartridge to report or change state</li>
 </ul>
 
 <p>A cartridge may implement the following scripts:
-* <code>teardown</code>: prepare this instance of cartridge to be removed</p>
+* <code>teardown</code>: prepare this instance of cartridge to be removed
+* <code>install</code>: prepare this instance of cartridge to be operational for the initial install
+* <code>post-setup</code>: an opportunity for setup after the cartridge has been started for the initial install and each upgrade
+* <code>post-install</code>: an opportunity for setup after the cartridge has been started for the initial install</p>
 
 <h3>Exit Status Codes</h3>
 
@@ -623,23 +629,92 @@ the version denoted by the <code>Version</code> element from <code>manifest.yml<
 
 <p>The <code>setup</code> script is responsible for creating and/or configuring the
 files that were copied from the cartridge repository into the gear&#39;s
-directory.</p>
+directory.  Setup must also be reentrant and will be called on every
+non backward compatible upgrade.  Any logic you want to occur only once
+should be added to install.</p>
 
 <p>If you have used ERB templates for software configuration those files will be
 processed for environment variable substitution after <code>setup</code> is run.  An
 example would be PHP&#39;s php.ini file:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='rubyid_upload_tmp_dir identifier id'>upload_tmp_dir</span> <span class='assign token'>=</span> <span class='string val'>&quot;&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php-5.3/tmp/&quot;</span>
-<span class='rubyid_session identifier id'>session</span><span class='dot token'>.</span><span class='rubyid_save_path identifier id'>save_path</span> <span class='assign token'>=</span> <span class='string val'>&quot;&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php-5.3/sessions/&quot;</span>
+<pre class="code ruby"><code class="ruby"><span class='rubyid_upload_tmp_dir identifier id'>upload_tmp_dir</span> <span class='assign token'>=</span> <span class='string val'>&quot;&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/tmp/&quot;</span>
+<span class='rubyid_session identifier id'>session</span><span class='dot token'>.</span><span class='rubyid_save_path identifier id'>save_path</span> <span class='assign token'>=</span> <span class='string val'>&quot;&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/sessions/&quot;</span>
 </code></pre>
 
 <p>Other candidates for templates are httpd configuration files for
 <code>includes</code>, configuring database to store persistent data in the
 OPENSHIFT_DATA_DIR, and setting the application name in the pom.xml file.</p>
 
-<p><code>setup</code> may substitute a version dependent of the <code>template</code> or <code>template.git</code> directories.</p>
+<p>Lock context: <code>unlocked</code></p>
+
+<h2>bin/install</h2>
+
+<h5>Synopsis</h5>
+
+<p><code>install [--version &lt;version&gt;]</code></p>
+
+<h5>Options</h5>
+
+<ul>
+<li><code>--version &lt;version&gt;</code>: Selects which version of cartridge to install. If no version is provided,
+the version denoted by the <code>Version</code> element from <code>manifest.yml</code> will be installed.</li>
+</ul>
+
+<h5>Description</h5>
+
+<p>The <code>install</code> script is responsible for creating and/or configuring the
+files that were copied from the cartridge repository into the gear&#39;s
+directory.  <code>install</code> will only be called on the initial install of a cartridge.</p>
+
+<p>Any one time operations such as generating passwords, creating ssh keys, adding environment 
+variables should occur in install.</p>
+
+<p>Also any client results/messages should also be reported in install rather than setup.</p>
+
+<p><code>install</code> may substitute a version dependent of the <code>template</code> or <code>template.git</code> directories.</p>
 
 <p>Lock context: <code>unlocked</code></p>
+
+<h2>bin/post-setup</h2>
+
+<h5>Synopsis</h5>
+
+<p><code>post-setup [--version &lt;version&gt;]</code></p>
+
+<h5>Options</h5>
+
+<ul>
+<li><code>--version &lt;version&gt;</code>: Selects which version of cartridge to install. If no version is provided,
+the version denoted by the <code>Version</code> element from <code>manifest.yml</code> will be installed.</li>
+</ul>
+
+<h5>Description</h5>
+
+<p>The <code>post-setup</code> script is an opportunity to configure your cartridge after the cartridge has been 
+started.  Like setup it must also be reentrant and is called for each non backward compatible cartridge 
+upgrade.</p>
+
+<p>Lock context: <code>locked</code></p>
+
+<h2>bin/post-install</h2>
+
+<h5>Synopsis</h5>
+
+<p><code>post-install [--version &lt;version&gt;]</code></p>
+
+<h5>Options</h5>
+
+<ul>
+<li><code>--version &lt;version&gt;</code>: Selects which version of cartridge to install. If no version is provided,
+the version denoted by the <code>Version</code> element from <code>manifest.yml</code> will be installed.</li>
+</ul>
+
+<h5>Description</h5>
+
+<p>The <code>post-install</code> script is an opportunity to configure your cartridge after the cartridge has been 
+started and is only called for the initial install of the cartridge.</p>
+
+<p>Lock context: <code>locked</code></p>
 
 <h5>Messaging to OpenShift from cartridge</h5>
 
@@ -822,7 +897,7 @@ to be used for all cartridge entry points.</p>
 
 <p>These are variables you either provided to you for communicating to the application developer.  You may add
 additional variables for your cartridges or the packaged software needs. You may provide these files in your
-cartridge&#39;s <code>env</code> directory or choose to create them in your <code>setup</code> script.</p>
+cartridge&#39;s <code>env</code> directory or choose to create them in your <code>setup</code> and <code>install</code> scripts.</p>
 
 <ul>
 <li><code>OPENSHIFT_MYSQL_DB_HOST</code>                  Backwards compatibility (ERB populate from <code>OPENSHIFT_MYSQL_DB_IP</code>)</li>
@@ -1152,7 +1227,7 @@ authors should take care to be as conservative as possible.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Tue Apr 23 18:42:46 2013 by
+  Generated on Wed Apr 24 18:38:41 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
