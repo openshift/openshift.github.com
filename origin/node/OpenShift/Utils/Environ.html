@@ -129,57 +129,7 @@ Class represents the OpenShift/Ruby analogy of C environ(7)
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#for_cartridge-class_method" title="for_cartridge (class method)">+ (Hash&lt;String,String&gt;) <strong>for_cartridge</strong>(cartridge_dir) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>
-Hash[Environment Variable] = Value.
-</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#for_gear-class_method" title="for_gear (class method)">+ (Hash&lt;String,String&gt;) <strong>for_gear</strong>(gear_dir) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>
-Load the combined cartridge environments for a gear.
-</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#for_gear_ordered-class_method" title="for_gear_ordered (class method)">+ (Hash&lt;String,String&gt;) <strong>for_gear_ordered</strong>(gear_dir, *dirs) </a>
+      <a href="#for_gear-class_method" title="for_gear (class method)">+ (Hash&lt;String,String&gt;) <strong>for_gear</strong>(gear_dir, *dirs) </a>
     
 
     
@@ -237,9 +187,9 @@ environ(7) hash.
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="for_cartridge-class_method">
+  <h3 class="signature first" id="for_gear-class_method">
   
-    + (<tt>Hash&lt;String,String&gt;</tt>) <strong>for_cartridge</strong>(cartridge_dir) 
+    + (<tt>Hash&lt;String,String&gt;</tt>) <strong>for_gear</strong>(gear_dir, *dirs) 
   
 
   
@@ -248,7 +198,7 @@ environ(7) hash.
 </h3><div class="docstring">
   <div class="discussion">
     <p>
-Hash[Environment Variable] = Value
+Load the combined cartridge environments for a gear
 </p>
 
 
@@ -260,7 +210,7 @@ Hash[Environment Variable] = Value
   
     <li>
       
-        <span class='name'>cartridge_dir</span>
+        <span class='name'>gear_dir</span>
       
       
         <span class='type'>(<tt>String</tt>)</span>
@@ -270,6 +220,23 @@ Hash[Environment Variable] = Value
         &mdash;
         <div class='inline'><p>
 Home directory of the gear
+</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>cartridge_dirs</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>
+Home directories of cartridges, loaded last to override other settings.
 </p>
 </div>
       
@@ -303,210 +270,73 @@ hash[Environment Variable] = Value
       <pre class="lines">
 
 
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
 45
 46
 47
 48
-49</pre>
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 29</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_for_cartridge identifier id'>for_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span><span class='rparen token'>)</span>
-  <span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='string val'>&quot;/etc/openshift/env&quot;</span><span class='comma token'>,</span>
-       <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_Pathname constant id'>Pathname</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_parent identifier id'>parent</span><span class='dot token'>.</span><span class='rubyid_to_path identifier id'>to_path</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='rparen token'>)</span><span class='comma token'>,</span>
-       <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_cartridge_dir identifier id'>cartridge_dir</span><span class='comma token'>,</span> <span class='string val'>'env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="for_gear-class_method">
-  
-    + (<tt>Hash&lt;String,String&gt;</tt>) <strong>for_gear</strong>(gear_dir) 
-  
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='mult op'>*</span><span class='rubyid_dirs identifier id'>dirs</span><span class='rparen token'>)</span>
+  <span class='rubyid_env identifier id'>env</span>         <span class='assign token'>=</span> <span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='string val'>'/etc/openshift/env'</span><span class='rparen token'>)</span>
+  <span class='rubyid_system_path identifier id'>system_path</span> <span class='assign token'>=</span> <span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'PATH'</span><span class='rbrack token'>]</span>
 
-  
+  <span class='rubyid_env identifier id'>env</span><span class='dot token'>.</span><span class='rubyid_merge! fid id'>merge!</span><span class='lparen token'>(</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span>
+                 <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='comma token'>,</span> <span class='string val'>'.uservars'</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+                 <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+                 <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='comma token'>,</span> <span class='string val'>'env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
 
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>
-Load the combined cartridge environments for a gear
-</p>
+  <span class='comment val'># If we have a primary cartridge make sure it's the last loaded in the environment</span>
+  <span class='rubyid_primary identifier id'>primary</span> <span class='assign token'>=</span> <span class='rubyid_if if kw'>if</span> <span class='rubyid_env identifier id'>env</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span> <span class='string val'>'OPENSHIFT_PRIMARY_CARTRIDGE_DIR'</span>
+              <span class='rubyid_dirs identifier id'>dirs</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span> <span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'OPENSHIFT_PRIMARY_CARTRIDGE_DIR'</span><span class='rbrack token'>]</span>
+              <span class='rubyid_dirs identifier id'>dirs</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'OPENSHIFT_PRIMARY_CARTRIDGE_DIR'</span><span class='rbrack token'>]</span>
 
+              <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_basename identifier id'>basename</span><span class='lparen token'>(</span><span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'OPENSHIFT_PRIMARY_CARTRIDGE_DIR'</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_upcase identifier id'>upcase</span>
+            <span class='rubyid_end end kw'>end</span>
 
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>gear_dir</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>
-Home directory of the gear
-</p>
-</div>
-      
-    </li>
-  
-</ul>
+  <span class='rubyid_dirs identifier id'>dirs</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='rubyid_env identifier id'>env</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='bitor op'>|</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_merge! fid id'>merge!</span><span class='lparen token'>(</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_d identifier id'>d</span><span class='comma token'>,</span> <span class='string val'>'env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
 
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Hash&lt;String,String&gt;</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>
-hash[Environment Variable] = Value
-</p>
-</div>
-      
-    </li>
-  
-</ul>
+  <span class='rubyid_primary_path identifier id'>primary_path</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;OPENSHIFT_#{primary}_PATH&quot;</span>
+  <span class='rubyid_path_segments identifier id'>path_segments</span> <span class='assign token'>=</span> <span class='rubyid_env identifier id'>env</span><span class='dot token'>.</span><span class='rubyid_keys identifier id'>keys</span><span class='dot token'>.</span><span class='rubyid_find_all identifier id'>find_all</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_k identifier id'>k</span><span class='bitor op'>|</span> <span class='regexp val'>/^OPENSHIFT_.*_PATH/</span> <span class='match op'>=~</span> <span class='rubyid_k identifier id'>k</span> <span class='rbrace token'>}</span>
 
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
+  <span class='comment val'># If we have a primary cartridge path make sure it's the first searched</span>
+  <span class='rubyid_path_segments identifier id'>path_segments</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span> <span class='rubyid_primary_path identifier id'>primary_path</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_path_segments identifier id'>path_segments</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_primary_path identifier id'>primary_path</span>
+  <span class='rubyid_segments identifier id'>segments</span> <span class='assign token'>=</span> <span class='rubyid_path_segments identifier id'>path_segments</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_s identifier id'>s</span><span class='comma token'>,</span> <span class='rubyid_p identifier id'>p</span><span class='bitor op'>|</span> <span class='rubyid_p identifier id'>p</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='rubyid_s identifier id'>s</span><span class='rbrack token'>]</span> <span class='rbrace token'>}</span>
 
+  <span class='rubyid_segments identifier id'>segments</span><span class='dot token'>.</span><span class='rubyid_unshift identifier id'>unshift</span> <span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='rubyid_primary_path identifier id'>primary_path</span><span class='rbrack token'>]</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='rubyid_primary_path identifier id'>primary_path</span><span class='rbrack token'>]</span>
+  <span class='rubyid_segments identifier id'>segments</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_system_path identifier id'>system_path</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_system_path identifier id'>system_path</span>
 
-27
-28
-29
-30
-31
-32</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 27</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='rparen token'>)</span>
-  <span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='string val'>&quot;/etc/openshift/env&quot;</span><span class='comma token'>,</span>
-       <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='comma token'>,</span> <span class='string val'>'.uservars'</span><span class='rparen token'>)</span><span class='comma token'>,</span>
-       <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='rparen token'>)</span><span class='comma token'>,</span>
-       <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='comma token'>,</span> <span class='string val'>'env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="for_gear_ordered-class_method">
-  
-    + (<tt>Hash&lt;String,String&gt;</tt>) <strong>for_gear_ordered</strong>(gear_dir, *dirs) 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>
-Load the combined cartridge environments for a gear
-</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>gear_dir</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>
-Home directory of the gear
-</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>dirs</span>
-      
-      
-        <span class='type'>(<tt>Array[String]</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>
-Ordered List of cartridge_dirs for overrides
-</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Hash&lt;String,String&gt;</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>
-hash[Environment Variable] = Value
-</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-38
-39
-40
-41</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 38</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_for_gear_ordered identifier id'>for_gear_ordered</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='mult op'>*</span><span class='rubyid_dirs identifier id'>dirs</span><span class='rparen token'>)</span>
-  <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_for_gear identifier id'>for_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='rparen token'>)</span>
-  <span class='rubyid_dirs identifier id'>dirs</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='rubyid_env identifier id'>env</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='bitor op'>|</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_merge identifier id'>merge</span><span class='lparen token'>(</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_d identifier id'>d</span><span class='comma token'>,</span> <span class='string val'>'env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'PATH'</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_segments identifier id'>segments</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='string val'>':'</span><span class='rparen token'>)</span>
+  <span class='rubyid_env identifier id'>env</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -582,17 +412,6 @@ environment variable name: value
       <pre class="lines">
 
 
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
 65
 66
 67
@@ -624,10 +443,21 @@ environment variable name: value
 93
 94
 95
-96</pre>
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 65</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_dirs identifier id'>dirs</span><span class='rparen token'>)</span>
   <span class='rubyid_dirs identifier id'>dirs</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_env_dir identifier id'>env_dir</span><span class='comma token'>,</span> <span class='rubyid_env identifier id'>env</span><span class='bitor op'>|</span>
@@ -656,7 +486,7 @@ environment variable name: value
         <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_contents identifier id'>contents</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
           <span class='rubyid_msg identifier id'>msg</span> <span class='lshft op'>&lt;&lt;</span> <span class='dstring node'>&quot; [#{contents}]&quot;</span>
         <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_msg identifier id'>msg</span> <span class='lshft op'>&lt;&lt;</span> <span class='string val'>&quot;: &quot;</span>
+        <span class='rubyid_msg identifier id'>msg</span> <span class='lshft op'>&lt;&lt;</span> <span class='string val'>': '</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='lshft op'>&lt;&lt;</span> <span class='lparen token'>(</span>
         <span class='rubyid_case case kw'>case</span> <span class='rubyid_e identifier id'>e</span>
           <span class='rubyid_when when kw'>when</span> <span class='rubyid_SystemCallError constant id'>SystemCallError</span>
@@ -683,7 +513,7 @@ environment variable name: value
 </div>
 
     <div id="footer">
-  Generated on Wed Apr 24 18:40:44 2013 by
+  Generated on Thu Apr 25 19:47:38 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

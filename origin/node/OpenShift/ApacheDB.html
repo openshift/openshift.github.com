@@ -111,11 +111,56 @@
 Present an API to Apache&#8217;s DB files for mod_rewrite.
 </p>
 <p>
-This is a bit complicated since there don&#8217;t appear to be a DB file
-format common to ruby and Apache that does not have corruption issues. The
-only format they can agree on is text, which is slow for 10&#8217;s of
-thousands of entries. Unfortunately, that means we have to go through a
-convoluted process to populate the final Apache DB.
+The process to update database files is complicated and hand-editing is
+strongly discouraged for the following reasons:
+</p>
+<ol>
+<li>There did not appear to be a corruption free database format in
+
+</li>
+</ol>
+<p>
+common between ruby and Apache that had a guaranteed consistent API. Even
+BerkeleyDB and the BDB module corrupted each other on testing.
+</p>
+<ol>
+<li>Every effort was made to ensure that a crash, even due to a
+
+</li>
+</ol>
+<p>
+system issue such as disk space or memory starvation did not result in a
+corrupt database and the loss of old information.
+</p>
+<ol>
+<li>Every effort was made to ensure that multiple threads and
+
+</li>
+</ol>
+<p>
+processes could not corrupt or step on each other.
+</p>
+<ol>
+<li>While the httxt2dbm tool can run on an existing database, that
+
+</li>
+</ol>
+<p>
+will result in additions but not removals from the database. Only some of
+your changes will take unless the entire db is recreated each time.
+</p>
+<ol>
+<li>In order for BerkeleyDB to be safe for multiple processes to
+
+</li>
+</ol>
+<p>
+access/edit, the environment must be specifically set up to allow locking.
+An audit of the Apache source code shows that it does not do that. And an
+strace of Apache shows no attempt to either lock or establish a mutex on
+the BerkeleyDB file. I believe the claim that BerkeleyDB is safe to have
+multiple processess reading/writing it is simply not true the way its used
+by Apache.
 </p>
 <p>
 This locks down to one thread for safety. You MUST ensure that close is
@@ -518,28 +563,6 @@ A new instance of ApacheDB
       <pre class="lines">
 
 
-933
-934
-935
-936
-937
-938
-939
-940
-941
-942
-943
-944
-945
-946
-947
-948
-949
-950
-951
-952
-953
-954
 955
 956
 957
@@ -569,10 +592,32 @@ A new instance of ApacheDB
 981
 982
 983
-984</pre>
+984
+985
+986
+987
+988
+989
+990
+991
+992
+993
+994
+995
+996
+997
+998
+999
+1000
+1001
+1002
+1003
+1004
+1005
+1006</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 933</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 955</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_flags identifier id'>flags</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_@closed ivar id'>@closed</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
@@ -667,25 +712,25 @@ the close.
       <pre class="lines">
 
 
-1089
-1090
-1091
-1092
-1093
-1094
-1095
-1096
-1097
-1098
-1099
-1100
-1101
-1102
-1103
-1104</pre>
+1111
+1112
+1113
+1114
+1115
+1116
+1117
+1118
+1119
+1120
+1121
+1122
+1123
+1124
+1125
+1126</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1089</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1111</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_flags identifier id'>flags</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_inst identifier id'>inst</span> <span class='assign token'>=</span> <span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_flags identifier id'>flags</span><span class='rparen token'>)</span>
@@ -730,28 +775,6 @@ the close.
       <pre class="lines">
 
 
-1017
-1018
-1019
-1020
-1021
-1022
-1023
-1024
-1025
-1026
-1027
-1028
-1029
-1030
-1031
-1032
-1033
-1034
-1035
-1036
-1037
-1038
 1039
 1040
 1041
@@ -759,10 +782,32 @@ the close.
 1043
 1044
 1045
-1046</pre>
+1046
+1047
+1048
+1049
+1050
+1051
+1052
+1053
+1054
+1055
+1056
+1057
+1058
+1059
+1060
+1061
+1062
+1063
+1064
+1065
+1066
+1067
+1068</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1017</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1039</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_callout identifier id'>callout</span>
   <span class='comment val'># Use Berkeley DB so that there's no race condition between</span>
@@ -815,21 +860,21 @@ the close.
       <pre class="lines">
 
 
-1070
-1071
-1072
-1073
-1074
-1075
-1076
-1077
-1078
-1079
-1080
-1081</pre>
+1092
+1093
+1094
+1095
+1096
+1097
+1098
+1099
+1100
+1101
+1102
+1103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1070</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1092</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_close identifier id'>close</span>
   <span class='rubyid_@closed ivar id'>@closed</span><span class='assign token'>=</span><span class='rubyid_true true kw'>true</span>
@@ -886,12 +931,12 @@ the close.
       <pre class="lines">
 
 
-1083
-1084
-1085</pre>
+1105
+1106
+1107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1083</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1105</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_closed? fid id'>closed?</span>
   <span class='rubyid_@closed ivar id'>@closed</span>
@@ -917,17 +962,17 @@ the close.
       <pre class="lines">
 
 
-986
-987
-988
-989
-990
-991
-992
-993</pre>
+1008
+1009
+1010
+1011
+1012
+1013
+1014
+1015</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 986</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1008</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_decode_contents identifier id'>decode_contents</span><span class='lparen token'>(</span><span class='rubyid_f identifier id'>f</span><span class='rparen token'>)</span>
   <span class='rubyid_f identifier id'>f</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_l identifier id'>l</span><span class='bitor op'>|</span>
@@ -958,14 +1003,14 @@ the close.
       <pre class="lines">
 
 
-995
-996
-997
-998
-999</pre>
+1017
+1018
+1019
+1020
+1021</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 995</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1017</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_encode_contents identifier id'>encode_contents</span><span class='lparen token'>(</span><span class='rubyid_f identifier id'>f</span><span class='rparen token'>)</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_k identifier id'>k</span><span class='comma token'>,</span> <span class='rubyid_v identifier id'>v</span><span class='bitor op'>|</span>
@@ -993,30 +1038,30 @@ the close.
       <pre class="lines">
 
 
-1048
-1049
-1050
-1051
-1052
-1053
-1054
-1055
-1056
-1057
-1058
-1059
-1060
-1061
-1062
-1063
-1064
-1065
-1066
-1067
-1068</pre>
+1070
+1071
+1072
+1073
+1074
+1075
+1076
+1077
+1078
+1079
+1080
+1081
+1082
+1083
+1084
+1085
+1086
+1087
+1088
+1089
+1090</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1048</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1070</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_flush identifier id'>flush</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_writable? fid id'>writable?</span>
@@ -1060,20 +1105,20 @@ the close.
       <pre class="lines">
 
 
-1001
-1002
-1003
-1004
-1005
-1006
-1007
-1008
-1009
-1010
-1011</pre>
+1023
+1024
+1025
+1026
+1027
+1028
+1029
+1030
+1031
+1032
+1033</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1001</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1023</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload identifier id'>reload</span>
   <span class='rubyid_begin begin kw'>begin</span>
@@ -1125,18 +1170,18 @@ of the hash and uses the following parameters:
       <pre class="lines">
 
 
-1112
-1113
-1114
-1115
-1116
-1117
-1118
-1119
-1120</pre>
+1134
+1135
+1136
+1137
+1138
+1139
+1140
+1141
+1142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1112</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1134</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_block identifier id'>update_block</span>
   <span class='rubyid_deletions identifier id'>deletions</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -1190,12 +1235,12 @@ of the hash and uses the following parameters:
       <pre class="lines">
 
 
-1013
-1014
-1015</pre>
+1035
+1036
+1037</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1013</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1035</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_writable? fid id'>writable?</span>
   <span class='lbrack token'>[</span><span class='rubyid_WRITER constant id'>WRITER</span><span class='comma token'>,</span> <span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='comma token'>,</span> <span class='rubyid_NEWDB constant id'>NEWDB</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_@flags ivar id'>@flags</span><span class='rparen token'>)</span>
@@ -1211,7 +1256,7 @@ of the hash and uses the following parameters:
 </div>
 
     <div id="footer">
-  Generated on Wed Apr 24 18:39:54 2013 by
+  Generated on Thu Apr 25 19:46:44 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

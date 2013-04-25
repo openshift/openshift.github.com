@@ -578,6 +578,32 @@ Used for handle methods like start/stop etc.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#post_configure_component-instance_method" title="#post_configure_component (instance method)">- (Object) <strong>post_configure_component</strong>(component, init_git_url = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Performs the post-configuration steps for the specified component on the
+gear.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#public_hostname-instance_method" title="#public_hostname (instance method)">- (String) <strong>public_hostname</strong> </a>
     
 
@@ -948,15 +974,15 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-155
-156
-157
-158
-159
-160</pre>
+173
+174
+175
+176
+177
+178</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 155</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 173</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_method_missing identifier id'>method_missing</span><span class='lparen token'>(</span><span class='rubyid_sym identifier id'>sym</span><span class='comma token'>,</span> <span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
   <span class='rubyid_sym identifier id'>sym</span> <span class='assign token'>=</span> <span class='symbol val'>:reload</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_sym identifier id'>sym</span> <span class='eq op'>==</span> <span class='symbol val'>:reload_config</span>
@@ -1276,7 +1302,25 @@ The <span class='object_link'><a href="GroupInstance.html" title="GroupInstance 
 261
 262
 263
-264</pre>
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 11</span>
@@ -1396,6 +1440,24 @@ The <span class='object_link'><a href="GroupInstance.html" title="GroupInstance 
     <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
     <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to add component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
+    <span class='rubyid_result_io identifier id'>result_io</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='comment val'># Performs the post-configuration steps for the specified component on the gear.</span>
+  <span class='comment val'>#</span>
+  <span class='comment val'># == Parameters:</span>
+  <span class='comment val'># component::</span>
+  <span class='comment val'>#   {ComponentInstance} to configure.</span>
+  <span class='comment val'># == Returns:</span>
+  <span class='comment val'># A {ResultIO} object with with output or error messages from the Node.</span>
+  <span class='comment val'># Exit codes:</span>
+  <span class='comment val'>#   success = 0</span>
+  <span class='comment val'># @raise [OpenShift::NodeException] on failure</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_post_configure_component identifier id'>post_configure_component</span><span class='lparen token'>(</span><span class='rubyid_component identifier id'>component</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+    <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_post_configure_cartridge identifier id'>post_configure_cartridge</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='rparen token'>)</span>
+    <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
+    <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to post-configure component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
     <span class='rubyid_result_io identifier id'>result_io</span>
   <span class='rubyid_end end kw'>end</span>
   
@@ -1846,7 +1908,25 @@ name of the gear
 261
 262
 263
-264</pre>
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 11</span>
@@ -1966,6 +2046,24 @@ name of the gear
     <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
     <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to add component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
+    <span class='rubyid_result_io identifier id'>result_io</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='comment val'># Performs the post-configuration steps for the specified component on the gear.</span>
+  <span class='comment val'>#</span>
+  <span class='comment val'># == Parameters:</span>
+  <span class='comment val'># component::</span>
+  <span class='comment val'>#   {ComponentInstance} to configure.</span>
+  <span class='comment val'># == Returns:</span>
+  <span class='comment val'># A {ResultIO} object with with output or error messages from the Node.</span>
+  <span class='comment val'># Exit codes:</span>
+  <span class='comment val'>#   success = 0</span>
+  <span class='comment val'># @raise [OpenShift::NodeException] on failure</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_post_configure_component identifier id'>post_configure_component</span><span class='lparen token'>(</span><span class='rubyid_component identifier id'>component</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+    <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_post_configure_cartridge identifier id'>post_configure_cartridge</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='rparen token'>)</span>
+    <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
+    <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to post-configure component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
     <span class='rubyid_result_io identifier id'>result_io</span>
   <span class='rubyid_end end kw'>end</span>
   
@@ -2412,7 +2510,25 @@ DNS name of the node the gear is hosted on.
 261
 262
 263
-264</pre>
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 11</span>
@@ -2532,6 +2648,24 @@ DNS name of the node the gear is hosted on.
     <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
     <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to add component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
+    <span class='rubyid_result_io identifier id'>result_io</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='comment val'># Performs the post-configuration steps for the specified component on the gear.</span>
+  <span class='comment val'>#</span>
+  <span class='comment val'># == Parameters:</span>
+  <span class='comment val'># component::</span>
+  <span class='comment val'>#   {ComponentInstance} to configure.</span>
+  <span class='comment val'># == Returns:</span>
+  <span class='comment val'># A {ResultIO} object with with output or error messages from the Node.</span>
+  <span class='comment val'># Exit codes:</span>
+  <span class='comment val'>#   success = 0</span>
+  <span class='comment val'># @raise [OpenShift::NodeException] on failure</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_post_configure_component identifier id'>post_configure_component</span><span class='lparen token'>(</span><span class='rubyid_component identifier id'>component</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+    <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_post_configure_cartridge identifier id'>post_configure_cartridge</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='rparen token'>)</span>
+    <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
+    <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to post-configure component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
     <span class='rubyid_result_io identifier id'>result_io</span>
   <span class='rubyid_end end kw'>end</span>
   
@@ -2978,7 +3112,25 @@ UID of the user on the node.
 261
 262
 263
-264</pre>
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 11</span>
@@ -3098,6 +3250,24 @@ UID of the user on the node.
     <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
     <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to add component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
+    <span class='rubyid_result_io identifier id'>result_io</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='comment val'># Performs the post-configuration steps for the specified component on the gear.</span>
+  <span class='comment val'>#</span>
+  <span class='comment val'># == Parameters:</span>
+  <span class='comment val'># component::</span>
+  <span class='comment val'>#   {ComponentInstance} to configure.</span>
+  <span class='comment val'># == Returns:</span>
+  <span class='comment val'># A {ResultIO} object with with output or error messages from the Node.</span>
+  <span class='comment val'># Exit codes:</span>
+  <span class='comment val'>#   success = 0</span>
+  <span class='comment val'># @raise [OpenShift::NodeException] on failure</span>
+  <span class='rubyid_def def kw'>def</span> <span class='rubyid_post_configure_component identifier id'>post_configure_component</span><span class='lparen token'>(</span><span class='rubyid_component identifier id'>component</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+    <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_post_configure_cartridge identifier id'>post_configure_cartridge</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='rparen token'>)</span>
+    <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
+    <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to post-configure component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
     <span class='rubyid_result_io identifier id'>result_io</span>
   <span class='rubyid_end end kw'>end</span>
   
@@ -3373,26 +3543,26 @@ Hash of Gear._id =&gt; state representing the state of each gear
       <pre class="lines">
 
 
-184
-185
-186
-187
-188
-189
-190
-191
-192
-193
-194
-195
-196
-197
-198
-199
-200</pre>
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 184</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 202</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_get_gear_states identifier id'>get_gear_states</span><span class='lparen token'>(</span><span class='rubyid_gears identifier id'>gears</span><span class='rparen token'>)</span>
   <span class='rubyid_gear_states identifier id'>gear_states</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
@@ -3587,12 +3757,12 @@ Convenience method to get the <span class='object_link'><a href="Application.htm
       <pre class="lines">
 
 
-231
-232
-233</pre>
+249
+250
+251</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 231</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 249</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_app identifier id'>app</span>
   <span class='rubyid_@app ivar id'>@app</span> <span class='opasgn op'>||=</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span>
@@ -3748,18 +3918,18 @@ this gear
       <pre class="lines">
 
 
-206
-207
-208
-209
-210
-211
-212
-213
-214</pre>
+224
+225
+226
+227
+228
+229
+230
+231
+232</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 206</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 224</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_proxy identifier id'>get_proxy</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_@container ivar id'>@container</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_server_identity identifier id'>server_identity</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
@@ -3823,15 +3993,100 @@ Public IP address of the node the gear is hosted on.
       <pre class="lines">
 
 
-172
-173
-174</pre>
+190
+191
+192</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 172</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 190</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_public_ip_address identifier id'>get_public_ip_address</span>
   <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_get_public_ip_address identifier id'>get_public_ip_address</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="post_configure_component-instance_method">
+  
+    - (<tt>Object</tt>) <strong>post_configure_component</strong>(component, init_git_url = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Performs the post-configuration steps for the specified component on the
+gear.
+</p>
+<h2>Parameters:</h2>
+<table>
+<tr><td valign="top">component:</td><td><span class='object_link'><a href="ComponentInstance.html" title="ComponentInstance (class)">ComponentInstance</a></span> to configure.
+
+</td></tr>
+</table>
+<h2>Returns:</h2>
+<p>
+A <span class='object_link'><a href="ResultIO.html" title="ResultIO (class)">ResultIO</a></span> object with with output or error messages from the Node. Exit
+codes:
+</p>
+<pre class="code ruby18"><code class="ruby18">
+  success = 0
+</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>OpenShift::NodeException</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>
+on failure
+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+139
+140
+141
+142
+143
+144
+145</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 139</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_post_configure_component identifier id'>post_configure_component</span><span class='lparen token'>(</span><span class='rubyid_component identifier id'>component</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+  <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_post_configure_cartridge identifier id'>post_configure_cartridge</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='rparen token'>)</span>
+  <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_process_properties identifier id'>process_properties</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
+  <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid__id identifier id'>_id</span><span class='rparen token'>)</span>
+  <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_NodeException constant id'>NodeException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unable to post-configure component #{component.cartridge_name}::#{component.component_name}&quot;</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_exitcode identifier id'>exitcode</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
+  <span class='rubyid_result_io identifier id'>result_io</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3886,12 +4141,12 @@ Public hostname of the node the gear is hosted on.
       <pre class="lines">
 
 
-165
-166
-167</pre>
+183
+184
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 165</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 183</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_public_hostname identifier id'>public_hostname</span>
   <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_get_public_hostname identifier id'>get_public_hostname</span>
@@ -4005,14 +4260,14 @@ on failure
       <pre class="lines">
 
 
-139
-140
-141
-142
-143</pre>
+157
+158
+159
+160
+161</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 139</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 157</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_component identifier id'>remove_component</span><span class='lparen token'>(</span><span class='rubyid_component identifier id'>component</span><span class='rparen token'>)</span>
   <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_deconfigure_cartridge identifier id'>deconfigure_cartridge</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='comma token'>,</span> <span class='rubyid_component identifier id'>component</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
@@ -4110,12 +4365,12 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-148
-149
-150</pre>
+166
+167
+168</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 148</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 166</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_respond_to? fid id'>respond_to?</span><span class='lparen token'>(</span><span class='rubyid_sym identifier id'>sym</span><span class='comma token'>,</span> <span class='rubyid_include_private identifier id'>include_private</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_get_proxy identifier id'>get_proxy</span><span class='dot token'>.</span><span class='rubyid_respond_to? fid id'>respond_to?</span><span class='lparen token'>(</span><span class='rubyid_sym identifier id'>sym</span><span class='comma token'>,</span> <span class='rubyid_include_private identifier id'>include_private</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='rubyid_super super kw'>super</span>
@@ -4141,14 +4396,14 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-259
-260
-261
-262
-263</pre>
+277
+278
+279
+280
+281</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 259</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 277</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_server_identities identifier id'>server_identities</span>
   <span class='rubyid_identities identifier id'>identities</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='rubyid_gear identifier id'>gear</span><span class='bitor op'>|</span> <span class='rubyid_gear identifier id'>gear</span><span class='dot token'>.</span><span class='rubyid_server_identity identifier id'>server_identity</span><span class='rbrace token'>}</span>
@@ -4176,13 +4431,13 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-235
-236
-237
-238</pre>
+253
+254
+255
+256</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 235</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 253</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_addtl_fs_gb identifier id'>set_addtl_fs_gb</span><span class='lparen token'>(</span><span class='rubyid_additional_filesystem_gb identifier id'>additional_filesystem_gb</span><span class='comma token'>,</span> <span class='rubyid_remote_job_handle identifier id'>remote_job_handle</span><span class='rparen token'>)</span>
   <span class='rubyid_total_fs_gb identifier id'>total_fs_gb</span> <span class='assign token'>=</span> <span class='rubyid_additional_filesystem_gb identifier id'>additional_filesystem_gb</span> <span class='plus op'>+</span> <span class='rubyid_Gear constant id'>Gear</span><span class='dot token'>.</span><span class='rubyid_base_filesystem_gb identifier id'>base_filesystem_gb</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_group_instance identifier id'>group_instance</span><span class='dot token'>.</span><span class='rubyid_gear_size identifier id'>gear_size</span><span class='rparen token'>)</span>
@@ -4275,22 +4530,22 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-216
-217
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228</pre>
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 216</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 234</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_configuration identifier id'>update_configuration</span><span class='lparen token'>(</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='rubyid_remote_job_handle identifier id'>remote_job_handle</span><span class='rparen token'>)</span>
   <span class='rubyid_add_keys identifier id'>add_keys</span> <span class='assign token'>=</span> <span class='rubyid_args identifier id'>args</span><span class='lbrack token'>[</span><span class='string val'>&quot;add_keys_attrs&quot;</span><span class='rbrack token'>]</span>
@@ -4326,27 +4581,27 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-240
-241
-242
-243
-244
-245
-246
-247
-248
-249
-250
-251
-252
-253
-254
-255
-256
-257</pre>
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 240</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/gear.rb', line 258</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_namespace identifier id'>update_namespace</span><span class='lparen token'>(</span><span class='rubyid_args identifier id'>args</span><span class='rparen token'>)</span>
   <span class='rubyid_old_ns identifier id'>old_ns</span> <span class='assign token'>=</span> <span class='rubyid_args identifier id'>args</span><span class='lbrack token'>[</span><span class='string val'>&quot;old_namespace&quot;</span><span class='rbrack token'>]</span>
@@ -4377,7 +4632,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </div>
 
     <div id="footer">
-  Generated on Wed Apr 24 18:11:12 2013 by
+  Generated on Thu Apr 25 19:17:53 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
