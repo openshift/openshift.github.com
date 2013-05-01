@@ -98,7 +98,7 @@
   
   
     <dt class="r1 last">Defined in:</dt>
-    <dd class="r1 last">origin-server/controller/app/models/cartridge_cache.rb</dd>
+    <dd class="r1 last">origin-server/controller/app/helpers/cartridge_cache.rb</dd>
   
 </dl>
 <div class="clear"></div>
@@ -134,7 +134,7 @@ the Node to retrieve cartridge information.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#cartridge_names-class_method" title="cartridge_names (class method)">+ (Object) <strong>cartridge_names</strong>(cart_type = nil) </a>
+      <a href="#cartridge_names-class_method" title="cartridge_names (class method)">+ (Object) <strong>cartridge_names</strong>(cart_type = nil, app = nil) </a>
     
 
     
@@ -184,7 +184,73 @@ Returns an Array of Cartridge objects.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#find_cartridge-class_method" title="find_cartridge (class method)">+ (Object) <strong>find_cartridge</strong>(feature) </a>
+      <a href="#download_from_url-class_method" title="download_from_url (class method)">+ (Object) <strong>download_from_url</strong>(url) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extract_vendor_feature_version-class_method" title="extract_vendor_feature_version (class method)">+ (Object) <strong>extract_vendor_feature_version</strong>(requested_feature) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#fetch_community_carts-class_method" title="fetch_community_carts (class method)">+ (Object) <strong>fetch_community_carts</strong>(urls) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_cartridge-class_method" title="find_cartridge (class method)">+ (Object) <strong>find_cartridge</strong>(requested_feature, app = nil) </a>
     
 
     
@@ -209,7 +275,7 @@ Returns the first cartridge that provides the specified feature.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#find_cartridge_by_category-class_method" title="find_cartridge_by_category (class method)">+ (Object) <strong>find_cartridge_by_category</strong>(cat) </a>
+      <a href="#find_cartridge_by_category-class_method" title="find_cartridge_by_category (class method)">+ (Object) <strong>find_cartridge_by_category</strong>(cat, app = nil) </a>
     
 
     
@@ -231,7 +297,29 @@ Returns the first cartridge that provides the specified feature.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#find_cartridge_by_component-class_method" title="find_cartridge_by_component (class method)">+ (Object) <strong>find_cartridge_by_component</strong>(component_name) </a>
+      <a href="#find_cartridge_by_component-class_method" title="find_cartridge_by_component (class method)">+ (Object) <strong>find_cartridge_by_component</strong>(component_name, app = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#foreach_cart_version-class_method" title="foreach_cart_version (class method)">+ (Object) <strong>foreach_cart_version</strong>(manifest_str) </a>
     
 
     
@@ -273,7 +361,7 @@ Returns the first cartridge that provides the specified feature.
       <div class="method_details first">
   <h3 class="signature first" id="cartridge_names-class_method">
   
-    + (<tt>Object</tt>) <strong>cartridge_names</strong>(cart_type = nil) 
+    + (<tt>Object</tt>) <strong>cartridge_names</strong>(cart_type = nil, app = nil) 
   
 
   
@@ -311,17 +399,27 @@ categories
 33
 34
 35
-36</pre>
+36
+37
+38
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 29</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridge_names identifier id'>cartridge_names</span><span class='lparen token'>(</span><span class='rubyid_cart_type identifier id'>cart_type</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridge_names identifier id'>cartridge_names</span><span class='lparen token'>(</span><span class='rubyid_cart_type identifier id'>cart_type</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_cart_type identifier id'>cart_type</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
-    <span class='rubyid_CacheHelper constant id'>CacheHelper</span><span class='dot token'>.</span><span class='rubyid_get_cached identifier id'>get_cached</span><span class='lparen token'>(</span><span class='string val'>&quot;cart_names_all&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:expires_in</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='float val'>1</span><span class='dot token'>.</span><span class='rubyid_day identifier id'>day</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='rubyid_cartridges identifier id'>cartridges</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='rbrace token'>}</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_cartnames identifier id'>cartnames</span> <span class='assign token'>=</span> <span class='rubyid_CacheHelper constant id'>CacheHelper</span><span class='dot token'>.</span><span class='rubyid_get_cached identifier id'>get_cached</span><span class='lparen token'>(</span><span class='string val'>&quot;cart_names_all&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:expires_in</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='float val'>1</span><span class='dot token'>.</span><span class='rubyid_day identifier id'>day</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span> <span class='rubyid_cartridges identifier id'>cartridges</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='rbrace token'>}</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_app identifier id'>app</span>
+      <span class='rubyid_cartnames identifier id'>cartnames</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_community_cartridges identifier id'>community_cartridges</span><span class='dot token'>.</span><span class='rubyid_values identifier id'>values</span><span class='dot token'>.</span><span class='rubyid_keys identifier id'>keys</span><span class='dot token'>.</span><span class='rubyid_dup identifier id'>dup</span>
+      <span class='rubyid_cartnames identifier id'>cartnames</span><span class='dot token'>.</span><span class='rubyid_flatten identifier id'>flatten</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_cartnames identifier id'>cartnames</span>
   <span class='rubyid_else else kw'>else</span>
     <span class='rubyid_cart_type identifier id'>cart_type</span> <span class='assign token'>=</span> <span class='string val'>&quot;web_framework&quot;</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart_type identifier id'>cart_type</span> <span class='eq op'>==</span> <span class='string val'>&quot;standalone&quot;</span>
-    <span class='rubyid_find_cartridge_by_category identifier id'>find_cartridge_by_category</span><span class='lparen token'>(</span><span class='rubyid_cart_type identifier id'>cart_type</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_find_cartridge_by_category identifier id'>find_cartridge_by_category</span><span class='lparen token'>(</span><span class='rubyid_cart_type identifier id'>cart_type</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='rbrace token'>}</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
@@ -369,7 +467,7 @@ Returns an Array of Cartridge objects
 16</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 7</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 7</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridges identifier id'>cartridges</span>
   <span class='rubyid_CacheHelper constant id'>CacheHelper</span><span class='dot token'>.</span><span class='rubyid_get_cached identifier id'>get_cached</span><span class='lparen token'>(</span><span class='string val'>&quot;all_cartridges&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:expires_in</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='float val'>21600</span><span class='dot token'>.</span><span class='rubyid_seconds identifier id'>seconds</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -388,9 +486,164 @@ Returns an Array of Cartridge objects
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="download_from_url-class_method">
+  
+    + (<tt>Object</tt>) <strong>download_from_url</strong>(url) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+114
+115
+116
+117
+118
+119</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 114</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_download_from_url identifier id'>download_from_url</span><span class='lparen token'>(</span><span class='rubyid_url identifier id'>url</span><span class='rparen token'>)</span>
+  <span class='rubyid_max_dl_time identifier id'>max_dl_time</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_config identifier id'>config</span><span class='dot token'>.</span><span class='rubyid_external_cartridges identifier id'>external_cartridges</span><span class='lbrack token'>[</span><span class='symbol val'>:max_download_time</span><span class='rbrack token'>]</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='integer val'>10</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='integer val'>10</span>
+  <span class='rubyid_max_file_size identifier id'>max_file_size</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_config identifier id'>config</span><span class='dot token'>.</span><span class='rubyid_external_cartridges identifier id'>external_cartridges</span><span class='lbrack token'>[</span><span class='symbol val'>:max_cart_size</span><span class='rbrack token'>]</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='integer val'>20480</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='integer val'>20480</span>
+  <span class='rubyid_max_redirs identifier id'>max_redirs</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_config identifier id'>config</span><span class='dot token'>.</span><span class='rubyid_external_cartridges identifier id'>external_cartridges</span><span class='lbrack token'>[</span><span class='symbol val'>:max_download_redirects</span><span class='rbrack token'>]</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='integer val'>2</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='integer val'>2</span>
+  <span class='dxstring node'>`curl --max-time #{max_dl_time} --connect-timeout 2 --location --max-redirs #{max_redirs} --max-filesize #{max_file_size} -k #{url}`</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="extract_vendor_feature_version-class_method">
+  
+    + (<tt>Object</tt>) <strong>extract_vendor_feature_version</strong>(requested_feature) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 153</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_extract_vendor_feature_version identifier id'>extract_vendor_feature_version</span><span class='lparen token'>(</span><span class='rubyid_requested_feature identifier id'>requested_feature</span><span class='rparen token'>)</span>
+  <span class='rubyid_vendor identifier id'>vendor</span><span class='comma token'>,</span> <span class='rubyid_feature identifier id'>feature</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_vendor identifier id'>vendor</span><span class='comma token'>,</span> <span class='rubyid_feature identifier id'>feature</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_requested_feature identifier id'>requested_feature</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+  <span class='rubyid_a identifier id'>a</span> <span class='assign token'>=</span> <span class='rubyid_requested_feature identifier id'>requested_feature</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;-&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_a identifier id'>a</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='integer val'>1</span> 
+    <span class='rubyid_feature identifier id'>feature</span> <span class='assign token'>=</span> <span class='rubyid_a identifier id'>a</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
+  <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_a identifier id'>a</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='integer val'>2</span> 
+    <span class='rubyid_feature identifier id'>feature</span> <span class='assign token'>=</span> <span class='rubyid_a identifier id'>a</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
+    <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_a identifier id'>a</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span>
+  <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_a identifier id'>a</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='geq op'>&gt;=</span> <span class='integer val'>3</span>
+    <span class='rubyid_vendor identifier id'>vendor</span> <span class='assign token'>=</span> <span class='rubyid_a identifier id'>a</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
+    <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_a identifier id'>a</span><span class='lbrack token'>[</span><span class='rubyid_a identifier id'>a</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='minus op'>-</span> <span class='integer val'>1</span><span class='rbrack token'>]</span> 
+    <span class='rubyid_feature identifier id'>feature</span> <span class='assign token'>=</span> <span class='rubyid_a identifier id'>a</span><span class='lbrack token'>[</span><span class='float val'>1</span><span class='dot2 op'>..</span><span class='lparen token'>(</span><span class='rubyid_a identifier id'>a</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='minus op'>-</span> <span class='integer val'>2</span><span class='rparen token'>)</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='string val'>&quot;-&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_vendor identifier id'>vendor</span><span class='comma token'>,</span> <span class='rubyid_feature identifier id'>feature</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="fetch_community_carts-class_method">
+  
+    + (<tt>Object</tt>) <strong>fetch_community_carts</strong>(urls) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 134</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_fetch_community_carts identifier id'>fetch_community_carts</span><span class='lparen token'>(</span><span class='rubyid_urls identifier id'>urls</span><span class='rparen token'>)</span>
+  <span class='rubyid_cmap identifier id'>cmap</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_cmap identifier id'>cmap</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_urls identifier id'>urls</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+  <span class='rubyid_urls identifier id'>urls</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_url identifier id'>url</span><span class='bitor op'>|</span>
+     <span class='rubyid_manifest_str identifier id'>manifest_str</span> <span class='assign token'>=</span> <span class='rubyid_download_from_url identifier id'>download_from_url</span><span class='lparen token'>(</span><span class='rubyid_url identifier id'>url</span><span class='rparen token'>)</span>
+     <span class='rubyid_if if kw'>if</span> <span class='rubyid_manifest_str identifier id'>manifest_str</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='integer val'>0</span>
+       <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Invalid cartridge, error downloading from url '#{url}' &quot;</span><span class='comma token'>,</span> <span class='integer val'>109</span><span class='rparen token'>)</span>  
+     <span class='rubyid_end end kw'>end</span>
+     <span class='comment val'># chash = YAML.load(manifest_str)</span>
+     <span class='comment val'># TODO: check versions and create multiple of them</span>
+     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_foreach_cart_version identifier id'>foreach_cart_version</span><span class='lparen token'>(</span><span class='rubyid_manifest_str identifier id'>manifest_str</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_chash identifier id'>chash</span><span class='bitor op'>|</span>
+       <span class='rubyid_cmap identifier id'>cmap</span><span class='lbrack token'>[</span><span class='rubyid_chash identifier id'>chash</span><span class='lbrack token'>[</span><span class='string val'>&quot;Name&quot;</span><span class='rbrack token'>]</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;url&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='string val'>&quot;manifest&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_chash identifier id'>chash</span><span class='dot token'>.</span><span class='rubyid_to_yaml identifier id'>to_yaml</span><span class='rbrace token'>}</span>
+       <span class='comment val'># no versioning support on external cartridges yet.. use the default one</span>
+       <span class='rubyid_break break kw'>break</span>
+     <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_cmap identifier id'>cmap</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="find_cartridge-class_method">
   
-    + (<tt>Object</tt>) <strong>find_cartridge</strong>(feature) 
+    + (<tt>Object</tt>) <strong>find_cartridge</strong>(requested_feature, app = nil) 
   
 
   
@@ -423,6 +676,19 @@ Returns the first cartridge that provides the specified feature.
 </div>
 <div class="tags">
   
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>OpenShift::UserException</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -430,25 +696,85 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-57
-58
-59
-60
-61
-62
-63
-64</pre>
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 57</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 75</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_requested_feature identifier id'>requested_feature</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_community_cartridges identifier id'>community_cartridges</span><span class='dot token'>.</span><span class='rubyid_values identifier id'>values</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_features identifier id'>features</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_requested_feature identifier id'>requested_feature</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='eq op'>==</span> <span class='rubyid_requested_feature identifier id'>requested_feature</span>
+  <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_app identifier id'>app</span>
+  
   <span class='rubyid_carts identifier id'>carts</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridges identifier id'>cartridges</span>
+  <span class='rubyid_vendor identifier id'>vendor</span><span class='comma token'>,</span> <span class='rubyid_feature identifier id'>feature</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_extract_vendor_feature_version identifier id'>extract_vendor_feature_version</span><span class='lparen token'>(</span><span class='rubyid_requested_feature identifier id'>requested_feature</span><span class='rparen token'>)</span>
+  <span class='rubyid_matching_carts identifier id'>matching_carts</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  
   <span class='rubyid_carts identifier id'>carts</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_features identifier id'>features</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='rparen token'>)</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='eq op'>==</span> <span class='rubyid_feature identifier id'>feature</span>
+    <span class='comment val'>#v1 cartridges</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='eq op'>==</span> <span class='rubyid_requested_feature identifier id'>requested_feature</span>
+    <span class='comment val'>#v2 cartridges</span>
+    <span class='rubyid_matching_carts identifier id'>matching_carts</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_features identifier id'>features</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> 
+                              <span class='lparen token'>(</span><span class='rubyid_vendor identifier id'>vendor</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_cartridge_vendor identifier id'>cartridge_vendor</span> <span class='eq op'>==</span> <span class='rubyid_vendor identifier id'>vendor</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> 
+                              <span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='eq op'>==</span> <span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='rubyid_or or kw'>or</span> <span class='lparen token'>(</span><span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_versions identifier id'>versions</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_versions identifier id'>versions</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
+  
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_matching_carts identifier id'>matching_carts</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
+  
+  <span class='comment val'>#return if only one match</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_matching_carts identifier id'>matching_carts</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_matching_carts identifier id'>matching_carts</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='integer val'>1</span>
+  
+  <span class='comment val'>#if any is by redhat return that one</span>
+  <span class='rubyid_cart identifier id'>cart</span> <span class='assign token'>=</span> <span class='rubyid_matching_carts identifier id'>matching_carts</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_cartridge_vendor identifier id'>cartridge_vendor</span> <span class='eq op'>==</span> <span class='string val'>&quot;redhat&quot;</span><span class='rbrace token'>}</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span>
+  
+  <span class='comment val'>#if there are more than one match and none by redhat raise an exception</span>
+  <span class='rubyid_choices identifier id'>choices</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+  <span class='rubyid_matching_carts identifier id'>matching_carts</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span>
+    <span class='rubyid_choices identifier id'>choices</span> <span class='lshft op'>&lt;&lt;</span> <span class='dstring node'>&quot;#{cart.cartridge_vendor}-#{cart.name}-#{cart.version}&quot;</span>
+  <span class='rubyid_end end kw'>end</span>
+  
+  <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;More that one cartridge was found matching #{requested_feature}.  Please select one of #{choices.to_s}&quot;</span><span class='rparen token'>)</span>
+  
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -459,7 +785,7 @@ Returns the first cartridge that provides the specified feature.
       <div class="method_details ">
   <h3 class="signature " id="find_cartridge_by_category-class_method">
   
-    + (<tt>Object</tt>) <strong>find_cartridge_by_category</strong>(cat) 
+    + (<tt>Object</tt>) <strong>find_cartridge_by_category</strong>(cat, app = nil) 
   
 
   
@@ -471,15 +797,27 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-47
-48
-49</pre>
+58
+59
+60
+61
+62
+63
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 58</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge_by_category identifier id'>find_cartridge_by_category</span><span class='lparen token'>(</span><span class='rubyid_cat identifier id'>cat</span><span class='rparen token'>)</span>
-  <span class='rubyid_CacheHelper constant id'>CacheHelper</span><span class='dot token'>.</span><span class='rubyid_get_cached identifier id'>get_cached</span><span class='lparen token'>(</span><span class='dstring node'>&quot;cartridges_by_cat_#{cat}&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:expires_in</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='float val'>1</span><span class='dot token'>.</span><span class='rubyid_day identifier id'>day</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span><span class='rubyid_cartridges identifier id'>cartridges</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_categories identifier id'>categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_cat identifier id'>cat</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge_by_category identifier id'>find_cartridge_by_category</span><span class='lparen token'>(</span><span class='rubyid_cat identifier id'>cat</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+  <span class='rubyid_global_carts identifier id'>global_carts</span> <span class='assign token'>=</span> <span class='rubyid_CacheHelper constant id'>CacheHelper</span><span class='dot token'>.</span><span class='rubyid_get_cached identifier id'>get_cached</span><span class='lparen token'>(</span><span class='dstring node'>&quot;cartridges_by_cat_#{cat}&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:expires_in</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='float val'>1</span><span class='dot token'>.</span><span class='rubyid_day identifier id'>day</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span><span class='rubyid_cartridges identifier id'>cartridges</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_categories identifier id'>categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_cat identifier id'>cat</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span><span class='rbrace token'>}</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_app identifier id'>app</span>
+    <span class='rubyid_app_local_community_carts identifier id'>app_local_community_carts</span> <span class='assign token'>=</span> <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_community_cartridges identifier id'>community_cartridges</span><span class='dot token'>.</span><span class='rubyid_values identifier id'>values</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_categories identifier id'>categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_cat identifier id'>cat</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_global_carts identifier id'>global_carts</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_app_local_community_carts identifier id'>app_local_community_carts</span>
+    <span class='rubyid_global_carts identifier id'>global_carts</span><span class='dot token'>.</span><span class='rubyid_flatten! fid id'>flatten!</span>
+  <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_global_carts identifier id'>global_carts</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -490,7 +828,7 @@ Returns the first cartridge that provides the specified feature.
       <div class="method_details ">
   <h3 class="signature " id="find_cartridge_by_component-class_method">
   
-    + (<tt>Object</tt>) <strong>find_cartridge_by_component</strong>(component_name) 
+    + (<tt>Object</tt>) <strong>find_cartridge_by_component</strong>(component_name, app = nil) 
   
 
   
@@ -502,19 +840,31 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-38
-39
-40
-41
-42
 43
 44
-45</pre>
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/cartridge_cache.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 43</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge_by_component identifier id'>find_cartridge_by_component</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find_cartridge_by_component identifier id'>find_cartridge_by_component</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_app identifier id'>app</span>
+    <span class='rubyid_app identifier id'>app</span><span class='dot token'>.</span><span class='rubyid_community_cartridges identifier id'>community_cartridges</span><span class='dot token'>.</span><span class='rubyid_values identifier id'>values</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span>
+      <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_has_component? fid id'>has_component?</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='rparen token'>)</span>
+      <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='eq op'>==</span> <span class='rubyid_component_name identifier id'>component_name</span>
+    <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_carts identifier id'>carts</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_cartridges identifier id'>cartridges</span>
   <span class='rubyid_carts identifier id'>carts</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_cart identifier id'>cart</span><span class='bitor op'>|</span>
     <span class='rubyid_return return kw'>return</span> <span class='rubyid_cart identifier id'>cart</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_has_component? fid id'>has_component?</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='rparen token'>)</span>
@@ -528,12 +878,61 @@ Returns the first cartridge that provides the specified feature.
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="foreach_cart_version-class_method">
+  
+    + (<tt>Object</tt>) <strong>foreach_cart_version</strong>(manifest_str) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 121</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_foreach_cart_version identifier id'>foreach_cart_version</span><span class='lparen token'>(</span><span class='rubyid_manifest_str identifier id'>manifest_str</span><span class='rparen token'>)</span>
+  <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_Runtime constant id'>Runtime</span><span class='colon2 op'>::</span><span class='rubyid_Manifest constant id'>Manifest</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_manifest_str identifier id'>manifest_str</span><span class='rparen token'>)</span>
+  <span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_versions identifier id'>versions</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_version identifier id'>version</span><span class='bitor op'>|</span>
+    <span class='rubyid_cooked identifier id'>cooked</span> <span class='assign token'>=</span> <span class='rubyid_Runtime constant id'>Runtime</span><span class='colon2 op'>::</span><span class='rubyid_Manifest constant id'>Manifest</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_manifest_str identifier id'>manifest_str</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span><span class='rparen token'>)</span>
+    <span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Loading #{cooked.name}-#{cooked.version}...&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_v1_manifest identifier id'>v1_manifest</span>            <span class='assign token'>=</span> <span class='rubyid_Marshal constant id'>Marshal</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_Marshal constant id'>Marshal</span><span class='dot token'>.</span><span class='rubyid_dump identifier id'>dump</span><span class='lparen token'>(</span><span class='rubyid_cooked identifier id'>cooked</span><span class='dot token'>.</span><span class='rubyid_manifest identifier id'>manifest</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+    <span class='rubyid_v1_manifest identifier id'>v1_manifest</span><span class='lbrack token'>[</span><span class='string val'>'Name'</span><span class='rbrack token'>]</span>    <span class='assign token'>=</span> <span class='dstring node'>&quot;#{cooked.name}-#{cooked.version}&quot;</span>
+    <span class='rubyid_v1_manifest identifier id'>v1_manifest</span><span class='lbrack token'>[</span><span class='string val'>'Version'</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_cooked identifier id'>cooked</span><span class='dot token'>.</span><span class='rubyid_version identifier id'>version</span>
+    <span class='rubyid_carts identifier id'>carts</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Cartridge constant id'>Cartridge</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='dot token'>.</span><span class='rubyid_from_descriptor identifier id'>from_descriptor</span><span class='lparen token'>(</span><span class='rubyid_v1_manifest identifier id'>v1_manifest</span><span class='rparen token'>)</span>
+    <span class='rubyid_carts identifier id'>carts</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_yield yield kw'>yield</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_descriptor identifier id'>to_descriptor</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
     <div id="footer">
-  Generated on Mon Apr 29 18:09:29 2013 by
+  Generated on Wed May  1 18:28:36 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

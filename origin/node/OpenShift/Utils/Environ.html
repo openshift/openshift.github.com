@@ -301,7 +301,14 @@ hash[Environment Variable] = Value
 57
 58
 59
-60</pre>
+60
+61
+62
+63
+64
+65
+66
+67</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 29</span>
@@ -314,6 +321,13 @@ hash[Environment Variable] = Value
                  <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='comma token'>,</span> <span class='string val'>'.uservars'</span><span class='rparen token'>)</span><span class='comma token'>,</span>
                  <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='rparen token'>)</span><span class='comma token'>,</span>
                  <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='comma token'>,</span> <span class='string val'>'env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+
+  <span class='comment val'># Load environment variables under subdirectories in ~/.env</span>
+  <span class='rubyid_Dir constant id'>Dir</span><span class='lbrack token'>[</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_gear_dir identifier id'>gear_dir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='rparen token'>)</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_entry identifier id'>entry</span><span class='bitor op'>|</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_directory? fid id'>directory?</span><span class='lparen token'>(</span><span class='rubyid_entry identifier id'>entry</span><span class='rparen token'>)</span>
+      <span class='rubyid_env identifier id'>env</span><span class='dot token'>.</span><span class='rubyid_merge! fid id'>merge!</span><span class='lparen token'>(</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_entry identifier id'>entry</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_end end kw'>end</span>
 
   <span class='comment val'># If we have a primary cartridge make sure it's the last loaded in the environment</span>
   <span class='rubyid_primary identifier id'>primary</span> <span class='assign token'>=</span> <span class='rubyid_if if kw'>if</span> <span class='rubyid_env identifier id'>env</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span> <span class='string val'>'OPENSHIFT_PRIMARY_CARTRIDGE_DIR'</span>
@@ -412,13 +426,6 @@ environment variable name: value
       <pre class="lines">
 
 
-65
-66
-67
-68
-69
-70
-71
 72
 73
 74
@@ -454,10 +461,17 @@ environment variable name: value
 104
 105
 106
-107</pre>
+107
+108
+109
+110
+111
+112
+113
+114</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/environ.rb', line 72</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_dirs identifier id'>dirs</span><span class='rparen token'>)</span>
   <span class='rubyid_dirs identifier id'>dirs</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_env_dir identifier id'>env_dir</span><span class='comma token'>,</span> <span class='rubyid_env identifier id'>env</span><span class='bitor op'>|</span>
@@ -513,7 +527,7 @@ environment variable name: value
 </div>
 
     <div id="footer">
-  Generated on Mon Apr 29 18:42:39 2013 by
+  Generated on Wed May  1 18:44:53 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
