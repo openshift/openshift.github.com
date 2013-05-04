@@ -125,6 +125,60 @@ Wrapper speeds up access and provides fixed API
   
 </p>
 
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="VALID_VENDOR_NAME_PATTERN-constant" class="">VALID_VENDOR_NAME_PATTERN =
+          <div class="docstring">
+  <div class="discussion">
+    <p>
+When a cartridge is installed from a URL, we validate the vendor name by
+matching against VALID_VENDOR_NAME_PATTERN, and the cartridge name agasint
+VALID_CARTRIDGE_NAME_PATTERN. If it does not match the respective pattern,
+the cartridge will be rejected.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='regexp val'>/\A[a-z][a-z0-9_]*\z/</span>
+</pre></dd>
+      
+        <dt id="VALID_CARTRIDGE_NAME_PATTERN-constant" class="">VALID_CARTRIDGE_NAME_PATTERN =
+          
+        </dt>
+        <dd><pre class="code"><span class='regexp val'>/\A[a-z0-9](?:[-\.a-z0-9_]*[a-z0-9]|)\z/</span>
+</pre></dd>
+      
+        <dt id="RESERVED_VENDOR_NAME_PATTERN-constant" class="">RESERVED_VENDOR_NAME_PATTERN =
+          <div class="docstring">
+  <div class="discussion">
+    <p>
+Furthermore, we validate the vendor name by matching against
+RESERVED_VENDOR_NAME_PATTERN. If it matches the pattern, it will be
+rejected.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='regexp val'>/\A(?:redhat)\z/</span>
+</pre></dd>
+      
+    </dl>
+  
+
 
 
 
@@ -620,6 +674,28 @@ Returns the value of attribute version.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#check_reserved_vendor_name-instance_method" title="#check_reserved_vendor_name (instance method)">- (Object) <strong>check_reserved_vendor_name</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#initialize-instance_method" title="#initialize (instance method)">- (Manifest) <strong>initialize</strong>(manifest, version = nil, repository_base_path = '') </a>
     
 
@@ -696,6 +772,50 @@ which have a public_port_name specified.
   <span class="summary_signature">
     
       <a href="#to_s-instance_method" title="#to_s (instance method)">- (Object) <strong>to_s</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate_cartridge_name-instance_method" title="#validate_cartridge_name (instance method)">- (Object) <strong>validate_cartridge_name</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate_vendor_name-instance_method" title="#validate_vendor_name (instance method)">- (Object) <strong>validate_vendor_name</strong>(check_reserved_name = false) </a>
     
 
     
@@ -819,17 +939,6 @@ Cartridge is a wrapper class for cartridge manifests
       <pre class="lines">
 
 
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160
 161
 162
 163
@@ -885,10 +994,24 @@ Cartridge is a wrapper class for cartridge manifests
 213
 214
 215
-216</pre>
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 150</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 161</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_manifest identifier id'>manifest</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_repository_base_path identifier id'>repository_base_path</span><span class='assign token'>=</span><span class='string val'>''</span><span class='rparen token'>)</span>
 
@@ -937,6 +1060,9 @@ Cartridge is a wrapper class for cartridge manifests
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_InvalidElementError constant id'>InvalidElementError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>'Cartridge-Short-Name'</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_@short_name ivar id'>@short_name</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>'-'</span><span class='rparen token'>)</span>
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_MissingElementError constant id'>MissingElementError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>'Name'</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_@name ivar id'>@name</span>
   <span class='comment val'>#raise InvalidElementError.new(nil, 'Name') if @name.include?('-')</span>
+
+  <span class='rubyid_validate_vendor_name identifier id'>validate_vendor_name</span>
+  <span class='rubyid_validate_cartridge_name identifier id'>validate_cartridge_name</span>
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_@manifest ivar id'>@manifest</span><span class='dot token'>.</span><span class='rubyid_has_key? fid id'>has_key?</span><span class='lparen token'>(</span><span class='string val'>'Source-Url'</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_InvalidElementError constant id'>InvalidElementError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='string val'>'Source-Url'</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_@manifest ivar id'>@manifest</span><span class='lbrack token'>[</span><span class='string val'>'Source-Url'</span><span class='rbrack token'>]</span> <span class='match op'>=~</span> <span class='rubyid_URI constant id'>URI</span><span class='colon2 op'>::</span><span class='rubyid_ABS_URI constant id'>ABS_URI</span>
@@ -1620,13 +1746,13 @@ Returns the value of attribute version
       <pre class="lines">
 
 
-239
-240
-241
-242</pre>
+253
+254
+255
+256</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 239</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 253</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_build_ident identifier id'>build_ident</span><span class='lparen token'>(</span><span class='rubyid_vendor identifier id'>vendor</span><span class='comma token'>,</span> <span class='rubyid_software identifier id'>software</span><span class='comma token'>,</span> <span class='rubyid_software_version identifier id'>software_version</span><span class='comma token'>,</span> <span class='rubyid_cartridge_version identifier id'>cartridge_version</span><span class='rparen token'>)</span>
   <span class='rubyid_vendor identifier id'>vendor</span> <span class='assign token'>=</span> <span class='rubyid_vendor identifier id'>vendor</span><span class='dot token'>.</span><span class='rubyid_gsub identifier id'>gsub</span><span class='lparen token'>(</span><span class='regexp val'>/\s+/</span><span class='comma token'>,</span> <span class='string val'>''</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span>
@@ -1675,14 +1801,14 @@ Returns the value of attribute version
       <pre class="lines">
 
 
-244
-245
-246
-247
-248</pre>
+258
+259
+260
+261
+262</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 244</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 258</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_parse_ident identifier id'>parse_ident</span><span class='lparen token'>(</span><span class='rubyid_ident identifier id'>ident</span><span class='rparen token'>)</span>
   <span class='rubyid_cooked identifier id'>cooked</span> <span class='assign token'>=</span> <span class='rubyid_ident identifier id'>ident</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>':'</span><span class='rparen token'>)</span>
@@ -1702,7 +1828,42 @@ Returns the value of attribute version
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="primary?-instance_method">
+  <h3 class="signature first" id="check_reserved_vendor_name-instance_method">
+  
+    - (<tt>Object</tt>) <strong>check_reserved_vendor_name</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+288
+289
+290
+291
+292</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 288</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_check_reserved_vendor_name identifier id'>check_reserved_vendor_name</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_cartridge_vendor identifier id'>cartridge_vendor</span> <span class='match op'>=~</span> <span class='rubyid_RESERVED_VENDOR_NAME_PATTERN constant id'>RESERVED_VENDOR_NAME_PATTERN</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_InvalidElementError constant id'>InvalidElementError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;'#{cartridge_vendor}' is reserved.&quot;</span><span class='comma token'>,</span> <span class='string val'>'Cartridge-Vendor'</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="primary?-instance_method">
   
     - (<tt>Boolean</tt>) <strong>primary?</strong> 
   
@@ -1738,12 +1899,12 @@ Returns the value of attribute version
       <pre class="lines">
 
 
-231
-232
-233</pre>
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 231</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 245</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_primary? fid id'>primary?</span>
   <span class='rubyid_@is_primary ivar id'>@is_primary</span>
@@ -1782,12 +1943,12 @@ which have a public_port_name specified.
       <pre class="lines">
 
 
-227
-228
-229</pre>
+241
+242
+243</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 227</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 241</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_public_endpoints identifier id'>public_endpoints</span>
   <span class='rubyid_@endpoints ivar id'>@endpoints</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_e identifier id'>e</span><span class='bitor op'>|</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_public_port_name identifier id'>public_port_name</span> <span class='rbrace token'>}</span>
@@ -1813,19 +1974,101 @@ which have a public_port_name specified.
       <pre class="lines">
 
 
-250
-251
-252
-253
-254</pre>
+264
+265
+266
+267
+268</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 250</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 264</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_s identifier id'>to_s</span>
   <span class='rubyid_instance_variables identifier id'>instance_variables</span><span class='dot token'>.</span><span class='rubyid_each_with_object identifier id'>each_with_object</span><span class='lparen token'>(</span><span class='string val'>'&lt;Cartridge: '</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_v identifier id'>v</span><span class='comma token'>,</span> <span class='rubyid_a identifier id'>a</span><span class='bitor op'>|</span>
     <span class='rubyid_a identifier id'>a</span> <span class='lshft op'>&lt;&lt;</span> <span class='dstring node'>&quot;#{v}: #{instance_variable_get(v)} &quot;</span>
   <span class='rubyid_end end kw'>end</span> <span class='lshft op'>&lt;&lt;</span> <span class='string val'>' &gt;'</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validate_cartridge_name-instance_method">
+  
+    - (<tt>Object</tt>) <strong>validate_cartridge_name</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+279
+280
+281
+282
+283
+284
+285
+286</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 279</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_cartridge_name identifier id'>validate_cartridge_name</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_name identifier id'>name</span> <span class='nmatch op'>!~</span> <span class='rubyid_VALID_CARTRIDGE_NAME_PATTERN constant id'>VALID_CARTRIDGE_NAME_PATTERN</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_InvalidElementError constant id'>InvalidElementError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
+      <span class='dstring node'>&quot;'#{name}' does not match pattern #{VALID_CARTRIDGE_NAME_PATTERN.inspect}.&quot;</span><span class='comma token'>,</span>
+      <span class='string val'>'Name'</span>
+    <span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validate_vendor_name-instance_method">
+  
+    - (<tt>Object</tt>) <strong>validate_vendor_name</strong>(check_reserved_name = false) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+270
+271
+272
+273
+274
+275
+276
+277</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 270</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_vendor_name identifier id'>validate_vendor_name</span><span class='lparen token'>(</span><span class='rubyid_check_reserved_name identifier id'>check_reserved_name</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_cartridge_vendor identifier id'>cartridge_vendor</span> <span class='nmatch op'>!~</span> <span class='rubyid_VALID_VENDOR_NAME_PATTERN constant id'>VALID_VENDOR_NAME_PATTERN</span>
+    <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_InvalidElementError constant id'>InvalidElementError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
+      <span class='dstring node'>&quot;'#{cartridge_vendor}' does not match pattern #{VALID_VENDOR_NAME_PATTERN.inspect}.&quot;</span><span class='comma token'>,</span>
+      <span class='string val'>'Cartridge-Vendor'</span>
+    <span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1860,14 +2103,14 @@ obtain all software versions covered in this manifest
       <pre class="lines">
 
 
-219
-220
-221
-222
-223</pre>
+233
+234
+235
+236
+237</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 219</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 233</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_versions identifier id'>versions</span>
   <span class='rubyid_seed identifier id'>seed</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_@manifest ivar id'>@manifest</span><span class='lbrack token'>[</span><span class='string val'>'Versions'</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_v identifier id'>v</span><span class='bitor op'>|</span> <span class='rubyid_v identifier id'>v</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='rbrace token'>}</span>
@@ -1917,12 +2160,12 @@ obtain all software versions covered in this manifest
       <pre class="lines">
 
 
-235
-236
-237</pre>
+249
+250
+251</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 235</span>
+      <pre class="code"><span class="info file"># File 'origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 249</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_web_proxy? fid id'>web_proxy?</span>
   <span class='rubyid_@is_web_proxy ivar id'>@is_web_proxy</span>
@@ -1938,7 +2181,7 @@ obtain all software versions covered in this manifest
 </div>
 
     <div id="footer">
-  Generated on Thu May  2 18:46:42 2013 by
+  Generated on Sat May  4 18:40:12 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
