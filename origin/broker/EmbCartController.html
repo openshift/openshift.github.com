@@ -509,43 +509,39 @@ POST /domains/[domain_id]/applications/[application_id]/cartridges
 126
 127
 128
-129
-130
-131</pre>
+129</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 35</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
-  <span class='rubyid_name identifier id'>name</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span>
+  <span class='rubyid_cart_param identifier id'>cart_param</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span>
 
   <span class='comment val'># :cartridge param is deprecated because it isn't consistent with</span>
   <span class='comment val'># the rest of the apis which take :name. Leave it here because</span>
   <span class='comment val'># some tools may still use it</span>
-  <span class='rubyid_name identifier id'>name</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:cartridge</span><span class='rbrack token'>]</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_name identifier id'>name</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
+  <span class='rubyid_cart_param identifier id'>cart_param</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:cartridge</span><span class='rbrack token'>]</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_cart_param identifier id'>cart_param</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
   <span class='rubyid_colocate_with identifier id'>colocate_with</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:colocate_with</span><span class='rbrack token'>]</span>
   <span class='rubyid_scales_from identifier id'>scales_from</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:scales_from</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_scales_to identifier id'>scales_to</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:scales_to</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_nil nil kw'>nil</span>
   <span class='rubyid_additional_storage identifier id'>additional_storage</span> <span class='assign token'>=</span> <span class='rubyid_Integer constant id'>Integer</span><span class='lparen token'>(</span><span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:additional_storage</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_nil nil kw'>nil</span>
 
-  <span class='rubyid_features identifier id'>features</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
   <span class='rubyid_cart_urls identifier id'>cart_urls</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_name identifier id'>name</span><span class='dot token'>.</span><span class='rubyid_is_a? fid id'>is_a?</span> <span class='rubyid_Hash constant id'>Hash</span>
-    <span class='rubyid_if if kw'>if</span> <span class='rubyid_name identifier id'>name</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_name identifier id'>name</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_is_a? fid id'>is_a?</span> <span class='rubyid_String constant id'>String</span>
-      <span class='rubyid_features identifier id'>features</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_name identifier id'>name</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_name identifier id'>name</span><span class='lbrack token'>[</span><span class='symbol val'>:url</span><span class='rbrack token'>]</span>
-      <span class='rubyid_cart_urls identifier id'>cart_urls</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_name identifier id'>name</span><span class='lbrack token'>[</span><span class='symbol val'>:url</span><span class='rbrack token'>]</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_cart_param identifier id'>cart_param</span><span class='dot token'>.</span><span class='rubyid_is_a? fid id'>is_a?</span> <span class='rubyid_Hash constant id'>Hash</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_cart_param identifier id'>cart_param</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_cart_param identifier id'>cart_param</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_is_a? fid id'>is_a?</span> <span class='rubyid_String constant id'>String</span>
+      <span class='rubyid_name identifier id'>name</span> <span class='assign token'>=</span> <span class='rubyid_cart_param identifier id'>cart_param</span><span class='lbrack token'>[</span><span class='symbol val'>:name</span><span class='rbrack token'>]</span>
+    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_cart_param identifier id'>cart_param</span><span class='lbrack token'>[</span><span class='symbol val'>:url</span><span class='rbrack token'>]</span>
+      <span class='rubyid_cart_urls identifier id'>cart_urls</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_cart_param identifier id'>cart_param</span><span class='lbrack token'>[</span><span class='symbol val'>:url</span><span class='rbrack token'>]</span>
       <span class='rubyid_begin begin kw'>begin</span>
         <span class='rubyid_cmap identifier id'>cmap</span> <span class='assign token'>=</span> <span class='rubyid_CartridgeCache constant id'>CartridgeCache</span><span class='dot token'>.</span><span class='rubyid_fetch_community_carts identifier id'>fetch_community_carts</span><span class='lparen token'>(</span><span class='rubyid_cart_urls identifier id'>cart_urls</span><span class='rparen token'>)</span>
         <span class='rubyid_name identifier id'>name</span> <span class='assign token'>=</span> <span class='rubyid_cmap identifier id'>cmap</span><span class='dot token'>.</span><span class='rubyid_keys identifier id'>keys</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
-        <span class='rubyid_features identifier id'>features</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_name identifier id'>name</span>
         <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_downloaded_cart_map identifier id'>downloaded_cart_map</span><span class='dot token'>.</span><span class='rubyid_merge! fid id'>merge!</span><span class='lparen token'>(</span><span class='rubyid_cmap identifier id'>cmap</span><span class='rparen token'>)</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span><span class='assign token'>=</span><span class='gt op'>&gt;</span><span class='rubyid_e identifier id'>e</span>
         <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Error in cartridge url - #{e.message}&quot;</span><span class='comma token'>,</span> <span class='integer val'>109</span><span class='rparen token'>)</span>
       <span class='rubyid_end end kw'>end</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_else else kw'>else</span>
-    <span class='rubyid_features identifier id'>features</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_name identifier id'>name</span>
+    <span class='rubyid_name identifier id'>name</span> <span class='assign token'>=</span> <span class='rubyid_cart_param identifier id'>cart_param</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_begin begin kw'>begin</span>
@@ -596,7 +592,7 @@ POST /domains/[domain_id]/applications/[application_id]/cartridges
       <span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_group_override identifier id'>group_override</span>
     <span class='rubyid_end end kw'>end</span>
 
-    <span class='rubyid_cart_create_reply identifier id'>cart_create_reply</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_add_features identifier id'>add_features</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
+    <span class='rubyid_cart_create_reply identifier id'>cart_create_reply</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_add_features identifier id'>add_features</span><span class='lparen token'>(</span><span class='lbrack token'>[</span><span class='rubyid_name identifier id'>name</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
 
     <span class='rubyid_component_instance identifier id'>component_instance</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_component_instances identifier id'>component_instances</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='colon op'>:</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='comma token'>,</span> <span class='rubyid_component_name identifier id'>component_name</span><span class='colon op'>:</span> <span class='rubyid_comp identifier id'>comp</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
     <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_get_rest_cartridge identifier id'>get_rest_cartridge</span><span class='lparen token'>(</span><span class='rubyid_@application ivar id'>@application</span><span class='comma token'>,</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_group_instances_with_scale identifier id'>group_instances_with_scale</span><span class='comma token'>,</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
@@ -646,6 +642,8 @@ DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <pre class="lines">
 
 
+132
+133
 134
 135
 136
@@ -666,12 +664,10 @@ DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 151
 152
 153
-154
-155
-156</pre>
+154</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 134</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 132</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy identifier id'>destroy</span>
   <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
@@ -762,12 +758,12 @@ GET /domains/[domain_id]/applications/[application_id]/cartridges
       <pre class="lines">
 
 
-241
-242
-243</pre>
+239
+240
+241</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 241</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 239</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_log_tag identifier id'>set_log_tag</span>
   <span class='rubyid_@log_tag ivar id'>@log_tag</span> <span class='assign token'>=</span> <span class='rubyid_get_log_tag_prepend identifier id'>get_log_tag_prepend</span> <span class='plus op'>+</span> <span class='string val'>&quot;APP_CARTRIDGE&quot;</span>
@@ -876,6 +872,8 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
       <pre class="lines">
 
 
+157
+158
 159
 160
 161
@@ -954,12 +952,10 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 234
 235
 236
-237
-238
-239</pre>
+237</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 159</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/emb_cart_controller.rb', line 157</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update identifier id'>update</span>
   <span class='rubyid_id identifier id'>id</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:id</span><span class='rbrack token'>]</span>
@@ -1053,7 +1049,7 @@ PUT /domains/[domain_id]/applications/[application_id]/cartridges/[id]
 </div>
 
     <div id="footer">
-  Generated on Mon May  6 18:24:55 2013 by
+  Generated on Tue May  7 18:25:21 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
