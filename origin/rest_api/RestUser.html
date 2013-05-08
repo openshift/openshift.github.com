@@ -531,7 +531,15 @@ A new instance of RestUser
 60
 61
 62
-63</pre>
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 43</span>
@@ -542,6 +550,14 @@ A new instance of RestUser
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+    <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+    <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
     <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -645,7 +661,15 @@ Map of user capabilities
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 40</span>
@@ -659,6 +683,14 @@ Map of user capabilities
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
       <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -763,7 +795,15 @@ Number of gears currently being used in applications
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 40</span>
@@ -777,6 +817,14 @@ Number of gears currently being used in applications
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
       <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -1007,7 +1055,15 @@ The login name of the user
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 40</span>
@@ -1021,6 +1077,14 @@ The login name of the user
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
       <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -1125,7 +1189,15 @@ Maximum number of gears avaiable to the user
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 40</span>
@@ -1139,6 +1211,14 @@ Maximum number of gears avaiable to the user
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
       <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -1243,7 +1323,15 @@ Plan ID
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 40</span>
@@ -1257,6 +1345,14 @@ Plan ID
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
       <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -1361,7 +1457,15 @@ Plan State
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 40</span>
@@ -1375,6 +1479,14 @@ Plan State
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
       <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -1479,7 +1591,15 @@ Account ID
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 40</span>
@@ -1493,6 +1613,14 @@ Account ID
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span> <span class='assign token'>=</span> <span class='rubyid_cloud_user identifier id'>cloud_user</span><span class='dot token'>.</span><span class='rubyid_get_capabilities identifier id'>get_capabilities</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span> <span class='assign token'>=</span> <span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_gears&quot;</span><span class='rbrack token'>]</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_gears&quot;</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span>
+      <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_untracked_storage identifier id'>untracked_storage</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='lbrack token'>[</span><span class='string val'>&quot;max_storage_per_gear&quot;</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_tracked_storage identifier id'>tracked_storage</span> <span class='plus op'>+</span> <span class='rubyid_untracked_storage identifier id'>untracked_storage</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_tracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_capabilities identifier id'>capabilities</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='string val'>&quot;max_untracked_addtl_storage_per_gear&quot;</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
 
     <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_nolinks identifier id'>nolinks</span>
       <span class='rubyid_@links ivar id'>@links</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -1551,13 +1679,13 @@ Account ID
       <pre class="lines">
 
 
-65
-66
-67
-68</pre>
+73
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/rest_models/rest_user.rb', line 73</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_xml identifier id'>to_xml</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:tag_name</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='string val'>&quot;user&quot;</span>
@@ -1574,7 +1702,7 @@ Account ID
 </div>
 
     <div id="footer">
-  Generated on Tue May  7 18:31:37 2013 by
+  Generated on Wed May  8 18:31:52 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
