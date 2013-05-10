@@ -400,28 +400,6 @@ Adds ssh keys to all gears within the group instance.
 
     <ul class="summary">
       
-        <li class="private ">
-  <span class="summary_signature">
-    
-      <a href="#action_group_override-instance_method" title="#action_group_override (instance method)">- (Object) <strong>action_group_override</strong>(action, key = nil, value = nil) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  <span class="note title private">private</span>
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
         <li class="public ">
   <span class="summary_signature">
     
@@ -998,15 +976,7 @@ Application DNS pointed to it.
 195
 196
 197
-198
-199
-200
-201
-202
-203
-204
-205
-206</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 16</span>
@@ -1108,15 +1078,40 @@ Application DNS pointed to it.
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+          <span class='rubyid_else else kw'>else</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+          <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+      <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
   <span class='rubyid_end end kw'>end</span>
  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+      <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_protected identifier id'>protected</span>
@@ -1168,39 +1163,6 @@ Application DNS pointed to it.
     <span class='rubyid_end end kw'>end</span>
     <span class='lbrack token'>[</span><span class='rubyid_successful_runs identifier id'>successful_runs</span><span class='comma token'>,</span><span class='rubyid_failed_runs identifier id'>failed_runs</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span> 
-
-  <span class='rubyid_private identifier id'>private</span>
- 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-            <span class='rubyid_else else kw'>else</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1438,15 +1400,7 @@ that this <span class='object_link'><a href="" title="GroupInstance (class)">Gro
 195
 196
 197
-198
-199
-200
-201
-202
-203
-204
-205
-206</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 16</span>
@@ -1548,15 +1502,40 @@ that this <span class='object_link'><a href="" title="GroupInstance (class)">Gro
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+          <span class='rubyid_else else kw'>else</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+          <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+      <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
   <span class='rubyid_end end kw'>end</span>
  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+      <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_protected identifier id'>protected</span>
@@ -1608,39 +1587,6 @@ that this <span class='object_link'><a href="" title="GroupInstance (class)">Gro
     <span class='rubyid_end end kw'>end</span>
     <span class='lbrack token'>[</span><span class='rubyid_successful_runs identifier id'>successful_runs</span><span class='comma token'>,</span><span class='rubyid_failed_runs identifier id'>failed_runs</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span> 
-
-  <span class='rubyid_private identifier id'>private</span>
- 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-            <span class='rubyid_else else kw'>else</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1878,15 +1824,7 @@ List of gears that are part of this <span class='object_link'><a href="" title="
 195
 196
 197
-198
-199
-200
-201
-202
-203
-204
-205
-206</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 16</span>
@@ -1988,15 +1926,40 @@ List of gears that are part of this <span class='object_link'><a href="" title="
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+          <span class='rubyid_else else kw'>else</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+          <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+      <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
   <span class='rubyid_end end kw'>end</span>
  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+      <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_protected identifier id'>protected</span>
@@ -2048,39 +2011,6 @@ List of gears that are part of this <span class='object_link'><a href="" title="
     <span class='rubyid_end end kw'>end</span>
     <span class='lbrack token'>[</span><span class='rubyid_successful_runs identifier id'>successful_runs</span><span class='comma token'>,</span><span class='rubyid_failed_runs identifier id'>failed_runs</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span> 
-
-  <span class='rubyid_private identifier id'>private</span>
- 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-            <span class='rubyid_else else kw'>else</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2320,15 +2250,7 @@ group.
 195
 196
 197
-198
-199
-200
-201
-202
-203
-204
-205
-206</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 16</span>
@@ -2430,15 +2352,40 @@ group.
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+          <span class='rubyid_else else kw'>else</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+          <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+      <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
   <span class='rubyid_end end kw'>end</span>
  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+      <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_protected identifier id'>protected</span>
@@ -2490,39 +2437,6 @@ group.
     <span class='rubyid_end end kw'>end</span>
     <span class='lbrack token'>[</span><span class='rubyid_successful_runs identifier id'>successful_runs</span><span class='comma token'>,</span><span class='rubyid_failed_runs identifier id'>failed_runs</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span> 
-
-  <span class='rubyid_private identifier id'>private</span>
- 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-            <span class='rubyid_else else kw'>else</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -2762,15 +2676,7 @@ group.
 195
 196
 197
-198
-199
-200
-201
-202
-203
-204
-205
-206</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 16</span>
@@ -2872,15 +2778,40 @@ group.
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+          <span class='rubyid_else else kw'>else</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+          <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+      <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
   <span class='rubyid_end end kw'>end</span>
  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+      <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_protected identifier id'>protected</span>
@@ -2932,39 +2863,6 @@ group.
     <span class='rubyid_end end kw'>end</span>
     <span class='lbrack token'>[</span><span class='rubyid_successful_runs identifier id'>successful_runs</span><span class='comma token'>,</span><span class='rubyid_failed_runs identifier id'>failed_runs</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span> 
-
-  <span class='rubyid_private identifier id'>private</span>
- 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-            <span class='rubyid_else else kw'>else</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3202,15 +3100,7 @@ User set maximum number of gears.
 195
 196
 197
-198
-199
-200
-201
-202
-203
-204
-205
-206</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 16</span>
@@ -3312,15 +3202,40 @@ User set maximum number of gears.
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+          <span class='rubyid_else else kw'>else</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+          <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+      <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
   <span class='rubyid_end end kw'>end</span>
  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+      <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_protected identifier id'>protected</span>
@@ -3372,39 +3287,6 @@ User set maximum number of gears.
     <span class='rubyid_end end kw'>end</span>
     <span class='lbrack token'>[</span><span class='rubyid_successful_runs identifier id'>successful_runs</span><span class='comma token'>,</span><span class='rubyid_failed_runs identifier id'>failed_runs</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span> 
-
-  <span class='rubyid_private identifier id'>private</span>
- 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-            <span class='rubyid_else else kw'>else</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3642,15 +3524,7 @@ User set minimum number of gears.
 195
 196
 197
-198
-199
-200
-201
-202
-203
-204
-205
-206</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 16</span>
@@ -3752,15 +3626,40 @@ User set minimum number of gears.
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+          <span class='rubyid_else else kw'>else</span>
+            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+          <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+      <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
   <span class='rubyid_end end kw'>end</span>
  
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+      <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_else else kw'>else</span>
+      <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+    <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-    <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_protected identifier id'>protected</span>
@@ -3812,39 +3711,6 @@ User set minimum number of gears.
     <span class='rubyid_end end kw'>end</span>
     <span class='lbrack token'>[</span><span class='rubyid_successful_runs identifier id'>successful_runs</span><span class='comma token'>,</span><span class='rubyid_failed_runs identifier id'>failed_runs</span><span class='rbrack token'>]</span>
   <span class='rubyid_end end kw'>end</span> 
-
-  <span class='rubyid_private identifier id'>private</span>
- 
-  <span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-            <span class='rubyid_else else kw'>else</span>
-              <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-            <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-            <span class='rubyid_return return kw'>return</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-    <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-      <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-      <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-    <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -3917,33 +3783,33 @@ Exception if a gear operation fails and fail_fast is true
       <pre class="lines">
 
 
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170
-171
-172</pre>
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 149</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 174</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_run_on_gears identifier id'>run_on_gears</span><span class='lparen token'>(</span><span class='rubyid_gears identifier id'>gears</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_fail_fast identifier id'>fail_fast</span><span class='assign token'>=</span><span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
   <span class='rubyid_successful_runs identifier id'>successful_runs</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -4080,92 +3946,7 @@ create/scale-up operations
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="action_group_override-instance_method">
-  
-    - (<tt>Object</tt>) <strong>action_group_override</strong>(action, key = nil, value = nil)  <span class="extras">(private)</span>
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186
-187
-188
-189
-190
-191
-192
-193
-194
-195
-196
-197
-198
-199
-200
-201
-202
-203
-204
-205</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 176</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-  <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
-  <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
-    <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
-      <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
-          <span class='rubyid_else else kw'>else</span>
-            <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span>
-          <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_key identifier id'>key</span>
-          <span class='rubyid_return return kw'>return</span>
-        <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;UNSET&quot;</span>
-          <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-          <span class='rubyid_return return kw'>return</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
-  <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;GET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
-    <span class='rubyid_return return kw'>return</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-  <span class='rubyid_elsif elsif kw'>elsif</span> <span class='lparen token'>(</span><span class='rubyid_action identifier id'>action</span> <span class='eq op'>==</span> <span class='string val'>&quot;SET&quot;</span><span class='rparen token'>)</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_key identifier id'>key</span>
-    <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
-    <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="addtl_fs_gb-instance_method">
+  <h3 class="signature first" id="addtl_fs_gb-instance_method">
   
     - (<tt>Object</tt>) <strong>addtl_fs_gb</strong> 
   
@@ -4375,13 +4156,43 @@ create/scale-up operations
 
 112
 113
-114</pre>
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 112</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
-  <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;GET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+  <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_comps identifier id'>comps</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_comp identifier id'>comp</span><span class='bitor op'>|</span>
+    <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_group_override identifier id'>group_override</span><span class='bitor op'>|</span>
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='string val'>&quot;components&quot;</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_comp identifier id'>comp</span><span class='rparen token'>)</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_key identifier id'>key</span>
+          <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span>
+        <span class='rubyid_else else kw'>else</span>
+          <span class='rubyid_return return kw'>return</span> <span class='rubyid_group_override identifier id'>group_override</span>
+        <span class='rubyid_end end kw'>end</span>
+      <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_end end kw'>end</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span>
+  <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='rubyid_key identifier id'>key</span>
+    <span class='rubyid_return return kw'>return</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+  <span class='rubyid_end end kw'>end</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_nil nil kw'>nil</span> 
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -4404,15 +4215,33 @@ create/scale-up operations
       <pre class="lines">
 
 
-116
-117
-118</pre>
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 116</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 131</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_override identifier id'>set_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
-  <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;SET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='comma token'>,</span> <span class='rubyid_value identifier id'>value</span><span class='rparen token'>)</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_key identifier id'>key</span>
+  <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
+    <span class='rubyid_group_override identifier id'>group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+  <span class='rubyid_else else kw'>else</span>
+    <span class='rubyid_comps identifier id'>comps</span> <span class='assign token'>=</span> <span class='rubyid_all_component_instances identifier id'>all_component_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_to_hash identifier id'>to_hash</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_new_group_override identifier id'>new_group_override</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='string val'>&quot;components&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_comps identifier id'>comps</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_new_group_override identifier id'>new_group_override</span><span class='lbrack token'>[</span><span class='rubyid_key identifier id'>key</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_value identifier id'>value</span>
+    <span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_new_group_override identifier id'>new_group_override</span>
+  <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -4532,15 +4361,17 @@ a simplified hash representing this <span class='object_link'><a href="" title="
       <pre class="lines">
 
 
-120
-121
-122</pre>
+144
+145
+146
+147</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 120</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/group_instance.rb', line 144</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_unset_group_override identifier id'>unset_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
-  <span class='rubyid_action_group_override identifier id'>action_group_override</span><span class='lparen token'>(</span><span class='string val'>&quot;UNSET&quot;</span><span class='comma token'>,</span> <span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+  <span class='rubyid_group_override identifier id'>group_override</span> <span class='assign token'>=</span> <span class='rubyid_get_group_override identifier id'>get_group_override</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span>
+  <span class='rubyid_group_override identifier id'>group_override</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_key identifier id'>key</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_group_override identifier id'>group_override</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -4553,7 +4384,7 @@ a simplified hash representing this <span class='object_link'><a href="" title="
 </div>
 
     <div id="footer">
-  Generated on Wed May  8 18:11:50 2013 by
+  Generated on Fri May 10 18:16:14 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
