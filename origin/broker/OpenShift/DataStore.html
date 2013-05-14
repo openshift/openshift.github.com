@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=c" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
   Class: OpenShift::DataStore
   
@@ -90,11 +90,15 @@
     
   
     
+      <dt class="r2">Includes:</dt>
+      <dd class="r2">Mongo</dd>
+      
+    
   
   
   
-    <dt class="r2 last">Defined in:</dt>
-    <dd class="r2 last">origin-server/controller/lib/openshift/data_store.rb</dd>
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">origin-server/controller/lib/openshift/data_store.rb</dd>
   
 </dl>
 <div class="clear"></div>
@@ -162,6 +166,7 @@
   
 
 
+  
 
   <div id="class_method_details" class="method_details_list">
     <h2>Class Method Details</h2>
@@ -182,8 +187,6 @@
       <pre class="lines">
 
 
-4
-5
 6
 7
 8
@@ -194,19 +197,23 @@
 13
 14
 15
-16</pre>
+16
+17
+18
+19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/data_store.rb', line 4</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/data_store.rb', line 6</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_db identifier id'>db</span><span class='lparen token'>(</span><span class='rubyid_read_preference identifier id'>read_preference</span><span class='assign token'>=</span><span class='symbol val'>:secondary</span><span class='comma token'>,</span> <span class='rubyid_session_name identifier id'>session_name</span><span class='assign token'>=</span><span class='string val'>'default'</span><span class='rparen token'>)</span>
   <span class='rubyid_config identifier id'>config</span> <span class='assign token'>=</span> <span class='rubyid_Mongoid constant id'>Mongoid</span><span class='colon2 op'>::</span><span class='rubyid_Config constant id'>Config</span><span class='dot token'>.</span><span class='rubyid_sessions identifier id'>sessions</span><span class='lbrack token'>[</span><span class='rubyid_session_name identifier id'>session_name</span><span class='rbrack token'>]</span>
   <span class='rubyid_hosts identifier id'>hosts</span> <span class='assign token'>=</span> <span class='rubyid_config identifier id'>config</span><span class='lbrack token'>[</span><span class='string val'>'hosts'</span><span class='rbrack token'>]</span>
+  <span class='rubyid_ssl identifier id'>ssl</span> <span class='assign token'>=</span> <span class='rubyid_config identifier id'>config</span><span class='lbrack token'>[</span><span class='string val'>'options'</span><span class='rbrack token'>]</span><span class='lbrack token'>[</span><span class='string val'>'ssl'</span><span class='rbrack token'>]</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_hosts identifier id'>hosts</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='gt op'>&gt;</span> <span class='integer val'>1</span>
-    <span class='rubyid_con identifier id'>con</span> <span class='assign token'>=</span> <span class='rubyid_Mongo constant id'>Mongo</span><span class='colon2 op'>::</span><span class='rubyid_ReplSetConnection constant id'>ReplSetConnection</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_hosts identifier id'>hosts</span><span class='comma token'>,</span> <span class='lbrace token'>{</span><span class='symbol val'>:read</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_read_preference identifier id'>read_preference</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+    <span class='rubyid_con identifier id'>con</span> <span class='assign token'>=</span> <span class='rubyid_MongoReplicaSetClient constant id'>MongoReplicaSetClient</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_hosts identifier id'>hosts</span><span class='comma token'>,</span> <span class='symbol val'>:read</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_read_preference identifier id'>read_preference</span><span class='comma token'>,</span> <span class='symbol val'>:ssl</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_ssl identifier id'>ssl</span><span class='rparen token'>)</span>
   <span class='rubyid_else else kw'>else</span>
     <span class='rubyid_host_port identifier id'>host_port</span> <span class='assign token'>=</span> <span class='rubyid_hosts identifier id'>hosts</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>':'</span><span class='rparen token'>)</span>
-    <span class='rubyid_con identifier id'>con</span> <span class='assign token'>=</span> <span class='rubyid_Mongo constant id'>Mongo</span><span class='colon2 op'>::</span><span class='rubyid_Connection constant id'>Connection</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_host_port identifier id'>host_port</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_host_port identifier id'>host_port</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span><span class='rparen token'>)</span>
+    <span class='rubyid_con identifier id'>con</span> <span class='assign token'>=</span> <span class='rubyid_MongoClient constant id'>MongoClient</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_host_port identifier id'>host_port</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_host_port identifier id'>host_port</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span><span class='comma token'>,</span> <span class='symbol val'>:ssl</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_ssl identifier id'>ssl</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_db identifier id'>db</span> <span class='assign token'>=</span> <span class='rubyid_con identifier id'>con</span><span class='dot token'>.</span><span class='rubyid_db identifier id'>db</span><span class='lparen token'>(</span><span class='rubyid_config identifier id'>config</span><span class='lbrack token'>[</span><span class='string val'>'database'</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
   <span class='rubyid_db identifier id'>db</span><span class='dot token'>.</span><span class='rubyid_authenticate identifier id'>authenticate</span><span class='lparen token'>(</span><span class='rubyid_config identifier id'>config</span><span class='lbrack token'>[</span><span class='string val'>'username'</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_config identifier id'>config</span><span class='lbrack token'>[</span><span class='string val'>'password'</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
@@ -233,16 +240,16 @@
       <pre class="lines">
 
 
-18
-19
-20
 21
 22
 23
-24</pre>
+24
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/data_store.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/lib/openshift/data_store.rb', line 21</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_collection_name identifier id'>collection_name</span><span class='comma token'>,</span> <span class='rubyid_query identifier id'>query</span><span class='comma token'>,</span> <span class='rubyid_selection identifier id'>selection</span><span class='rparen token'>)</span>
   <span class='rubyid_db identifier id'>db</span><span class='dot token'>.</span><span class='rubyid_collection identifier id'>collection</span><span class='lparen token'>(</span><span class='rubyid_collection_name identifier id'>collection_name</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_find identifier id'>find</span><span class='lparen token'>(</span><span class='rubyid_query identifier id'>query</span><span class='comma token'>,</span> <span class='rubyid_selection identifier id'>selection</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_mcursor identifier id'>mcursor</span><span class='bitor op'>|</span>
@@ -262,7 +269,7 @@
 </div>
 
     <div id="footer">
-  Generated on Mon May 13 18:28:13 2013 by
+  Generated on Tue May 14 18:08:54 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

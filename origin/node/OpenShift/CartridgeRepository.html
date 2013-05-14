@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=c" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>
   Class: OpenShift::CartridgeRepository
   
@@ -919,7 +919,7 @@ Filesystem path to where cartridges are installed
     <span class='rubyid_black_list identifier id'>black_list</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_basename identifier id'>basename</span><span class='lparen token'>(</span><span class='rubyid_e identifier id'>e</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
-  <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_ArgumentError constant id'>ArgumentError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>'No cartridge sources found to install.'</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_entries identifier id'>entries</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
+  <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_ArgumentError constant id'>ArgumentError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>'CLIENT_ERROR: No cartridge sources found to install.'</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_entries identifier id'>entries</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
 
   <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/bin/cp -ad #{entries.join(' ')} #{target}&quot;</span><span class='comma token'>,</span>
                  <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
@@ -1084,7 +1084,7 @@ Instantiate a cartridge in a gear;
         <span class='rubyid_filesystem_copy identifier id'>filesystem_copy</span><span class='lparen token'>(</span><span class='rubyid_entries identifier id'>entries</span><span class='comma token'>,</span> <span class='rubyid_target identifier id'>target</span><span class='comma token'>,</span> <span class='dstring node'>%w(. ..)</span><span class='rparen token'>)</span>
 
       <span class='rubyid_else else kw'>else</span>
-        <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_ArgumentError constant id'>ArgumentError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Unsupported URL(#{cartridge.source_url}) for downloading a private cartridge&quot;</span><span class='rparen token'>)</span>
+        <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_ArgumentError constant id'>ArgumentError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;CLIENT_ERROR: Unsupported URL(#{cartridge.source_url}) for downloading a private cartridge&quot;</span><span class='rparen token'>)</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_else else kw'>else</span>
     <span class='rubyid_entries identifier id'>entries</span> <span class='assign token'>=</span> <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='dot token'>.</span><span class='rubyid_repository_path identifier id'>repository_path</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_FNM_DOTMATCH constant id'>FNM_DOTMATCH</span><span class='rparen token'>)</span>
@@ -1173,7 +1173,7 @@ Instantiate a cartridge in a gear;
           <span class='rubyid_total identifier id'>total</span>   <span class='opasgn op'>+=</span> <span class='rubyid_output identifier id'>output</span><span class='dot token'>.</span><span class='rubyid_write identifier id'>write</span> <span class='rubyid_partial identifier id'>partial</span>
 
           <span class='rubyid_if if kw'>if</span> <span class='rubyid_content_length identifier id'>content_length</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_content_length identifier id'>content_length</span> <span class='lt op'>&lt;</span> <span class='rubyid_total identifier id'>total</span>
-            <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_Net constant id'>Net</span><span class='colon2 op'>::</span><span class='rubyid_HTTPBadResponse constant id'>HTTPBadResponse</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Download of '#{uri}' exceeded Content-Length of #{content_length}. Download aborted.&quot;</span><span class='rparen token'>)</span>
+            <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_Net constant id'>Net</span><span class='colon2 op'>::</span><span class='rubyid_HTTPBadResponse constant id'>HTTPBadResponse</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;CLIENT_ERROR: Download of '#{uri}' exceeded Content-Length of #{content_length}. Download aborted.&quot;</span><span class='rparen token'>)</span>
           <span class='rubyid_end end kw'>end</span>
         <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_EOFError constant id'>EOFError</span>
@@ -1184,13 +1184,13 @@ Instantiate a cartridge in a gear;
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_content_length identifier id'>content_length</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_content_length identifier id'>content_length</span> <span class='neq op'>!=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_size identifier id'>size</span><span class='lparen token'>(</span><span class='rubyid_temporary identifier id'>temporary</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_Net constant id'>Net</span><span class='colon2 op'>::</span><span class='rubyid_HTTPBadResponse constant id'>HTTPBadResponse</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
-              <span class='dstring node'>&quot;Download of '#{uri}' failed, expected Content-Length of #{content_length} received #{File.size(temporary)}&quot;</span><span class='rparen token'>)</span>
+              <span class='dstring node'>&quot;CLIENT_ERROR: Download of '#{uri}' failed, expected Content-Length of #{content_length} received #{File.size(temporary)}&quot;</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_md5 identifier id'>md5</span>
     <span class='rubyid_digest identifier id'>digest</span> <span class='assign token'>=</span> <span class='rubyid_Digest constant id'>Digest</span><span class='colon2 op'>::</span><span class='rubyid_MD5 constant id'>MD5</span><span class='dot token'>.</span><span class='rubyid_file identifier id'>file</span><span class='lparen token'>(</span><span class='rubyid_temporary identifier id'>temporary</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_hexdigest identifier id'>hexdigest</span>
     <span class='rubyid_if if kw'>if</span> <span class='rubyid_digest identifier id'>digest</span> <span class='neq op'>!=</span> <span class='rubyid_md5 identifier id'>md5</span>
-      <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_IOError constant id'>IOError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Failed to download cartridge, checksum failed: #{md5} expected, #{digest} actual&quot;</span><span class='rparen token'>)</span>
+      <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_IOError constant id'>IOError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;CLIENT_ERROR: Failed to download cartridge, checksum failed: #{md5} expected, #{digest} actual&quot;</span><span class='rparen token'>)</span>
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
 <span class='rubyid_end end kw'>end</span>
@@ -1260,7 +1260,7 @@ Instantiate a cartridge in a gear;
 
   <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_errors identifier id'>errors</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_MalformedCartridgeError constant id'>MalformedCartridgeError</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span>
-              <span class='dstring node'>&quot;Malformed cartridge (#{cartridge.name}, #{cartridge.version}, #{cartridge.cartridge_version})&quot;</span><span class='comma token'>,</span>
+              <span class='dstring node'>&quot;CLIENT_ERROR: Malformed cartridge (#{cartridge.name}, #{cartridge.version}, #{cartridge.cartridge_version})&quot;</span><span class='comma token'>,</span>
               <span class='rubyid_errors identifier id'>errors</span>
           <span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
@@ -2134,7 +2134,7 @@ print out all indexed cartridges in a table
 </div>
 
     <div id="footer">
-  Generated on Mon May 13 18:42:58 2013 by
+  Generated on Tue May 14 18:13:22 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
