@@ -218,6 +218,11 @@ API to perform manage an application.
   
   
   
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="BaseController.html" title="BaseController (class)">BaseController</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="BaseController.html#render_upgrade_in_progress-instance_method" title="BaseController#render_upgrade_in_progress (method)">#render_upgrade_in_progress</a></span></p>
+
+  
+  
   
   
   
@@ -489,7 +494,12 @@ the event.
 107
 108
 109
-110</pre>
+110
+111
+112
+113
+114
+115</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/app_events_controller.rb', line 28</span>
@@ -501,6 +511,11 @@ the event.
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Alias must be specified for adding or removing application alias.&quot;</span><span class='comma token'>,</span> <span class='integer val'>126</span><span class='comma token'>,</span>
                       <span class='string val'>&quot;event&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='lbrack token'>[</span><span class='string val'>'add-alias'</span><span class='comma token'>,</span> <span class='string val'>'remove-alias'</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_event identifier id'>event</span><span class='rparen token'>)</span> <span class='andop op'>&amp;&amp;</span> <span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_server_alias identifier id'>server_alias</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span><span class='rparen token'>)</span>
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Reached gear limit of #{@cloud_user.max_gears}&quot;</span><span class='comma token'>,</span> <span class='integer val'>104</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_event identifier id'>event</span> <span class='eq op'>==</span> <span class='string val'>'scale-up'</span><span class='rparen token'>)</span> <span class='andop op'>&amp;&amp;</span> <span class='lparen token'>(</span><span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='dot token'>.</span><span class='rubyid_consumed_gears identifier id'>consumed_gears</span> <span class='geq op'>&gt;=</span> <span class='rubyid_@cloud_user ivar id'>@cloud_user</span><span class='dot token'>.</span><span class='rubyid_max_gears identifier id'>max_gears</span><span class='rparen token'>)</span>
+  
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_quarantined identifier id'>quarantined</span> <span class='andop op'>&amp;&amp;</span> <span class='lbrack token'>[</span><span class='string val'>'scale-up'</span><span class='comma token'>,</span> <span class='string val'>'scale-down'</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_event identifier id'>event</span><span class='rparen token'>)</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_upgrade_in_progress identifier id'>render_upgrade_in_progress</span>            
+  <span class='rubyid_end end kw'>end</span>
+    
 
   <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Added #{event} to application #{@application.name}&quot;</span>
   <span class='rubyid_begin begin kw'>begin</span>
@@ -607,17 +622,17 @@ the event.
       <pre class="lines">
 
 
-112
-113
-114
-115
-116
 117
 118
-119</pre>
+119
+120
+121
+122
+123
+124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/app_events_controller.rb', line 112</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/app_events_controller.rb', line 117</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_log_tag identifier id'>set_log_tag</span>
   <span class='rubyid_event identifier id'>event</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:event</span><span class='rbrack token'>]</span>
@@ -638,7 +653,7 @@ the event.
 </div>
 
     <div id="footer">
-  Generated on Tue May 14 18:08:37 2013 by
+  Generated on Thu May 16 18:25:50 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
