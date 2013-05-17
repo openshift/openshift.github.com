@@ -87,7 +87,6 @@ using your cartridge.</p>
  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_bin identifier id'>bin</span>                        <span class='lparen token'>(</span><span class='rubyid_required identifier id'>required</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_setup identifier id'>setup</span>                   <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_install identifier id'>install</span>                 <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
- <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_post identifier id'>post</span><span class='minus op'>-</span><span class='rubyid_setup identifier id'>setup</span>              <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_post identifier id'>post</span><span class='minus op'>-</span><span class='rubyid_install identifier id'>install</span>            <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_teardown identifier id'>teardown</span>                <span class='lparen token'>(</span><span class='rubyid_optional identifier id'>optional</span><span class='rparen token'>)</span>
  <span class='bitor op'>|</span>  <span class='plus op'>+</span><span class='minus op'>-</span> <span class='rubyid_control identifier id'>control</span>                 <span class='lparen token'>(</span><span class='rubyid_required identifier id'>required</span><span class='rparen token'>)</span>
@@ -256,8 +255,8 @@ the cartridge to be re-started or the application developer&#39;s application to
 
 <p>By not requiring a restart, you improve the application user&#39;s experience since no downtime will
 be incurred from your changes. If the cartridge&#39;s current version is not in the list when upgraded,
-the cartridge will be stopped, the new code will be installed, <code>setup</code> will be run, the cartridge
-started and <code>post-setup</code> will be run.</p>
+the cartridge will be stopped, the new code will be installed, <code>setup</code> will be run and the cartridge
+started.</p>
 
 <p>Today this is a simple list and string matching is used to determine compatible versions.
 If this list proves to be unmanageable, future versions of OpenShift may implement maven dependency range style checking.</p>
@@ -681,7 +680,6 @@ be run from the home directory of the gear.</p>
 <p>A cartridge may implement the following scripts:
 * <code>teardown</code>: prepare this instance of cartridge to be removed
 * <code>install</code>: prepare this instance of cartridge to be operational for the initial install
-* <code>post-setup</code>: an opportunity for setup after the cartridge has been started for the initial install and each upgrade
 * <code>post-install</code>: an opportunity for setup after the cartridge has been started for the initial install</p>
 
 <h3>Exit Status Codes</h3>
@@ -804,31 +802,6 @@ variables should occur in install.</p>
 <p><code>install</code> may substitute a version dependent of the <code>template</code> or <code>template.git</code> directories.</p>
 
 <p>Lock context: <code>unlocked</code></p>
-
-<h2>bin/post-setup</h2>
-
-<h5>Synopsis</h5>
-
-<p><code>post-setup [--version &lt;version&gt;]</code></p>
-
-<h5>Options</h5>
-
-<ul>
-<li><code>--version &lt;version&gt;</code>: Selects which version of cartridge to install. If no version is provided,
-the version denoted by the <code>Version</code> element from <code>manifest.yml</code> will be installed.</li>
-</ul>
-
-<h5>Description</h5>
-
-<p>The <code>post-setup</code> script is an opportunity to configure your cartridge after the cartridge has been 
-started.  Like setup it must also be reentrant and is called for each non backward compatible cartridge 
-upgrade.</p>
-
-<p>Any files created during <code>post-setup</code> should be added to
-<code>setup_rewritten</code> section of <code>metadata/managed_files.yml</code>
-so that they may be cleared before upgrades.</p>
-
-<p>Lock context: <code>locked</code></p>
 
 <h2>bin/post-install</h2>
 
@@ -1362,7 +1335,7 @@ authors should take care to be as conservative as possible.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Thu May 16 18:39:52 2013 by
+  Generated on Fri May 17 18:40:11 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

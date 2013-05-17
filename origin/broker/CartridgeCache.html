@@ -554,7 +554,27 @@ Returns an Array of Cartridge objects
 126
 127
 128
-129</pre>
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 119</span>
@@ -563,10 +583,30 @@ Returns an Array of Cartridge objects
   <span class='rubyid_max_dl_time identifier id'>max_dl_time</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_config identifier id'>config</span><span class='dot token'>.</span><span class='rubyid_downloaded_cartridges identifier id'>downloaded_cartridges</span><span class='lbrack token'>[</span><span class='symbol val'>:max_download_time</span><span class='rbrack token'>]</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='integer val'>10</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='integer val'>10</span>
   <span class='rubyid_max_file_size identifier id'>max_file_size</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_config identifier id'>config</span><span class='dot token'>.</span><span class='rubyid_downloaded_cartridges identifier id'>downloaded_cartridges</span><span class='lbrack token'>[</span><span class='symbol val'>:max_cart_size</span><span class='rbrack token'>]</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='integer val'>20480</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='integer val'>20480</span>
   <span class='rubyid_max_redirs identifier id'>max_redirs</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_config identifier id'>config</span><span class='dot token'>.</span><span class='rubyid_downloaded_cartridges identifier id'>downloaded_cartridges</span><span class='lbrack token'>[</span><span class='symbol val'>:max_download_redirects</span><span class='rbrack token'>]</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='integer val'>2</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='integer val'>2</span>
+  <span class='rubyid_rate_limit identifier id'>rate_limit</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_Rails constant id'>Rails</span><span class='dot token'>.</span><span class='rubyid_application identifier id'>application</span><span class='dot token'>.</span><span class='rubyid_config identifier id'>config</span><span class='dot token'>.</span><span class='rubyid_downloaded_cartridges identifier id'>downloaded_cartridges</span><span class='lbrack token'>[</span><span class='symbol val'>:max_download_rate</span><span class='rbrack token'>]</span> <span class='rubyid_rescue rescue kw'>rescue</span> <span class='string val'>&quot;100k&quot;</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='string val'>&quot;100k&quot;</span> 
   <span class='rubyid_manifest identifier id'>manifest</span> <span class='assign token'>=</span> <span class='string val'>&quot;&quot;</span>
+  
   <span class='rubyid_uri_obj identifier id'>uri_obj</span> <span class='assign token'>=</span> <span class='rubyid_URI constant id'>URI</span><span class='dot token'>.</span><span class='rubyid_parse identifier id'>parse</span><span class='lparen token'>(</span><span class='rubyid_url identifier id'>url</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_uri_obj identifier id'>uri_obj</span><span class='dot token'>.</span><span class='rubyid_kind_of? fid id'>kind_of?</span> <span class='rubyid_URI constant id'>URI</span><span class='colon2 op'>::</span><span class='rubyid_HTTP constant id'>HTTP</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_uri_obj identifier id'>uri_obj</span><span class='dot token'>.</span><span class='rubyid_kind_of? fid id'>kind_of?</span> <span class='rubyid_URI constant id'>URI</span><span class='colon2 op'>::</span><span class='rubyid_FTP constant id'>FTP</span>
-    <span class='rubyid_manifest identifier id'>manifest</span> <span class='assign token'>=</span> <span class='dxstring node'>`curl --max-time #{max_dl_time} --connect-timeout 2 --location --max-redirs #{max_redirs} --max-filesize #{max_file_size} -k #{url}`</span>
+    <span class='rubyid_rout identifier id'>rout</span><span class='comma token'>,</span><span class='rubyid_wout identifier id'>wout</span> <span class='assign token'>=</span> <span class='rubyid_IO constant id'>IO</span><span class='dot token'>.</span><span class='rubyid_pipe identifier id'>pipe</span>
+    <span class='rubyid_rerr identifier id'>rerr</span><span class='comma token'>,</span><span class='rubyid_werr identifier id'>werr</span> <span class='assign token'>=</span> <span class='rubyid_IO constant id'>IO</span><span class='dot token'>.</span><span class='rubyid_pipe identifier id'>pipe</span>
+    <span class='rubyid_pid identifier id'>pid</span> <span class='assign token'>=</span> <span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_spawn identifier id'>spawn</span><span class='lparen token'>(</span><span class='string val'>&quot;curl&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;--max-time&quot;</span><span class='comma token'>,</span> <span class='rubyid_max_dl_time identifier id'>max_dl_time</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='comma token'>,</span> <span class='string val'>&quot;--limit-rate&quot;</span><span class='comma token'>,</span> <span class='rubyid_rate_limit identifier id'>rate_limit</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='comma token'>,</span> <span class='string val'>&quot;--connect-timeout&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;2&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;--location&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;--max-redirs&quot;</span><span class='comma token'>,</span> <span class='rubyid_max_redirs identifier id'>max_redirs</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='comma token'>,</span> <span class='string val'>&quot;--max-filesize&quot;</span><span class='comma token'>,</span> <span class='rubyid_max_file_size identifier id'>max_file_size</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='comma token'>,</span> <span class='string val'>&quot;-k&quot;</span><span class='comma token'>,</span> <span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='symbol val'>:out</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_wout identifier id'>wout</span><span class='comma token'>,</span> <span class='symbol val'>:err</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_werr identifier id'>werr</span><span class='rparen token'>)</span>
+    <span class='rubyid_begin begin kw'>begin</span>
+      <span class='rubyid_Timeout constant id'>Timeout</span><span class='colon2 op'>::</span><span class='rubyid_timeout identifier id'>timeout</span><span class='lparen token'>(</span><span class='rubyid_max_dl_time identifier id'>max_dl_time</span><span class='rparen token'>)</span> <span class='lbrace token'>{</span>
+        <span class='rubyid_p identifier id'>p</span><span class='comma token'>,</span><span class='rubyid_status identifier id'>status</span> <span class='assign token'>=</span> <span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_waitpid2 identifier id'>waitpid2</span><span class='lparen token'>(</span><span class='rubyid_pid identifier id'>pid</span><span class='rparen token'>)</span>
+        <span class='rubyid_wout identifier id'>wout</span><span class='dot token'>.</span><span class='rubyid_close identifier id'>close</span>
+        <span class='rubyid_werr identifier id'>werr</span><span class='dot token'>.</span><span class='rubyid_close identifier id'>close</span>
+        <span class='rubyid_if if kw'>if</span> <span class='rubyid_status identifier id'>status</span><span class='dot token'>.</span><span class='rubyid_exitstatus identifier id'>exitstatus</span><span class='eq op'>==</span><span class='integer val'>0</span>
+          <span class='rubyid_manifest identifier id'>manifest</span> <span class='assign token'>=</span> <span class='rubyid_rout identifier id'>rout</span><span class='dot token'>.</span><span class='rubyid_read identifier id'>read</span>
+        <span class='rubyid_end end kw'>end</span>
+        <span class='rubyid_rout identifier id'>rout</span><span class='dot token'>.</span><span class='rubyid_close identifier id'>close</span>
+        <span class='rubyid_rerr identifier id'>rerr</span><span class='dot token'>.</span><span class='rubyid_close identifier id'>close</span>
+      <span class='rbrace token'>}</span>
+    <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Timeout constant id'>Timeout</span><span class='colon2 op'>::</span><span class='rubyid_Error constant id'>Error</span>
+      <span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_kill identifier id'>kill</span><span class='lparen token'>(</span><span class='string val'>'SIGKILL'</span><span class='comma token'>,</span> <span class='rubyid_pid identifier id'>pid</span><span class='rparen token'>)</span>
+    <span class='rubyid_end end kw'>end</span>
+
+    <span class='comment val'># manifest = `curl --max-time #{max_dl_time} --limit-rate #{rate_limit} --connect-timeout 2 --location --max-redirs #{max_redirs} --max-filesize #{max_file_size} -k #{url}`</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_manifest identifier id'>manifest</span>
 <span class='rubyid_end end kw'>end</span>
@@ -591,25 +631,25 @@ Returns an Array of Cartridge objects
       <pre class="lines">
 
 
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186</pre>
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 171</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 191</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_extract_vendor_feature_version identifier id'>extract_vendor_feature_version</span><span class='lparen token'>(</span><span class='rubyid_requested_feature identifier id'>requested_feature</span><span class='rparen token'>)</span>
   <span class='rubyid_vendor identifier id'>vendor</span><span class='comma token'>,</span> <span class='rubyid_feature identifier id'>feature</span><span class='comma token'>,</span> <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
@@ -648,24 +688,24 @@ Returns an Array of Cartridge objects
       <pre class="lines">
 
 
-155
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169</pre>
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 155</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 175</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_fetch_community_carts identifier id'>fetch_community_carts</span><span class='lparen token'>(</span><span class='rubyid_urls identifier id'>urls</span><span class='rparen token'>)</span>
   <span class='rubyid_cmap identifier id'>cmap</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
@@ -972,21 +1012,21 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142</pre>
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 131</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 151</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_foreach_cart_version identifier id'>foreach_cart_version</span><span class='lparen token'>(</span><span class='rubyid_manifest_str identifier id'>manifest_str</span><span class='comma token'>,</span> <span class='rubyid_software_version identifier id'>software_version</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_cartridge identifier id'>cartridge</span> <span class='assign token'>=</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Runtime constant id'>Runtime</span><span class='colon2 op'>::</span><span class='rubyid_Manifest constant id'>Manifest</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_manifest_str identifier id'>manifest_str</span><span class='rparen token'>)</span>
@@ -1043,19 +1083,19 @@ Returns the first cartridge that provides the specified feature.
       <pre class="lines">
 
 
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153</pre>
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 144</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/helpers/cartridge_cache.rb', line 164</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_validate_yaml identifier id'>validate_yaml</span><span class='lparen token'>(</span><span class='rubyid_url identifier id'>url</span><span class='comma token'>,</span> <span class='rubyid_str identifier id'>str</span><span class='rparen token'>)</span>
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Invalid cartridge, error downloading from url '#{url}' &quot;</span><span class='comma token'>,</span> <span class='integer val'>109</span><span class='rparen token'>)</span>  <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_str identifier id'>str</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_str identifier id'>str</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span><span class='eq op'>==</span><span class='integer val'>0</span>
@@ -1078,7 +1118,7 @@ Returns the first cartridge that provides the specified feature.
 </div>
 
     <div id="footer">
-  Generated on Thu May 16 18:27:17 2013 by
+  Generated on Fri May 17 18:27:43 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
