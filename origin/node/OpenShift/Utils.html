@@ -322,7 +322,8 @@ correctly handle the resulting data type.
 137
 138
 139
-140</pre>
+140
+141</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 80</span>
@@ -354,7 +355,8 @@ correctly handle the resulting data type.
         <span class='comment val'># Only switch contexts if necessary</span>
         <span class='rubyid_if if kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_current_context identifier id'>current_context</span> <span class='neq op'>!=</span> <span class='rubyid_target_context identifier id'>target_context</span><span class='rparen token'>)</span> <span class='orop op'>||</span> <span class='lparen token'>(</span><span class='rubyid_Process constant id'>Process</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span> <span class='neq op'>!=</span> <span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:uid</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
           <span class='rubyid_target_name identifier id'>target_name</span> <span class='assign token'>=</span> <span class='rubyid_Etc constant id'>Etc</span><span class='dot token'>.</span><span class='rubyid_getpwuid identifier id'>getpwuid</span><span class='lparen token'>(</span><span class='rubyid_options identifier id'>options</span><span class='lbrack token'>[</span><span class='symbol val'>:uid</span><span class='rbrack token'>]</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>
-          <span class='rubyid_command identifier id'>command</span>     <span class='assign token'>=</span> <span class='dstring node'>%Q{/sbin/runuser -m -s /bin/sh #{target_name} -c &quot;exec /usr/bin/runcon '#{target_context}' /bin/sh -c \\&quot;#{command}\\&quot;&quot;}</span>
+          <span class='rubyid_exec identifier id'>exec</span>        <span class='assign token'>=</span> <span class='dstring node'>%Q{exec /usr/bin/runcon '#{target_context}' /bin/sh -c \\&quot;#{command}\\&quot;}</span>
+          <span class='rubyid_command identifier id'>command</span>     <span class='assign token'>=</span> <span class='dstring node'>%Q{/sbin/runuser -m -s /bin/sh #{target_name} -c &quot;#{exec}&quot;}</span>
         <span class='rubyid_end end kw'>end</span>
       <span class='rubyid_end end kw'>end</span>
 
@@ -432,7 +434,6 @@ options: hash
       <pre class="lines">
 
 
-150
 151
 152
 153
@@ -473,10 +474,11 @@ options: hash
 188
 189
 190
-191</pre>
+191
+192</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 150</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/shell_exec.rb', line 151</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_read_results identifier id'>read_results</span><span class='lparen token'>(</span><span class='rubyid_pid identifier id'>pid</span><span class='comma token'>,</span> <span class='rubyid_stdout identifier id'>stdout</span><span class='comma token'>,</span> <span class='rubyid_stderr identifier id'>stderr</span><span class='comma token'>,</span> <span class='rubyid_options identifier id'>options</span><span class='rparen token'>)</span>
   <span class='comment val'># TODO: Are these variables thread safe...?</span>
@@ -531,7 +533,7 @@ options: hash
 </div>
 
     <div id="footer">
-  Generated on Tue May 21 18:40:27 2013 by
+  Generated on Wed May 22 18:40:41 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
