@@ -97,6 +97,25 @@
   
     <dl class="constants">
       
+        <dt id="IMMUTABLE_FILES-constant" class="">IMMUTABLE_FILES =
+          <div class="docstring">
+  <div class="discussion">
+    <p>
+Immutable Files: Once instantiated in a gear this files cannot be changed.
+mode: 0644 own: root.uuid
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='dstring node'>%w(metadata/manifest.yml metadata/managed_files.yml env/OPENSHIFT_*_IDENT env/OPENSHIFT_*_DIR)</span>
+</pre></dd>
+      
         <dt id="FILENAME_BLACKLIST-constant" class="">FILENAME_BLACKLIST =
           <div class="docstring">
   <div class="discussion">
@@ -350,14 +369,6 @@ Returns an array of matching file entries. Entries are only allowed if:
       <pre class="lines">
 
 
-109
-110
-111
-112
-113
-114
-115
-116
 117
 118
 119
@@ -369,10 +380,18 @@ Returns an array of matching file entries. Entries are only allowed if:
 125
 126
 127
-128</pre>
+128
+129
+130
+131
+132
+133
+134
+135
+136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 109</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 117</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_locked_files identifier id'>locked_files</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_locked_files identifier id'>locked_files</span> <span class='assign token'>=</span> <span class='rubyid_managed_files identifier id'>managed_files</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='symbol val'>:locked_files</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
@@ -457,9 +476,6 @@ Returns an <tt>Array</tt> containing file names or strings
       <pre class="lines">
 
 
-51
-52
-53
 54
 55
 56
@@ -506,10 +522,18 @@ Returns an <tt>Array</tt> containing file names or strings
 97
 98
 99
-100</pre>
+100
+101
+102
+103
+104
+105
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 54</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_managed_files identifier id'>managed_files</span><span class='lparen token'>(</span><span class='rubyid_cart identifier id'>cart</span><span class='comma token'>,</span> <span class='rubyid_type identifier id'>type</span><span class='comma token'>,</span> <span class='rubyid_root identifier id'>root</span><span class='comma token'>,</span> <span class='rubyid_process_files identifier id'>process_files</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
   <span class='comment val'># Ensure that root ends in a slash</span>
@@ -526,6 +550,11 @@ Returns an <tt>Array</tt> containing file names or strings
     <span class='dot token'>.</span><span class='rubyid_flatten identifier id'>flatten</span><span class='dot token'>.</span><span class='rubyid_compact identifier id'>compact</span>      <span class='comment val'># Remove any nils</span>
     <span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lparen token'>(</span><span class='bitand op'>&amp;</span><span class='symbol val'>:strip</span><span class='rparen token'>)</span>         <span class='comment val'># Remove leading/trailing whitespace</span>
     <span class='dot token'>.</span><span class='rubyid_delete_if identifier id'>delete_if</span><span class='lparen token'>(</span><span class='bitand op'>&amp;</span><span class='symbol val'>:empty?</span><span class='rparen token'>)</span>  <span class='comment val'># Remove any empty patterns</span>
+
+  <span class='rubyid_IMMUTABLE_FILES constant id'>IMMUTABLE_FILES</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_name identifier id'>name</span><span class='bitor op'>|</span>
+    <span class='rubyid_name identifier id'>name</span><span class='dot token'>.</span><span class='rubyid_gsub! fid id'>gsub!</span><span class='lparen token'>(</span><span class='string val'>'*'</span><span class='comma token'>,</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_short_name identifier id'>short_name</span><span class='rparen token'>)</span>
+    <span class='rubyid_file_patterns identifier id'>file_patterns</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
 
   <span class='comment val'># Specify whether or not to do extra processing</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_process_files identifier id'>process_files</span>
@@ -601,12 +630,12 @@ Returns an array of matching file entries.
       <pre class="lines">
 
 
-163
-164
-165</pre>
+171
+172
+173</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 163</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 171</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_processed_templates identifier id'>processed_templates</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_managed_files identifier id'>managed_files</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='symbol val'>:processed_templates</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
@@ -651,13 +680,13 @@ Returns an array of transform scripts (sed commands)
       <pre class="lines">
 
 
-153
-154
-155
-156</pre>
+161
+162
+163
+164</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 153</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 161</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_restore_transforms identifier id'>restore_transforms</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='comment val'># Do not let managed_files process the entries, since they will be sed scripts</span>
@@ -703,12 +732,12 @@ Returns an array of matching file entries.
       <pre class="lines">
 
 
-144
-145
-146</pre>
+152
+153
+154</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 144</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 152</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_setup_rewritten identifier id'>setup_rewritten</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_managed_files identifier id'>managed_files</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='symbol val'>:setup_rewritten</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
@@ -753,12 +782,12 @@ Returns an array of matching file entries.
       <pre class="lines">
 
 
-135
-136
-137</pre>
+143
+144
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 135</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/managed_files.rb', line 143</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_snapshot_exclusions identifier id'>snapshot_exclusions</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='rparen token'>)</span>
   <span class='rubyid_managed_files identifier id'>managed_files</span><span class='lparen token'>(</span><span class='rubyid_cartridge identifier id'>cartridge</span><span class='comma token'>,</span> <span class='symbol val'>:snapshot_exclusions</span><span class='comma token'>,</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='rparen token'>)</span>
@@ -774,7 +803,7 @@ Returns an array of matching file entries.
 </div>
 
     <div id="footer">
-  Generated on Fri May 24 18:39:45 2013 by
+  Generated on Sat May 25 18:38:17 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>

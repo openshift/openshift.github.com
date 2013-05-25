@@ -172,7 +172,7 @@ GIT_DIR=./&lt;%= @application_name %&gt;.git git repack
 }</span>
 </pre></dd>
       
-        <dt id="GIT_DEPLOY-constant" class="">GIT_DEPLOY =
+        <dt id="GIT_ARCHIVE-constant" class="">GIT_ARCHIVE =
           
         </dt>
         <dd><pre class="code"><span class='string val'>%Q{\
@@ -279,6 +279,28 @@ Returns the value of attribute path.
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#archive-instance_method" title="#archive (instance method)">- (Object) <strong>archive</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#build_bare-instance_method" title="#build_bare (instance method)">- (Object) <strong>build_bare</strong>(path) </a>
     
 
@@ -322,28 +344,6 @@ Copy a file tree structure and build an application repository.
 Install Git repository hooks and set permissions.
 </p>
 </div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#deploy-instance_method" title="#deploy (instance method)">- (Object) <strong>deploy</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -607,7 +607,96 @@ Returns the value of attribute path
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="build_bare-instance_method">
+  <h3 class="signature first" id="archive-instance_method">
+  
+    - (<tt>Object</tt>) <strong>archive</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 132</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_archive identifier id'>archive</span>
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_exist? fid id'>exist?</span>
+
+  <span class='comment val'># expose variables for ERB processing</span>
+  <span class='rubyid_@application_name ivar id'>@application_name</span> <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span>
+  <span class='rubyid_@user_homedir ivar id'>@user_homedir</span>     <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span>
+  <span class='rubyid_@target_dir ivar id'>@target_dir</span>       <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'app-root'</span><span class='comma token'>,</span> <span class='string val'>'runtime'</span><span class='comma token'>,</span> <span class='string val'>'repo'</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_rf identifier id'>rm_rf</span> <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_rf identifier id'>rm_rf</span> <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'.[^\.]*'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_ARCHIVE constant id'>GIT_ARCHIVE</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_@path ivar id'>@path</span><span class='comma token'>,</span>
+                 <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>                 <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
+                 <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'.gitmodules'</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_cache identifier id'>cache</span> <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'OPENSHIFT_TMP_DIR'</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='string val'>'git_cache'</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span>
+  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkpath identifier id'>mkpath</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/bin/sh #{PathUtils.join('/usr/libexec/openshift/lib', &quot;archive_git_submodules.sh&quot;)} #{@path} #{@target_dir}&quot;</span><span class='comma token'>,</span>
+                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span>
+                 <span class='rubyid_env identifier id'>env</span><span class='colon op'>:</span>                 <span class='rubyid_env identifier id'>env</span><span class='comma token'>,</span>
+                 <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>                 <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
+                 <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
+
+  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/bin/rm -rf #{cache} &amp;&quot;</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="build_bare-instance_method">
   
     - (<tt>Object</tt>) <strong>build_bare</strong>(path) 
   
@@ -761,95 +850,6 @@ Install Git repository hooks and set permissions
 
   <span class='rubyid_render_file identifier id'>render_file</span><span class='dot token'>.</span><span class='rubyid_call identifier id'>call</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_hooks identifier id'>hooks</span><span class='comma token'>,</span> <span class='string val'>'pre-receive'</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='integer val'>0755</span><span class='comma token'>,</span> <span class='rubyid_PRE_RECEIVE constant id'>PRE_RECEIVE</span><span class='rparen token'>)</span>
   <span class='rubyid_render_file identifier id'>render_file</span><span class='dot token'>.</span><span class='rubyid_call identifier id'>call</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_hooks identifier id'>hooks</span><span class='comma token'>,</span> <span class='string val'>'post-receive'</span><span class='rparen token'>)</span><span class='comma token'>,</span> <span class='integer val'>0755</span><span class='comma token'>,</span> <span class='rubyid_POST_RECEIVE constant id'>POST_RECEIVE</span><span class='rparen token'>)</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="deploy-instance_method">
-  
-    - (<tt>Object</tt>) <strong>deploy</strong> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160
-161
-162
-163</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/application_repository.rb', line 132</span>
-
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_deploy identifier id'>deploy</span>
-  <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_exist? fid id'>exist?</span>
-
-  <span class='comment val'># expose variables for ERB processing</span>
-  <span class='rubyid_@application_name ivar id'>@application_name</span> <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_app_name identifier id'>app_name</span>
-  <span class='rubyid_@user_homedir ivar id'>@user_homedir</span>     <span class='assign token'>=</span> <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span>
-  <span class='rubyid_@target_dir ivar id'>@target_dir</span>       <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'app-root'</span><span class='comma token'>,</span> <span class='string val'>'runtime'</span><span class='comma token'>,</span> <span class='string val'>'repo'</span><span class='rparen token'>)</span>
-
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_rf identifier id'>rm_rf</span> <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'*'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_rf identifier id'>rm_rf</span> <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'.[^\.]*'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
-
-  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='rubyid_ERB constant id'>ERB</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_GIT_DEPLOY constant id'>GIT_DEPLOY</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_result identifier id'>result</span><span class='lparen token'>(</span><span class='rubyid_binding identifier id'>binding</span><span class='rparen token'>)</span><span class='comma token'>,</span>
-                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_@path ivar id'>@path</span><span class='comma token'>,</span>
-                 <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>                 <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
-                 <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
-
-  <span class='rubyid_return return kw'>return</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@target_dir ivar id'>@target_dir</span><span class='comma token'>,</span> <span class='string val'>'.gitmodules'</span><span class='rparen token'>)</span>
-
-  <span class='rubyid_env identifier id'>env</span> <span class='assign token'>=</span> <span class='rubyid_Utils constant id'>Utils</span><span class='colon2 op'>::</span><span class='rubyid_Environ constant id'>Environ</span><span class='dot token'>.</span><span class='rubyid_load identifier id'>load</span><span class='lparen token'>(</span><span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span> <span class='string val'>'.env'</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
-
-  <span class='rubyid_cache identifier id'>cache</span> <span class='assign token'>=</span> <span class='rubyid_PathUtils constant id'>PathUtils</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_env identifier id'>env</span><span class='lbrack token'>[</span><span class='string val'>'OPENSHIFT_TMP_DIR'</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='string val'>'git_cache'</span><span class='rparen token'>)</span>
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_rm_r identifier id'>rm_r</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span>
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkpath identifier id'>mkpath</span><span class='lparen token'>(</span><span class='rubyid_cache identifier id'>cache</span><span class='rparen token'>)</span>
-
-  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/bin/sh #{PathUtils.join('/usr/libexec/openshift/lib', &quot;deploy_git_submodules.sh&quot;)} #{@path} #{@target_dir}&quot;</span><span class='comma token'>,</span>
-                 <span class='rubyid_chdir identifier id'>chdir</span><span class='colon op'>:</span>               <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_homedir identifier id'>homedir</span><span class='comma token'>,</span>
-                 <span class='rubyid_env identifier id'>env</span><span class='colon op'>:</span>                 <span class='rubyid_env identifier id'>env</span><span class='comma token'>,</span>
-                 <span class='rubyid_uid identifier id'>uid</span><span class='colon op'>:</span>                 <span class='rubyid_@user ivar id'>@user</span><span class='dot token'>.</span><span class='rubyid_uid identifier id'>uid</span><span class='comma token'>,</span>
-                 <span class='rubyid_expected_exitstatus identifier id'>expected_exitstatus</span><span class='colon op'>:</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
-
-  <span class='rubyid_Utils constant id'>Utils</span><span class='dot token'>.</span><span class='rubyid_oo_spawn identifier id'>oo_spawn</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/bin/rm -rf #{cache} &amp;&quot;</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -1174,7 +1174,7 @@ install a template application for the gear
 </div>
 
     <div id="footer">
-  Generated on Fri May 24 18:40:16 2013 by
+  Generated on Sat May 25 18:38:42 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
