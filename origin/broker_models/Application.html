@@ -1659,7 +1659,7 @@ Remove environment variables from all gears on the application.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#remove_features-instance_method" title="#remove_features (instance method)">- (ResultIO) <strong>remove_features</strong>(features, group_overrides = [], force = false) </a>
+      <a href="#remove_features-instance_method" title="#remove_features (instance method)">- (ResultIO) <strong>remove_features</strong>(features, group_overrides = [], force = false, remove_all_features = false) </a>
     
 
     
@@ -3128,17 +3128,6 @@ The application and gear objects or nil array if no application matches
       <pre class="lines">
 
 
-1255
-1256
-1257
-1258
-1259
-1260
-1261
-1262
-1263
-1264
-1265
 1266
 1267
 1268
@@ -3149,10 +3138,21 @@ The application and gear objects or nil array if no application matches
 1273
 1274
 1275
-1276</pre>
+1276
+1277
+1278
+1279
+1280
+1281
+1282
+1283
+1284
+1285
+1286
+1287</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1255</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1266</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_application identifier id'>application</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
   <span class='rubyid_got_lock identifier id'>got_lock</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
@@ -3285,16 +3285,6 @@ application.
       <pre class="lines">
 
 
-852
-853
-854
-855
-856
-857
-858
-859
-860
-861
 862
 863
 864
@@ -3315,10 +3305,20 @@ application.
 879
 880
 881
-882</pre>
+882
+883
+884
+885
+886
+887
+888
+889
+890
+891
+892</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 852</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 862</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_alias identifier id'>add_alias</span><span class='lparen token'>(</span><span class='rubyid_fqdn identifier id'>fqdn</span><span class='comma token'>,</span> <span class='rubyid_ssl_certificate identifier id'>ssl_certificate</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_private_key identifier id'>private_key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_pass_phrase identifier id'>pass_phrase</span><span class='assign token'>=</span><span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span>
   <span class='comment val'># Server aliases validate as DNS host names in accordance with RFC</span>
@@ -3327,7 +3327,7 @@ application.
   <span class='comment val'># Since DNS is case insensitive, all names are downcased for</span>
   <span class='comment val'># indexing/compares.</span>
   <span class='rubyid_server_alias identifier id'>server_alias</span> <span class='assign token'>=</span> <span class='rubyid_fqdn identifier id'>fqdn</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_fqdn identifier id'>fqdn</span>
-  <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span> <span class='match op'>=~</span> <span class='regexp val'>/\A[0-9a-zA-Z\-\.]+\z/</span><span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span>
+  <span class='rubyid_if if kw'>if</span> <span class='notop op'>!</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span> <span class='match op'>=~</span> <span class='regexp val'>/\A[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+(-[a-z0-9]+)*)+\z/</span><span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span>
       <span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span> <span class='match op'>=~</span> <span class='dregexp node'>/#{Rails.configuration.openshift[:domain_suffix]}$/</span><span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span>
       <span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='gt op'>&gt;</span> <span class='integer val'>255</span> <span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span>
       <span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='eq op'>==</span> <span class='integer val'>0</span> <span class='rparen token'>)</span> <span class='rubyid_or or kw'>or</span>
@@ -3381,18 +3381,18 @@ application.
       <pre class="lines">
 
 
-1587
-1588
-1589
-1590
-1591
-1592
-1593
-1594
-1595</pre>
+1598
+1599
+1600
+1601
+1602
+1603
+1604
+1605
+1606</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1587</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1598</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_add_component_ops identifier id'>add_component_ops</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='comma token'>,</span> <span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_ops identifier id'>ops</span><span class='rparen token'>)</span>
   <span class='rubyid_count identifier id'>count</span> <span class='assign token'>=</span> <span class='integer val'>0</span>
@@ -3955,17 +3955,6 @@ Output from cartridges
       <pre class="lines">
 
 
-1482
-1483
-1484
-1485
-1486
-1487
-1488
-1489
-1490
-1491
-1492
 1493
 1494
 1495
@@ -4028,10 +4017,21 @@ Output from cartridges
 1552
 1553
 1554
-1555</pre>
+1555
+1556
+1557
+1558
+1559
+1560
+1561
+1562
+1563
+1564
+1565
+1566</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1482</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1493</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_add_component_ops identifier id'>calculate_add_component_ops</span><span class='lparen token'>(</span><span class='rubyid_comp_specs identifier id'>comp_specs</span><span class='comma token'>,</span> <span class='rubyid_group_instance_id identifier id'>group_instance_id</span><span class='comma token'>,</span> <span class='rubyid_gear_id_prereqs identifier id'>gear_id_prereqs</span><span class='comma token'>,</span> <span class='rubyid_singleton_gear_id identifier id'>singleton_gear_id</span><span class='comma token'>,</span> <span class='rubyid_component_ops identifier id'>component_ops</span><span class='comma token'>,</span> <span class='rubyid_is_scale_up identifier id'>is_scale_up</span><span class='comma token'>,</span> <span class='rubyid_new_group_instance_op_id identifier id'>new_group_instance_op_id</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_ops identifier id'>ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -4151,17 +4151,6 @@ final order (topological sort).
       <pre class="lines">
 
 
-2228
-2229
-2230
-2231
-2232
-2233
-2234
-2235
-2236
-2237
-2238
 2239
 2240
 2241
@@ -4197,10 +4186,21 @@ final order (topological sort).
 2271
 2272
 2273
-2274</pre>
+2274
+2275
+2276
+2277
+2278
+2279
+2280
+2281
+2282
+2283
+2284
+2285</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2228</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2239</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_component_orders identifier id'>calculate_component_orders</span>
   <span class='rubyid_start_order identifier id'>start_order</span> <span class='assign token'>=</span> <span class='rubyid_ComponentOrder constant id'>ComponentOrder</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span>
@@ -4305,17 +4305,6 @@ order (topological sort).
       <pre class="lines">
 
 
-2185
-2186
-2187
-2188
-2189
-2190
-2191
-2192
-2193
-2194
-2195
 2196
 2197
 2198
@@ -4338,10 +4327,21 @@ order (topological sort).
 2215
 2216
 2217
-2218</pre>
+2218
+2219
+2220
+2221
+2222
+2223
+2224
+2225
+2226
+2227
+2228
+2229</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2185</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2196</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_configure_order identifier id'>calculate_configure_order</span><span class='lparen token'>(</span><span class='rubyid_comp_specs identifier id'>comp_specs</span><span class='rparen token'>)</span>
   <span class='rubyid_configure_order identifier id'>configure_order</span> <span class='assign token'>=</span> <span class='rubyid_ComponentOrder constant id'>ComponentOrder</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span>
@@ -4407,18 +4407,18 @@ order (topological sort).
       <pre class="lines">
 
 
-1564
-1565
-1566
-1567
-1568
-1569
-1570
-1571
-1572</pre>
+1575
+1576
+1577
+1578
+1579
+1580
+1581
+1582
+1583</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1564</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1575</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_ctl_app_component_ops identifier id'>calculate_ctl_app_component_ops</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='rparen token'>)</span>
   <span class='rubyid_ops identifier id'>ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -4459,15 +4459,15 @@ order (topological sort).
       <pre class="lines">
 
 
-1557
-1558
-1559
-1560
-1561
-1562</pre>
+1568
+1569
+1570
+1571
+1572
+1573</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1557</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1568</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_ctl_component_ops identifier id'>calculate_ctl_component_ops</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='comma token'>,</span> <span class='rubyid_comp_spec identifier id'>comp_spec</span><span class='rparen token'>)</span>
   <span class='rubyid_component_instance identifier id'>component_instance</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_component_instances identifier id'>component_instances</span><span class='dot token'>.</span><span class='rubyid_find_by identifier id'>find_by</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='colon op'>:</span> <span class='rubyid_comp_spec identifier id'>comp_spec</span><span class='lbrack token'>[</span><span class='string val'>'cart'</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_component_name identifier id'>component_name</span><span class='colon op'>:</span> <span class='rubyid_comp_spec identifier id'>comp_spec</span><span class='lbrack token'>[</span><span class='string val'>'comp'</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
@@ -4505,21 +4505,21 @@ order (topological sort).
       <pre class="lines">
 
 
-1574
-1575
-1576
-1577
-1578
-1579
-1580
-1581
-1582
-1583
-1584
-1585</pre>
+1585
+1586
+1587
+1588
+1589
+1590
+1591
+1592
+1593
+1594
+1595
+1596</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1574</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1585</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_ctl_feature_component_ops identifier id'>calculate_ctl_feature_component_ops</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='comma token'>,</span> <span class='rubyid_feature identifier id'>feature</span><span class='rparen token'>)</span>
   <span class='rubyid_ops identifier id'>ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -4563,17 +4563,6 @@ order (topological sort).
       <pre class="lines">
 
 
-1395
-1396
-1397
-1398
-1399
-1400
-1401
-1402
-1403
-1404
-1405
 1406
 1407
 1408
@@ -4615,10 +4604,21 @@ order (topological sort).
 1444
 1445
 1446
-1447</pre>
+1447
+1448
+1449
+1450
+1451
+1452
+1453
+1454
+1455
+1456
+1457
+1458</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1395</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1406</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_gear_create_ops identifier id'>calculate_gear_create_ops</span><span class='lparen token'>(</span><span class='rubyid_ginst_id identifier id'>ginst_id</span><span class='comma token'>,</span> <span class='rubyid_gear_ids identifier id'>gear_ids</span><span class='comma token'>,</span> <span class='rubyid_singleton_gear_id identifier id'>singleton_gear_id</span><span class='comma token'>,</span> <span class='rubyid_comp_specs identifier id'>comp_specs</span><span class='comma token'>,</span> <span class='rubyid_component_ops identifier id'>component_ops</span><span class='comma token'>,</span> <span class='rubyid_additional_filesystem_gb identifier id'>additional_filesystem_gb</span><span class='comma token'>,</span> <span class='rubyid_gear_size identifier id'>gear_size</span><span class='comma token'>,</span> <span class='rubyid_ginst_op_id identifier id'>ginst_op_id</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_is_scale_up identifier id'>is_scale_up</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='rubyid_hosts_app_dns identifier id'>hosts_app_dns</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_pending_ops identifier id'>pending_ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -4703,17 +4703,6 @@ order (topological sort).
       <pre class="lines">
 
 
-1449
-1450
-1451
-1452
-1453
-1454
-1455
-1456
-1457
-1458
-1459
 1460
 1461
 1462
@@ -4734,10 +4723,21 @@ order (topological sort).
 1477
 1478
 1479
-1480</pre>
+1480
+1481
+1482
+1483
+1484
+1485
+1486
+1487
+1488
+1489
+1490
+1491</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1449</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1460</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_gear_destroy_ops identifier id'>calculate_gear_destroy_ops</span><span class='lparen token'>(</span><span class='rubyid_ginst_id identifier id'>ginst_id</span><span class='comma token'>,</span> <span class='rubyid_gear_ids identifier id'>gear_ids</span><span class='comma token'>,</span> <span class='rubyid_additional_filesystem_gb identifier id'>additional_filesystem_gb</span><span class='rparen token'>)</span>
   <span class='rubyid_pending_ops identifier id'>pending_ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -4820,17 +4820,6 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1663
-1664
-1665
-1666
-1667
-1668
-1669
-1670
-1671
-1672
-1673
 1674
 1675
 1676
@@ -4986,10 +4975,21 @@ new_group_instances. (Includes all adds/removes). (Output of
 1826
 1827
 1828
-1829</pre>
+1829
+1830
+1831
+1832
+1833
+1834
+1835
+1836
+1837
+1838
+1839
+1840</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1663</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1674</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_ops identifier id'>calculate_ops</span><span class='lparen token'>(</span><span class='rubyid_changes identifier id'>changes</span><span class='comma token'>,</span><span class='rubyid_moves identifier id'>moves</span><span class='assign token'>=</span><span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='comma token'>,</span><span class='rubyid_connections identifier id'>connections</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span><span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_app_dns_ginst_found identifier id'>app_dns_ginst_found</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
@@ -5188,17 +5188,6 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1614
-1615
-1616
-1617
-1618
-1619
-1620
-1621
-1622
-1623
-1624
 1625
 1626
 1627
@@ -5224,10 +5213,21 @@ new_group_instances. (Includes all adds/removes). (Output of
 1647
 1648
 1649
-1650</pre>
+1650
+1651
+1652
+1653
+1654
+1655
+1656
+1657
+1658
+1659
+1660
+1661</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1614</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1625</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_remove_component_ops identifier id'>calculate_remove_component_ops</span><span class='lparen token'>(</span><span class='rubyid_comp_specs identifier id'>comp_specs</span><span class='comma token'>,</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='comma token'>,</span> <span class='rubyid_singleton_gear identifier id'>singleton_gear</span><span class='rparen token'>)</span>
   <span class='rubyid_ops identifier id'>ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -5296,18 +5296,18 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1278
-1279
-1280
-1281
-1282
-1283
-1284
-1285
-1286</pre>
+1289
+1290
+1291
+1292
+1293
+1294
+1295
+1296
+1297</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1278</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1289</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_remove_gear_ops identifier id'>calculate_remove_gear_ops</span><span class='lparen token'>(</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='rubyid_prereqs identifier id'>prereqs</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_gear_id identifier id'>gear_id</span> <span class='assign token'>=</span> <span class='rubyid_args identifier id'>args</span><span class='lbrack token'>[</span><span class='string val'>&quot;gear_id&quot;</span><span class='rbrack token'>]</span>
@@ -5348,17 +5348,6 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1363
-1364
-1365
-1366
-1367
-1368
-1369
-1370
-1371
-1372
-1373
 1374
 1375
 1376
@@ -5378,10 +5367,21 @@ new_group_instances. (Includes all adds/removes). (Output of
 1390
 1391
 1392
-1393</pre>
+1393
+1394
+1395
+1396
+1397
+1398
+1399
+1400
+1401
+1402
+1403
+1404</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1363</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1374</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_remove_group_instance_ops identifier id'>calculate_remove_group_instance_ops</span><span class='lparen token'>(</span><span class='rubyid_comp_specs identifier id'>comp_specs</span><span class='comma token'>,</span> <span class='rubyid_group_instance identifier id'>group_instance</span><span class='rparen token'>)</span>
   <span class='rubyid_pending_ops identifier id'>pending_ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -5444,23 +5444,23 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1328
-1329
-1330
-1331
-1332
-1333
-1334
-1335
-1336
-1337
-1338
 1339
 1340
-1341</pre>
+1341
+1342
+1343
+1344
+1345
+1346
+1347
+1348
+1349
+1350
+1351
+1352</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1328</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1339</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_replace_all_ssh_keys_ops identifier id'>calculate_replace_all_ssh_keys_ops</span><span class='lparen token'>(</span><span class='rubyid_args identifier id'>args</span><span class='rparen token'>)</span>
   <span class='rubyid_ops identifier id'>ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -5506,17 +5506,6 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1343
-1344
-1345
-1346
-1347
-1348
-1349
-1350
-1351
-1352
-1353
 1354
 1355
 1356
@@ -5524,10 +5513,21 @@ new_group_instances. (Includes all adds/removes). (Output of
 1358
 1359
 1360
-1361</pre>
+1361
+1362
+1363
+1364
+1365
+1366
+1367
+1368
+1369
+1370
+1371
+1372</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1343</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1354</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_scale_by identifier id'>calculate_scale_by</span><span class='lparen token'>(</span><span class='rubyid_ginst_id identifier id'>ginst_id</span><span class='comma token'>,</span> <span class='rubyid_scale_by identifier id'>scale_by</span><span class='rparen token'>)</span>
   <span class='rubyid_changes identifier id'>changes</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -5578,24 +5578,24 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1298
-1299
-1300
-1301
-1302
-1303
-1304
-1305
-1306
-1307
-1308
 1309
 1310
 1311
-1312</pre>
+1312
+1313
+1314
+1315
+1316
+1317
+1318
+1319
+1320
+1321
+1322
+1323</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1298</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1309</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_update_existing_configuration_ops identifier id'>calculate_update_existing_configuration_ops</span><span class='lparen token'>(</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='rubyid_prereqs identifier id'>prereqs</span><span class='assign token'>=</span><span class='lbrace token'>{</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
   <span class='rubyid_ops identifier id'>ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -5642,22 +5642,22 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-1314
-1315
-1316
-1317
-1318
-1319
-1320
-1321
-1322
-1323
-1324
 1325
-1326</pre>
+1326
+1327
+1328
+1329
+1330
+1331
+1332
+1333
+1334
+1335
+1336
+1337</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1314</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1325</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_calculate_update_new_configuration_ops identifier id'>calculate_update_new_configuration_ops</span><span class='lparen token'>(</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='rubyid_group_instance_id identifier id'>group_instance_id</span><span class='comma token'>,</span> <span class='rubyid_gear_id_prereqs identifier id'>gear_id_prereqs</span><span class='rparen token'>)</span>
   <span class='rubyid_ops identifier id'>ops</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -5702,24 +5702,24 @@ new_group_instances. (Includes all adds/removes). (Output of
       <pre class="lines">
 
 
-822
-823
-824
-825
-826
-827
-828
-829
-830
-831
 832
 833
 834
 835
-836</pre>
+836
+837
+838
+839
+840
+841
+842
+843
+844
+845
+846</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 822</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 832</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_component_status identifier id'>component_status</span><span class='lparen token'>(</span><span class='rubyid_component_instance identifier id'>component_instance</span><span class='rparen token'>)</span>
   <span class='comment val'>#if cartridge_name.nil?</span>
@@ -5793,17 +5793,6 @@ new_group_instances. (Includes all adds/removes)
       <pre class="lines">
 
 
-1846
-1847
-1848
-1849
-1850
-1851
-1852
-1853
-1854
-1855
-1856
 1857
 1858
 1859
@@ -5854,10 +5843,21 @@ new_group_instances. (Includes all adds/removes)
 1904
 1905
 1906
-1907</pre>
+1907
+1908
+1909
+1910
+1911
+1912
+1913
+1914
+1915
+1916
+1917
+1918</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1846</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1857</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_compute_diffs identifier id'>compute_diffs</span><span class='lparen token'>(</span><span class='rubyid_current_group_instances identifier id'>current_group_instances</span><span class='comma token'>,</span> <span class='rubyid_new_group_instances identifier id'>new_group_instances</span><span class='rparen token'>)</span>
   <span class='rubyid_axis_size identifier id'>axis_size</span> <span class='assign token'>=</span> <span class='rubyid_current_group_instances identifier id'>current_group_instances</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span> <span class='plus op'>+</span> <span class='rubyid_new_group_instances identifier id'>new_group_instances</span><span class='dot token'>.</span><span class='rubyid_length identifier id'>length</span>
@@ -5983,15 +5983,6 @@ Output from cartridges
       <pre class="lines">
 
 
-538
-539
-540
-541
-542
-543
-544
-545
-546
 547
 548
 549
@@ -6001,10 +5992,20 @@ Output from cartridges
 553
 554
 555
-556</pre>
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 538</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 547</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_destroy_app identifier id'>destroy_app</span>
   <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_app identifier id'>app</span><span class='bitor op'>|</span>
@@ -6017,7 +6018,8 @@ Output from cartridges
       <span class='rubyid_end end kw'>end</span>
     <span class='rbrace token'>}</span>
   <span class='rbrace token'>}</span>
-  <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_remove_features identifier id'>remove_features</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_requires identifier id'>requires</span><span class='comma token'>,</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+  <span class='comment val'># specifying the remove_all_features flag as true to ensure removal of all features</span>
+  <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_remove_features identifier id'>remove_features</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_requires identifier id'>requires</span><span class='comma token'>,</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_pending_op_groups identifier id'>pending_op_groups</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span> <span class='rubyid_PendingAppOpGroup constant id'>PendingAppOpGroup</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='colon op'>:</span> <span class='symbol val'>:delete_app</span><span class='comma token'>,</span> <span class='rubyid_user_agent identifier id'>user_agent</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_user_agent identifier id'>user_agent</span><span class='rparen token'>)</span>
     <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_ResultIO constant id'>ResultIO</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span>
@@ -6079,17 +6081,6 @@ the same group. Components can be specified as Hash&lt;cart name&gt;
       <pre class="lines">
 
 
-2082
-2083
-2084
-2085
-2086
-2087
-2088
-2089
-2090
-2091
-2092
 2093
 2094
 2095
@@ -6415,10 +6406,21 @@ the same group. Components can be specified as Hash&lt;cart name&gt;
 2415
 2416
 2417
-2418</pre>
+2418
+2419
+2420
+2421
+2422
+2423
+2424
+2425
+2426
+2427
+2428
+2429</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2082</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2093</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_elaborate identifier id'>elaborate</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
     <span class='rubyid_profiles identifier id'>profiles</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -6787,16 +6789,6 @@ the same group. Components can be specified as Hash&lt;cart name&gt;
       <pre class="lines">
 
 
-993
-994
-995
-996
-997
-998
-999
-1000
-1001
-1002
 1003
 1004
 1005
@@ -6853,10 +6845,20 @@ the same group. Components can be specified as Hash&lt;cart name&gt;
 1056
 1057
 1058
-1059</pre>
+1059
+1060
+1061
+1062
+1063
+1064
+1065
+1066
+1067
+1068
+1069</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 993</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1003</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_execute_connections identifier id'>execute_connections</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_scalable identifier id'>scalable</span>
@@ -7164,14 +7166,14 @@ Returns the fully qualified DNS name for the primary application gear
       <pre class="lines">
 
 
-622
-623
-624
-625
-626</pre>
+632
+633
+634
+635
+636</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 622</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 632</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_fqdn identifier id'>fqdn</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_gear_uuid identifier id'>gear_uuid</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_domain identifier id'>domain</span> <span class='assign token'>=</span> <span class='rubyid_domain identifier id'>domain</span> <span class='orop op'>||</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span>
@@ -7208,17 +7210,6 @@ Returns the fully qualified DNS name for the primary application gear
       <pre class="lines">
 
 
-2299
-2300
-2301
-2302
-2303
-2304
-2305
-2306
-2307
-2308
-2309
 2310
 2311
 2312
@@ -7239,10 +7230,21 @@ Returns the fully qualified DNS name for the primary application gear
 2327
 2328
 2329
-2330</pre>
+2330
+2331
+2332
+2333
+2334
+2335
+2336
+2337
+2338
+2339
+2340
+2341</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2299</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2310</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_gen_non_scalable_app_overrides identifier id'>gen_non_scalable_app_overrides</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='rparen token'>)</span>
   <span class='comment val'>#find web_framework</span>
@@ -7324,15 +7326,15 @@ compatibility for rest api version 1.0
       <pre class="lines">
 
 
-2371
-2372
-2373
-2374
-2375
-2376</pre>
+2382
+2383
+2384
+2385
+2386
+2387</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2371</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2382</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_app_scaling_limits identifier id'>get_app_scaling_limits</span>
   <span class='rubyid_web_cart identifier id'>web_cart</span> <span class='assign token'>=</span> <span class='rubyid_get_framework_cartridge identifier id'>get_framework_cartridge</span>
@@ -7383,15 +7385,15 @@ compatibility for rest api version 1.0
       <pre class="lines">
 
 
-2292
-2293
-2294
-2295
-2296
-2297</pre>
+2303
+2304
+2305
+2306
+2307
+2308</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2292</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2303</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_components_for_feature identifier id'>get_components_for_feature</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='rparen token'>)</span>
   <span class='rubyid_cart identifier id'>cart</span> <span class='assign token'>=</span> <span class='rubyid_CartridgeCache constant id'>CartridgeCache</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span>
@@ -7445,14 +7447,14 @@ Feature name provided by the cartridge that includes the component
       <pre class="lines">
 
 
-2286
-2287
-2288
-2289
-2290</pre>
+2297
+2298
+2299
+2300
+2301</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2286</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2297</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_feature identifier id'>get_feature</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span><span class='rubyid_component_name identifier id'>component_name</span><span class='rparen token'>)</span>
   <span class='rubyid_cart identifier id'>cart</span> <span class='assign token'>=</span> <span class='rubyid_CartridgeCache constant id'>CartridgeCache</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span>
@@ -7512,19 +7514,19 @@ Cartridge
       <pre class="lines">
 
 
-2381
-2382
-2383
-2384
-2385
-2386
-2387
-2388
-2389
-2390</pre>
+2392
+2393
+2394
+2395
+2396
+2397
+2398
+2399
+2400
+2401</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2381</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2392</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_framework_cartridge identifier id'>get_framework_cartridge</span>
   <span class='rubyid_web_cart identifier id'>web_cart</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
@@ -7588,12 +7590,12 @@ Map of <span class='object_link'>Gear</span> ID to state
       <pre class="lines">
 
 
-647
-648
-649</pre>
+657
+658
+659</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 647</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 657</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_gear_states identifier id'>get_gear_states</span>
   <span class='rubyid_Gear constant id'>Gear</span><span class='dot token'>.</span><span class='rubyid_get_gear_states identifier id'>get_gear_states</span><span class='lparen token'>(</span><span class='rubyid_group_instances identifier id'>group_instances</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span><span class='lbrace token'>{</span><span class='bitor op'>|</span><span class='rubyid_g identifier id'>g</span><span class='bitor op'>|</span> <span class='rubyid_g identifier id'>g</span><span class='dot token'>.</span><span class='rubyid_gears identifier id'>gears</span><span class='rbrace token'>}</span><span class='dot token'>.</span><span class='rubyid_flatten identifier id'>flatten</span><span class='rparen token'>)</span>
@@ -7628,24 +7630,24 @@ Map of <span class='object_link'>Gear</span> ID to state
       <pre class="lines">
 
 
-944
-945
-946
-947
-948
-949
-950
-951
-952
-953
 954
 955
 956
 957
-958</pre>
+958
+959
+960
+961
+962
+963
+964
+965
+966
+967
+968</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 944</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 954</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_unsubscribe_info identifier id'>get_unsubscribe_info</span><span class='lparen token'>(</span><span class='rubyid_comp_inst identifier id'>comp_inst</span><span class='rparen token'>)</span>
   <span class='rubyid_old_features identifier id'>old_features</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_requires identifier id'>requires</span> <span class='plus op'>+</span> <span class='lbrack token'>[</span><span class='rubyid_comp_inst identifier id'>comp_inst</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rbrack token'>]</span> <span class='comment val'>#[get_feature(comp_inst.cartridge_name, comp_inst.component_name)]</span>
@@ -7697,24 +7699,24 @@ otherwise it may break key removal code on the node
       <pre class="lines">
 
 
-2334
-2335
-2336
-2337
-2338
-2339
-2340
-2341
-2342
-2343
-2344
 2345
 2346
 2347
-2348</pre>
+2348
+2349
+2350
+2351
+2352
+2353
+2354
+2355
+2356
+2357
+2358
+2359</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2334</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2345</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_get_updated_ssh_keys identifier id'>get_updated_ssh_keys</span><span class='lparen token'>(</span><span class='rubyid_user_id identifier id'>user_id</span><span class='comma token'>,</span> <span class='rubyid_keys identifier id'>keys</span><span class='rparen token'>)</span>
   <span class='rubyid_updated_keys_attrs identifier id'>updated_keys_attrs</span> <span class='assign token'>=</span> <span class='rubyid_keys identifier id'>keys</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_key identifier id'>key</span><span class='bitor op'>|</span>
@@ -7845,23 +7847,23 @@ backwards compatibility for rest api version 1.0
       <pre class="lines">
 
 
-2353
-2354
-2355
-2356
-2357
-2358
-2359
-2360
-2361
-2362
-2363
 2364
 2365
-2366</pre>
+2366
+2367
+2368
+2369
+2370
+2371
+2372
+2373
+2374
+2375
+2376
+2377</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2353</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2364</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_health_check_path identifier id'>health_check_path</span>
   <span class='rubyid_web_cart identifier id'>web_cart</span> <span class='assign token'>=</span> <span class='rubyid_get_framework_cartridge identifier id'>get_framework_cartridge</span>
@@ -7907,17 +7909,6 @@ backwards compatibility for rest api version 1.0
       <pre class="lines">
 
 
-2038
-2039
-2040
-2041
-2042
-2043
-2044
-2045
-2046
-2047
-2048
 2049
 2050
 2051
@@ -7935,10 +7926,21 @@ backwards compatibility for rest api version 1.0
 2063
 2064
 2065
-2066</pre>
+2066
+2067
+2068
+2069
+2070
+2071
+2072
+2073
+2074
+2075
+2076
+2077</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2038</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2049</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_merge_group_overrides identifier id'>merge_group_overrides</span><span class='lparen token'>(</span><span class='rubyid_first identifier id'>first</span><span class='comma token'>,</span> <span class='rubyid_second identifier id'>second</span><span class='rparen token'>)</span>
   <span class='rubyid_return_go identifier id'>return_go</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span> <span class='rbrace token'>}</span>
@@ -8065,25 +8067,25 @@ number of gears
       <pre class="lines">
 
 
-1597
-1598
-1599
-1600
-1601
-1602
-1603
-1604
-1605
-1606
-1607
 1608
 1609
 1610
 1611
-1612</pre>
+1612
+1613
+1614
+1615
+1616
+1617
+1618
+1619
+1620
+1621
+1622
+1623</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1597</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1608</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_op_type_to_comp_op_type identifier id'>op_type_to_comp_op_type</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='rparen token'>)</span>
   <span class='rubyid_comp_op_type identifier id'>comp_op_type</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
@@ -8150,16 +8152,6 @@ keys, app ssh keys, env variables, broker keys etc
       <pre class="lines">
 
 
-1069
-1070
-1071
-1072
-1073
-1074
-1075
-1076
-1077
-1078
 1079
 1080
 1081
@@ -8195,10 +8187,20 @@ keys, app ssh keys, env variables, broker keys etc
 1111
 1112
 1113
-1114</pre>
+1114
+1115
+1116
+1117
+1118
+1119
+1120
+1121
+1122
+1123
+1124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1069</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1079</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_process_commands identifier id'>process_commands</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='comma token'>,</span> <span class='rubyid_component_id identifier id'>component_id</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_commands identifier id'>commands</span> <span class='assign token'>=</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_cart_commands identifier id'>cart_commands</span>
@@ -8276,17 +8278,6 @@ keys, app ssh keys, env variables, broker keys etc
       <pre class="lines">
 
 
-1955
-1956
-1957
-1958
-1959
-1960
-1961
-1962
-1963
-1964
-1965
 1966
 1967
 1968
@@ -8357,10 +8348,21 @@ keys, app ssh keys, env variables, broker keys etc
 2033
 2034
 2035
-2036</pre>
+2036
+2037
+2038
+2039
+2040
+2041
+2042
+2043
+2044
+2045
+2046
+2047</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1955</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1966</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_process_group_overrides identifier id'>process_group_overrides</span><span class='lparen token'>(</span><span class='rubyid_component_instances identifier id'>component_instances</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
   <span class='rubyid_overrides identifier id'>overrides</span> <span class='assign token'>=</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='integer val'>? </span><span class='rubyid_deep_copy identifier id'>deep_copy</span><span class='lparen token'>(</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span> <span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -8528,18 +8530,18 @@ keys, app ssh keys, env variables, broker keys etc
       <pre class="lines">
 
 
-775
-776
-777
-778
-779
-780
-781
-782
-783</pre>
+785
+786
+787
+788
+789
+790
+791
+792
+793</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 775</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 785</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload_component_config identifier id'>reload_component_config</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='comma token'>,</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -8580,23 +8582,23 @@ keys, app ssh keys, env variables, broker keys etc
       <pre class="lines">
 
 
-747
-748
-749
-750
-751
-752
-753
-754
-755
-756
 757
 758
 759
-760</pre>
+760
+761
+762
+763
+764
+765
+766
+767
+768
+769
+770</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 747</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 757</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload_config identifier id'>reload_config</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -8655,24 +8657,24 @@ PendingAppOps object which tracks the progress of the operation.
       <pre class="lines">
 
 
-892
-893
-894
-895
-896
-897
-898
-899
-900
-901
 902
 903
 904
 905
-906</pre>
+906
+907
+908
+909
+910
+911
+912
+913
+914
+915
+916</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 892</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 902</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_alias identifier id'>remove_alias</span><span class='lparen token'>(</span><span class='rubyid_fqdn identifier id'>fqdn</span><span class='rparen token'>)</span>
   <span class='rubyid_fqdn identifier id'>fqdn</span> <span class='assign token'>=</span> <span class='rubyid_fqdn identifier id'>fqdn</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_fqdn identifier id'>fqdn</span>
@@ -8812,7 +8814,7 @@ Output from cartridges
       <div class="method_details ">
   <h3 class="signature " id="remove_features-instance_method">
   
-    - (<tt><span class='object_link'>ResultIO</span></tt>) <strong>remove_features</strong>(features, group_overrides = [], force = false) 
+    - (<tt><span class='object_link'>ResultIO</span></tt>) <strong>remove_features</strong>(features, group_overrides = [], force = false, remove_all_features = false) 
   
 
   
@@ -8888,6 +8890,27 @@ and ignores missing features
       
     </li>
   
+    <li>
+      
+        <span class='name'>remove_all_features</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>
+Set to true when deleting an application. It allows recomputing the list of
+features within the application after acquiring the lock. If set to true,
+this ignores the features argument
+</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 <p class="tag_title">Returns:</p>
@@ -8936,9 +8959,6 @@ removed from the Application
       <pre class="lines">
 
 
-491
-492
-493
 494
 495
 496
@@ -8976,15 +8996,28 @@ removed from the Application
 528
 529
 530
-531</pre>
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 491</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 494</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_features identifier id'>remove_features</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='assign token'>=</span><span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_force identifier id'>force</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_features identifier id'>remove_features</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='assign token'>=</span><span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_force identifier id'>force</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='rubyid_remove_all_features identifier id'>remove_all_features</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_installed_features identifier id'>installed_features</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_requires identifier id'>requires</span>
-  
   <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_ResultIO constant id'>ResultIO</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span>
+
+  <span class='comment val'># FIXME: remove_all_features argument is ignored here</span>
+  <span class='comment val'># For now, it is only used to check if we are removing a jenkins server application</span>
+  <span class='comment val'># If the jenkins server app is still being created, jenkins clients cannot exist.</span>
+  <span class='comment val'># But if this loop is modified to perform other checks/actions, we'll have to consider the remove_all_features flag</span>
   <span class='rubyid_features identifier id'>features</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_feature identifier id'>feature</span><span class='bitor op'>|</span>
     <span class='rubyid_cart identifier id'>cart</span> <span class='assign token'>=</span> <span class='rubyid_CartridgeCache constant id'>CartridgeCache</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='comma token'>,</span> <span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span>
     <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Invalid feature: #{feature}&quot;</span><span class='comma token'>,</span> <span class='integer val'>109</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_cart identifier id'>cart</span>
@@ -8995,6 +9028,8 @@ removed from the Application
       <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;'#{feature}' is not a feature of '#{self.name}'&quot;</span><span class='comma token'>,</span> <span class='integer val'>135</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_installed_features identifier id'>installed_features</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span> <span class='rubyid_feature identifier id'>feature</span>
     <span class='rubyid_end end kw'>end</span>
     
+    <span class='comment val'># FIXME: Instead of relying on individual cartridge categories to determine if any dependent features </span>
+    <span class='comment val'># need to be removed in other applications, we need to make it more generic by using the domain_scope category</span>
     <span class='rubyid_if if kw'>if</span> <span class='rubyid_cart identifier id'>cart</span><span class='dot token'>.</span><span class='rubyid_is_ci_server? fid id'>is_ci_server?</span>
       <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_applications identifier id'>applications</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_uapp identifier id'>uapp</span><span class='bitor op'>|</span>
         <span class='rubyid_next next kw'>next</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span> <span class='eq op'>==</span> <span class='rubyid_uapp identifier id'>uapp</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span>
@@ -9011,7 +9046,7 @@ removed from the Application
     <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_end end kw'>end</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
-    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_pending_op_groups identifier id'>pending_op_groups</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span> <span class='rubyid_PendingAppOpGroup constant id'>PendingAppOpGroup</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='colon op'>:</span> <span class='symbol val'>:remove_features</span><span class='comma token'>,</span> <span class='rubyid_args identifier id'>args</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='string val'>&quot;features&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='string val'>&quot;group_overrides&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_user_agent identifier id'>user_agent</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_user_agent identifier id'>user_agent</span><span class='rparen token'>)</span>
+    <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_pending_op_groups identifier id'>pending_op_groups</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span> <span class='rubyid_PendingAppOpGroup constant id'>PendingAppOpGroup</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_op_type identifier id'>op_type</span><span class='colon op'>:</span> <span class='symbol val'>:remove_features</span><span class='comma token'>,</span> <span class='rubyid_args identifier id'>args</span><span class='colon op'>:</span> <span class='lbrace token'>{</span><span class='string val'>&quot;features&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='string val'>&quot;group_overrides&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='comma token'>,</span> <span class='string val'>&quot;remove_all_features&quot;</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_remove_all_features identifier id'>remove_all_features</span><span class='rbrace token'>}</span><span class='comma token'>,</span> <span class='rubyid_user_agent identifier id'>user_agent</span><span class='colon op'>:</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_user_agent identifier id'>user_agent</span><span class='rparen token'>)</span>
     <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_run_jobs identifier id'>run_jobs</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='rparen token'>)</span>
   <span class='rubyid_end end kw'>end</span>
 
@@ -9065,19 +9100,19 @@ removed from the Application
       <pre class="lines">
 
 
-800
-801
-802
-803
-804
-805
-806
-807
-808
-809</pre>
+810
+811
+812
+813
+814
+815
+816
+817
+818
+819</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 800</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 810</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_gear identifier id'>remove_gear</span><span class='lparen token'>(</span><span class='rubyid_gear_uuid identifier id'>gear_uuid</span><span class='rparen token'>)</span>
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Application #{self.name} is not scalable&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='notop op'>!</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_scalable identifier id'>scalable</span>
@@ -9368,23 +9403,23 @@ List of features
       <pre class="lines">
 
 
-722
-723
-724
-725
-726
-727
-728
-729
-730
-731
 732
 733
 734
-735</pre>
+735
+736
+737
+738
+739
+740
+741
+742
+743
+744
+745</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 722</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 732</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_restart identifier id'>restart</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -9430,18 +9465,18 @@ List of features
       <pre class="lines">
 
 
-737
-738
-739
-740
-741
-742
-743
-744
-745</pre>
+747
+748
+749
+750
+751
+752
+753
+754
+755</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 737</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 747</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_restart_component identifier id'>restart_component</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='comma token'>,</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -9490,16 +9525,6 @@ True on success or False if unable to acquire the lock or no pending jobs.
       <pre class="lines">
 
 
-1120
-1121
-1122
-1123
-1124
-1125
-1126
-1127
-1128
-1129
 1130
 1131
 1132
@@ -9623,10 +9648,21 @@ True on success or False if unable to acquire the lock or no pending jobs.
 1250
 1251
 1252
-1253</pre>
+1253
+1254
+1255
+1256
+1257
+1258
+1259
+1260
+1261
+1262
+1263
+1264</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1120</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1130</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_run_jobs identifier id'>run_jobs</span><span class='lparen token'>(</span><span class='rubyid_result_io identifier id'>result_io</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_ResultIO constant id'>ResultIO</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_result_io identifier id'>result_io</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span>
@@ -9650,7 +9686,8 @@ True on success or False if unable to acquire the lock or no pending jobs.
           <span class='rubyid_try_reserve_gears identifier id'>try_reserve_gears</span><span class='lparen token'>(</span><span class='rubyid_add_gear_count identifier id'>add_gear_count</span><span class='comma token'>,</span> <span class='rubyid_rm_gear_count identifier id'>rm_gear_count</span><span class='comma token'>,</span> <span class='rubyid_op_group identifier id'>op_group</span><span class='comma token'>,</span> <span class='rubyid_ops identifier id'>ops</span><span class='rparen token'>)</span>
         <span class='rubyid_when when kw'>when</span> <span class='symbol val'>:remove_features</span>
           <span class='comment val'>#need rollback</span>
-          <span class='rubyid_features identifier id'>features</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_requires identifier id'>requires</span> <span class='minus op'>-</span> <span class='rubyid_op_group identifier id'>op_group</span><span class='dot token'>.</span><span class='rubyid_args identifier id'>args</span><span class='lbrack token'>[</span><span class='string val'>&quot;features&quot;</span><span class='rbrack token'>]</span>
+          <span class='rubyid_features identifier id'>features</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+          <span class='rubyid_features identifier id'>features</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_requires identifier id'>requires</span> <span class='minus op'>-</span> <span class='rubyid_op_group identifier id'>op_group</span><span class='dot token'>.</span><span class='rubyid_args identifier id'>args</span><span class='lbrack token'>[</span><span class='string val'>&quot;features&quot;</span><span class='rbrack token'>]</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_op_group identifier id'>op_group</span><span class='dot token'>.</span><span class='rubyid_args identifier id'>args</span><span class='lbrack token'>[</span><span class='string val'>&quot;remove_all_features&quot;</span><span class='rbrack token'>]</span>
           <span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='orop op'>||</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rparen token'>)</span> <span class='plus op'>+</span> <span class='lparen token'>(</span><span class='rubyid_op_group identifier id'>op_group</span><span class='dot token'>.</span><span class='rubyid_args identifier id'>args</span><span class='lbrack token'>[</span><span class='string val'>&quot;group_overrides&quot;</span><span class='rbrack token'>]</span> <span class='orop op'>||</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
           <span class='rubyid_ops identifier id'>ops</span><span class='comma token'>,</span> <span class='rubyid_add_gear_count identifier id'>add_gear_count</span><span class='comma token'>,</span> <span class='rubyid_rm_gear_count identifier id'>rm_gear_count</span> <span class='assign token'>=</span> <span class='rubyid_update_requirements identifier id'>update_requirements</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
           <span class='rubyid_try_reserve_gears identifier id'>try_reserve_gears</span><span class='lparen token'>(</span><span class='rubyid_add_gear_count identifier id'>add_gear_count</span><span class='comma token'>,</span> <span class='rubyid_rm_gear_count identifier id'>rm_gear_count</span><span class='comma token'>,</span> <span class='rubyid_op_group identifier id'>op_group</span><span class='comma token'>,</span> <span class='rubyid_ops identifier id'>ops</span><span class='rparen token'>)</span>
@@ -9872,23 +9909,23 @@ Exception raised if request cannot be completed
       <pre class="lines">
 
 
-604
-605
-606
-607
-608
-609
-610
-611
-612
-613
 614
 615
 616
-617</pre>
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 604</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 614</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_scale_by identifier id'>scale_by</span><span class='lparen token'>(</span><span class='rubyid_group_instance_id identifier id'>group_instance_id</span><span class='comma token'>,</span> <span class='rubyid_scale_by identifier id'>scale_by</span><span class='rparen token'>)</span>
   <span class='rubyid_raise identifier id'>raise</span> <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_UserException constant id'>UserException</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='dstring node'>&quot;Application #{self.name} is not scalable&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='notop op'>!</span><span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_scalable identifier id'>scalable</span>
@@ -9934,20 +9971,20 @@ Exception raised if request cannot be completed
       <pre class="lines">
 
 
-932
-933
-934
-935
-936
-937
-938
-939
-940
-941
-942</pre>
+942
+943
+944
+945
+946
+947
+948
+949
+950
+951
+952</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 932</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 942</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_connections identifier id'>set_connections</span><span class='lparen token'>(</span><span class='rubyid_connections identifier id'>connections</span><span class='rparen token'>)</span>
   <span class='rubyid_conns identifier id'>conns</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
@@ -10034,19 +10071,19 @@ Output from cartridges
       <pre class="lines">
 
 
-562
-563
-564
-565
-566
-567
-568
-569
-570
-571</pre>
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 562</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 572</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_group_overrides identifier id'>set_group_overrides</span><span class='lparen token'>(</span><span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>    
@@ -10088,13 +10125,13 @@ Output from cartridges
       <pre class="lines">
 
 
-795
-796
-797
-798</pre>
+805
+806
+807
+808</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 795</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 805</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_show_port identifier id'>show_port</span>
   <span class='comment val'>#TODO</span>
@@ -10146,21 +10183,21 @@ Returns the SSH URI for the primary application gear
       <pre class="lines">
 
 
-631
-632
-633
-634
-635
-636
-637
-638
-639
-640
 641
-642</pre>
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 631</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 641</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_ssh_uri identifier id'>ssh_uri</span><span class='lparen token'>(</span><span class='rubyid_domain identifier id'>domain</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_gear_uuid identifier id'>gear_uuid</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='comment val'>#if gear_uuid provided</span>
@@ -10250,23 +10287,23 @@ Output from cartridges
       <pre class="lines">
 
 
-672
-673
-674
-675
-676
-677
-678
-679
-680
-681
 682
 683
 684
-685</pre>
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 672</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 682</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_start identifier id'>start</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_ResultIO constant id'>ResultIO</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span>
@@ -10312,18 +10349,18 @@ Output from cartridges
       <pre class="lines">
 
 
-687
-688
-689
-690
-691
-692
-693
-694
-695</pre>
+697
+698
+699
+700
+701
+702
+703
+704
+705</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 687</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 697</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_start_component identifier id'>start_component</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='comma token'>,</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -10364,19 +10401,19 @@ Output from cartridges
       <pre class="lines">
 
 
-811
-812
-813
-814
-815
-816
-817
-818
-819
-820</pre>
+821
+822
+823
+824
+825
+826
+827
+828
+829
+830</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 811</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 821</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_status identifier id'>status</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_result_io identifier id'>result_io</span> <span class='assign token'>=</span> <span class='rubyid_ResultIO constant id'>ResultIO</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span>
@@ -10418,23 +10455,23 @@ Output from cartridges
       <pre class="lines">
 
 
-697
-698
-699
-700
-701
-702
-703
-704
-705
-706
 707
 708
 709
-710</pre>
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 697</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 707</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_stop identifier id'>stop</span><span class='lparen token'>(</span><span class='rubyid_feature identifier id'>feature</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_force identifier id'>force</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -10480,18 +10517,18 @@ Output from cartridges
       <pre class="lines">
 
 
-712
-713
-714
-715
-716
-717
-718
-719
-720</pre>
+722
+723
+724
+725
+726
+727
+728
+729
+730</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 712</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 722</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_stop_component identifier id'>stop_component</span><span class='lparen token'>(</span><span class='rubyid_component_name identifier id'>component_name</span><span class='comma token'>,</span> <span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span> <span class='rubyid_force identifier id'>force</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -10545,21 +10582,21 @@ Output from cartridges
       <pre class="lines">
 
 
-762
-763
-764
-765
-766
-767
-768
-769
-770
-771
 772
-773</pre>
+773
+774
+775
+776
+777
+778
+779
+780
+781
+782
+783</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 762</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 772</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_threaddump identifier id'>threaddump</span>
   <span class='rubyid_threaddump_available identifier id'>threaddump_available</span> <span class='assign token'>=</span> <span class='rubyid_false false kw'>false</span>
@@ -10603,18 +10640,18 @@ Output from cartridges
       <pre class="lines">
 
 
-785
-786
-787
-788
-789
-790
-791
-792
-793</pre>
+795
+796
+797
+798
+799
+800
+801
+802
+803</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 785</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 795</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_tidy identifier id'>tidy</span>
   <span class='rubyid_Application constant id'>Application</span><span class='dot token'>.</span><span class='rubyid_run_in_application_lock identifier id'>run_in_application_lock</span><span class='lparen token'>(</span><span class='rubyid_self self kw'>self</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span>
@@ -10659,21 +10696,21 @@ the metadata necessary to descript the application.
       <pre class="lines">
 
 
-655
-656
-657
-658
-659
-660
-661
-662
-663
-664
 665
-666</pre>
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 655</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 665</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_to_descriptor identifier id'>to_descriptor</span>
   <span class='rubyid_h identifier id'>h</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span>
@@ -10730,17 +10767,6 @@ are available on the domain owner
       <pre class="lines">
 
 
-1918
-1919
-1920
-1921
-1922
-1923
-1924
-1925
-1926
-1927
-1928
 1929
 1930
 1931
@@ -10750,10 +10776,21 @@ are available on the domain owner
 1935
 1936
 1937
-1938</pre>
+1938
+1939
+1940
+1941
+1942
+1943
+1944
+1945
+1946
+1947
+1948
+1949</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1918</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1929</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_try_reserve_gears identifier id'>try_reserve_gears</span><span class='lparen token'>(</span><span class='rubyid_num_gears_added identifier id'>num_gears_added</span><span class='comma token'>,</span> <span class='rubyid_num_gears_removed identifier id'>num_gears_removed</span><span class='comma token'>,</span> <span class='rubyid_op_group identifier id'>op_group</span><span class='comma token'>,</span> <span class='rubyid_ops identifier id'>ops</span><span class='rparen token'>)</span>
   <span class='rubyid_owner identifier id'>owner</span> <span class='assign token'>=</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_domain identifier id'>domain</span><span class='dot token'>.</span><span class='rubyid_owner identifier id'>owner</span>
@@ -10806,23 +10843,23 @@ are available on the domain owner
       <pre class="lines">
 
 
-1940
-1941
-1942
-1943
-1944
-1945
-1946
-1947
-1948
-1949
-1950
 1951
 1952
-1953</pre>
+1953
+1954
+1955
+1956
+1957
+1958
+1959
+1960
+1961
+1962
+1963
+1964</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1940</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1951</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_unreserve_gears identifier id'>unreserve_gears</span><span class='lparen token'>(</span><span class='rubyid_num_gears_removed identifier id'>num_gears_removed</span><span class='rparen token'>)</span>
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_num_gears_removed identifier id'>num_gears_removed</span> <span class='eq op'>==</span> <span class='integer val'>0</span>
@@ -10868,16 +10905,6 @@ are available on the domain owner
       <pre class="lines">
 
 
-960
-961
-962
-963
-964
-965
-966
-967
-968
-969
 970
 971
 972
@@ -10899,10 +10926,20 @@ are available on the domain owner
 988
 989
 990
-991</pre>
+991
+992
+993
+994
+995
+996
+997
+998
+999
+1000
+1001</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 960</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 970</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_unsubscribe_connections identifier id'>unsubscribe_connections</span><span class='lparen token'>(</span><span class='rubyid_sub_pub_hash identifier id'>sub_pub_hash</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_scalable identifier id'>scalable</span> <span class='rubyid_and and kw'>and</span> <span class='rubyid_sub_pub_hash identifier id'>sub_pub_hash</span>
@@ -10966,16 +11003,6 @@ are available on the domain owner
       <pre class="lines">
 
 
-908
-909
-910
-911
-912
-913
-914
-915
-916
-917
 918
 919
 920
@@ -10988,10 +11015,20 @@ are available on the domain owner
 927
 928
 929
-930</pre>
+930
+931
+932
+933
+934
+935
+936
+937
+938
+939
+940</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 908</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 918</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_alias identifier id'>update_alias</span><span class='lparen token'>(</span><span class='rubyid_fqdn identifier id'>fqdn</span><span class='comma token'>,</span> <span class='rubyid_ssl_certificate identifier id'>ssl_certificate</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_private_key identifier id'>private_key</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_pass_phrase identifier id'>pass_phrase</span><span class='assign token'>=</span><span class='string val'>&quot;&quot;</span><span class='rparen token'>)</span>
   
@@ -11160,24 +11197,24 @@ Exception raised if request cannot be completed
       <pre class="lines">
 
 
-581
-582
-583
-584
-585
-586
-587
-588
-589
-590
 591
 592
 593
 594
-595</pre>
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 581</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 591</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_component_limits identifier id'>update_component_limits</span><span class='lparen token'>(</span><span class='rubyid_component_instance identifier id'>component_instance</span><span class='comma token'>,</span> <span class='rubyid_scale_from identifier id'>scale_from</span><span class='comma token'>,</span> <span class='rubyid_scale_to identifier id'>scale_to</span><span class='comma token'>,</span> <span class='rubyid_additional_filesystem_gb identifier id'>additional_filesystem_gb</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_additional_filesystem_gb identifier id'>additional_filesystem_gb</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_additional_filesystem_gb identifier id'>additional_filesystem_gb</span> <span class='neq op'>!=</span> <span class='integer val'>0</span>
@@ -11224,18 +11261,18 @@ Exception raised if request cannot be completed
       <pre class="lines">
 
 
-1288
-1289
-1290
-1291
-1292
-1293
-1294
-1295
-1296</pre>
+1299
+1300
+1301
+1302
+1303
+1304
+1305
+1306
+1307</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1288</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 1299</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_update_requirements identifier id'>update_requirements</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='comma token'>,</span> <span class='rubyid_group_overrides identifier id'>group_overrides</span><span class='comma token'>,</span> <span class='rubyid_init_git_url identifier id'>init_git_url</span><span class='assign token'>=</span><span class='rubyid_nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='assign token'>=</span> <span class='lparen token'>(</span><span class='rubyid_group_overrides identifier id'>group_overrides</span> <span class='plus op'>+</span> <span class='rubyid_gen_non_scalable_app_overrides identifier id'>gen_non_scalable_app_overrides</span><span class='lparen token'>(</span><span class='rubyid_features identifier id'>features</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_uniq identifier id'>uniq</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_scalable identifier id'>scalable</span>
@@ -11276,17 +11313,6 @@ Exception raised if request cannot be completed
       <pre class="lines">
 
 
-2392
-2393
-2394
-2395
-2396
-2397
-2398
-2399
-2400
-2401
-2402
 2403
 2404
 2405
@@ -11300,10 +11326,21 @@ Exception raised if request cannot be completed
 2413
 2414
 2415
-2416</pre>
+2416
+2417
+2418
+2419
+2420
+2421
+2422
+2423
+2424
+2425
+2426
+2427</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2392</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/models/application.rb', line 2403</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_validate_certificate identifier id'>validate_certificate</span><span class='lparen token'>(</span><span class='rubyid_ssl_certificate identifier id'>ssl_certificate</span><span class='comma token'>,</span> <span class='rubyid_private_key identifier id'>private_key</span><span class='comma token'>,</span> <span class='rubyid_pass_phrase identifier id'>pass_phrase</span><span class='rparen token'>)</span>
   <span class='rubyid_if if kw'>if</span> <span class='rubyid_ssl_certificate identifier id'>ssl_certificate</span> <span class='rubyid_and and kw'>and</span> <span class='notop op'>!</span><span class='rubyid_ssl_certificate identifier id'>ssl_certificate</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span>
@@ -11341,7 +11378,7 @@ Exception raised if request cannot be completed
 </div>
 
     <div id="footer">
-  Generated on Thu May 30 18:39:51 2013 by
+  Generated on Fri May 31 18:39:33 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
