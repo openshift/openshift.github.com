@@ -1,0 +1,779 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: OpenShift::NodeLogger::SplitTraceLogger
+  
+    &mdash; Documentation by YARD 0.8.5.2
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../../';
+  framesUrl = "../../frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../OpenShift.html" title="OpenShift (module)">OpenShift</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../NodeLogger.html" title="OpenShift::NodeLogger (module)">NodeLogger</a></span></span>
+     &raquo; 
+    <span class="title">SplitTraceLogger</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: OpenShift::NodeLogger::SplitTraceLogger
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">OpenShift::NodeLogger::SplitTraceLogger</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>
+This NodeLogger implementation is backed by the Ruby stdlib <tt>logger</tt>
+class, and uses a separate logger instance for <tt>trace</tt> logging in
+order to physically segregate messages at the <tt>trace</tt> level.
+</p>
+<p>
+The logger uses the following config keys:
+</p>
+<pre class="code ruby"><code class="ruby">
+  <span class='rubyid_PLATFORM_LOG_FILE constant id'>PLATFORM_LOG_FILE</span>        <span class='minus op'>-</span> <span class='rubyid_The constant id'>The</span> <span class='rubyid_absolute identifier id'>absolute</span> <span class='rubyid_path identifier id'>path</span> <span class='rubyid_to identifier id'>to</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_primary identifier id'>primary</span> <span class='rubyid_log identifier id'>log</span> <span class='rubyid_file identifier id'>file</span> <span class='lparen token'>(</span><span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='regexp val'>/var/</span><span class='rubyid_log identifier id'>log</span><span class='div op'>/</span><span class='rubyid_openshift identifier id'>openshift</span><span class='div op'>/</span><span class='rubyid_node identifier id'>node</span><span class='div op'>/</span><span class='rubyid_platform identifier id'>platform</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='rparen token'>)</span>
+  <span class='rubyid_PLATFORM_LOG_LEVEL constant id'>PLATFORM_LOG_LEVEL</span>       <span class='minus op'>-</span> <span class='rubyid_The constant id'>The</span> <span class='rubyid_log identifier id'>log</span> <span class='rubyid_level identifier id'>level</span> <span class='rubyid_for for kw'>for</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_primary identifier id'>primary</span> <span class='rubyid_logger identifier id'>logger</span> <span class='lparen token'>(</span><span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='rubyid_DEBUG constant id'>DEBUG</span><span class='rparen token'>)</span>
+  <span class='rubyid_PLATFORM_TRACE_LOG_FILE constant id'>PLATFORM_TRACE_LOG_FILE</span>  <span class='minus op'>-</span> <span class='rubyid_The constant id'>The</span> <span class='rubyid_absolute identifier id'>absolute</span> <span class='rubyid_path identifier id'>path</span> <span class='rubyid_to identifier id'>to</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_trace identifier id'>trace</span> <span class='rubyid_log identifier id'>log</span> <span class='rubyid_file identifier id'>file</span> <span class='lparen token'>(</span><span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='regexp val'>/var/</span><span class='rubyid_log identifier id'>log</span><span class='div op'>/</span><span class='rubyid_openshift identifier id'>openshift</span><span class='div op'>/</span><span class='rubyid_node identifier id'>node</span><span class='div op'>/</span><span class='rubyid_platform identifier id'>platform</span><span class='minus op'>-</span><span class='rubyid_trace identifier id'>trace</span><span class='dot token'>.</span><span class='rubyid_log identifier id'>log</span><span class='rparen token'>)</span>
+  <span class='rubyid_PLATFORM_TRACE_LOG_LEVEL constant id'>PLATFORM_TRACE_LOG_LEVEL</span> <span class='minus op'>-</span> <span class='rubyid_The constant id'>The</span> <span class='rubyid_log identifier id'>log</span> <span class='rubyid_level identifier id'>level</span> <span class='rubyid_for for kw'>for</span> <span class='rubyid_the identifier id'>the</span> <span class='rubyid_trace identifier id'>trace</span> <span class='rubyid_logger identifier id'>logger</span> <span class='lparen token'>(</span><span class='rubyid_default identifier id'>default</span><span class='colon op'>:</span> <span class='rubyid_INFO constant id'>INFO</span><span class='rparen token'>)</span>
+</code></pre>
+<p>
+Note: File IO for the underlying loggers is synchronous.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="PROFILES-constant" class="">PROFILES =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace token'>{</span>
+  <span class='symbol val'>:standard</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span>
+      <span class='rubyid_file_config identifier id'>file_config</span><span class='colon op'>:</span>   <span class='string val'>'PLATFORM_LOG_FILE'</span><span class='comma token'>,</span>
+      <span class='rubyid_level_config identifier id'>level_config</span><span class='colon op'>:</span>  <span class='string val'>'PLATFORM_LOG_LEVEL'</span><span class='comma token'>,</span>
+      <span class='rubyid_default_file identifier id'>default_file</span><span class='colon op'>:</span>  <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_SEPARATOR constant id'>SEPARATOR</span><span class='comma token'>,</span> <span class='dstring node'>%w{var log openshift node platform.log}</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+      <span class='rubyid_default_level identifier id'>default_level</span><span class='colon op'>:</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_DEBUG constant id'>DEBUG</span>
+  <span class='rbrace token'>}</span><span class='comma token'>,</span>
+  <span class='symbol val'>:trace</span>    <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrace token'>{</span>
+      <span class='rubyid_file_config identifier id'>file_config</span><span class='colon op'>:</span>   <span class='string val'>'PLATFORM_TRACE_LOG_FILE'</span><span class='comma token'>,</span>
+      <span class='rubyid_level_config identifier id'>level_config</span><span class='colon op'>:</span>  <span class='string val'>'PLATFORM_TRACE_LOG_LEVEL'</span><span class='comma token'>,</span>
+      <span class='rubyid_default_file identifier id'>default_file</span><span class='colon op'>:</span>  <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_join identifier id'>join</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_SEPARATOR constant id'>SEPARATOR</span><span class='comma token'>,</span> <span class='dstring node'>%w{var log openshift node platform-trace.log}</span><span class='rparen token'>)</span><span class='comma token'>,</span>
+      <span class='rubyid_default_level identifier id'>default_level</span><span class='colon op'>:</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_INFO constant id'>INFO</span>
+  <span class='rbrace token'>}</span>
+<span class='rbrace token'>}</span>
+</pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="private ">
+  <span class="summary_signature">
+    
+      <a href="#build_logger-instance_method" title="#build_logger (instance method)">- (Object) <strong>build_logger</strong>(profile) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  <span class="note title private">private</span>
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#debug-instance_method" title="#debug (instance method)">- (Object) <strong>debug</strong>(*args, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#error-instance_method" title="#error (instance method)">- (Object) <strong>error</strong>(*args, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#fatal-instance_method" title="#fatal (instance method)">- (Object) <strong>fatal</strong>(*args, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#info-instance_method" title="#info (instance method)">- (Object) <strong>info</strong>(*args, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (SplitTraceLogger) <strong>initialize</strong>(config, context) </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+A new instance of SplitTraceLogger.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#reinitialize-instance_method" title="#reinitialize (instance method)">- (Object) <strong>reinitialize</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#trace-instance_method" title="#trace (instance method)">- (Object) <strong>trace</strong>(*args, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#warn-instance_method" title="#warn (instance method)">- (Object) <strong>warn</strong>(*args, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="OpenShift::NodeLogger::SplitTraceLogger (class)">SplitTraceLogger</a></span></tt>) <strong>initialize</strong>(config, context) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+A new instance of SplitTraceLogger
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 52</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='rubyid_config identifier id'>config</span><span class='comma token'>,</span> <span class='rubyid_context identifier id'>context</span><span class='rparen token'>)</span>
+  <span class='rubyid_@config ivar id'>@config</span> <span class='assign token'>=</span> <span class='rubyid_config identifier id'>config</span>
+  <span class='rubyid_@context ivar id'>@context</span> <span class='assign token'>=</span> <span class='rubyid_context identifier id'>context</span>
+
+  <span class='rubyid_reinitialize identifier id'>reinitialize</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="build_logger-instance_method">
+  
+    - (<tt>Object</tt>) <strong>build_logger</strong>(profile)  <span class="extras">(private)</span>
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 91</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_build_logger identifier id'>build_logger</span><span class='lparen token'>(</span><span class='rubyid_profile identifier id'>profile</span><span class='rparen token'>)</span>
+  <span class='rubyid_begin begin kw'>begin</span>
+    <span class='comment val'># Use defaults</span>
+    <span class='rubyid_log_file identifier id'>log_file</span>  <span class='assign token'>=</span> <span class='rubyid_profile identifier id'>profile</span><span class='lbrack token'>[</span><span class='symbol val'>:default_file</span><span class='rbrack token'>]</span>
+    <span class='rubyid_log_level identifier id'>log_level</span> <span class='assign token'>=</span> <span class='rubyid_profile identifier id'>profile</span><span class='lbrack token'>[</span><span class='symbol val'>:default_level</span><span class='rbrack token'>]</span>
+
+    <span class='comment val'># Override defaults with configs if possible</span>
+    <span class='rubyid_begin begin kw'>begin</span>
+      <span class='rubyid_config_log_file identifier id'>config_log_file</span>  <span class='assign token'>=</span> <span class='rubyid_@config ivar id'>@config</span><span class='dot token'>.</span><span class='rubyid_get identifier id'>get</span><span class='lparen token'>(</span><span class='rubyid_profile identifier id'>profile</span><span class='lbrack token'>[</span><span class='symbol val'>:file_config</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+      <span class='rubyid_config_log_level identifier id'>config_log_level</span> <span class='assign token'>=</span> <span class='rubyid_@config ivar id'>@config</span><span class='dot token'>.</span><span class='rubyid_get identifier id'>get</span><span class='lparen token'>(</span><span class='rubyid_profile identifier id'>profile</span><span class='lbrack token'>[</span><span class='symbol val'>:level_config</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_config_log_level identifier id'>config_log_level</span> <span class='andop op'>&amp;&amp;</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_Severity constant id'>Severity</span><span class='dot token'>.</span><span class='rubyid_const_defined? fid id'>const_defined?</span><span class='lparen token'>(</span><span class='rubyid_config_log_level identifier id'>config_log_level</span><span class='rparen token'>)</span>
+        <span class='rubyid_log_level identifier id'>log_level</span> <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='colon2 op'>::</span><span class='rubyid_Severity constant id'>Severity</span><span class='dot token'>.</span><span class='rubyid_const_get identifier id'>const_get</span><span class='lparen token'>(</span><span class='rubyid_config_log_level identifier id'>config_log_level</span><span class='rparen token'>)</span>
+      <span class='rubyid_end end kw'>end</span>
+
+      <span class='rubyid_if if kw'>if</span> <span class='rubyid_config_log_file identifier id'>config_log_file</span>
+        <span class='rubyid_log_file identifier id'>log_file</span> <span class='assign token'>=</span> <span class='rubyid_config_log_file identifier id'>config_log_file</span>
+      <span class='rubyid_end end kw'>end</span>
+    <span class='rubyid_rescue rescue kw'>rescue</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
+      <span class='comment val'># just use the defaults</span>
+      <span class='rubyid_Logger constant id'>Logger</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_STDERR constant id'>STDERR</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;Failed to apply logging configuration #{profile}: #{e.message}&quot;</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_end end kw'>end</span>
+
+    <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkpath identifier id'>mkpath</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_dirname identifier id'>dirname</span><span class='lparen token'>(</span><span class='rubyid_log_file identifier id'>log_file</span><span class='rparen token'>)</span><span class='rparen token'>)</span> <span class='rubyid_unless unless_mod kw'>unless</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exist? fid id'>exist?</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_dirname identifier id'>dirname</span><span class='lparen token'>(</span><span class='rubyid_log_file identifier id'>log_file</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_orig_umask identifier id'>orig_umask</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_umask identifier id'>umask</span><span class='lparen token'>(</span><span class='integer val'>0</span><span class='rparen token'>)</span>
+    <span class='rubyid_file identifier id'>file</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_log_file identifier id'>log_file</span><span class='comma token'>,</span> <span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_WRONLY constant id'>WRONLY</span> <span class='bitor op'>|</span> <span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_APPEND constant id'>APPEND</span><span class='bitor op'>|</span> <span class='rubyid_File constant id'>File</span><span class='colon2 op'>::</span><span class='rubyid_CREAT constant id'>CREAT</span><span class='comma token'>,</span> <span class='integer val'>0660</span><span class='rparen token'>)</span>
+    <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_umask identifier id'>umask</span><span class='lparen token'>(</span><span class='rubyid_orig_umask identifier id'>orig_umask</span><span class='rparen token'>)</span>
+
+    <span class='rubyid_file identifier id'>file</span><span class='dot token'>.</span><span class='rubyid_sync identifier id'>sync</span> <span class='assign token'>=</span> <span class='rubyid_true true kw'>true</span>
+    
+    <span class='rubyid_logger identifier id'>logger</span>       <span class='assign token'>=</span> <span class='rubyid_Logger constant id'>Logger</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_file identifier id'>file</span><span class='comma token'>,</span> <span class='integer val'>5</span><span class='comma token'>,</span> <span class='integer val'>10</span> <span class='mult op'>*</span> <span class='integer val'>1024</span> <span class='mult op'>*</span> <span class='integer val'>1024</span><span class='rparen token'>)</span>
+    <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_level identifier id'>level</span> <span class='assign token'>=</span> <span class='rubyid_log_level identifier id'>log_level</span>
+
+    <span class='rubyid_logger identifier id'>logger</span><span class='dot token'>.</span><span class='rubyid_formatter identifier id'>formatter</span> <span class='assign token'>=</span> <span class='rubyid_proc identifier id'>proc</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_severity identifier id'>severity</span><span class='comma token'>,</span> <span class='rubyid_datetime identifier id'>datetime</span><span class='comma token'>,</span> <span class='rubyid_progname identifier id'>progname</span><span class='comma token'>,</span> <span class='rubyid_msg identifier id'>msg</span><span class='bitor op'>|</span>
+      <span class='dstring node'>&quot;#{datetime.strftime(&quot;%B %d %H:%M:%S&quot;)} #{severity} #{msg}\n&quot;</span>
+    <span class='rubyid_end end kw'>end</span>
+
+    <span class='rubyid_logger identifier id'>logger</span>
+  <span class='rubyid_rescue rescue kw'>rescue</span> <span class='rubyid_Exception constant id'>Exception</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='comment val'># If all else fails, use a STDOUT logger</span>
+    <span class='rubyid_Logger constant id'>Logger</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_STDERR constant id'>STDERR</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span> <span class='lbrace token'>{</span> <span class='dstring node'>&quot;Failed to create logger; falling back to STDOUT: #{e.message}&quot;</span> <span class='rbrace token'>}</span>
+    <span class='rubyid_Logger constant id'>Logger</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_STDOUT constant id'>STDOUT</span><span class='rparen token'>)</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="debug-instance_method">
+  
+    - (<tt>Object</tt>) <strong>debug</strong>(*args, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+68
+69
+70</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 68</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_debug identifier id'>debug</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+  <span class='rubyid_@logger ivar id'>@logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="error-instance_method">
+  
+    - (<tt>Object</tt>) <strong>error</strong>(*args, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+76
+77
+78</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 76</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+  <span class='rubyid_@logger ivar id'>@logger</span><span class='dot token'>.</span><span class='rubyid_error identifier id'>error</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="fatal-instance_method">
+  
+    - (<tt>Object</tt>) <strong>fatal</strong>(*args, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+80
+81
+82</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 80</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_fatal identifier id'>fatal</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+  <span class='rubyid_@logger ivar id'>@logger</span><span class='dot token'>.</span><span class='rubyid_fatal identifier id'>fatal</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="info-instance_method">
+  
+    - (<tt>Object</tt>) <strong>info</strong>(*args, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+64
+65
+66</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 64</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+  <span class='rubyid_@logger ivar id'>@logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reinitialize-instance_method">
+  
+    - (<tt>Object</tt>) <strong>reinitialize</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+59
+60
+61
+62</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 59</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_reinitialize identifier id'>reinitialize</span>
+  <span class='rubyid_@logger ivar id'>@logger</span> <span class='assign token'>=</span> <span class='rubyid_build_logger identifier id'>build_logger</span><span class='lparen token'>(</span><span class='rubyid_PROFILES constant id'>PROFILES</span><span class='lbrack token'>[</span><span class='symbol val'>:standard</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+  <span class='rubyid_@trace_logger ivar id'>@trace_logger</span> <span class='assign token'>=</span> <span class='rubyid_build_logger identifier id'>build_logger</span><span class='lparen token'>(</span><span class='rubyid_PROFILES constant id'>PROFILES</span><span class='lbrack token'>[</span><span class='symbol val'>:trace</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="trace-instance_method">
+  
+    - (<tt>Object</tt>) <strong>trace</strong>(*args, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+84
+85
+86</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 84</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_trace identifier id'>trace</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+  <span class='rubyid_@trace_logger ivar id'>@trace_logger</span><span class='dot token'>.</span><span class='rubyid_info identifier id'>info</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="warn-instance_method">
+  
+    - (<tt>Object</tt>) <strong>warn</strong>(*args, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+72
+73
+74</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/utils/logger/split_trace_logger.rb', line 72</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_warn identifier id'>warn</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+  <span class='rubyid_@logger ivar id'>@logger</span><span class='dot token'>.</span><span class='rubyid_warn identifier id'>warn</span><span class='lparen token'>(</span><span class='mult op'>*</span><span class='rubyid_args identifier id'>args</span><span class='comma token'>,</span> <span class='bitand op'>&amp;</span><span class='rubyid_block identifier id'>block</span><span class='rparen token'>)</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Mon Jun  3 18:44:38 2013 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.5.2 (ruby-1.8.7).
+</div>
+
+  </body>
+</html>
