@@ -443,25 +443,14 @@ the event.
 101
 102
 103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115</pre>
+104</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/app_events_controller.rb', line 28</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_create identifier id'>create</span>
-  <span class='rubyid_event identifier id'>event</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:event</span><span class='rbrack token'>]</span>
-  <span class='rubyid_server_alias identifier id'>server_alias</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:alias</span><span class='rbrack token'>]</span>
+  <span class='rubyid_event identifier id'>event</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:event</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_presence identifier id'>presence</span>
+  <span class='rubyid_server_alias identifier id'>server_alias</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:alias</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_presence identifier id'>presence</span>
 
   <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='string val'>&quot;Alias must be specified for adding or removing application alias.&quot;</span><span class='comma token'>,</span> <span class='integer val'>126</span><span class='comma token'>,</span>
                       <span class='string val'>&quot;event&quot;</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='lbrack token'>[</span><span class='string val'>'add-alias'</span><span class='comma token'>,</span> <span class='string val'>'remove-alias'</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_event identifier id'>event</span><span class='rparen token'>)</span> <span class='andop op'>&amp;&amp;</span> <span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='dot token'>.</span><span class='rubyid_nil? fid id'>nil?</span> <span class='rubyid_or or kw'>or</span> <span class='rubyid_server_alias identifier id'>server_alias</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span><span class='rparen token'>)</span>
@@ -476,23 +465,22 @@ the event.
   <span class='rubyid_begin begin kw'>begin</span>
     <span class='rubyid_case case kw'>case</span> <span class='rubyid_event identifier id'>event</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;start&quot;</span>
-        <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_start identifier id'>start</span>
+        <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_start identifier id'>start</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has started&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;stop&quot;</span>
-        <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_stop identifier id'>stop</span>
+        <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_stop identifier id'>stop</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has stopped&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;force-stop&quot;</span>
-        <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_stop identifier id'>stop</span><span class='lparen token'>(</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
+        <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_stop identifier id'>stop</span><span class='lparen token'>(</span><span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='rparen token'>)</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has forcefully stopped&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;restart&quot;</span>
-        <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_restart identifier id'>restart</span>
+        <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_restart identifier id'>restart</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has restarted&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;show-port&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;expose-port&quot;</span><span class='comma token'>,</span> <span class='string val'>&quot;conceal-port&quot;</span>
         <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:gone</span><span class='comma token'>,</span> <span class='dstring node'>&quot;This event (#{event}) is no longer supported.&quot;</span><span class='comma token'>,</span> <span class='integer val'>112</span><span class='rparen token'>)</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;add-alias&quot;</span>
         <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_add_alias identifier id'>add_alias</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has added alias&quot;</span>
-        <span class='comment val'># msg += &quot;: #{r.resultIO.string.chomp}&quot; if !r.resultIO.string.empty?</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;remove-alias&quot;</span>
         <span class='rubyid_begin begin kw'>begin</span>
           <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_remove_alias identifier id'>remove_alias</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
@@ -500,14 +488,13 @@ the event.
           <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:not_found</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Alias #{server_alias} not found for application #{@application.name}&quot;</span><span class='comma token'>,</span> <span class='integer val'>173</span><span class='comma token'>,</span> <span class='dstring node'>&quot;#{event.sub('-', '_').upcase}_APPLICATION&quot;</span><span class='rparen token'>)</span>
         <span class='rubyid_end end kw'>end</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has removed alias&quot;</span>
-        <span class='comment val'># msg += &quot;: #{r.resultIO.string.chomp}&quot; if !r.resultIO.string.empty?</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;scale-up&quot;</span>
         <span class='rubyid_web_framework_component_instance identifier id'>web_framework_component_instance</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_component_instances identifier id'>component_instances</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_CartridgeCache constant id'>CartridgeCache</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span><span class='rubyid_@application ivar id'>@application</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_categories identifier id'>categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>&quot;web_framework&quot;</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
-        <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_scale_by identifier id'>scale_by</span><span class='lparen token'>(</span><span class='rubyid_web_framework_component_instance identifier id'>web_framework_component_instance</span><span class='dot token'>.</span><span class='rubyid_group_instance_id identifier id'>group_instance_id</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='rparen token'>)</span>
+        <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_scale_by identifier id'>scale_by</span><span class='lparen token'>(</span><span class='rubyid_web_framework_component_instance identifier id'>web_framework_component_instance</span><span class='dot token'>.</span><span class='rubyid_group_instance_id identifier id'>group_instance_id</span><span class='comma token'>,</span> <span class='integer val'>1</span><span class='rparen token'>)</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has scaled up&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;scale-down&quot;</span>
         <span class='rubyid_web_framework_component_instance identifier id'>web_framework_component_instance</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_component_instances identifier id'>component_instances</span><span class='dot token'>.</span><span class='rubyid_select identifier id'>select</span><span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_c identifier id'>c</span><span class='bitor op'>|</span> <span class='rubyid_CartridgeCache constant id'>CartridgeCache</span><span class='dot token'>.</span><span class='rubyid_find_cartridge identifier id'>find_cartridge</span><span class='lparen token'>(</span><span class='rubyid_c identifier id'>c</span><span class='dot token'>.</span><span class='rubyid_cartridge_name identifier id'>cartridge_name</span><span class='comma token'>,</span><span class='rubyid_@application ivar id'>@application</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_categories identifier id'>categories</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='string val'>&quot;web_framework&quot;</span><span class='rparen token'>)</span> <span class='rbrace token'>}</span><span class='dot token'>.</span><span class='rubyid_first identifier id'>first</span>
-        <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_scale_by identifier id'>scale_by</span><span class='lparen token'>(</span><span class='rubyid_web_framework_component_instance identifier id'>web_framework_component_instance</span><span class='dot token'>.</span><span class='rubyid_group_instance_id identifier id'>group_instance_id</span><span class='comma token'>,</span> <span class='integer val'>-1</span><span class='rparen token'>)</span>
+        <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_scale_by identifier id'>scale_by</span><span class='lparen token'>(</span><span class='rubyid_web_framework_component_instance identifier id'>web_framework_component_instance</span><span class='dot token'>.</span><span class='rubyid_group_instance_id identifier id'>group_instance_id</span><span class='comma token'>,</span> <span class='integer val'>-1</span><span class='rparen token'>)</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} has scaled down&quot;</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>&quot;thread-dump&quot;</span>
         <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_threaddump identifier id'>threaddump</span>
@@ -516,18 +503,12 @@ the event.
         <span class='rubyid_else else kw'>else</span>
           <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='notop op'>!</span><span class='rubyid_r identifier id'>r</span><span class='dot token'>.</span><span class='rubyid_errorIO identifier id'>errorIO</span><span class='dot token'>.</span><span class='rubyid_string identifier id'>string</span><span class='dot token'>.</span><span class='rubyid_empty? fid id'>empty?</span> <span class='integer val'>? </span><span class='rubyid_r identifier id'>r</span><span class='dot token'>.</span><span class='rubyid_errorIO identifier id'>errorIO</span><span class='dot token'>.</span><span class='rubyid_string identifier id'>string</span><span class='dot token'>.</span><span class='rubyid_chomp identifier id'>chomp</span> <span class='colon op'>:</span> <span class='rubyid_r identifier id'>r</span><span class='dot token'>.</span><span class='rubyid_resultIO identifier id'>resultIO</span><span class='dot token'>.</span><span class='rubyid_string identifier id'>string</span><span class='dot token'>.</span><span class='rubyid_chomp identifier id'>chomp</span>
         <span class='rubyid_end end kw'>end</span>
-        <span class='comment val'>#TODO: We need to reconsider how we are reporting messages to the client</span>
-        <span class='rubyid_message identifier id'>message</span> <span class='assign token'>=</span> <span class='rubyid_Message constant id'>Message</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='symbol val'>:result</span><span class='comma token'>,</span> <span class='rubyid_msg identifier id'>msg</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
-        <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_get_rest_application identifier id'>get_rest_application</span><span class='lparen token'>(</span><span class='rubyid_@application ivar id'>@application</span><span class='rparen token'>)</span>
-        <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;application&quot;</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Application event '#{event}' successful&quot;</span><span class='comma token'>,</span> <span class='rubyid_true true kw'>true</span><span class='comma token'>,</span> <span class='rubyid_nil nil kw'>nil</span><span class='comma token'>,</span> <span class='lbrack token'>[</span><span class='rubyid_message identifier id'>message</span><span class='rbrack token'>]</span><span class='rparen token'>)</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>'tidy'</span>
         <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_tidy identifier id'>tidy</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} called tidy&quot;</span>
-        <span class='comment val'># msg += &quot;: #{r.resultIO.string.chomp}&quot; if !r.resultIO.string.empty?</span>
       <span class='rubyid_when when kw'>when</span> <span class='string val'>'reload'</span>
         <span class='rubyid_r identifier id'>r</span> <span class='assign token'>=</span> <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_reload_config identifier id'>reload_config</span>
         <span class='rubyid_msg identifier id'>msg</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;Application #{@application.name} called reload&quot;</span>
-        <span class='comment val'># msg += &quot;: #{r.resultIO.string.chomp}&quot; if !r.resultIO.string.empty?</span>
       <span class='rubyid_else else kw'>else</span>
         <span class='rubyid_return return kw'>return</span> <span class='rubyid_render_error identifier id'>render_error</span><span class='lparen token'>(</span><span class='symbol val'>:unprocessable_entity</span><span class='comma token'>,</span> <span class='dstring node'>&quot;Invalid application event '#{event}' specified&quot;</span><span class='comma token'>,</span>
                             <span class='integer val'>126</span><span class='comma token'>,</span> <span class='string val'>&quot;event&quot;</span><span class='rparen token'>)</span>
@@ -542,10 +523,7 @@ the event.
 
   <span class='rubyid_@application ivar id'>@application</span><span class='dot token'>.</span><span class='rubyid_with identifier id'>with</span><span class='lparen token'>(</span><span class='rubyid_consistency identifier id'>consistency</span><span class='colon op'>:</span> <span class='symbol val'>:strong</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_reload identifier id'>reload</span>
   <span class='rubyid_app identifier id'>app</span> <span class='assign token'>=</span> <span class='rubyid_get_rest_application identifier id'>get_rest_application</span><span class='lparen token'>(</span><span class='rubyid_@application ivar id'>@application</span><span class='rparen token'>)</span>
-  <span class='rubyid_@reply ivar id'>@reply</span> <span class='assign token'>=</span> <span class='rubyid_new_rest_reply identifier id'>new_rest_reply</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;application&quot;</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='rparen token'>)</span>
-  <span class='rubyid_message identifier id'>message</span> <span class='assign token'>=</span> <span class='rubyid_Message constant id'>Message</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='string val'>&quot;INFO&quot;</span><span class='comma token'>,</span> <span class='rubyid_msg identifier id'>msg</span><span class='comma token'>,</span> <span class='integer val'>0</span><span class='rparen token'>)</span>
-  <span class='rubyid_@reply ivar id'>@reply</span><span class='dot token'>.</span><span class='rubyid_messages identifier id'>messages</span><span class='dot token'>.</span><span class='rubyid_push identifier id'>push</span><span class='lparen token'>(</span><span class='rubyid_message identifier id'>message</span><span class='rparen token'>)</span>
-  <span class='rubyid_respond_with identifier id'>respond_with</span> <span class='rubyid_@reply ivar id'>@reply</span><span class='comma token'>,</span> <span class='symbol val'>:status</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_@reply ivar id'>@reply</span><span class='dot token'>.</span><span class='rubyid_status identifier id'>status</span>
+  <span class='rubyid_render_success identifier id'>render_success</span><span class='lparen token'>(</span><span class='symbol val'>:ok</span><span class='comma token'>,</span> <span class='string val'>&quot;application&quot;</span><span class='comma token'>,</span> <span class='rubyid_app identifier id'>app</span><span class='comma token'>,</span> <span class='rubyid_msg identifier id'>msg</span><span class='comma token'>,</span> <span class='rubyid_r identifier id'>r</span><span class='rparen token'>)</span>
 <span class='rubyid_end end kw'>end</span>
 </pre>
     </td>
@@ -577,17 +555,17 @@ the event.
       <pre class="lines">
 
 
-117
-118
-119
-120
-121
-122
-123
-124</pre>
+106
+107
+108
+109
+110
+111
+112
+113</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/app_events_controller.rb', line 117</span>
+      <pre class="code"><span class="info file"># File 'origin-server/controller/app/controllers/app_events_controller.rb', line 106</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_set_log_tag identifier id'>set_log_tag</span>
   <span class='rubyid_event identifier id'>event</span> <span class='assign token'>=</span> <span class='rubyid_params identifier id'>params</span><span class='lbrack token'>[</span><span class='symbol val'>:event</span><span class='rbrack token'>]</span>
@@ -608,7 +586,7 @@ the event.
 </div>
 
     <div id="footer">
-  Generated on Mon Jun  3 18:35:56 2013 by
+  Generated on Tue Jun  4 18:34:54 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
