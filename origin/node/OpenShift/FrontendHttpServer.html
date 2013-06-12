@@ -1786,7 +1786,7 @@ Public: Adds a ssl certificate for an alias
   <span class='comment val'>#</span>
 
   <span class='comment val'># Create top level config file for the alias</span>
-  <span class='rubyid_alias_conf_contents identifier id'>alias_conf_contents</span> <span class='assign token'>=</span> <span class='string val'>&quot;&lt;VirtualHost *:443&gt;\nServerName \#{server_alias_clean}\nServerAdmin openshift-bofh@redhat.com\nDocumentRoot /var/www/html\nDefaultType None\n\nSSLEngine on\n\nSSLCertificateFile \#{ssl_cert_file_path}\nSSLCertificateKeyFile \#{priv_key_file_path}\nSSLCertificateChainFile \#{ssl_cert_file_path}\nSSLCipherSuite RSA:!EXPORT:!DH:!LOW:!NULL:+MEDIUM:+HIGH\nSSLProtocol -ALL +SSLv3 +TLSv1\nSSLOptions +StdEnvVars +ExportCertData\n# SSLVerifyClient must be set for +ExportCertData to take effect, so just use\n# optional_no_ca.\nSSLVerifyClient optional_no_ca\n\nRequestHeader set X-Forwarded-Proto \&quot;https\&quot;\nRequestHeader set X-Forwarded-SSL-Client-Cert %{SSL_CLIENT_CERT}e\n\nRewriteEngine On\ninclude conf.d/openshift_route.include\n\n&lt;/VirtualHost&gt;\n&quot;</span>
+  <span class='rubyid_alias_conf_contents identifier id'>alias_conf_contents</span> <span class='assign token'>=</span> <span class='string val'>&quot;&lt;VirtualHost *:443&gt;\nServerName \#{server_alias_clean}\nServerAdmin openshift-bofh@redhat.com\nDocumentRoot /var/www/html\nDefaultType None\n\nSSLEngine on\n\nSSLCertificateFile \#{ssl_cert_file_path}\nSSLCertificateKeyFile \#{priv_key_file_path}\nSSLCertificateChainFile \#{ssl_cert_file_path}\nSSLCipherSuite RSA:!EXPORT:!DH:!LOW:!NULL:+MEDIUM:+HIGH\nSSLProtocol -ALL +SSLv3 +TLSv1\nSSLOptions +StdEnvVars +ExportCertData\n\nRequestHeader set X-Forwarded-Proto \&quot;https\&quot;\nRequestHeader set X-Forwarded-SSL-Client-Cert %{SSL_CLIENT_CERT}e\n\nRewriteEngine On\ninclude conf.d/openshift_route.include\n\n&lt;/VirtualHost&gt;\n&quot;</span>
 
   <span class='comment val'># Finally, commit the changes</span>
   <span class='rubyid_ApacheDBAliases constant id'>ApacheDBAliases</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_ApacheDBAliases constant id'>ApacheDBAliases</span><span class='colon2 op'>::</span><span class='rubyid_WRCREAT constant id'>WRCREAT</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_d identifier id'>d</span><span class='bitor op'>|</span>
@@ -1899,6 +1899,9 @@ address.
       <pre class="lines">
 
 
+834
+835
+836
 837
 838
 839
@@ -1925,13 +1928,10 @@ address.
 860
 861
 862
-863
-864
-865
-866</pre>
+863</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 837</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 834</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_name identifier id'>name</span><span class='rparen token'>)</span>
   <span class='rubyid_dname identifier id'>dname</span> <span class='assign token'>=</span> <span class='rubyid_name identifier id'>name</span><span class='dot token'>.</span><span class='rubyid_downcase identifier id'>downcase</span>
@@ -2901,18 +2901,18 @@ Reload the Apache configuration
       <pre class="lines">
 
 
+866
+867
+868
 869
 870
 871
 872
 873
-874
-875
-876
-877</pre>
+874</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 869</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 866</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_reload_httpd identifier id'>reload_httpd</span><span class='lparen token'>(</span><span class='rubyid_async identifier id'>async</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
   <span class='rubyid_async_opt identifier id'>async_opt</span><span class='assign token'>=</span><span class='string val'>&quot;-b&quot;</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_async identifier id'>async</span>
@@ -3029,6 +3029,9 @@ Public: Removes ssl certificate/private key associated with an alias
       <pre class="lines">
 
 
+806
+807
+808
 809
 810
 811
@@ -3047,13 +3050,10 @@ Public: Removes ssl certificate/private key associated with an alias
 824
 825
 826
-827
-828
-829
-830</pre>
+827</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 809</span>
+      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 806</span>
 
 <span class='rubyid_def def kw'>def</span> <span class='rubyid_remove_ssl_cert identifier id'>remove_ssl_cert</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
   <span class='rubyid_server_alias_clean identifier id'>server_alias_clean</span> <span class='assign token'>=</span> <span class='rubyid_clean_server_name identifier id'>clean_server_name</span><span class='lparen token'>(</span><span class='rubyid_server_alias identifier id'>server_alias</span><span class='rparen token'>)</span>
@@ -3470,7 +3470,7 @@ but the call may take over a minute to complete.
 </div>
 
     <div id="footer">
-  Generated on Tue Jun  4 18:43:02 2013 by
+  Generated on Tue Jun 11 20:10:44 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-1.8.7).
 </div>
