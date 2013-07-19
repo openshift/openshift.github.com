@@ -83,7 +83,7 @@
   
   
     <dt class="r2 last">Defined in:</dt>
-    <dd class="r2 last">origin-dev-tools/build/lib/openshift/tito.rb</dd>
+    <dd class="r2 last">/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb</dd>
   
 </dl>
 <div class="clear"></div>
@@ -406,34 +406,33 @@
 35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 11</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 11</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_build_dirs identifier id'>get_build_dirs</span>
-  <span class='comment val'># Figure out what needs to be built</span>
-  <span class='rubyid_li_repo identifier id'>li_repo</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='string val'>'li'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrack token'>[</span><span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_pwd identifier id'>pwd</span><span class='rbrack token'>]</span><span class='rbrace token'>}</span>
-  <span class='rubyid_repos identifier id'>repos</span> <span class='assign token'>=</span> <span class='rubyid_li_repo identifier id'>li_repo</span><span class='dot token'>.</span><span class='rubyid_merge identifier id'>merge</span><span class='lparen token'>(</span><span class='rubyid_SIBLING_REPOS constant id'>SIBLING_REPOS</span><span class='rparen token'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_build_dirs'>get_build_dirs</span>
+  <span class='comment'># Figure out what needs to be built
+</span>  <span class='id identifier rubyid_li_repo'>li_repo</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>li</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbracket'>[</span><span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_pwd'>pwd</span><span class='rbracket'>]</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_repos'>repos</span> <span class='op'>=</span> <span class='id identifier rubyid_li_repo'>li_repo</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='const'>SIBLING_REPOS</span><span class='rparen'>)</span>
 
-  <span class='rubyid_all_packages identifier id'>all_packages</span> <span class='assign token'>=</span> <span class='rubyid_get_packages identifier id'>get_packages</span>
-  <span class='rubyid_build_dirs identifier id'>build_dirs</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_repos identifier id'>repos</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_repo_name identifier id'>repo_name</span><span class='comma token'>,</span> <span class='rubyid_repo_dirs identifier id'>repo_dirs</span><span class='bitor op'>|</span>
-    <span class='rubyid_repo_dirs identifier id'>repo_dirs</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_repo_dir identifier id'>repo_dir</span><span class='bitor op'>|</span>
-      <span class='rubyid_if if kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exists? fid id'>exists?</span><span class='lparen token'>(</span><span class='rubyid_repo_dir identifier id'>repo_dir</span><span class='rparen token'>)</span>
-        <span class='rubyid_packages identifier id'>packages</span> <span class='assign token'>=</span> <span class='dxstring node'>`cd #{repo_dir} &amp;&amp; tito report --untagged-commits`</span>
-        <span class='rubyid_packages identifier id'>packages</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;\n&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_package identifier id'>package</span><span class='bitor op'>|</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_package identifier id'>package</span> <span class='match op'>=~</span> <span class='rubyid_PACKAGE_REGEX constant id'>PACKAGE_REGEX</span>
-            <span class='rubyid_pkg identifier id'>pkg</span> <span class='assign token'>=</span> <span class='rubyid_$1 nth_ref id'>$1</span>
-            <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_IGNORE_PACKAGES constant id'>IGNORE_PACKAGES</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_pkg identifier id'>pkg</span><span class='rparen token'>)</span>
-              <span class='rubyid_build_dirs identifier id'>build_dirs</span> <span class='lshft op'>&lt;&lt;</span> <span class='lbrack token'>[</span><span class='rubyid_pkg identifier id'>pkg</span><span class='comma token'>,</span> <span class='rubyid_all_packages identifier id'>all_packages</span><span class='lbrack token'>[</span><span class='rubyid_pkg identifier id'>pkg</span><span class='rbrack token'>]</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span><span class='comma token'>,</span> <span class='rubyid_all_packages identifier id'>all_packages</span><span class='lbrack token'>[</span><span class='rubyid_pkg identifier id'>pkg</span><span class='rbrack token'>]</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span><span class='rbrack token'>]</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_break break kw'>break</span>
-      <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_build_dirs identifier id'>build_dirs</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+  <span class='id identifier rubyid_all_packages'>all_packages</span> <span class='op'>=</span> <span class='id identifier rubyid_get_packages'>get_packages</span>
+  <span class='id identifier rubyid_build_dirs'>build_dirs</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_repos'>repos</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_repo_name'>repo_name</span><span class='comma'>,</span> <span class='id identifier rubyid_repo_dirs'>repo_dirs</span><span class='op'>|</span>
+    <span class='id identifier rubyid_repo_dirs'>repo_dirs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_packages'>packages</span> <span class='op'>=</span> <span class='backtick'>`</span><span class='tstring_content'>cd </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='embexpr_end'>}</span><span class='tstring_content'> &amp;&amp; tito report --untagged-commits</span><span class='tstring_end'>`</span></span>
+        <span class='id identifier rubyid_packages'>packages</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_package'>package</span><span class='op'>|</span>
+          <span class='kw'>if</span> <span class='id identifier rubyid_package'>package</span> <span class='op'>=~</span> <span class='const'>PACKAGE_REGEX</span>
+            <span class='id identifier rubyid_pkg'>pkg</span> <span class='op'>=</span> <span class='backref'>$1</span>
+            <span class='kw'>unless</span> <span class='const'>IGNORE_PACKAGES</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_pkg'>pkg</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_build_dirs'>build_dirs</span> <span class='op'>&lt;&lt;</span> <span class='lbracket'>[</span><span class='id identifier rubyid_pkg'>pkg</span><span class='comma'>,</span> <span class='id identifier rubyid_all_packages'>all_packages</span><span class='lbracket'>[</span><span class='id identifier rubyid_pkg'>pkg</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_all_packages'>all_packages</span><span class='lbracket'>[</span><span class='id identifier rubyid_pkg'>pkg</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='rbracket'>]</span>
+            <span class='kw'>end</span>
+          <span class='kw'>end</span>
+        <span class='kw'>end</span>
+        <span class='kw'>break</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_build_dirs'>build_dirs</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -486,39 +485,38 @@
 131</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 102</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 102</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_packages identifier id'>get_packages</span><span class='lparen token'>(</span><span class='rubyid_include_subpackages identifier id'>include_subpackages</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='comma token'>,</span> <span class='rubyid_as_obj identifier id'>as_obj</span><span class='assign token'>=</span><span class='rubyid_false false kw'>false</span><span class='rparen token'>)</span>
-  <span class='rubyid_packages identifier id'>packages</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='rbrace token'>}</span>
-  <span class='rubyid_dirs identifier id'>dirs</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='string val'>'.'</span><span class='rbrack token'>]</span>
-  <span class='rubyid_SIBLING_REPOS constant id'>SIBLING_REPOS</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_repo_name identifier id'>repo_name</span><span class='comma token'>,</span> <span class='rubyid_repo_dirs identifier id'>repo_dirs</span><span class='bitor op'>|</span>
-    <span class='rubyid_repo_dirs identifier id'>repo_dirs</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_repo_dir identifier id'>repo_dir</span><span class='bitor op'>|</span>
-      <span class='rubyid_if if kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exists? fid id'>exists?</span><span class='lparen token'>(</span><span class='rubyid_repo_dir identifier id'>repo_dir</span><span class='rparen token'>)</span>
-        <span class='rubyid_dirs identifier id'>dirs</span> <span class='lshft op'>&lt;&lt;</span> <span class='rubyid_repo_dir identifier id'>repo_dir</span>
-        <span class='rubyid_break break kw'>break</span>
-      <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_dirs identifier id'>dirs</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_repo_dir identifier id'>repo_dir</span><span class='bitor op'>|</span>
-    <span class='rubyid_Dir constant id'>Dir</span><span class='dot token'>.</span><span class='rubyid_glob identifier id'>glob</span><span class='lparen token'>(</span><span class='dstring node'>&quot;#{repo_dir}/**/*.spec&quot;</span><span class='rparen token'>)</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_file identifier id'>file</span><span class='bitor op'>|</span>
-      <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_file identifier id'>file</span><span class='dot token'>.</span><span class='rubyid_start_with? fid id'>start_with?</span><span class='lparen token'>(</span><span class='string val'>'build/'</span><span class='rparen token'>)</span>
-        <span class='rubyid_package identifier id'>package</span> <span class='assign token'>=</span> <span class='rubyid_Package constant id'>Package</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span><span class='lparen token'>(</span><span class='rubyid_file identifier id'>file</span><span class='comma token'>,</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_dirname identifier id'>dirname</span><span class='lparen token'>(</span><span class='rubyid_file identifier id'>file</span><span class='rparen token'>)</span><span class='rparen token'>)</span>
-        <span class='rubyid_packages identifier id'>packages</span><span class='lbrack token'>[</span><span class='rubyid_package identifier id'>package</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_as_obj identifier id'>as_obj</span> <span class='integer val'>? </span><span class='rubyid_package identifier id'>package</span> <span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rubyid_package identifier id'>package</span><span class='dot token'>.</span><span class='rubyid_dir identifier id'>dir</span><span class='comma token'>,</span> <span class='rubyid_package identifier id'>package</span><span class='dot token'>.</span><span class='rubyid_spec_path identifier id'>spec_path</span><span class='rbrack token'>]</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_packages'>get_packages</span><span class='lparen'>(</span><span class='id identifier rubyid_include_subpackages'>include_subpackages</span><span class='op'>=</span><span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_as_obj'>as_obj</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_packages'>packages</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_dirs'>dirs</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='const'>SIBLING_REPOS</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_repo_name'>repo_name</span><span class='comma'>,</span> <span class='id identifier rubyid_repo_dirs'>repo_dirs</span><span class='op'>|</span>
+    <span class='id identifier rubyid_repo_dirs'>repo_dirs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_dirs'>dirs</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_repo_dir'>repo_dir</span>
+        <span class='kw'>break</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_dirs'>dirs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='op'>|</span>
+    <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_glob'>glob</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='embexpr_end'>}</span><span class='tstring_content'>/**/*.spec</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_file'>file</span><span class='op'>|</span>
+      <span class='kw'>unless</span> <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>build/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_package'>package</span> <span class='op'>=</span> <span class='const'>Package</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_dirname'>dirname</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_packages'>packages</span><span class='lbracket'>[</span><span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_as_obj'>as_obj</span> <span class='op'>?</span> <span class='id identifier rubyid_package'>package</span> <span class='op'>:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_dir'>dir</span><span class='comma'>,</span> <span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_spec_path'>spec_path</span><span class='rbracket'>]</span>
 
-        <span class='rubyid_if if kw'>if</span> <span class='rubyid_include_subpackages identifier id'>include_subpackages</span>
-          <span class='rubyid_package identifier id'>package</span><span class='dot token'>.</span><span class='rubyid_subpackages identifier id'>subpackages</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_p identifier id'>p</span><span class='bitor op'>|</span>
-            <span class='rubyid_packages identifier id'>packages</span><span class='lbrack token'>[</span><span class='rubyid_p identifier id'>p</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_as_obj identifier id'>as_obj</span> <span class='integer val'>? </span><span class='rubyid_p identifier id'>p</span> <span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rubyid_p identifier id'>p</span><span class='dot token'>.</span><span class='rubyid_dir identifier id'>dir</span><span class='comma token'>,</span> <span class='rubyid_p identifier id'>p</span><span class='dot token'>.</span><span class='rubyid_spec_path identifier id'>spec_path</span><span class='rbrack token'>]</span>
-          <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_package identifier id'>package</span><span class='dot token'>.</span><span class='rubyid_provides identifier id'>provides</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_p identifier id'>p</span><span class='bitor op'>|</span>
-            <span class='rubyid_packages identifier id'>packages</span><span class='lbrack token'>[</span><span class='rubyid_p identifier id'>p</span><span class='dot token'>.</span><span class='rubyid_name identifier id'>name</span><span class='rbrack token'>]</span> <span class='assign token'>=</span> <span class='rubyid_as_obj identifier id'>as_obj</span> <span class='integer val'>? </span><span class='rubyid_p identifier id'>p</span> <span class='colon op'>:</span> <span class='lbrack token'>[</span><span class='rubyid_p identifier id'>p</span><span class='dot token'>.</span><span class='rubyid_dir identifier id'>dir</span><span class='comma token'>,</span> <span class='rubyid_p identifier id'>p</span><span class='dot token'>.</span><span class='rubyid_spec_path identifier id'>spec_path</span><span class='rbrack token'>]</span>
-          <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_end end kw'>end</span>
-      <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_packages identifier id'>packages</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+        <span class='kw'>if</span> <span class='id identifier rubyid_include_subpackages'>include_subpackages</span>
+          <span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_subpackages'>subpackages</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_p'>p</span><span class='op'>|</span>
+            <span class='id identifier rubyid_packages'>packages</span><span class='lbracket'>[</span><span class='id identifier rubyid_p'>p</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_as_obj'>as_obj</span> <span class='op'>?</span> <span class='id identifier rubyid_p'>p</span> <span class='op'>:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_p'>p</span><span class='period'>.</span><span class='id identifier rubyid_dir'>dir</span><span class='comma'>,</span> <span class='id identifier rubyid_p'>p</span><span class='period'>.</span><span class='id identifier rubyid_spec_path'>spec_path</span><span class='rbracket'>]</span>
+          <span class='kw'>end</span>
+          <span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_provides'>provides</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_p'>p</span><span class='op'>|</span>
+            <span class='id identifier rubyid_packages'>packages</span><span class='lbracket'>[</span><span class='id identifier rubyid_p'>p</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_as_obj'>as_obj</span> <span class='op'>?</span> <span class='id identifier rubyid_p'>p</span> <span class='op'>:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_p'>p</span><span class='period'>.</span><span class='id identifier rubyid_dir'>dir</span><span class='comma'>,</span> <span class='id identifier rubyid_p'>p</span><span class='period'>.</span><span class='id identifier rubyid_spec_path'>spec_path</span><span class='rbracket'>]</span>
+          <span class='kw'>end</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_packages'>packages</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -560,28 +558,27 @@
 100</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 82</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 82</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_stale_dirs identifier id'>get_stale_dirs</span>
-  <span class='rubyid_stale_dirs identifier id'>stale_dirs</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_packages identifier id'>packages</span> <span class='assign token'>=</span> <span class='rubyid_get_packages identifier id'>get_packages</span>
-  <span class='rubyid_packages identifier id'>packages</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_package_name identifier id'>package_name</span><span class='comma token'>,</span> <span class='rubyid_build_info identifier id'>build_info</span><span class='bitor op'>|</span>
-    <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_IGNORE_PACKAGES constant id'>IGNORE_PACKAGES</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_package_name identifier id'>package_name</span><span class='rparen token'>)</span>
-      <span class='rubyid_build_dir identifier id'>build_dir</span> <span class='assign token'>=</span> <span class='rubyid_build_info identifier id'>build_info</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
-      <span class='rubyid_spec_file identifier id'>spec_file</span> <span class='assign token'>=</span> <span class='rubyid_build_info identifier id'>build_info</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span>
-      <span class='rubyid_installed_version identifier id'>installed_version</span> <span class='assign token'>=</span> <span class='dxstring node'>`yum list installed #{package_name} | tail -n1 | gawk '{print $2}'`</span>
-      <span class='rubyid_if if kw'>if</span> <span class='rubyid_installed_version identifier id'>installed_version</span> <span class='match op'>=~</span> <span class='regexp val'>/(\d+\.\d+\.\d+)-/</span>
-        <span class='rubyid_installed_version identifier id'>installed_version</span> <span class='assign token'>=</span> <span class='rubyid_$1 nth_ref id'>$1</span>
-        <span class='rubyid_spec_version identifier id'>spec_version</span> <span class='assign token'>=</span> <span class='regexp val'>/Version: *(.*)/</span><span class='dot token'>.</span><span class='rubyid_match identifier id'>match</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_read identifier id'>read</span><span class='lparen token'>(</span><span class='rubyid_spec_file identifier id'>spec_file</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_strip identifier id'>strip</span>
-        <span class='rubyid_installed_version_parts identifier id'>installed_version_parts</span> <span class='assign token'>=</span> <span class='rubyid_installed_version identifier id'>installed_version</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;.&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_part identifier id'>part</span><span class='bitor op'>|</span> <span class='rubyid_part identifier id'>part</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span> <span class='rbrace token'>}</span>
-        <span class='rubyid_spec_version_parts identifier id'>spec_version_parts</span> <span class='assign token'>=</span> <span class='rubyid_spec_version identifier id'>spec_version</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;.&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_map identifier id'>map</span> <span class='lbrace token'>{</span> <span class='bitor op'>|</span><span class='rubyid_part identifier id'>part</span><span class='bitor op'>|</span> <span class='rubyid_part identifier id'>part</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span> <span class='rbrace token'>}</span>
-        <span class='rubyid_stale_dirs identifier id'>stale_dirs</span> <span class='lshft op'>&lt;&lt;</span> <span class='lbrack token'>[</span><span class='rubyid_package_name identifier id'>package_name</span><span class='comma token'>,</span> <span class='rubyid_build_dir identifier id'>build_dir</span><span class='comma token'>,</span> <span class='rubyid_spec_file identifier id'>spec_file</span><span class='rbrack token'>]</span> <span class='rubyid_if if_mod kw'>if</span> <span class='lparen token'>(</span><span class='rubyid_installed_version_parts identifier id'>installed_version_parts</span> <span class='cmp op'>&lt;=&gt;</span> <span class='rubyid_spec_version_parts identifier id'>spec_version_parts</span><span class='rparen token'>)</span> <span class='lt op'>&lt;</span> <span class='integer val'>0</span>
-      <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_stale_dirs identifier id'>stale_dirs</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_stale_dirs'>get_stale_dirs</span>
+  <span class='id identifier rubyid_stale_dirs'>stale_dirs</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_packages'>packages</span> <span class='op'>=</span> <span class='id identifier rubyid_get_packages'>get_packages</span>
+  <span class='id identifier rubyid_packages'>packages</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_package_name'>package_name</span><span class='comma'>,</span> <span class='id identifier rubyid_build_info'>build_info</span><span class='op'>|</span>
+    <span class='kw'>unless</span> <span class='const'>IGNORE_PACKAGES</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_package_name'>package_name</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_build_dir'>build_dir</span> <span class='op'>=</span> <span class='id identifier rubyid_build_info'>build_info</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_spec_file'>spec_file</span> <span class='op'>=</span> <span class='id identifier rubyid_build_info'>build_info</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_installed_version'>installed_version</span> <span class='op'>=</span> <span class='backtick'>`</span><span class='tstring_content'>yum list installed </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_package_name'>package_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> | tail -n1 | gawk &#39;{print $2}&#39;</span><span class='tstring_end'>`</span></span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_installed_version'>installed_version</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(\d+\.\d+\.\d+)-</span><span class='regexp_end'>/</span></span>
+        <span class='id identifier rubyid_installed_version'>installed_version</span> <span class='op'>=</span> <span class='backref'>$1</span>
+        <span class='id identifier rubyid_spec_version'>spec_version</span> <span class='op'>=</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>Version: *(.*)</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_spec_file'>spec_file</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>
+        <span class='id identifier rubyid_installed_version_parts'>installed_version_parts</span> <span class='op'>=</span> <span class='id identifier rubyid_installed_version'>installed_version</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_part'>part</span><span class='op'>|</span> <span class='id identifier rubyid_part'>part</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='rbrace'>}</span>
+        <span class='id identifier rubyid_spec_version_parts'>spec_version_parts</span> <span class='op'>=</span> <span class='id identifier rubyid_spec_version'>spec_version</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_part'>part</span><span class='op'>|</span> <span class='id identifier rubyid_part'>part</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='rbrace'>}</span>
+        <span class='id identifier rubyid_stale_dirs'>stale_dirs</span> <span class='op'>&lt;&lt;</span> <span class='lbracket'>[</span><span class='id identifier rubyid_package_name'>package_name</span><span class='comma'>,</span> <span class='id identifier rubyid_build_dir'>build_dir</span><span class='comma'>,</span> <span class='id identifier rubyid_spec_file'>spec_file</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_installed_version_parts'>installed_version_parts</span> <span class='op'>&lt;=&gt;</span> <span class='id identifier rubyid_spec_version_parts'>spec_version_parts</span><span class='rparen'>)</span> <span class='op'>&lt;</span> <span class='int'>0</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_stale_dirs'>stale_dirs</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -648,53 +645,52 @@
 80</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 37</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 37</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_sync_dirs identifier id'>get_sync_dirs</span>
-  <span class='comment val'># Figure out what needs to be synced</span>
-  <span class='rubyid_tito_report identifier id'>tito_report</span> <span class='assign token'>=</span> <span class='xstring val'>`tito report --untagged-commits`</span>
-  <span class='rubyid_current_package identifier id'>current_package</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_mkdir_p identifier id'>mkdir_p</span> <span class='string val'>&quot;/tmp/devenv/sync/&quot;</span>
-  <span class='rubyid_sync_dirs identifier id'>sync_dirs</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
-  <span class='rubyid_li_repo identifier id'>li_repo</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='string val'>'li'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='lbrack token'>[</span><span class='rubyid_FileUtils constant id'>FileUtils</span><span class='dot token'>.</span><span class='rubyid_pwd identifier id'>pwd</span><span class='rbrack token'>]</span><span class='rbrace token'>}</span>
-  <span class='rubyid_repos identifier id'>repos</span> <span class='assign token'>=</span> <span class='rubyid_li_repo identifier id'>li_repo</span><span class='dot token'>.</span><span class='rubyid_merge identifier id'>merge</span><span class='lparen token'>(</span><span class='rubyid_SIBLING_REPOS constant id'>SIBLING_REPOS</span><span class='rparen token'>)</span>
-  <span class='rubyid_all_packages identifier id'>all_packages</span> <span class='assign token'>=</span> <span class='rubyid_get_packages identifier id'>get_packages</span>
-  <span class='rubyid_repos identifier id'>repos</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_repo_name identifier id'>repo_name</span><span class='comma token'>,</span> <span class='rubyid_repo_dirs identifier id'>repo_dirs</span><span class='bitor op'>|</span>
-    <span class='rubyid_current_package_contents identifier id'>current_package_contents</span> <span class='assign token'>=</span> <span class='string val'>''</span>
-    <span class='rubyid_current_package identifier id'>current_package</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
-    <span class='rubyid_current_sync_dir identifier id'>current_sync_dir</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
-    <span class='rubyid_current_spec_file identifier id'>current_spec_file</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
-    <span class='rubyid_repo_dirs identifier id'>repo_dirs</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_repo_dir identifier id'>repo_dir</span><span class='bitor op'>|</span>
-      <span class='rubyid_if if kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exists? fid id'>exists?</span><span class='lparen token'>(</span><span class='rubyid_repo_dir identifier id'>repo_dir</span><span class='rparen token'>)</span>
-        <span class='rubyid_packages identifier id'>packages</span> <span class='assign token'>=</span> <span class='dxstring node'>`cd #{repo_dir} &amp;&amp; tito report --untagged-commits`</span>
-        <span class='rubyid_packages identifier id'>packages</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;\n&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_each identifier id'>each</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_package identifier id'>package</span><span class='bitor op'>|</span>
-          <span class='rubyid_if if kw'>if</span> <span class='rubyid_package identifier id'>package</span> <span class='match op'>=~</span> <span class='rubyid_DEVENV_REGEX constant id'>DEVENV_REGEX</span>
-            <span class='rubyid_puts identifier id'>puts</span> <span class='string val'>&quot;The devenv package has an update but isn't being installed.&quot;</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_package identifier id'>package</span> <span class='match op'>=~</span> <span class='rubyid_PACKAGE_REGEX constant id'>PACKAGE_REGEX</span>
-            <span class='rubyid_pkg identifier id'>pkg</span> <span class='assign token'>=</span> <span class='rubyid_$1 nth_ref id'>$1</span>
-            <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_IGNORE_PACKAGES constant id'>IGNORE_PACKAGES</span><span class='dot token'>.</span><span class='rubyid_include? fid id'>include?</span><span class='lparen token'>(</span><span class='rubyid_pkg identifier id'>pkg</span><span class='rparen token'>)</span>
-              <span class='rubyid_current_package identifier id'>current_package</span> <span class='assign token'>=</span> <span class='rubyid_pkg identifier id'>pkg</span>
-              <span class='rubyid_current_sync_dir identifier id'>current_sync_dir</span> <span class='assign token'>=</span> <span class='rubyid_all_packages identifier id'>all_packages</span><span class='lbrack token'>[</span><span class='rubyid_pkg identifier id'>pkg</span><span class='rbrack token'>]</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='rbrack token'>]</span>
-              <span class='rubyid_current_spec_file identifier id'>current_spec_file</span> <span class='assign token'>=</span> <span class='rubyid_all_packages identifier id'>all_packages</span><span class='lbrack token'>[</span><span class='rubyid_pkg identifier id'>pkg</span><span class='rbrack token'>]</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_elsif elsif kw'>elsif</span> <span class='rubyid_package identifier id'>package</span> <span class='match op'>=~</span> <span class='regexp val'>/---------------------/</span>
-            <span class='rubyid_if if kw'>if</span> <span class='rubyid_current_package identifier id'>current_package</span>
-              <span class='rubyid_update_sync_history identifier id'>update_sync_history</span><span class='lparen token'>(</span><span class='rubyid_current_package identifier id'>current_package</span><span class='comma token'>,</span> <span class='rubyid_current_package_contents identifier id'>current_package_contents</span><span class='comma token'>,</span> <span class='rubyid_current_sync_dir identifier id'>current_sync_dir</span><span class='comma token'>,</span> <span class='rubyid_current_spec_file identifier id'>current_spec_file</span><span class='comma token'>,</span> <span class='rubyid_sync_dirs identifier id'>sync_dirs</span><span class='rparen token'>)</span>
-              <span class='rubyid_current_package_contents identifier id'>current_package_contents</span> <span class='assign token'>=</span> <span class='string val'>''</span>
-              <span class='rubyid_current_package identifier id'>current_package</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
-            <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_end end kw'>end</span>
-          <span class='rubyid_current_package_contents identifier id'>current_package_contents</span> <span class='opasgn op'>+=</span> <span class='rubyid_package identifier id'>package</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_package identifier id'>current_package</span>
-        <span class='rubyid_end end kw'>end</span>
-        <span class='rubyid_update_sync_history identifier id'>update_sync_history</span><span class='lparen token'>(</span><span class='rubyid_current_package identifier id'>current_package</span><span class='comma token'>,</span> <span class='rubyid_current_package_contents identifier id'>current_package_contents</span><span class='comma token'>,</span> <span class='rubyid_current_sync_dir identifier id'>current_sync_dir</span><span class='comma token'>,</span> <span class='rubyid_current_spec_file identifier id'>current_spec_file</span><span class='comma token'>,</span> <span class='rubyid_sync_dirs identifier id'>sync_dirs</span><span class='rparen token'>)</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_current_package identifier id'>current_package</span>
-        <span class='rubyid_break break kw'>break</span>
-      <span class='rubyid_end end kw'>end</span>
-    <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_sync_dirs identifier id'>sync_dirs</span><span class='dot token'>.</span><span class='rubyid_compact! fid id'>compact!</span>
-  <span class='rubyid_sync_dirs identifier id'>sync_dirs</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_sync_dirs'>get_sync_dirs</span>
+  <span class='comment'># Figure out what needs to be synced
+</span>  <span class='id identifier rubyid_tito_report'>tito_report</span> <span class='op'>=</span> <span class='backtick'>`</span><span class='tstring_content'>tito report --untagged-commits</span><span class='tstring_end'>`</span></span>
+  <span class='id identifier rubyid_current_package'>current_package</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_mkdir_p'>mkdir_p</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/tmp/devenv/sync/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_sync_dirs'>sync_dirs</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_li_repo'>li_repo</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>li</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbracket'>[</span><span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_pwd'>pwd</span><span class='rbracket'>]</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_repos'>repos</span> <span class='op'>=</span> <span class='id identifier rubyid_li_repo'>li_repo</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='const'>SIBLING_REPOS</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_all_packages'>all_packages</span> <span class='op'>=</span> <span class='id identifier rubyid_get_packages'>get_packages</span>
+  <span class='id identifier rubyid_repos'>repos</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_repo_name'>repo_name</span><span class='comma'>,</span> <span class='id identifier rubyid_repo_dirs'>repo_dirs</span><span class='op'>|</span>
+    <span class='id identifier rubyid_current_package_contents'>current_package_contents</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_current_package'>current_package</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='id identifier rubyid_current_sync_dir'>current_sync_dir</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='id identifier rubyid_current_spec_file'>current_spec_file</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='id identifier rubyid_repo_dirs'>repo_dirs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_packages'>packages</span> <span class='op'>=</span> <span class='backtick'>`</span><span class='tstring_content'>cd </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_repo_dir'>repo_dir</span><span class='embexpr_end'>}</span><span class='tstring_content'> &amp;&amp; tito report --untagged-commits</span><span class='tstring_end'>`</span></span>
+        <span class='id identifier rubyid_packages'>packages</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_package'>package</span><span class='op'>|</span>
+          <span class='kw'>if</span> <span class='id identifier rubyid_package'>package</span> <span class='op'>=~</span> <span class='const'>DEVENV_REGEX</span>
+            <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The devenv package has an update but isn&#39;t being installed.</span><span class='tstring_end'>&quot;</span></span>
+          <span class='kw'>elsif</span> <span class='id identifier rubyid_package'>package</span> <span class='op'>=~</span> <span class='const'>PACKAGE_REGEX</span>
+            <span class='id identifier rubyid_pkg'>pkg</span> <span class='op'>=</span> <span class='backref'>$1</span>
+            <span class='kw'>unless</span> <span class='const'>IGNORE_PACKAGES</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_pkg'>pkg</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_current_package'>current_package</span> <span class='op'>=</span> <span class='id identifier rubyid_pkg'>pkg</span>
+              <span class='id identifier rubyid_current_sync_dir'>current_sync_dir</span> <span class='op'>=</span> <span class='id identifier rubyid_all_packages'>all_packages</span><span class='lbracket'>[</span><span class='id identifier rubyid_pkg'>pkg</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+              <span class='id identifier rubyid_current_spec_file'>current_spec_file</span> <span class='op'>=</span> <span class='id identifier rubyid_all_packages'>all_packages</span><span class='lbracket'>[</span><span class='id identifier rubyid_pkg'>pkg</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span>
+            <span class='kw'>end</span>
+          <span class='kw'>elsif</span> <span class='id identifier rubyid_package'>package</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>---------------------</span><span class='regexp_end'>/</span></span>
+            <span class='kw'>if</span> <span class='id identifier rubyid_current_package'>current_package</span>
+              <span class='id identifier rubyid_update_sync_history'>update_sync_history</span><span class='lparen'>(</span><span class='id identifier rubyid_current_package'>current_package</span><span class='comma'>,</span> <span class='id identifier rubyid_current_package_contents'>current_package_contents</span><span class='comma'>,</span> <span class='id identifier rubyid_current_sync_dir'>current_sync_dir</span><span class='comma'>,</span> <span class='id identifier rubyid_current_spec_file'>current_spec_file</span><span class='comma'>,</span> <span class='id identifier rubyid_sync_dirs'>sync_dirs</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_current_package_contents'>current_package_contents</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+              <span class='id identifier rubyid_current_package'>current_package</span> <span class='op'>=</span> <span class='kw'>nil</span>
+            <span class='kw'>end</span>
+          <span class='kw'>end</span>
+          <span class='id identifier rubyid_current_package_contents'>current_package_contents</span> <span class='op'>+=</span> <span class='id identifier rubyid_package'>package</span> <span class='kw'>if</span> <span class='id identifier rubyid_current_package'>current_package</span>
+        <span class='kw'>end</span>
+        <span class='id identifier rubyid_update_sync_history'>update_sync_history</span><span class='lparen'>(</span><span class='id identifier rubyid_current_package'>current_package</span><span class='comma'>,</span> <span class='id identifier rubyid_current_package_contents'>current_package_contents</span><span class='comma'>,</span> <span class='id identifier rubyid_current_sync_dir'>current_sync_dir</span><span class='comma'>,</span> <span class='id identifier rubyid_current_spec_file'>current_spec_file</span><span class='comma'>,</span> <span class='id identifier rubyid_sync_dirs'>sync_dirs</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_current_package'>current_package</span>
+        <span class='kw'>break</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_sync_dirs'>sync_dirs</span><span class='period'>.</span><span class='id identifier rubyid_compact!'>compact!</span>
+  <span class='id identifier rubyid_sync_dirs'>sync_dirs</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -720,12 +716,11 @@
 334</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 332</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 332</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_version identifier id'>get_version</span><span class='lparen token'>(</span><span class='rubyid_file identifier id'>file</span><span class='rparen token'>)</span>
-  <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='regexp val'>/Version: *(.*)/</span><span class='dot token'>.</span><span class='rubyid_match identifier id'>match</span><span class='lparen token'>(</span><span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_read identifier id'>read</span><span class='lparen token'>(</span><span class='rubyid_file identifier id'>file</span><span class='rparen token'>)</span><span class='rparen token'>)</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_strip identifier id'>strip</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_version'>get_version</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_version'>version</span> <span class='op'>=</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>Version: *(.*)</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -763,24 +758,23 @@
 356</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 342</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 342</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_get_yum_version identifier id'>get_yum_version</span><span class='lparen token'>(</span><span class='rubyid_package identifier id'>package</span><span class='rparen token'>)</span>
-  <span class='rubyid_yum_output identifier id'>yum_output</span> <span class='assign token'>=</span> <span class='dxstring node'>`yum info #{package}`</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_yum_version'>get_yum_version</span><span class='lparen'>(</span><span class='id identifier rubyid_package'>package</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_yum_output'>yum_output</span> <span class='op'>=</span> <span class='backtick'>`</span><span class='tstring_content'>yum info </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_package'>package</span><span class='embexpr_end'>}</span><span class='tstring_end'>`</span></span>
 
-  <span class='comment val'># Process the yum output to get a version</span>
-  <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_yum_output identifier id'>yum_output</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;\n&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_collect identifier id'>collect</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_line identifier id'>line</span><span class='bitor op'>|</span>
-    <span class='rubyid_line identifier id'>line</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;:&quot;</span><span class='rparen token'>)</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_strip identifier id'>strip</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_line identifier id'>line</span><span class='dot token'>.</span><span class='rubyid_start_with? fid id'>start_with?</span><span class='lparen token'>(</span><span class='string val'>&quot;Version&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_end end kw'>end</span><span class='dot token'>.</span><span class='rubyid_compact identifier id'>compact</span><span class='lbrack token'>[</span><span class='integer val'>-1</span><span class='rbrack token'>]</span>
+  <span class='comment'># Process the yum output to get a version
+</span>  <span class='id identifier rubyid_version'>version</span> <span class='op'>=</span> <span class='id identifier rubyid_yum_output'>yum_output</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_collect'>collect</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_line'>line</span><span class='op'>|</span>
+    <span class='id identifier rubyid_line'>line</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span> <span class='kw'>if</span> <span class='id identifier rubyid_line'>line</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Version</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='lbracket'>[</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span>
 
-  <span class='comment val'># Process the yum output to get a release</span>
-  <span class='rubyid_release identifier id'>release</span> <span class='assign token'>=</span> <span class='rubyid_yum_output identifier id'>yum_output</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;\n&quot;</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_collect identifier id'>collect</span> <span class='rubyid_do do kw'>do</span> <span class='bitor op'>|</span><span class='rubyid_line identifier id'>line</span><span class='bitor op'>|</span>
-    <span class='rubyid_line identifier id'>line</span><span class='dot token'>.</span><span class='rubyid_split identifier id'>split</span><span class='lparen token'>(</span><span class='string val'>&quot;:&quot;</span><span class='rparen token'>)</span><span class='lbrack token'>[</span><span class='integer val'>1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_strip identifier id'>strip</span> <span class='rubyid_if if_mod kw'>if</span> <span class='rubyid_line identifier id'>line</span><span class='dot token'>.</span><span class='rubyid_start_with? fid id'>start_with?</span><span class='lparen token'>(</span><span class='string val'>&quot;Release&quot;</span><span class='rparen token'>)</span>
-  <span class='rubyid_end end kw'>end</span><span class='dot token'>.</span><span class='rubyid_compact identifier id'>compact</span><span class='lbrack token'>[</span><span class='integer val'>-1</span><span class='rbrack token'>]</span>
+  <span class='comment'># Process the yum output to get a release
+</span>  <span class='id identifier rubyid_release'>release</span> <span class='op'>=</span> <span class='id identifier rubyid_yum_output'>yum_output</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_collect'>collect</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_line'>line</span><span class='op'>|</span>
+    <span class='id identifier rubyid_line'>line</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span> <span class='kw'>if</span> <span class='id identifier rubyid_line'>line</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Release</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='lbracket'>[</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span>
 
-  <span class='rubyid_return return kw'>return</span> <span class='dstring node'>&quot;#{version}-#{release.split('.')[0]}&quot;</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+  <span class='kw'>return</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_version'>version</span><span class='embexpr_end'>}</span><span class='tstring_content'>-</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_release'>release</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -813,19 +807,18 @@
 330</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 321</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 321</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_next_minor_version identifier id'>next_minor_version</span><span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='rparen token'>)</span>
-  <span class='rubyid_index_of_dot identifier id'>index_of_dot</span> <span class='assign token'>=</span> <span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='string val'>'.'</span><span class='rparen token'>)</span>
-  <span class='rubyid_second_index_of_dot identifier id'>second_index_of_dot</span> <span class='assign token'>=</span> <span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_index identifier id'>index</span><span class='lparen token'>(</span><span class='string val'>'.'</span><span class='comma token'>,</span> <span class='rubyid_index_of_dot identifier id'>index_of_dot</span> <span class='plus op'>+</span> <span class='integer val'>1</span><span class='rparen token'>)</span>
-  <span class='rubyid_last_index_of_dot identifier id'>last_index_of_dot</span> <span class='assign token'>=</span> <span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_rindex identifier id'>rindex</span><span class='lparen token'>(</span><span class='string val'>'.'</span><span class='rparen token'>)</span>
-  <span class='rubyid_next_minor_version identifier id'>next_minor_version</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_version identifier id'>version</span><span class='lbrack token'>[</span><span class='rubyid_last_index_of_dot identifier id'>last_index_of_dot</span><span class='plus op'>+</span><span class='float val'>1</span><span class='dot2 op'>..</span><span class='integer val'>-1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span> <span class='gt op'>&gt;</span> <span class='integer val'>1</span>
-    <span class='rubyid_next_minor_version identifier id'>next_minor_version</span> <span class='assign token'>=</span> <span class='rubyid_version identifier id'>version</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='dot2 op'>..</span><span class='rubyid_index_of_dot identifier id'>index_of_dot</span><span class='rbrack token'>]</span> <span class='plus op'>+</span> <span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='lbrack token'>[</span><span class='rubyid_index_of_dot identifier id'>index_of_dot</span> <span class='plus op'>+</span> <span class='float val'>1</span><span class='dot2 op'>..</span><span class='rubyid_second_index_of_dot identifier id'>second_index_of_dot</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span> <span class='plus op'>+</span> <span class='integer val'>1</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span> <span class='plus op'>+</span> <span class='string val'>&quot;.0&quot;</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_next_minor_version identifier id'>next_minor_version</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_next_minor_version'>next_minor_version</span><span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_index_of_dot'>index_of_dot</span> <span class='op'>=</span> <span class='id identifier rubyid_version'>version</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_second_index_of_dot'>second_index_of_dot</span> <span class='op'>=</span> <span class='id identifier rubyid_version'>version</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_index_of_dot'>index_of_dot</span> <span class='op'>+</span> <span class='int'>1</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_last_index_of_dot'>last_index_of_dot</span> <span class='op'>=</span> <span class='id identifier rubyid_version'>version</span><span class='period'>.</span><span class='id identifier rubyid_rindex'>rindex</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_next_minor_version'>next_minor_version</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_version'>version</span><span class='lbracket'>[</span><span class='id identifier rubyid_last_index_of_dot'>last_index_of_dot</span><span class='op'>+</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>&gt;</span> <span class='int'>1</span>
+    <span class='id identifier rubyid_next_minor_version'>next_minor_version</span> <span class='op'>=</span> <span class='id identifier rubyid_version'>version</span><span class='lbracket'>[</span><span class='int'>0</span><span class='op'>..</span><span class='id identifier rubyid_index_of_dot'>index_of_dot</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='lbracket'>[</span><span class='id identifier rubyid_index_of_dot'>index_of_dot</span> <span class='op'>+</span> <span class='int'>1</span><span class='op'>..</span><span class='id identifier rubyid_second_index_of_dot'>second_index_of_dot</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>+</span> <span class='int'>1</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.0</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_next_minor_version'>next_minor_version</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -852,13 +845,12 @@
 319</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 316</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 316</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_next_patch_version identifier id'>next_patch_version</span><span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='rparen token'>)</span>
-  <span class='rubyid_last_index_of_dot identifier id'>last_index_of_dot</span> <span class='assign token'>=</span> <span class='rubyid_version identifier id'>version</span><span class='dot token'>.</span><span class='rubyid_rindex identifier id'>rindex</span><span class='lparen token'>(</span><span class='string val'>'.'</span><span class='rparen token'>)</span>
-  <span class='rubyid_version identifier id'>version</span><span class='lbrack token'>[</span><span class='integer val'>0</span><span class='dot2 op'>..</span><span class='rubyid_last_index_of_dot identifier id'>last_index_of_dot</span><span class='rbrack token'>]</span> <span class='plus op'>+</span> <span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='lbrack token'>[</span><span class='rubyid_last_index_of_dot identifier id'>last_index_of_dot</span><span class='plus op'>+</span><span class='float val'>1</span><span class='dot2 op'>..</span><span class='integer val'>-1</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='rubyid_to_i identifier id'>to_i</span> <span class='plus op'>+</span> <span class='integer val'>1</span><span class='rparen token'>)</span><span class='dot token'>.</span><span class='rubyid_to_s identifier id'>to_s</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_next_patch_version'>next_patch_version</span><span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_last_index_of_dot'>last_index_of_dot</span> <span class='op'>=</span> <span class='id identifier rubyid_version'>version</span><span class='period'>.</span><span class='id identifier rubyid_rindex'>rindex</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_version'>version</span><span class='lbracket'>[</span><span class='int'>0</span><span class='op'>..</span><span class='id identifier rubyid_last_index_of_dot'>last_index_of_dot</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='lbracket'>[</span><span class='id identifier rubyid_last_index_of_dot'>last_index_of_dot</span><span class='op'>+</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>+</span> <span class='int'>1</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -885,13 +877,12 @@
 314</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 311</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 311</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_next_tito_version identifier id'>next_tito_version</span><span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='comma token'>,</span> <span class='rubyid_commit_id identifier id'>commit_id</span><span class='rparen token'>)</span>
-  <span class='comment val'>#version + &quot;-1.git.#{commit_id}&quot;</span>
-  <span class='rubyid_version identifier id'>version</span> <span class='plus op'>+</span> <span class='string val'>&quot;.1&quot;</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_next_tito_version'>next_tito_version</span><span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='comma'>,</span> <span class='id identifier rubyid_commit_id'>commit_id</span><span class='rparen'>)</span>
+  <span class='comment'>#version + &quot;-1.git.#{commit_id}&quot;
+</span>  <span class='id identifier rubyid_version'>version</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.1</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -919,14 +910,13 @@
 340</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 336</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 336</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_update_gemfile_version identifier id'>update_gemfile_version</span><span class='lparen token'>(</span><span class='rubyid_spec_file identifier id'>spec_file</span><span class='comma token'>,</span> <span class='rubyid_gem_name identifier id'>gem_name</span><span class='comma token'>,</span> <span class='rubyid_gemfile identifier id'>gemfile</span><span class='comma token'>,</span> <span class='rubyid_verbose identifier id'>verbose</span><span class='rparen token'>)</span>
-  <span class='rubyid_version identifier id'>version</span> <span class='assign token'>=</span> <span class='rubyid_get_version identifier id'>get_version</span><span class='lparen token'>(</span><span class='rubyid_spec_file identifier id'>spec_file</span><span class='rparen token'>)</span>
-  <span class='rubyid_nv identifier id'>nv</span> <span class='assign token'>=</span> <span class='rubyid_next_patch_version identifier id'>next_patch_version</span><span class='lparen token'>(</span><span class='rubyid_version identifier id'>version</span><span class='rparen token'>)</span>
-  <span class='rubyid_run identifier id'>run</span><span class='lparen token'>(</span><span class='dstring node'>&quot;/bin/sed -i 's,#{gem_name} (.*,#{gem_name} (#{nv}),' #{gemfile}&quot;</span><span class='comma token'>,</span> <span class='symbol val'>:verbose</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='rubyid_verbose identifier id'>verbose</span><span class='rparen token'>)</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_update_gemfile_version'>update_gemfile_version</span><span class='lparen'>(</span><span class='id identifier rubyid_spec_file'>spec_file</span><span class='comma'>,</span> <span class='id identifier rubyid_gem_name'>gem_name</span><span class='comma'>,</span> <span class='id identifier rubyid_gemfile'>gemfile</span><span class='comma'>,</span> <span class='id identifier rubyid_verbose'>verbose</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_version'>version</span> <span class='op'>=</span> <span class='id identifier rubyid_get_version'>get_version</span><span class='lparen'>(</span><span class='id identifier rubyid_spec_file'>spec_file</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_nv'>nv</span> <span class='op'>=</span> <span class='id identifier rubyid_next_patch_version'>next_patch_version</span><span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_run'>run</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/bin/sed -i &#39;s,</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> (.*,</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gem_name'>gem_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> (</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_nv'>nv</span><span class='embexpr_end'>}</span><span class='tstring_content'>),&#39; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gemfile'>gemfile</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='symbol'>:verbose</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_verbose'>verbose</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -967,27 +957,26 @@
 309</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-dev-tools/build/lib/openshift/tito.rb', line 292</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/lib/openshift/tito.rb', line 292</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_update_sync_history identifier id'>update_sync_history</span><span class='lparen token'>(</span><span class='rubyid_current_package identifier id'>current_package</span><span class='comma token'>,</span> <span class='rubyid_current_package_contents identifier id'>current_package_contents</span><span class='comma token'>,</span> <span class='rubyid_current_sync_dir identifier id'>current_sync_dir</span><span class='comma token'>,</span> <span class='rubyid_current_spec_file identifier id'>current_spec_file</span><span class='comma token'>,</span> <span class='rubyid_sync_dirs identifier id'>sync_dirs</span><span class='rparen token'>)</span>
-  <span class='rubyid_current_package_file identifier id'>current_package_file</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;/tmp/devenv/sync/#{current_package}&quot;</span>
-  <span class='rubyid_previous_package_contents identifier id'>previous_package_contents</span> <span class='assign token'>=</span> <span class='rubyid_nil nil kw'>nil</span>
-  <span class='rubyid_if if kw'>if</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_exists? fid id'>exists?</span> <span class='rubyid_current_package_file identifier id'>current_package_file</span>
-    <span class='rubyid_previous_package_contents identifier id'>previous_package_contents</span> <span class='assign token'>=</span> <span class='dxstring node'>`cat #{current_package_file}`</span><span class='dot token'>.</span><span class='rubyid_chomp identifier id'>chomp</span>
-  <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_unless unless kw'>unless</span> <span class='rubyid_previous_package_contents identifier id'>previous_package_contents</span> <span class='eq op'>==</span> <span class='rubyid_current_package_contents identifier id'>current_package_contents</span>
-    <span class='rubyid_sync_dirs identifier id'>sync_dirs</span> <span class='lshft op'>&lt;&lt;</span> <span class='lbrack token'>[</span><span class='rubyid_current_package identifier id'>current_package</span><span class='comma token'>,</span> <span class='rubyid_current_sync_dir identifier id'>current_sync_dir</span><span class='comma token'>,</span> <span class='rubyid_current_spec_file identifier id'>current_spec_file</span><span class='rbrack token'>]</span>
-    <span class='rubyid_file identifier id'>file</span> <span class='assign token'>=</span> <span class='rubyid_File constant id'>File</span><span class='dot token'>.</span><span class='rubyid_open identifier id'>open</span><span class='lparen token'>(</span><span class='rubyid_current_package_file identifier id'>current_package_file</span><span class='comma token'>,</span> <span class='string val'>'w'</span><span class='rparen token'>)</span>
-    <span class='rubyid_begin begin kw'>begin</span>
-      <span class='rubyid_file identifier id'>file</span><span class='dot token'>.</span><span class='rubyid_print identifier id'>print</span> <span class='rubyid_current_package_contents identifier id'>current_package_contents</span>
-    <span class='rubyid_ensure ensure kw'>ensure</span>
-      <span class='rubyid_file identifier id'>file</span><span class='dot token'>.</span><span class='rubyid_close identifier id'>close</span>
-    <span class='rubyid_end end kw'>end</span>
-  <span class='rubyid_else else kw'>else</span>
-    <span class='rubyid_puts identifier id'>puts</span> <span class='dstring node'>&quot;Latest package already installed for: #{current_package}&quot;</span>
-  <span class='rubyid_end end kw'>end</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='id identifier rubyid_update_sync_history'>update_sync_history</span><span class='lparen'>(</span><span class='id identifier rubyid_current_package'>current_package</span><span class='comma'>,</span> <span class='id identifier rubyid_current_package_contents'>current_package_contents</span><span class='comma'>,</span> <span class='id identifier rubyid_current_sync_dir'>current_sync_dir</span><span class='comma'>,</span> <span class='id identifier rubyid_current_spec_file'>current_spec_file</span><span class='comma'>,</span> <span class='id identifier rubyid_sync_dirs'>sync_dirs</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_current_package_file'>current_package_file</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/tmp/devenv/sync/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_current_package'>current_package</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_previous_package_contents'>previous_package_contents</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span> <span class='id identifier rubyid_current_package_file'>current_package_file</span>
+    <span class='id identifier rubyid_previous_package_contents'>previous_package_contents</span> <span class='op'>=</span> <span class='backtick'>`</span><span class='tstring_content'>cat </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_current_package_file'>current_package_file</span><span class='embexpr_end'>}</span><span class='tstring_end'>`</span></span><span class='period'>.</span><span class='id identifier rubyid_chomp'>chomp</span>
+  <span class='kw'>end</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_previous_package_contents'>previous_package_contents</span> <span class='op'>==</span> <span class='id identifier rubyid_current_package_contents'>current_package_contents</span>
+    <span class='id identifier rubyid_sync_dirs'>sync_dirs</span> <span class='op'>&lt;&lt;</span> <span class='lbracket'>[</span><span class='id identifier rubyid_current_package'>current_package</span><span class='comma'>,</span> <span class='id identifier rubyid_current_sync_dir'>current_sync_dir</span><span class='comma'>,</span> <span class='id identifier rubyid_current_spec_file'>current_spec_file</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_file'>file</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='id identifier rubyid_current_package_file'>current_package_file</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>w</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='kw'>begin</span>
+      <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_print'>print</span> <span class='id identifier rubyid_current_package_contents'>current_package_contents</span>
+    <span class='kw'>ensure</span>
+      <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Latest package already installed for: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_current_package'>current_package</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -998,9 +987,9 @@
 </div>
 
     <div id="footer">
-  Generated on Tue Jun 11 20:15:56 2013 by
+  Generated on Fri Jul 19 21:49:49 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.5.2 (ruby-1.8.7).
+  0.8.5.2 (ruby-2.0.0).
 </div>
 
   </body>

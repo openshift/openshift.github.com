@@ -94,11 +94,45 @@
   
   
     <dt class="r2 last">Defined in:</dt>
-    <dd class="r2 last">origin-server/node/lib/openshift-origin-node/config.rb</dd>
+    <dd class="r2 last">/home/fedora/origin-server/node/lib/openshift-origin-node/config.rb<span class="defines">,<br />
+  /home/fedora/origin-server/common/lib/openshift-origin-common/config.rb</span>
+</dd>
   
 </dl>
 <div class="clear"></div>
 
+
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="CONF_DIR-constant" class="">CONF_DIR =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/etc/openshift/</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PLUGINS_DIR-constant" class="">PLUGINS_DIR =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='const'>CONF_DIR</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>plugins.d/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span></pre></dd>
+      
+        <dt id="NODE_CONF_FILE-constant" class="">NODE_CONF_FILE =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='const'>CONF_DIR</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>node.conf</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span></pre></dd>
+      
+        <dt id="conf_parsed-classvariable" class="">@@conf_parsed =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span><span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="conf_mtime-classvariable" class="">@@conf_mtime =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span><span class='rbrace'>}</span></pre></dd>
+      
+    </dl>
+  
 
 
 
@@ -131,9 +165,87 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>
-This is a bit of a hack.
-</p>
+    <span class="summary_desc"><div class='inline'>
+<p>This is a bit of a hack.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get-instance_method" title="#get (instance method)">- (Object) <strong>get</strong>(name, default = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_bool-instance_method" title="#get_bool (instance method)">- (Object) <strong>get_bool</strong>(name, default = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (Config) <strong>initialize</strong>(conf_path = NODE_CONF_FILE) </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of Config.</p>
 </div></span>
   
 </li>
@@ -142,6 +254,71 @@ This is a bit of a hack.
     </ul>
   
 
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="OpenShift::Config (class)">Config</a></span></tt>) <strong>initialize</strong>(conf_path = NODE_CONF_FILE) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>A new instance of Config</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/config.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='op'>=</span><span class='const'>NODE_CONF_FILE</span><span class='rparen'>)</span>
+  <span class='kw'>begin</span>
+    <span class='id identifier rubyid_conf_mtime'>conf_mtime</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_stat'>stat</span><span class='lparen'>(</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_mtime'>mtime</span>
+    <span class='kw'>if</span> <span class='cvar'>@@conf_parsed</span><span class='lbracket'>[</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='kw'>or</span> <span class='lparen'>(</span><span class='id identifier rubyid_conf_mtime'>conf_mtime</span> <span class='op'>!=</span> <span class='cvar'>@@conf_mtime</span><span class='lbracket'>[</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='cvar'>@@conf_parsed</span><span class='lbracket'>[</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'>ParseConfig</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='rparen'>)</span>
+      <span class='cvar'>@@conf_mtime</span><span class='lbracket'>[</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_conf_mtime'>conf_mtime</span>
+    <span class='kw'>end</span>
+    <span class='ivar'>@conf</span> <span class='op'>=</span> <span class='cvar'>@@conf_parsed</span><span class='lbracket'>[</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='rbracket'>]</span>
+  <span class='kw'>rescue</span> <span class='const'>Errno</span><span class='op'>::</span><span class='const'>EACCES</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Could not open config file </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_exit'>exit</span> <span class='int'>253</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
 
 
   <div id="class_method_details" class="method_details_list">
@@ -159,13 +336,12 @@ This is a bit of a hack.
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>
-This is a bit of a hack. The old OpenShift::Config was a singleton object,
+    
+<p>This is a bit of a hack.  The old OpenShift::Config was a singleton object,
 and so users would use OpenShift::Config.instance to get it. Here, we
-define .instance to return a new instance. Hopefully, nothing is relying on
-the standard singleton behavior whereby .instance always returns the same
-instance.
-</p>
+define .instance to return a new instance.  Hopefully, nothing is relying
+on the standard singleton behavior whereby .instance always returns the
+same instance.</p>
 
 
   </div>
@@ -184,12 +360,89 @@ instance.
 19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'origin-server/node/lib/openshift-origin-node/config.rb', line 17</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/config.rb', line 17</span>
 
-<span class='rubyid_def def kw'>def</span> <span class='rubyid_self self kw'>self</span><span class='dot token'>.</span><span class='rubyid_instance identifier id'>instance</span>
-  <span class='rubyid_OpenShift constant id'>OpenShift</span><span class='colon2 op'>::</span><span class='rubyid_Config constant id'>Config</span><span class='dot token'>.</span><span class='rubyid_new identifier id'>new</span>
-<span class='rubyid_end end kw'>end</span>
-</pre>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span>
+  <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>Config</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="get-instance_method">
+  
+    - (<tt>Object</tt>) <strong>get</strong>(name, default = nil) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46
+47
+48
+49
+50
+51</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/config.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_default'>default</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_val'>val</span> <span class='op'>=</span> <span class='ivar'>@conf</span><span class='lbracket'>[</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_val'>val</span> <span class='op'>=</span> <span class='id identifier rubyid_default'>default</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_val'>val</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='kw'>and</span> <span class='op'>!</span><span class='id identifier rubyid_default'>default</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_val'>val</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\\:</span><span class='regexp_end'>/</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_val'>val</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='id identifier rubyid_val'>val</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[ \t]*#[^\n]*</span><span class='regexp_end'>/</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_val'>val</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='id identifier rubyid_val'>val</span> <span class='op'>=</span> <span class='id identifier rubyid_val'>val</span><span class='lbracket'>[</span><span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>2</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_val'>val</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='kw'>and</span> <span class='id identifier rubyid_val'>val</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_val'>val</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_bool-instance_method">
+  
+    - (<tt>Object</tt>) <strong>get_bool</strong>(name, default = nil) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+53
+54
+55
+56</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/config.rb', line 53</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_bool'>get_bool</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_default'>default</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='comment'># !! is used to normalise the value to either a 1 (true) or a 0 (false).
+</span>  <span class='op'>!</span><span class='op'>!</span><span class='lparen'>(</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_default'>default</span><span class='rparen'>)</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^(true|t|yes|y|1)$</span><span class='regexp_end'>/i</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -200,9 +453,9 @@ instance.
 </div>
 
     <div id="footer">
-  Generated on Tue Jun 11 20:12:38 2013 by
+  Generated on Fri Jul 19 21:49:27 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.8.5.2 (ruby-1.8.7).
+  0.8.5.2 (ruby-2.0.0).
 </div>
 
   </body>
