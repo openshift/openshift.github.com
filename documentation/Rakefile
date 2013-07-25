@@ -1,0 +1,17 @@
+require 'asciidoctor'
+require 'rake'
+
+task :build do
+  Dir.glob("*.txt").each do |file|
+    puts "Processing #{file}"
+    Asciidoctor.render_file file, :in_place => true, :safe => :safe, :template_dir => './templates', :attributes => %w(source-highlighter=coderay coderay-css=style stylesdir=./stylesheets imagesdir=./images stylesheet=foundation.css linkcss! icons=font idprefix= idseparator=- sectanchors)
+  end
+end
+
+task :clean do
+  sh "rm *.html" do |ok,res|
+    if ! ok
+      puts "Nothing to clean."
+    end
+  end
+end
