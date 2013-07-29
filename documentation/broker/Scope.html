@@ -86,7 +86,25 @@
 </dl>
 <div class="clear"></div>
 
-<h2>Defined Under Namespace</h2>
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>A scope represents a constraint on an authenticated user&#39;s access to
+the system. The actions a given authenticated user can perform are the
+union of actions that the active scopes allow - for instance, a client with
+the “read” scope and the “domain/&lt;id&gt;/admin” scope has read access to
+all resources visible to the active  user, and full administrative access
+on the identified domain.  If the active user is himself limited to a set
+of actions on that domain, the scope does not grant any more actions than
+he has normally.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
 <p class="children">
   
     
@@ -403,14 +421,14 @@
       <pre class="lines">
 
 
-9
-10
-11
-12
-13</pre>
+18
+19
+20
+21
+22</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 9</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 18</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span>
   <span class='id identifier rubyid_s'>s</span> <span class='op'>=</span> <span class='id identifier rubyid_scopes'>scopes</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
@@ -437,12 +455,12 @@
       <pre class="lines">
 
 
-62
-63
-64</pre>
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 62</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default'>default</span>
   <span class='const'>Scope</span><span class='period'>.</span><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:default_scope</span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -467,15 +485,15 @@
       <pre class="lines">
 
 
-66
-67
-68</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 66</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_describe_all'>describe_all</span>
-  <span class='id identifier rubyid_scopes'>scopes</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span> <span class='kw'>unless</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:describe</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='id identifier rubyid_scopes'>scopes</span><span class='lbracket'>[</span><span class='kw'>nil</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:describe</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_scopes'>scopes</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span> <span class='kw'>unless</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:describe</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='id identifier rubyid_scopes'>scopes</span><span class='lbracket'>[</span><span class='kw'>nil</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:describe</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -508,16 +526,16 @@
       <pre class="lines">
 
 
-19
-20
-21
-22
-23
-24
-25</pre>
+28
+29
+30
+31
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 19</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 28</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='kw'>for</span><span class='lparen'>(</span><span class='id identifier rubyid_s'>s</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_s'>s</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
@@ -557,12 +575,12 @@
       <pre class="lines">
 
 
-30
-31
-32</pre>
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 30</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_for!'>for!</span><span class='lparen'>(</span><span class='id identifier rubyid_s'>s</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_for'>for</span><span class='lparen'>(</span><span class='id identifier rubyid_s'>s</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_raise'>raise</span> <span class='const'>Unrecognized</span><span class='comma'>,</span> <span class='id identifier rubyid_s'>s</span><span class='rparen'>)</span>
@@ -598,19 +616,19 @@
       <pre class="lines">
 
 
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60</pre>
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 51</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_spec'>spec</span><span class='rparen'>)</span>
   <span class='const'>Scopes</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span>
@@ -653,19 +671,19 @@
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46</pre>
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 37</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 46</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list!'>list!</span><span class='lparen'>(</span><span class='id identifier rubyid_spec'>spec</span><span class='rparen'>)</span>
   <span class='const'>Scopes</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span>
@@ -697,20 +715,20 @@
       <pre class="lines">
 
 
-213
-214
-215
-216
-217
-218
-219
-220
-221
-222
-223</pre>
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 213</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 264</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_load_scopes'>load_scopes</span><span class='lparen'>(</span><span class='id identifier rubyid_classes'>classes</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_classes'>classes</span><span class='period'>.</span><span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='kw'>nil</span> <span class='op'>=&gt;</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_h'>h</span><span class='comma'>,</span> <span class='id identifier rubyid_c'>c</span><span class='op'>|</span>
@@ -743,12 +761,12 @@
       <pre class="lines">
 
 
-210
-211
-212</pre>
+261
+262
+263</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 210</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 261</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_scopes'>scopes</span>
   <span class='ivar'>@scopes</span> <span class='op'>||=</span> <span class='id identifier rubyid_load_scopes'>load_scopes</span><span class='lparen'>(</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:scopes</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
@@ -773,17 +791,17 @@
       <pre class="lines">
 
 
-200
-201
-202
-203
-204
-205
-206
-207</pre>
+251
+252
+253
+254
+255
+256
+257
+258</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 200</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/scope.rb', line 251</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>Scopes</span><span class='lparen'>(</span><span class='id identifier rubyid_arg'>arg</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_arg'>arg</span>
@@ -803,7 +821,7 @@
 </div>
 
     <div id="footer">
-  Generated on Sun Jul 28 22:04:02 2013 by
+  Generated on Mon Jul 29 18:18:30 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

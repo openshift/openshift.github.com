@@ -318,20 +318,20 @@ objects.</p>
       <pre class="lines">
 
 
-183
-184
-185
-186
-187
-188
-189
-190
 191
 192
-193</pre>
+193
+194
+195
+196
+197
+198
+199
+200
+201</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 183</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 191</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_error_messages'>get_error_messages</span><span class='lparen'>(</span><span class='id identifier rubyid_object'>object</span><span class='comma'>,</span> <span class='id identifier rubyid_field_name_map'>field_name_map</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_messages'>messages</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -375,16 +375,16 @@ objects.</p>
       <pre class="lines">
 
 
-203
-204
-205
-206
-207
-208
-209</pre>
+211
+212
+213
+214
+215
+216
+217</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 203</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 211</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_log_args'>get_log_args</span>
   <span class='id identifier rubyid_args'>args</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -413,12 +413,12 @@ objects.</p>
       <pre class="lines">
 
 
-195
-196
-197</pre>
+203
+204
+205</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 195</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 203</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new_rest_reply'>new_rest_reply</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_arguments'>arguments</span><span class='rparen'>)</span>
   <span class='const'>RestReply</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_requested_api_version'>requested_api_version</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_arguments'>arguments</span><span class='rparen'>)</span>
@@ -619,7 +619,15 @@ messages::
 137
 138
 139
-140</pre>
+140
+141
+142
+143
+144
+145
+146
+147
+148</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 55</span>
@@ -631,6 +639,14 @@ messages::
   <span class='id identifier rubyid_field'>field</span> <span class='op'>=</span> <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:field</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_field'>field</span> <span class='op'>:</span> <span class='kw'>nil</span>
 
   <span class='kw'>case</span> <span class='id identifier rubyid_ex'>ex</span>
+  <span class='kw'>when</span> <span class='const'>Mongoid</span><span class='op'>::</span><span class='const'>Errors</span><span class='op'>::</span><span class='const'>Validations</span>
+    <span class='id identifier rubyid_field_map'>field_map</span> <span class='op'>=</span> 
+      <span class='kw'>case</span> <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span>
+      <span class='kw'>when</span> <span class='const'>Domain</span> <span class='kw'>then</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>namespace</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>id</span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+    <span class='id identifier rubyid_messages'>messages</span> <span class='op'>=</span> <span class='id identifier rubyid_get_error_messages'>get_error_messages</span><span class='lparen'>(</span><span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_document'>document</span><span class='comma'>,</span> <span class='id identifier rubyid_field_map'>field_map</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_render_error'>render_error</span><span class='lparen'>(</span><span class='symbol'>:unprocessable_entity</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_messages'>messages</span><span class='rparen'>)</span>
+
   <span class='kw'>when</span> <span class='const'>Mongoid</span><span class='op'>::</span><span class='const'>Errors</span><span class='op'>::</span><span class='const'>DocumentNotFound</span>
     <span class='id identifier rubyid_status'>status</span> <span class='op'>=</span> <span class='symbol'>:not_found</span>
     <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='id identifier rubyid_ex'>ex</span><span class='period'>.</span><span class='id identifier rubyid_klass'>klass</span>
@@ -754,14 +770,6 @@ extra_messages::
       <pre class="lines">
 
 
-156
-157
-158
-159
-160
-161
-162
-163
 164
 165
 166
@@ -772,10 +780,18 @@ extra_messages::
 171
 172
 173
-174</pre>
+174
+175
+176
+177
+178
+179
+180
+181
+182</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 156</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/controller/api_responses.rb', line 164</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_render_success'>render_success</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_result'>result</span><span class='op'>=</span><span class='kw'>nil</span> <span class='comma'>,</span><span class='id identifier rubyid_extra_messages'>extra_messages</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_extra_log_args'>extra_log_args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_reply'>reply</span> <span class='op'>=</span> <span class='id identifier rubyid_new_rest_reply'>new_rest_reply</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
@@ -847,7 +863,7 @@ extra_messages::
 </div>
 
     <div id="footer">
-  Generated on Sun Jul 28 22:04:02 2013 by
+  Generated on Mon Jul 29 18:18:31 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
