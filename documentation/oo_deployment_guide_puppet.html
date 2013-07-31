@@ -656,7 +656,7 @@ code { font-family: source_code_pro; }
 <ol type="none" class="sectlevel1">
 <li><a href="#installing-puppet">1. Installing Puppet</a></li>
 <li><a href="#generating-bind-tsig-key">2. Generating BIND TSIG Key</a></li>
-<li><a href="#add-etc-hosts-entry-optional">3. Add /etc/hosts entry (optional)</a></li>
+<li><a href="#update-the-machines-hostname">3. Update the Machines Hostname</a></li>
 <li><a href="#configuring-an-all-in-one-host">4. Configuring an all-in-one host</a></li>
 <li><a href="#configuring-seperate-hosts-for-broker-node">5. Configuring seperate hosts for broker/node</a></li>
 <li>
@@ -797,40 +797,24 @@ cat /var/named/Kexample.com.*.key  | awk '{print $8}'</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="add-etc-hosts-entry-optional"><a class="anchor" href="#add-etc-hosts-entry-optional"></a>3. Add /etc/hosts entry (optional)</h2>
+<h2 id="update-the-machines-hostname"><a class="anchor" href="#update-the-machines-hostname"></a>3. Update the Machines Hostname</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>If your machines hostname does not resolve to its public IP address, do the following:</p>
+<div class="listingblock">
+<div class="title">Fedora</div>
+<div class="content monospaced">
+<pre>echo "broker.example.com" &gt; /etc/hostname
+hostname broker.example.com</pre>
 </div>
-<div class="olist arabic">
-
-<ol class="arabic">
-<li>
-<p>Add an entry in <code>/etc/hosts</code> mapping the machines hostname to its public IP; e.g.,</p>
-</li>
-</ol>
 </div>
 <div class="listingblock">
-
+<div class="title">RHEL</div>
 <div class="content monospaced">
-<pre>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-10.211.55.3 thishost.thisdomain.com</pre>
-</div>
-</div>
-<div class="olist arabic">
+<pre>cat&lt;&lt;EOF&gt;/etc/sysconfig/network
+NETWORKING=yes
+HOSTNAME=broker.example.com
+EOF
 
-<ol class="arabic">
-<li>
-<p>Update the <code>/etc/hostname</code> file; e.g.,</p>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-
-<div class="content monospaced">
-<pre>echo "thishost.thisdomain.com" &gt; /etc/hostname
-hostname thishost.thisdomain.com</pre>
+hostname broker.example.com</pre>
 </div>
 </div>
 
@@ -853,7 +837,7 @@ Furthermore, TSIG key that we generated above should be inserted.</p>
 <div class="content monospaced">
 <pre>    class { 'openshift_origin' :
       #The DNS resolvable hostname of this host
-      node_fqdn                  =&gt; "thishost.thisdomain.com",
+      node_fqdn                  =&gt; "broker.example.com",
 
       #The domain under which application should be created. Eg: &lt;app&gt;-&lt;namespace&gt;.example.com
       cloud_domain               =&gt; 'example.com',
@@ -886,7 +870,13 @@ Furthermore, TSIG key that we generated above should be inserted.</p>
       #install_repo               =&gt; 'file:///root/origin-rpms',
 
       #If using BIND, let the broker know what TSIG key to use
-      named_tsig_priv_key         =&gt; '&lt;tsig key&gt;'
+      named_tsig_priv_key         =&gt; '&lt;tsig key&gt;',
+
+      #If using an external ethernet device other than eth0
+      #eth_device                 =&gt; '&lt;ethernet device name, eg: enp0s5&gt;',
+
+      #If using with GDM, or have users with UID 500 or greater, add to this list
+      #os_unmanaged_users         =&gt; ['gdm'],
     }</pre>
 </div>
 </div>
@@ -920,7 +910,7 @@ modified if necessary.</p>
 <div class="content monospaced">
 <pre>    class { 'openshift_origin' :
       #The DNS resolvable hostname of this host
-      node_fqdn                  =&gt; "thishost.thisdomain.com",
+      node_fqdn                  =&gt; "broker.example.com",
 
       #The domain under which application should be created. Eg: &lt;app&gt;-&lt;namespace&gt;.example.com
       cloud_domain               =&gt; 'example.com',
@@ -959,7 +949,13 @@ modified if necessary.</p>
       #install_repo               =&gt; 'file:///root/origin-rpms',
 
       #If using BIND, let the broker know what TSIG key to use
-      named_tsig_priv_key         =&gt; '&lt;tsig key&gt;'
+      named_tsig_priv_key         =&gt; '&lt;tsig key&gt;',
+
+      #If using an external ethernet device other than eth0
+      #eth_device                 =&gt; '&lt;ethernet device name, eg: enp0s5&gt;',
+
+      #If using with GDM, or have users with UID 500 or greater, add to this list
+      #os_unmanaged_users         =&gt; ['gdm'],
     }</pre>
 </div>
 </div>
@@ -989,7 +985,7 @@ values should be modified.</p>
 <div class="content monospaced">
 <pre>    class { 'openshift_origin' :
       #The DNS resolvable hostname of this host
-      node_fqdn                  =&gt; "thishost.thisdomain.com",
+      node_fqdn                  =&gt; "node.example.com",
 
       #The domain under which application should be created. Eg: &lt;app&gt;-&lt;namespace&gt;.example.com
       cloud_domain               =&gt; 'example.com',
@@ -1030,6 +1026,12 @@ values should be modified.</p>
 
       #If installing from a local build, specify the path for Origin RPMs
       #install_repo               =&gt; 'file:///root/origin-rpms',
+
+      #If using an external ethernet device other than eth0
+      #eth_device                 =&gt; '&lt;ethernet device name, eg: enp0s5&gt;',
+
+      #If using with GDM, or have users with UID 500 or greater, add to this list
+      #os_unmanaged_users         =&gt; ['gdm'],
     }</pre>
 </div>
 </div>
