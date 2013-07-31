@@ -620,7 +620,16 @@ code { font-family: source_code_pro; }
 
 .admonitionblock td.icon .icon-tip:before { color: #cc6; text-shadow: none; }
 
-#footer { background-image: url("images/panda.png"); background-position: right bottom; background-repeat: no-repeat; }</style>
+#footer { background-image: url("images/panda.png"); background-position: right bottom; background-repeat: no-repeat; }
+
+/* Alignment Styles */
+.halign-left { text-align: left }
+.halign-center { text-align: center }
+.halign-right { text-align: right }
+
+.valign-top { vertical-align: top }
+.valign-middle { vertical-align: middle }
+.valign-bottom { vertical-align: bottom }</style>
 <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body class="article toc2">
@@ -632,7 +641,7 @@ code { font-family: source_code_pro; }
 </a>
 </li>
 <li>
-<a href="index.html">Documentation home</a>
+<a href="index.html">Documentation Home</a>
 </li>
 </ul>
 </nav>
@@ -733,28 +742,20 @@ code { font-family: source_code_pro; }
 <li><a href="#builder-tips">13.4. Builder Tips</a></li>
 </ol>
 </li>
+<li><a href="#openshift-upgrades">14. OpenShift Upgrades</a></li>
+<li>
+<ol type="none" class="sectlevel2">
+<li><a href="#upgrade-itinerary">14.1. Upgrade Itinerary</a></li>
+<li><a href="#compatible-upgrades">14.2. Compatible Upgrades</a></li>
+<li><a href="#incompatible-upgrades">14.3. Incompatible Upgrades</a></li>
+<li><a href="#cartridge-upgrade-script">14.4. Cartridge Upgrade Script</a></li>
+</ol>
+</li>
 </ol>
 </div>
 </div>
 <div id="content"><div id="preamble">
 <div class="sectionbody">
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Document Site Navigation</div>
-<div class="ulist">
-
-<ul>
-<li>
-<p><a href="index.html"><strong>Documentation Home</strong></a></p>
-</li>
-<li>
-<p><a href="http://openshift.github.io/"><strong>OpenShift Origin Home</strong></a></p>
-</li>
-</ul>
-</div>
-
-</div>
-</div>
 <div class="paragraph">
 <p>OpenShift cartridges provide the necessary command and control for the functionality of software that is running users' applications. OpenShift currently has many language cartridges (JBoss EAP, JBoss EWS, PHP, Ruby, Rails, etc.) as well as many DB cartridges (Postgres, Mysql, Mongo, etc.). Before writing your own cartridge, you should search the current list of <a href="https://openshift.redhat.com">Red Hat</a> and <a href="https://www.openshift.com/community">OpenShift Community</a> provided cartridges.</p>
 </div>
@@ -2810,6 +2811,183 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <h3 id="builder-tips"><a class="anchor" href="#builder-tips"></a>13.4. Builder Tips</h3>
 <div class="paragraph">
 <p>Any build implementation should take care to avoid duplicating source or copying artifacts any more than necessary. The space a cartridge&#8217;s build implementation consumes during the build cycle is the application developer&#8217;s, and so cartridge authors should take care to be as conservative as possible.</p>
+</div>
+<div class="paragraph">
+<p>[cart_locking]: #cartridge-locking
+[snapshot]: #backing-up-and-restoring-your-cartridge
+[erb_processing]: #erb-processing
+[erb]: <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html</a>
+[locking_ruby]: <a href="http://www.ruby-doc.org/docs/ProgrammingRuby/html/taint.html)">http://www.ruby-doc.org/docs/ProgrammingRuby/html/taint.html)</a>.</p>
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="openshift-upgrades"><a class="anchor" href="#openshift-upgrades"></a>14. OpenShift Upgrades</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The OpenShift runtime contains an upgrade system used to upgrade the cartridges in a gear to the latest available version and to apply gear-scoped changes which are orthogonal to cartridges to a gear.  The <code>oo-admin-upgrade</code> command provides the CLI for the upgrade system and can be used to upgrade all gears in an OpenShift environment, all gears on a node, or a single gear.  This command queries the openshift broker to determine the locations of the indicated gears to migrate and makes mcollective calls to trigger the upgrade for a gear.</p>
+</div>
+<div class="paragraph">
+<p>During upgrades, OpenShift follows the following high-level process to upgrade a gear:</p>
+</div>
+<div class="olist arabic">
+
+<ol class="arabic">
+<li>
+<p>Load the gear upgrade extension, if configured.</p>
+</li>
+<li>
+<p>Inspect the gear state.</p>
+</li>
+<li>
+<p>Run the gear extension&#8217;s pre-upgrade method, if it exists.</p>
+</li>
+<li>
+<p>Compute the upgrade itinerary for the gear.</p>
+</li>
+<li>
+<p>If the itinerary contains an incompatible upgrade, stop the gear.</p>
+</li>
+<li>
+<p>Upgrade the cartridges in the gear according to the itinerary.</p>
+</li>
+<li>
+<p>Run the gear extension&#8217;s post-upgrade method, if it exists.</p>
+</li>
+<li>
+<p>If the itinerary contains an incompatible upgrade, restart and validate the gear.</p>
+</li>
+<li>
+<p>Clean up after the upgrade by deleting pre-upgrade state and upgrade metadata.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="upgrade-itinerary"><a class="anchor" href="#upgrade-itinerary"></a>14.1. Upgrade Itinerary</h3>
+<div class="paragraph">
+<p>The upgrade process must be re-entrant; if it fails or times out, a subsequent upgrade operation must pick up where the last one left off without losing any data about which operations must be performed to fully upgrade a gear.  The upgrade itinerary stores information about which cartridges in a gear must be upgraded and which type of upgrade to perform.</p>
+</div>
+<div class="paragraph">
+<p>There are two types of cartridge upgrade process: compatible and incompatible.  Whether an upgrade from version X to version Y is compatible is driven by the presence of version X in version Y&#8217;s <code>Compatible-Versions</code> manifest element.  Though compatible and incompatible upgrades differ in various ways, the chief difference is that when an incompatible upgrade is to be applied to any cartridge in a gear, that gear is stopped before the cartridge upgrades are performed and restarted after all cartridges have been upgraded.</p>
+</div>
+<div class="paragraph">
+<p>The upgrade itinerary is computed as follows for each cartridge in a gear:</p>
+</div>
+<div class="olist arabic">
+
+<ol class="arabic">
+<li>
+<p>Read in the current IDENT of the cartridge.</p>
+</li>
+<li>
+<p>Select the name and software version of the cartridge from the cartridge repository; this will yield the manifest for the latest version of the cartridge. If the manifest does not exist in the cartridge repository or does not include the software version, skip the cartridge.</p>
+</li>
+<li>
+<p>If the latest manifest is for the same cartridge version as that currently installed in the gear, skip the cartridge unless the <code>ignore_cartridge_version</code> parameter is set.  If the <code>ignore_cartridge_version</code> parameter is set, record an incompatible upgrade for the cartridge in the itinerary.  (TODO: case where manifest declares itself as compatible version).</p>
+</li>
+<li>
+<p>If the latest manifest includes the current cartridge version in the <code>Compatible-Versions</code> element, record a compatible upgrade for the cartridge in the itinerary.  Otherwise, record an incompatible upgrade for the cartridge in the itinerary.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="sect2">
+<h3 id="compatible-upgrades"><a class="anchor" href="#compatible-upgrades"></a>14.2. Compatible Upgrades</h3>
+<div class="paragraph">
+<p>The compatible upgrade process for a cartridge is as follows:</p>
+</div>
+<div class="olist arabic">
+
+<ol class="arabic">
+<li>
+<p>The new version of the cartridge is overlaid in the gear.</p>
+</li>
+<li>
+<p>The files declared in the <code>Processed-Templates</code> section of the cartridge&#8217;s <code>managed-files.yml</code> are removed.</p>
+</li>
+<li>
+<p>The cartridge directory is unlocked.</p>
+</li>
+<li>
+<p>The cartridge directory is secured.</p>
+</li>
+<li>
+<p>If the cartridge provides an <code>upgrade</code> script, that script is executed.</p>
+</li>
+<li>
+<p>The cartridge directory is locked.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="sect2">
+<h3 id="incompatible-upgrades"><a class="anchor" href="#incompatible-upgrades"></a>14.3. Incompatible Upgrades</h3>
+<div class="paragraph">
+<p>The incompatible upgrade process for a cartridge is as follows:</p>
+</div>
+<div class="olist arabic">
+
+<ol class="arabic">
+<li>
+<p>The files and directories declared in the <code>Setup-Rewritten</code> section of the cartridge&#8217;s <code>managed_files.yml</code> are removed.</p>
+</li>
+<li>
+<p>The new version of the cartridge is overlaid in the gear.</p>
+</li>
+<li>
+<p>The cartridge directory is unlocked.</p>
+</li>
+<li>
+<p>The cartridge directory is secured.</p>
+</li>
+<li>
+<p>The cartridge <code>setup</code> script is run.</p>
+</li>
+<li>
+<p>The erb templates for the cartridge are processed.</p>
+</li>
+<li>
+<p>If the cartridge provides an <code>upgrade</code> script, that script is executed.</p>
+</li>
+<li>
+<p>The cartridge directory is locked.</p>
+</li>
+<li>
+<p>New endpoints for the cartridge are created.</p>
+</li>
+<li>
+<p>The frontend is connected.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="sect2">
+<h3 id="cartridge-upgrade-script"><a class="anchor" href="#cartridge-upgrade-script"></a>14.4. Cartridge Upgrade Script</h3>
+<div class="paragraph">
+<p>A cartridge may provide an <code>upgrade</code> script in the <code>bin</code> directory which will be executed during the upgrade process.  The purpose of this script is to allow for arbitrary actions to occur during the upgrade process which are not accounted for by the compatible or incompatible processes.  If the <code>upgrade</code> script is provided, it will be passed the following arguments:</p>
+</div>
+<div class="olist arabic">
+
+<ol class="arabic">
+<li>
+<p>The software version of the cartridge.</p>
+</li>
+<li>
+<p>The current cartridge version.</p>
+</li>
+<li>
+<p>The cartridge version being upgraded to.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A non-zero exit code from this script will result in the upgrade operation failing until the exit code is corrected.</p>
 </div>
 
 </div>
