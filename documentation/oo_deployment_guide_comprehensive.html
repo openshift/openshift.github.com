@@ -739,8 +739,11 @@ code { font-family: source_code_pro; }
 <li><a href="#configure-disk-quotas">10.4. Configure Disk Quotas</a></li>
 <li><a href="#configure-selinux-and-system-control-settings">10.5. Configure SELinux and System Control Settings</a></li>
 <li><a href="#configure-ssh-openshift-port-proxy-and-node-configuration">10.6. Configure SSH, OpenShift Port Proxy, and Node Configuration</a></li>
-<li><a href="#update-the-em-facter-em-database">10.7. Update the <em>facter</em> Database</a></li>
-<li><a href="#reboot-the-node-host">10.8. Reboot the Node Host</a></li>
+<li><a href="#initialize-traffic-control">10.7. Initialize Traffic Control</a></li>
+<li><a href="#update-login-defs">10.8. Update login.defs</a></li>
+<li><a href="#update-the-em-facter-em-database">10.9. Update the <em>facter</em> Database</a></li>
+<li><a href="#setup-routes-for-all-in-one-setup">10.10. Setup Routes for All-In-One setup</a></li>
+<li><a href="#reboot-the-node-host">10.11. Reboot the Node Host</a></li>
 </ol>
 </li>
 <li><a href="#testing-the-configuration">11. Testing the Configuration</a></li>
@@ -3470,7 +3473,7 @@ You can skip this section if you are build a all-in-one environment.
 <div class="listingblock">
 <div class="title">All-In-One Setup</div>
 <div class="content monospaced">
-<pre>cp /etc/openshift/rsync_id_rsa.pub /root/.ssh/</pre>
+<pre>cp -f /etc/openshift/rsync_id_rsa.pub /root/.ssh/</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3726,7 +3729,7 @@ collectives = mcollective
 libdir = /usr/libexec/mcollective
 logfile = /var/log/mcollective.log
 loglevel = debug
-daemonize = 1
+daemonize = 0
 direct_addressing = n
 registerinterval = 30
 
@@ -3751,12 +3754,29 @@ EOF</pre>
 <p>Update the <em>plugin.activemq.pool.1.password</em> password to match what you set up in the active configuration.</p>
 </div>
 <div class="paragraph">
-<p>On Fedora 19, Update the systemd service file to manage only the mcollective process. This prevents gears spawned from the process from being shut down if you have to restart mcollective. Edit /usr/lib/systemd/system/mcollective.service and add the following under the <strong>[Service]</strong> section:</p>
+<p>On Fedora 19, Update the systemd service file to manage only the mcollective process. This prevents gears spawned from the process from being shut down if you have to restart mcollective.
+Update the mcollective service file:</p>
 </div>
 <div class="listingblock">
 
 <div class="content monospaced">
-<pre>KillMode=process</pre>
+<pre>cat &lt;&lt;EOF &gt; /usr/lib/systemd/system/mcollective.service
+[Unit]
+Description=The Marionette Collective
+After=network.target
+
+[Service]
+Type=simple
+StandardOutput=syslog
+StandardError=syslog
+ExecStart=/usr/sbin/mcollectived --config=/etc/mcollective/server.cfg --pidfile=/var/run/mcollective.pid
+ExecReload=/bin/kill -USR1 $MAINPID
+PIDFile=/var/run/mcollective.pid
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+EOF</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4045,9 +4065,13 @@ The OpenShift Jenkins plugin currently requires jenkins-1.510. You may need to d
 <pre>lokkit --service=ssh
 lokkit --service=https
 lokkit --service=http
+lokkit --port=8000:tcp
+lokkit --port=8443:tcp
 chkconfig httpd on
 chkconfig network on
-chkconfig sshd on</pre>
+chkconfig sshd on
+chkconfig oddjobd on
+chkconfig openshift-node-web-proxy on</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4056,11 +4080,17 @@ chkconfig sshd on</pre>
 <pre>firewall-cmd --add-service=ssh
 firewall-cmd --add-service=http
 firewall-cmd --add-service=https
+firewall-cmd --add-port=8000/tcp
+firewall-cmd --add-service=8443/tcp
 firewall-cmd --permanent --add-service=ssh
 firewall-cmd --permanent --add-service=http
 firewall-cmd --permanent --add-service=https
+firewall-cmd --permanent --add-port=8000/tcp
+firewall-cmd --permanent --add-port=8443/tcp
 systemctl enable network.service
-systemctl enable sshd.service</pre>
+systemctl enable sshd.service
+systemctl enable oddjobd.service
+systemctl enable openshift-node-web-proxy.service</pre>
 </div>
 </div>
 
@@ -4190,6 +4220,22 @@ set /files/etc/pam.d/system-auth-ac/01/module pam_namespace.so
 set /files/etc/pam.d/system-auth-ac/01/argument[1] no_unmount_on_close
 set /files/etc/pam.d/system-auth-ac/01/#comment 'Managed by openshift_origin'
 save
+EOF</pre>
+</div>
+</div>
+<div class="listingblock">
+
+<div class="content monospaced">
+<pre>cat &lt;&lt;EOF &gt; /etc/security/namespace.d/sandbox.conf
+# /sandbox        \$HOME/.sandbox/      user:iscript=/usr/sbin/oo-namespace-init       root,adm,apache
+EOF
+
+cat &lt;&lt;EOF &gt; /etc/security/namespace.d/tmp.conf
+/tmp        \$HOME/.tmp/      user:iscript=/usr/sbin/oo-namespace-init root,adm,apache
+EOF
+
+cat &lt;&lt;EOF &gt; /etc/security/namespace.d/vartmp.conf
+/var/tmp    \$HOME/.tmp/   user:iscript=/usr/sbin/oo-namespace-init root,adm,apache
 EOF</pre>
 </div>
 </div>
@@ -4408,15 +4454,11 @@ restorecon -rv /var/lib/openshift /etc/openshift/node.conf /etc/httpd/conf.d/ope
 <div class="listingblock">
 
 <div class="content monospaced">
-<pre>cat &lt;&lt;EOF &gt;/etc/sysctl.conf
-# System default settings live in /usr/lib/sysctl.d/00-system.conf.
-# To override those settings, enter new settings here, or in an /etc/sysctl.d/&lt;name&gt;.conf file
-#
-# For more information, see sysctl.conf(5) and sysctl.d(5).
-# Added for OpenShift Origin
-kernel.sem = 250  32000 32  4096
-net.ipv4.ip_local_port_range = 15000 35530
-net.netfilter.nf_conntrack_max = 1048576
+<pre>cat &lt;&lt;EOF | augtool
+set /files/etc/sysctl.conf/kernel.sem "250  32000 32  4096"
+set /files/etc/sysctl.conf/net.ipv4.ip_local_port_range "15000 35530"
+set /files/etc/sysctl.conf/net.netfilter.nf_conntrack_max "1048576"
+save
 EOF</pre>
 </div>
 </div>
@@ -4502,8 +4544,27 @@ EOF</pre>
 </div>
 
 </div>
+
+</div>
+<div class="sect2">
+<h3 id="initialize-traffic-control"><a class="anchor" href="#initialize-traffic-control"></a>10.7. Initialize Traffic Control</h3>
+<div class="paragraph">
+<p>Configure traffic control to measure and control the amount of outgoing and incoming traffic used by each gear:</p>
+</div>
+<div class="listingblock">
+<div class="title">RHEL6</div>
+<div class="content monospaced">
+<pre>chkconfig openshift-tc on</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Fedora</div>
+<div class="content monospaced">
+<pre>systemctl enable openshift-tc.service</pre>
+</div>
+</div>
 <div class="sect3">
-<h4 id="configuring-the-port-proxy"><a class="anchor" href="#configuring-the-port-proxy"></a>10.6.2. Configuring the Port Proxy</h4>
+<h4 id="configuring-the-port-proxy"><a class="anchor" href="#configuring-the-port-proxy"></a>10.7.1. Configuring the Port Proxy</h4>
 <div class="paragraph">
 <p>Multiple application gears can and will reside on the same node host. In order for these applications to receive HTTP requests to the node, you need to configure a proxy that will pass traffic to the gear application that is listening for connections on the loopback address. To do this, you need to open up a range of ports that the node can accept traffic on as well as ensure the port-proxy is started on boot.</p>
 </div>
@@ -4542,32 +4603,64 @@ systemctl restart  openshift-port-proxy.service</pre>
 
 </div>
 <div class="sect3">
-<h4 id="configuring-node-settings-for-domain-name"><a class="anchor" href="#configuring-node-settings-for-domain-name"></a>10.6.3. Configuring Node Settings for Domain Name</h4>
+<h4 id="configuring-node-settings-for-domain-name"><a class="anchor" href="#configuring-node-settings-for-domain-name"></a>10.7.2. Configuring Node Settings for Domain Name</h4>
 <div class="paragraph">
 <p>Edit the <em>/etc/openshift/node.conf</em> file and <strong>specify the correct settings for your <em>CLOUD_DOMAIN, PUBLIC_HOSTNAME, and BROKER_HOST</em> IP address</strong>. For example:</p>
 </div>
 <div class="listingblock">
 <div class="title">Seperate Broker and Node Setup</div>
 <div class="content monospaced">
-<pre>PUBLIC_HOSTNAME="node.example.com"       # The node host's public hostname
-PUBLIC_IP="10.4.59.y"                                      # The node host's public IP address
-BROKER_HOST="broker.example.com"              # IP or DNS name of broker host for REST API----</pre>
+<pre>PUBLIC_HOSTNAME="node.example.com"            # The node host's public hostname
+PUBLIC_IP="10.4.59.y"                         # The node host's public IP address
+BROKER_HOST="broker.example.com"              # IP or DNS name of broker host for REST API
+EXTERNAL_ETH_DEV='enp0s5'					  # Update to match name of external network device</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">All-In-One Setup</div>
 <div class="content monospaced">
-<pre>PUBLIC_HOSTNAME="broker.example.com"       # The node host's public hostname
-PUBLIC_IP="10.4.59.x"                                      # The node host's public IP address
-BROKER_HOST="broker.example.com"              # IP or DNS name of broker host for REST API</pre>
+<pre>PUBLIC_HOSTNAME="broker.example.com"          # The node host's public hostname
+PUBLIC_IP="10.4.59.x"                         # The node host's public IP address
+BROKER_HOST="broker.example.com"              # IP or DNS name of broker host for REST API
+EXTERNAL_ETH_DEV='enp0s5'					  # Update to match name of external network device</pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+
+Ensure that EXTERNAL_ETH_DEV and PUBLIC_IP have accurate values or node will be unable to create gears
+</td>
+</tr>
+</table>
 </div>
 
 </div>
 
 </div>
 <div class="sect2">
-<h3 id="update-the-em-facter-em-database"><a class="anchor" href="#update-the-em-facter-em-database"></a>10.7. Update the <em>facter</em> Database</h3>
+<h3 id="update-login-defs"><a class="anchor" href="#update-login-defs"></a>10.8. Update login.defs</h3>
+<div class="paragraph">
+<p>Update the minimum UID and GID for the machine to match GEAR_MIN_UID from node.conf. This value is 500 by default.</p>
+</div>
+<div class="listingblock">
+
+<div class="content monospaced">
+<pre>cat &lt;&lt;EOF | augtool
+set /files/etc/login.defs/UID_MIN 500
+set /files/etc/login.defs/GID_MIN 500
+save
+EOF</pre>
+</div>
+</div>
+
+</div>
+<div class="sect2">
+<h3 id="update-the-em-facter-em-database"><a class="anchor" href="#update-the-em-facter-em-database"></a>10.9. Update the <em>facter</em> Database</h3>
 <div class="paragraph">
 <p>Facter generates metadata files for MCollective and is normally run by cron. Run the following command to execute facter immediately to create the initial database and ensure that it runs properly:</p>
 </div>
@@ -4580,7 +4673,44 @@ BROKER_HOST="broker.example.com"              # IP or DNS name of broker host fo
 
 </div>
 <div class="sect2">
-<h3 id="reboot-the-node-host"><a class="anchor" href="#reboot-the-node-host"></a>10.8. Reboot the Node Host</h3>
+<h3 id="setup-routes-for-all-in-one-setup"><a class="anchor" href="#setup-routes-for-all-in-one-setup"></a>10.10. Setup Routes for All-In-One setup</h3>
+<div class="paragraph">
+<p>Create broker and console routes in the node re-write map:</p>
+</div>
+<div class="listingblock">
+
+<div class="content monospaced">
+<pre>cat &lt;&lt;EOF &gt; /tmp/nodes.broker_routes.txt
+__default__ REDIRECT:/console
+__default__/console TOHTTPS:127.0.0.1:8118/console
+__default__/broker TOHTTPS:127.0.0.1:8080/broker
+EOF
+
+cat /etc/httpd/conf.d/openshift/nodes.txt /tmp/nodes.broker_routes.txt &gt; /etc/httpd/conf.d/openshift/nodes.txt.new
+mv -f /etc/httpd/conf.d/openshift/nodes.txt.new /etc/httpd/conf.d/openshift/nodes.txt
+httxt2dbm -f DB -i /etc/httpd/conf.d/openshift/nodes.txt -o /etc/httpd/conf.d/openshift/nodes.db.new
+chown root:apache /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new
+chmod 750 /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new
+mv -f /etc/httpd/conf.d/openshift/nodes.db.new /etc/httpd/conf.d/openshift/nodes.db</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+
+Skip this section if you are setting up broker and node on separate machines.
+</td>
+</tr>
+</table>
+</div>
+
+</div>
+<div class="sect2">
+<h3 id="reboot-the-node-host"><a class="anchor" href="#reboot-the-node-host"></a>10.11. Reboot the Node Host</h3>
 <div class="paragraph">
 <p>In order to verify that all services were installed and configured correctly, restart the node to ensure that all
 services start on boot as described in this post.</p>
