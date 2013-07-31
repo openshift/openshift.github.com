@@ -603,6 +603,28 @@ return the stored capabilities.</p>
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#add_gear_size-instance_method" title="#add_gear_size (instance method)">- (Object) <strong>add_gear_size</strong>(gear_size) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#add_ssh_key-instance_method" title="#add_ssh_key (instance method)">- (Object) <strong>add_ssh_key</strong>(key) </a>
     
 
@@ -829,6 +851,28 @@ with the user.</p>
   <span class="summary_signature">
     
       <a href="#mongoid_save-instance_method" title="#mongoid_save (instance method)">- (Object) <strong>mongoid_save</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#remove_gear_size-instance_method" title="#remove_gear_size (instance method)">- (Object) <strong>remove_gear_size</strong>(gear_size) </a>
     
 
     
@@ -1344,7 +1388,25 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -1573,6 +1635,24 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -1993,7 +2073,25 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -2222,6 +2320,24 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -2642,7 +2758,25 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -2871,6 +3005,24 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -3291,7 +3443,25 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -3520,6 +3690,24 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -3940,7 +4128,25 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -4169,6 +4375,24 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -4572,7 +4796,25 @@ capabilities and ssh-keys for the user.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -4801,6 +5043,24 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -5204,7 +5464,25 @@ capabilities and ssh-keys for the user.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -5433,6 +5711,24 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -5836,7 +6132,25 @@ capabilities and ssh-keys for the user.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -6065,6 +6379,24 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -6534,7 +6866,25 @@ by the supplied scope.  All other actions are forbidden.  Type is Scopes</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -6763,6 +7113,24 @@ by the supplied scope.  All other actions are forbidden.  Type is Scopes</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -7166,7 +7534,25 @@ capabilities and ssh-keys for the user.</p>
 312
 313
 314
-315</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -7395,6 +7781,24 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
@@ -8015,7 +8419,25 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
 518
 519
 520
-521</pre>
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 225</span>
@@ -8246,6 +8668,24 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
     <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
   <span class='kw'>end</span>
 
+  <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>return</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
   <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
     <span class='lparen'>(</span><span class='id identifier rubyid_max_tracked_additional_storage'>max_tracked_additional_storage</span> <span class='op'>+</span> <span class='id identifier rubyid_max_untracked_additional_storage'>max_untracked_additional_storage</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
@@ -8316,6 +8756,44 @@ oo-admin-user-ctl scripts or when a plan changes.</p>
       <span class='kw'>false</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="add_gear_size-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>add_gear_size</strong>(gear_size) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+245
+246
+247
+248
+249
+250
+251</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 245</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='op'>!</span> <span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> is not defined. Defined sizes are: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_available_sizes'>available_sizes</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_gear_size'>gear_size</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -8472,21 +8950,21 @@ with the user</p>
       <pre class="lines">
 
 
-258
-259
-260
-261
-262
-263
-264
-265
-266
-267
-268
-269</pre>
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 258</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 276</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
   <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -8622,12 +9100,12 @@ with the user</p>
       <pre class="lines">
 
 
-245
-246
-247</pre>
+263
+264
+265</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 245</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 263</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_max_tracked_additional_storage'>max_tracked_additional_storage</span> <span class='op'>+</span> <span class='id identifier rubyid_max_untracked_additional_storage'>max_untracked_additional_storage</span><span class='rparen'>)</span>
@@ -8652,12 +9130,12 @@ with the user</p>
       <pre class="lines">
 
 
-253
-254
-255</pre>
+271
+272
+273</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 253</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 271</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_tracked_additional_storage'>max_tracked_additional_storage</span>
   <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_tracked_addtl_storage_per_gear</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>0</span>
@@ -8682,12 +9160,12 @@ with the user</p>
       <pre class="lines">
 
 
-249
-250
-251</pre>
+267
+268
+269</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 249</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 267</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_untracked_additional_storage'>max_untracked_additional_storage</span>
   <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_untracked_addtl_storage_per_gear</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>0</span>
@@ -8718,6 +9196,48 @@ with the user</p>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 23</span>
 
 <span class='id identifier rubyid_alias_method'>alias_method</span> <span class='symbol'>:mongoid_save</span><span class='comma'>,</span> <span class='symbol'>:save</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="remove_gear_size-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>remove_gear_size</strong>(gear_size) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+253
+254
+255
+256
+257
+258
+259
+260
+261</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 253</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>User </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_login'>login</span><span class='embexpr_end'>}</span><span class='tstring_content'> does not have gear size </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='embexpr_end'>}</span><span class='tstring_content'> in its capabilities.</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>return</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_caps'>caps</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -8810,24 +9330,6 @@ user has access to.</p>
       <pre class="lines">
 
 
-275
-276
-277
-278
-279
-280
-281
-282
-283
-284
-285
-286
-287
-288
-289
-290
-291
-292
 293
 294
 295
@@ -8849,10 +9351,28 @@ user has access to.</p>
 311
 312
 313
-314</pre>
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 275</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 293</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_run_jobs'>run_jobs</span>
   <span class='kw'>begin</span>
@@ -9034,7 +9554,7 @@ user has access to.</p>
 </div>
 
     <div id="footer">
-  Generated on Wed Jul 31 21:01:48 2013 by
+  Generated on Wed Jul 31 22:04:14 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
