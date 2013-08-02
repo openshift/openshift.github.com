@@ -347,7 +347,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#log_action-instance_method" title="#log_action (instance method)">- (Object) <strong>log_action</strong>(action, uuid, value) </a>
+      <a href="#log_action-instance_method" title="#log_action (instance method)">- (Object) <strong>log_action</strong>(action, uuid, value, level = :info) </a>
     
 
     
@@ -383,10 +383,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'>
-<p>Loop through all lines from grep and contruct a hash TODO: Should this be
-moved into libcgroup?.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -582,8 +579,8 @@ moved into libcgroup?.</p>
   <span class='const'>MonitoredGear</span><span class='period'>.</span><span class='id identifier rubyid_intervals'>intervals</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='ivar'>@interval</span><span class='rbracket'>]</span>
 
   <span class='comment'># Allow us to lazy initialize MonitoredGears
-</span>  <span class='ivar'>@running_apps</span> <span class='op'>=</span> <span class='const'>Hash</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_h'>h</span><span class='comma'>,</span><span class='id identifier rubyid_k'>k</span><span class='op'>|</span>
-    <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'>MonitoredGear</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='rparen'>)</span>
+</span>  <span class='ivar'>@running_apps</span> <span class='op'>=</span> <span class='const'>Hash</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_h'>h</span><span class='comma'>,</span><span class='id identifier rubyid_uuid'>uuid</span><span class='op'>|</span>
+    <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'>MonitoredGear</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='const'>Syslog</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_basename'>basename</span><span class='lparen'>(</span><span class='gvar'>$0</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='const'>Syslog</span><span class='op'>::</span><span class='const'>LOG_PID</span><span class='comma'>,</span> <span class='const'>Syslog</span><span class='op'>::</span><span class='const'>LOG_DAEMON</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='const'>Syslog</span><span class='period'>.</span><span class='id identifier rubyid_opened?'>opened?</span>
@@ -839,8 +836,6 @@ moved into libcgroup?.</p>
       <pre class="lines">
 
 
-160
-161
 162
 163
 164
@@ -852,10 +847,19 @@ moved into libcgroup?.</p>
 170
 171
 172
-173</pre>
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 160</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 162</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_apply_action'>apply_action</span><span class='lparen'>(</span><span class='id identifier rubyid_hash'>hash</span><span class='comma'>,</span> <span class='id identifier rubyid_cur_util'>cur_util</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_util'>util</span> <span class='op'>=</span> <span class='id identifier rubyid_cur_util'>cur_util</span><span class='period'>.</span><span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_h'>h</span><span class='comma'>,</span><span class='lparen'>(</span><span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span><span class='id identifier rubyid_vals'>vals</span><span class='rparen'>)</span><span class='op'>|</span>
@@ -866,8 +870,15 @@ moved into libcgroup?.</p>
   <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_gears'>gears</span><span class='op'>|</span>
     <span class='id identifier rubyid_str'>str</span> <span class='op'>=</span> <span class='id identifier rubyid_action'>action</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>over_threshold</span><span class='tstring_end'>&quot;</span></span>
     <span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span> <span class='id identifier rubyid_g'>g</span><span class='op'>|</span>
-      <span class='id identifier rubyid_g'>g</span><span class='period'>.</span><span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_action'>action</span>
-      <span class='id identifier rubyid_log_action'>log_action</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='comma'>,</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span> <span class='id identifier rubyid_util'>util</span><span class='lbracket'>[</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='kw'>begin</span>
+        <span class='id identifier rubyid_g'>g</span><span class='period'>.</span><span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_action'>action</span>
+        <span class='kw'>if</span> <span class='id identifier rubyid_action'>action</span> <span class='op'>==</span> <span class='symbol'>:throttle</span>
+          <span class='ivar'>@old_bad_gears</span><span class='lbracket'>[</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_g'>g</span>
+        <span class='kw'>end</span>
+        <span class='id identifier rubyid_log_action'>log_action</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='comma'>,</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span> <span class='id identifier rubyid_util'>util</span><span class='lbracket'>[</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='kw'>rescue</span> <span class='const'>RuntimeError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+        <span class='id identifier rubyid_log_action'>log_action</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>FAILED </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='symbol'>:warning</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -891,6 +902,9 @@ moved into libcgroup?.</p>
       <pre class="lines">
 
 
+110
+111
+112
 113
 114
 115
@@ -916,10 +930,14 @@ moved into libcgroup?.</p>
 135
 136
 137
-138</pre>
+138
+139
+140
+141
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 113</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 110</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_find'>find</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_apps'>apps</span> <span class='op'>=</span> <span class='id identifier rubyid_running_apps'>running_apps</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
@@ -942,7 +960,14 @@ moved into libcgroup?.</p>
   <span class='kw'>end</span>
 
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:state</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_apps'>apps</span><span class='period'>.</span><span class='id identifier rubyid_select!'>select!</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_profile'>profile</span> <span class='op'>==</span> <span class='id identifier rubyid_state'>state</span><span class='rbrace'>}</span>
+    <span class='id identifier rubyid_apps'>apps</span><span class='period'>.</span><span class='id identifier rubyid_select!'>select!</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span>
+      <span class='kw'>begin</span>
+        <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_profile'>profile</span> <span class='op'>==</span> <span class='id identifier rubyid_state'>state</span>
+      <span class='kw'>rescue</span> <span class='const'>RuntimeError</span>
+        <span class='comment'># There&#39;s the possibility that this gear no longer exists, so just ignore it
+</span>        <span class='kw'>false</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
   <span class='comment'># Return current utilization with the apps for logging
 </span>  <span class='lbracket'>[</span><span class='id identifier rubyid_apps'>apps</span><span class='comma'>,</span> <span class='id identifier rubyid_cur_util'>cur_util</span><span class='rbracket'>]</span>
@@ -955,7 +980,7 @@ moved into libcgroup?.</p>
       <div class="method_details ">
   <h3 class="signature " id="log_action-instance_method">
   
-    - (<tt>Object</tt>) <strong>log_action</strong>(action, uuid, value) 
+    - (<tt>Object</tt>) <strong>log_action</strong>(action, uuid, value, level = :info) 
   
 
   
@@ -967,15 +992,29 @@ moved into libcgroup?.</p>
       <pre class="lines">
 
 
-175
-176
-177</pre>
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 175</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 184</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_log_action'>log_action</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
-  <span class='const'>Syslog</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Throttler: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'> =&gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> (</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_log_action'>log_action</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='symbol'>:info</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Throttler: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'> =&gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> (</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_log_level'>log_level</span> <span class='op'>=</span> <span class='kw'>case</span> <span class='id identifier rubyid_level'>level</span>
+              <span class='kw'>when</span> <span class='symbol'>:warning</span>
+                <span class='const'>Syslog</span><span class='op'>::</span><span class='const'>LOG_WARNING</span>
+              <span class='kw'>else</span>
+                <span class='const'>Syslog</span><span class='op'>::</span><span class='const'>LOG_INFO</span>
+              <span class='kw'>end</span>
+  <span class='const'>Syslog</span><span class='period'>.</span><span class='id identifier rubyid_log'>log</span><span class='lparen'>(</span><span class='id identifier rubyid_log_level'>log_level</span><span class='comma'>,</span> <span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -991,35 +1030,23 @@ moved into libcgroup?.</p>
   
 
   
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Loop through all lines from grep and contruct a hash TODO: Should this be
-moved into libcgroup?</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
+</h3><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
+50
+51
+52
 53
 54
 55
 56
-57
-58
-59
-60</pre>
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 53</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_start'>start</span>
   <span class='const'>Thread</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span>
@@ -1049,10 +1076,6 @@ moved into libcgroup?</p>
       <pre class="lines">
 
 
-140
-141
-142
-143
 144
 145
 146
@@ -1067,10 +1090,12 @@ moved into libcgroup?</p>
 155
 156
 157
-158</pre>
+158
+159
+160</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 140</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 144</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_throttle'>throttle</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_bad_gears'>bad_gears</span><span class='comma'>,</span> <span class='id identifier rubyid_cur_util'>cur_util</span><span class='rparen'>)</span> <span class='op'>=</span> <span class='id identifier rubyid_find'>find</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
@@ -1088,8 +1113,6 @@ moved into libcgroup?</p>
     <span class='symbol'>:throttle</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_bad_gears'>bad_gears</span><span class='comma'>,</span>
     <span class='kw'>nil</span> <span class='op'>=&gt;</span> <span class='ivar'>@old_bad_gears</span>
   <span class='rbrace'>}</span><span class='comma'>,</span> <span class='id identifier rubyid_cur_util'>cur_util</span><span class='rparen'>)</span>
-
-  <span class='ivar'>@old_bad_gears</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_bad_gears'>bad_gears</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1111,15 +1134,15 @@ moved into libcgroup?</p>
       <pre class="lines">
 
 
+59
+60
+61
 62
 63
-64
-65
-66
-67</pre>
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 62</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tick'>tick</span>
   <span class='id identifier rubyid_vals'>vals</span> <span class='op'>=</span> <span class='const'>Libcgroup</span><span class='period'>.</span><span class='id identifier rubyid_usage'>usage</span>
@@ -1158,6 +1181,9 @@ moved into libcgroup?</p>
       <pre class="lines">
 
 
+67
+68
+69
 70
 71
 72
@@ -1172,13 +1198,10 @@ moved into libcgroup?</p>
 81
 82
 83
-84
-85
-86
-87</pre>
+84</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 70</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='id identifier rubyid_vals'>vals</span><span class='rparen'>)</span>
   <span class='comment'># Synchronize this in case uuids are deleted
@@ -1218,6 +1241,9 @@ moved into libcgroup?</p>
       <pre class="lines">
 
 
+97
+98
+99
 100
 101
 102
@@ -1226,13 +1252,10 @@ moved into libcgroup?</p>
 105
 106
 107
-108
-109
-110
-111</pre>
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 100</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/utils/cgroups/throttler.rb', line 97</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_utilization'>utilization</span><span class='lparen'>(</span><span class='id identifier rubyid_apps'>apps</span> <span class='op'>=</span> <span class='id identifier rubyid_running_apps'>running_apps</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_utilization'>utilization</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -1256,7 +1279,7 @@ moved into libcgroup?</p>
 </div>
 
     <div id="footer">
-  Generated on Thu Aug  1 22:59:43 2013 by
+  Generated on Fri Aug  2 22:05:15 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
