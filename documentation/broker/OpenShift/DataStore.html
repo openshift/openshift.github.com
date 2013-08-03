@@ -195,7 +195,12 @@
 13
 14
 15
-16</pre>
+16
+17
+18
+19
+20
+21</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/data_store.rb', line 3</span>
@@ -205,10 +210,15 @@
   <span class='id identifier rubyid_hosts'>hosts</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>hosts</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_ssl'>ssl</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>options</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ssl</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_hosts'>hosts</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>&gt;</span> <span class='int'>1</span>
-    <span class='id identifier rubyid_con'>con</span> <span class='op'>=</span> <span class='const'>MongoReplicaSetClient</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_hosts'>hosts</span><span class='comma'>,</span> <span class='symbol'>:read</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_read_preference'>read_preference</span><span class='comma'>,</span> <span class='symbol'>:ssl</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ssl'>ssl</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_con'>con</span> <span class='op'>=</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'>MongoReplicaSetClient</span><span class='rparen'>)</span> \
+      <span class='op'>?</span> <span class='const'>MongoReplicaSetClient</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_hosts'>hosts</span><span class='comma'>,</span> <span class='symbol'>:read</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_read_preference'>read_preference</span><span class='comma'>,</span> <span class='symbol'>:ssl</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ssl'>ssl</span><span class='rparen'>)</span>
+      <span class='comment'># compatibility with mongo 1.6 API
+</span>      <span class='op'>:</span> <span class='const'>Mongo</span><span class='op'>::</span><span class='const'>ReplSetConnection</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_hosts'>hosts</span><span class='comma'>,</span> <span class='symbol'>:read</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_read_preference'>read_preference</span><span class='comma'>,</span> <span class='symbol'>:ssl</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ssl'>ssl</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
     <span class='id identifier rubyid_host_port'>host_port</span> <span class='op'>=</span> <span class='id identifier rubyid_hosts'>hosts</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_con'>con</span> <span class='op'>=</span> <span class='const'>Mongo</span><span class='op'>::</span><span class='const'>MongoClient</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_host_port'>host_port</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_host_port'>host_port</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='symbol'>:ssl</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ssl'>ssl</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_con'>con</span> <span class='op'>=</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'>MongoClient</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='const'>MongoClient</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_host_port'>host_port</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_host_port'>host_port</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='symbol'>:ssl</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ssl'>ssl</span><span class='rparen'>)</span>
+                                <span class='comment'># compatibility with mongo 1.6 API
+</span>                                <span class='op'>:</span> <span class='const'>Mongo</span><span class='op'>::</span><span class='const'>Connection</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_host_port'>host_port</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_host_port'>host_port</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='symbol'>:ssl</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_ssl'>ssl</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
   <span class='id identifier rubyid_db'>db</span> <span class='op'>=</span> <span class='id identifier rubyid_con'>con</span><span class='period'>.</span><span class='id identifier rubyid_db'>db</span><span class='lparen'>(</span><span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>database</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_db'>db</span><span class='period'>.</span><span class='id identifier rubyid_authenticate'>authenticate</span><span class='lparen'>(</span><span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>username</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>password</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -234,18 +244,18 @@
       <pre class="lines">
 
 
-18
-19
-20
-21
-22
 23
 24
 25
-26</pre>
+26
+27
+28
+29
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/data_store.rb', line 18</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/lib/openshift/data_store.rb', line 23</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span><span class='lparen'>(</span><span class='id identifier rubyid_collection_name'>collection_name</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span><span class='comma'>,</span> <span class='id identifier rubyid_selection'>selection</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_db_handle'>db_handle</span> <span class='op'>=</span> <span class='id identifier rubyid_db'>db</span>
@@ -266,7 +276,7 @@
 </div>
 
     <div id="footer">
-  Generated on Fri Aug  2 22:04:26 2013 by
+  Generated on Sat Aug  3 22:04:48 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
