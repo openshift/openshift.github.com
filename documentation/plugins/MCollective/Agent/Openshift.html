@@ -1722,6 +1722,30 @@ it.</p>
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#report_quota-instance_method" title="#report_quota (instance method)">- (Object) <strong>report_quota</strong>(buffer, uuid) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>report approaching quota overage.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#set_district_action-instance_method" title="#set_district_action (instance method)">- (Object) <strong>set_district_action</strong> </a>
     
 
@@ -1883,15 +1907,15 @@ exception handling pattern.</p>
       <pre class="lines">
 
 
-44
 45
 46
 47
 48
-49</pre>
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 44</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_before_processing_hook'>before_processing_hook</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span><span class='comma'>,</span> <span class='id identifier rubyid_connection'>connection</span><span class='rparen'>)</span>
   <span class='comment'># Set working directory to a &#39;safe&#39; directory to prevent Dir.chdir
@@ -1931,7 +1955,6 @@ and constructs a reply.</p>
       <pre class="lines">
 
 
-70
 71
 72
 73
@@ -2015,10 +2038,12 @@ and constructs a reply.</p>
 151
 152
 153
-154</pre>
+154
+155
+156</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 70</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cartridge_do_action'>cartridge_do_action</span>
   <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cartridge_do_action call / action: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'>, agent=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_agent'>agent</span><span class='embexpr_end'>}</span><span class='tstring_content'>, data=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_pretty_inspect'>pretty_inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -2094,6 +2119,7 @@ and constructs a reply.</p>
 
   <span class='comment'># Do the action execution
 </span>  <span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span>           <span class='op'>=</span> <span class='id identifier rubyid_execute_action'>execute_action</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_report_quota'>report_quota</span><span class='lparen'>(</span><span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
 
   <span class='id identifier rubyid_reply'>reply</span><span class='lbracket'>[</span><span class='symbol'>:exitcode</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_exitcode'>exitcode</span>
   <span class='id identifier rubyid_reply'>reply</span><span class='lbracket'>[</span><span class='symbol'>:output</span><span class='rbracket'>]</span>   <span class='op'>=</span> <span class='id identifier rubyid_output'>output</span>
@@ -2136,37 +2162,37 @@ and constructs a reply.</p>
       <pre class="lines">
 
 
-1047
-1048
-1049
-1050
-1051
-1052
-1053
-1054
-1055
-1056
-1057
-1058
-1059
-1060
-1061
-1062
-1063
-1064
-1065
-1066
-1067
 1068
 1069
 1070
 1071
 1072
 1073
-1074</pre>
+1074
+1075
+1076
+1077
+1078
+1079
+1080
+1081
+1082
+1083
+1084
+1085
+1086
+1087
+1088
+1089
+1090
+1091
+1092
+1093
+1094
+1095</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 1047</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 1068</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cartridge_repository_action'>cartridge_repository_action</span>
   <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>action: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'>_action, agent=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_agent'>agent</span><span class='embexpr_end'>}</span><span class='tstring_content'>, data=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_pretty_inspect'>pretty_inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -2216,12 +2242,12 @@ and constructs a reply.</p>
       <pre class="lines">
 
 
-57
 58
-59</pre>
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 57</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cleanpwd'>cleanpwd</span><span class='lparen'>(</span><span class='id identifier rubyid_arg'>arg</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_arg'>arg</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(passwo?r?d\s*[:=]+\s*)\S+</span><span class='regexp_end'>/i</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>\\1[HIDDEN]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(usern?a?m?e?\s*[:=]+\s*)\S+</span><span class='regexp_end'>/i</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>\\1[HIDDEN]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -2246,13 +2272,13 @@ and constructs a reply.</p>
       <pre class="lines">
 
 
-52
 53
 54
-55</pre>
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 52</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_echo_action'>echo_action</span>
   <span class='id identifier rubyid_validate'>validate</span> <span class='symbol'>:msg</span><span class='comma'>,</span> <span class='const'>String</span>
@@ -2291,8 +2317,6 @@ and constructs a reply.</p>
       <pre class="lines">
 
 
-159
-160
 161
 162
 163
@@ -2321,10 +2345,12 @@ and constructs a reply.</p>
 186
 187
 188
-189</pre>
+189
+190
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 159</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 161</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute_action'>execute_action</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_action_method'>action_method</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>oo_</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -2396,37 +2422,41 @@ management</p>
       <pre class="lines">
 
 
-199
-200
-201
-202
-203
-204
-205
-206
-207
-208
-209
-210
-211
-212
-213
-214
-215
 216
 217
 218
 219
-220</pre>
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 199</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 216</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute_parallel_action'>execute_parallel_action</span>
   <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>execute_parallel_action call / action: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'>, agent=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_agent'>agent</span><span class='embexpr_end'>}</span><span class='tstring_content'>, data=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_pretty_inspect'>pretty_inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
+  <span class='id identifier rubyid_quota_reported'>quota_reported</span> <span class='op'>=</span> <span class='kw'>false</span>
   <span class='id identifier rubyid_joblist'>joblist</span> <span class='op'>=</span> <span class='id identifier rubyid_request'>request</span><span class='lbracket'>[</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_identity'>identity</span><span class='rbracket'>]</span>
-
   <span class='id identifier rubyid_joblist'>joblist</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_parallel_job'>parallel_job</span><span class='op'>|</span>
       <span class='id identifier rubyid_job'>job</span> <span class='op'>=</span> <span class='id identifier rubyid_parallel_job'>parallel_job</span><span class='lbracket'>[</span><span class='symbol'>:job</span><span class='rbracket'>]</span>
 
@@ -2435,6 +2465,10 @@ management</p>
       <span class='id identifier rubyid_args'>args</span>      <span class='op'>=</span> <span class='id identifier rubyid_job'>job</span><span class='lbracket'>[</span><span class='symbol'>:args</span><span class='rbracket'>]</span>
 
       <span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span> <span class='op'>=</span> <span class='id identifier rubyid_execute_action'>execute_action</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span> <span class='id identifier rubyid_quota_reported'>quota_reported</span>
+        <span class='id identifier rubyid_report_quota'>report_quota</span><span class='lparen'>(</span><span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_quota_reported'>quota_reported</span> <span class='op'>=</span> <span class='kw'>true</span>
+      <span class='kw'>end</span>
 
       <span class='id identifier rubyid_parallel_job'>parallel_job</span><span class='lbracket'>[</span><span class='symbol'>:result_exit_code</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_exitcode'>exitcode</span>
       <span class='id identifier rubyid_parallel_job'>parallel_job</span><span class='lbracket'>[</span><span class='symbol'>:result_stdout</span><span class='rbracket'>]</span>    <span class='op'>=</span> <span class='id identifier rubyid_output'>output</span>
@@ -2475,25 +2509,25 @@ management</p>
       <pre class="lines">
 
 
-1029
-1030
-1031
-1032
-1033
-1034
-1035
-1036
-1037
-1038
-1039
-1040
-1041
-1042
-1043
-1044</pre>
+1050
+1051
+1052
+1053
+1054
+1055
+1056
+1057
+1058
+1059
+1060
+1061
+1062
+1063
+1064
+1065</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 1029</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 1050</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_all_active_gears_action'>get_all_active_gears_action</span>
   <span class='id identifier rubyid_active_gears'>active_gears</span>     <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2542,33 +2576,33 @@ management</p>
       <pre class="lines">
 
 
-974
-975
-976
-977
-978
-979
-980
-981
-982
-983
-984
-985
-986
-987
-988
-989
-990
-991
-992
-993
-994
 995
 996
-997</pre>
+997
+998
+999
+1000
+1001
+1002
+1003
+1004
+1005
+1006
+1007
+1008
+1009
+1010
+1011
+1012
+1013
+1014
+1015
+1016
+1017
+1018</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 974</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 995</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_all_gears_action'>get_all_gears_action</span>
   <span class='id identifier rubyid_gear_map'>gear_map</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2625,32 +2659,32 @@ management</p>
       <pre class="lines">
 
 
-1002
-1003
-1004
-1005
-1006
-1007
-1008
-1009
-1010
-1011
-1012
-1013
-1014
-1015
-1016
-1017
-1018
-1019
-1020
-1021
-1022
 1023
-1024</pre>
+1024
+1025
+1026
+1027
+1028
+1029
+1030
+1031
+1032
+1033
+1034
+1035
+1036
+1037
+1038
+1039
+1040
+1041
+1042
+1043
+1044
+1045</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 1002</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 1023</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_all_gears_sshkeys_action'>get_all_gears_sshkeys_action</span>
   <span class='id identifier rubyid_gear_map'>gear_map</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2714,26 +2748,26 @@ agent timeout.</p>
       <pre class="lines">
 
 
-275
-276
-277
-278
-279
-280
-281
-282
-283
-284
-285
-286
-287
-288
-289
-290
-291</pre>
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 275</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 296</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_app_container_from_args'>get_app_container_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_app_uuid'>app_uuid</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-app-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-app-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -2772,15 +2806,15 @@ agent timeout.</p>
       <pre class="lines">
 
 
-61
 62
 63
 64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 61</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_facts_action'>get_facts_action</span>
   <span class='id identifier rubyid_reply'>reply</span><span class='lbracket'>[</span><span class='symbol'>:output</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2819,16 +2853,16 @@ agent timeout.</p>
       <pre class="lines">
 
 
-918
-919
-920
-921
-922
-923
-924</pre>
+939
+940
+941
+942
+943
+944
+945</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 918</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 939</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_gear_envs_action'>get_gear_envs_action</span>
    <span class='id identifier rubyid_validate'>validate</span> <span class='symbol'>:uuid</span><span class='comma'>,</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[a-zA-Z0-9]+$</span><span class='regexp_end'>/</span></span>
@@ -2868,12 +2902,12 @@ agent timeout.</p>
       <pre class="lines">
 
 
-881
-882
-883</pre>
+902
+903
+904</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 881</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 902</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_has_app_action'>has_app_action</span>
   <span class='id identifier rubyid_has_gear_action'>has_gear_action</span>
@@ -2909,31 +2943,31 @@ agent timeout.</p>
       <pre class="lines">
 
 
-948
-949
-950
-951
-952
-953
-954
-955
-956
-957
-958
-959
-960
-961
-962
-963
-964
-965
-966
-967
-968
-969</pre>
+969
+970
+971
+972
+973
+974
+975
+976
+977
+978
+979
+980
+981
+982
+983
+984
+985
+986
+987
+988
+989
+990</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 948</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 969</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_has_app_cartridge_action'>has_app_cartridge_action</span>
   <span class='id identifier rubyid_validate'>validate</span> <span class='symbol'>:app_uuid</span><span class='comma'>,</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[a-zA-Z0-9]+$</span><span class='regexp_end'>/</span></span>
@@ -2988,21 +3022,21 @@ agent timeout.</p>
       <pre class="lines">
 
 
-902
-903
-904
-905
-906
-907
-908
-909
-910
-911
-912
-913</pre>
+923
+924
+925
+926
+927
+928
+929
+930
+931
+932
+933
+934</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 902</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 923</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_has_embedded_app_action'>has_embedded_app_action</span>
   <span class='id identifier rubyid_validate'>validate</span> <span class='symbol'>:uuid</span><span class='comma'>,</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[a-zA-Z0-9]+$</span><span class='regexp_end'>/</span></span>
@@ -3047,19 +3081,19 @@ agent timeout.</p>
       <pre class="lines">
 
 
-888
-889
-890
-891
-892
-893
-894
-895
-896
-897</pre>
+909
+910
+911
+912
+913
+914
+915
+916
+917
+918</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 888</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 909</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_has_gear_action'>has_gear_action</span>
   <span class='id identifier rubyid_validate'>validate</span> <span class='symbol'>:uuid</span><span class='comma'>,</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[a-zA-Z0-9]+$</span><span class='regexp_end'>/</span></span>
@@ -3102,24 +3136,24 @@ agent timeout.</p>
       <pre class="lines">
 
 
-929
-930
-931
-932
-933
-934
-935
-936
-937
-938
-939
-940
-941
-942
-943</pre>
+950
+951
+952
+953
+954
+955
+956
+957
+958
+959
+960
+961
+962
+963
+964</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 929</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 950</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_has_uid_or_gid_action'>has_uid_or_gid_action</span>
   <span class='id identifier rubyid_validate'>validate</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[0-9]+$</span><span class='regexp_end'>/</span></span>
@@ -3156,15 +3190,15 @@ agent timeout.</p>
       <pre class="lines">
 
 
-608
-609
-610
-611
-612
-613</pre>
+629
+630
+631
+632
+633
+634</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 608</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 629</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_add_alias'>oo_add_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_alias_name'>alias_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-alias-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3192,14 +3226,14 @@ agent timeout.</p>
       <pre class="lines">
 
 
-622
-623
-624
-625
-626</pre>
+643
+644
+645
+646
+647</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 622</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 643</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_aliases'>oo_aliases</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_returns_data'>with_frontend_returns_data</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -3226,26 +3260,26 @@ agent timeout.</p>
       <pre class="lines">
 
 
-308
-309
-310
-311
-312
-313
-314
-315
-316
-317
-318
-319
-320
-321
-322
-323
-324</pre>
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 308</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 329</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_app_create'>oo_app_create</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_output'>output</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
@@ -3284,25 +3318,25 @@ agent timeout.</p>
       <pre class="lines">
 
 
-326
-327
-328
-329
-330
-331
-332
-333
-334
-335
-336
-337
-338
-339
-340
-341</pre>
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 326</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 347</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_app_destroy'>oo_app_destroy</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_skip_hooks'>skip_hooks</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--skip-hooks</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>?</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--skip-hooks</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='kw'>false</span>
@@ -3340,17 +3374,17 @@ agent timeout.</p>
       <pre class="lines">
 
 
-425
-426
-427
-428
-429
-430
-431
-432</pre>
+446
+447
+448
+449
+450
+451
+452
+453</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 425</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 446</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_app_state_show'>oo_app_state_show</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_container_uuid'>container_uuid</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3380,18 +3414,18 @@ agent timeout.</p>
       <pre class="lines">
 
 
-343
-344
-345
-346
-347
-348
-349
-350
-351</pre>
+364
+365
+366
+367
+368
+369
+370
+371
+372</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 343</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 364</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_authorized_ssh_key_add'>oo_authorized_ssh_key_add</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ssh_key'>ssh_key</span>  <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-ssh-key</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3422,17 +3456,17 @@ agent timeout.</p>
       <pre class="lines">
 
 
-353
-354
-355
-356
-357
-358
-359
-360</pre>
+374
+375
+376
+377
+378
+379
+380
+381</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 353</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 374</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_authorized_ssh_key_remove'>oo_authorized_ssh_key_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ssh_key'>ssh_key</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-ssh-key</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3462,23 +3496,23 @@ agent timeout.</p>
       <pre class="lines">
 
 
-362
-363
-364
-365
-366
-367
-368
-369
-370
-371
-372
-373
-374
-375</pre>
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 362</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 383</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_authorized_ssh_keys_replace'>oo_authorized_ssh_keys_replace</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ssh_keys'>ssh_keys</span>  <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-ssh-keys</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -3514,17 +3548,17 @@ agent timeout.</p>
       <pre class="lines">
 
 
-377
-378
-379
-380
-381
-382
-383
-384</pre>
+398
+399
+400
+401
+402
+403
+404
+405</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 377</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 398</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_broker_auth_key_add'>oo_broker_auth_key_add</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_iv'>iv</span>    <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-iv</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3554,14 +3588,14 @@ agent timeout.</p>
       <pre class="lines">
 
 
-386
-387
-388
-389
-390</pre>
+407
+408
+409
+410
+411</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 386</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 407</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_broker_auth_key_remove'>oo_broker_auth_key_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_container_from_args'>with_container_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_container'>container</span><span class='op'>|</span>
@@ -3588,24 +3622,24 @@ agent timeout.</p>
       <pre class="lines">
 
 
-409
-410
-411
-412
-413
-414
-415
-416
-417
-418
-419
-420
-421
-422
-423</pre>
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 409</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 430</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_cartridge_list'>oo_cartridge_list</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_list_descriptors'>list_descriptors</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-descriptors</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3642,16 +3676,16 @@ agent timeout.</p>
       <pre class="lines">
 
 
-690
-691
-692
-693
-694
-695
-696</pre>
+711
+712
+713
+714
+715
+716
+717</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 690</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 711</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_conceal_port'>oo_conceal_port</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3680,18 +3714,18 @@ agent timeout.</p>
       <pre class="lines">
 
 
-710
-711
-712
-713
-714
-715
-716
-717
-718</pre>
+731
+732
+733
+734
+735
+736
+737
+738
+739</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 710</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 731</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_configure'>oo_configure</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span>        <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3722,20 +3756,20 @@ agent timeout.</p>
       <pre class="lines">
 
 
-698
-699
-700
-701
-702
-703
-704
-705
-706
-707
-708</pre>
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 698</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 719</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_connector_execute'>oo_connector_execute</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span>        <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3768,16 +3802,16 @@ agent timeout.</p>
       <pre class="lines">
 
 
-729
-730
-731
-732
-733
-734
-735</pre>
+750
+751
+752
+753
+754
+755
+756</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 729</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 750</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_deconfigure'>oo_deconfigure</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3806,16 +3840,16 @@ agent timeout.</p>
       <pre class="lines">
 
 
-746
-747
-748
-749
-750
-751
-752</pre>
+767
+768
+769
+770
+771
+772
+773</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 746</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 767</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_deploy_httpd_proxy'>oo_deploy_httpd_proxy</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3844,17 +3878,17 @@ agent timeout.</p>
       <pre class="lines">
 
 
-392
-393
-394
-395
-396
-397
-398
-399</pre>
+413
+414
+415
+416
+417
+418
+419
+420</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 392</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 413</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_env_var_add'>oo_env_var_add</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_key'>key</span>   <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-key</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3884,16 +3918,16 @@ agent timeout.</p>
       <pre class="lines">
 
 
-401
-402
-403
-404
-405
-406
-407</pre>
+422
+423
+424
+425
+426
+427
+428</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 401</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 422</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_env_var_remove'>oo_env_var_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-key</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3922,16 +3956,16 @@ agent timeout.</p>
       <pre class="lines">
 
 
-682
-683
-684
-685
-686
-687
-688</pre>
+703
+704
+705
+706
+707
+708
+709</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 682</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 703</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_expose_port'>oo_expose_port</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -3960,17 +3994,17 @@ agent timeout.</p>
       <pre class="lines">
 
 
-466
-467
-468
-469
-470
-471
-472
-473</pre>
+487
+488
+489
+490
+491
+492
+493
+494</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 466</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 487</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_force_stop'>oo_force_stop</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_container_uuid'>container_uuid</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4014,12 +4048,12 @@ from interpretation.</p>
       <pre class="lines">
 
 
-663
-664
-665</pre>
+684
+685
+686</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 663</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 684</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_backup'>oo_frontend_backup</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_oo_frontend_to_hash'>oo_frontend_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
@@ -4044,14 +4078,14 @@ from interpretation.</p>
       <pre class="lines">
 
 
-583
-584
-585
-586
-587</pre>
+604
+605
+606
+607
+608</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 583</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 604</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_check_idle'>oo_frontend_check_idle</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_returns_data'>with_frontend_returns_data</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4092,15 +4126,15 @@ path(String), target(String), options(Hash) ] ex: [ “”, “127.0.250.1:8080�
       <pre class="lines">
 
 
-548
-549
-550
-551
-552
-553</pre>
+569
+570
+571
+572
+573
+574</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 548</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 569</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_connect'>oo_frontend_connect</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_path_target_options'>path_target_options</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-path-target-options</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4128,14 +4162,14 @@ path(String), target(String), options(Hash) ] ex: [ “”, “127.0.250.1:8080�
       <pre class="lines">
 
 
-565
-566
-567
-568
-569</pre>
+586
+587
+588
+589
+590</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 565</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 586</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_connections'>oo_frontend_connections</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_returns_data'>with_frontend_returns_data</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4174,14 +4208,14 @@ it.</p>
       <pre class="lines">
 
 
-523
-524
-525
-526
-527</pre>
+544
+545
+546
+547
+548</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 523</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 544</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_create'>oo_frontend_create</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_from_args'>with_frontend_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4208,14 +4242,14 @@ it.</p>
       <pre class="lines">
 
 
-529
-530
-531
-532
-533</pre>
+550
+551
+552
+553
+554</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 529</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 550</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_destroy'>oo_frontend_destroy</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_from_args'>with_frontend_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4253,15 +4287,15 @@ it.</p>
       <pre class="lines">
 
 
-558
-559
-560
-561
-562
-563</pre>
+579
+580
+581
+582
+583
+584</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 558</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 579</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_disconnect'>oo_frontend_disconnect</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_paths'>paths</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-paths</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4289,14 +4323,14 @@ it.</p>
       <pre class="lines">
 
 
-602
-603
-604
-605
-606</pre>
+623
+624
+625
+626
+627</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 602</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 623</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_get_sts'>oo_frontend_get_sts</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_returns_data'>with_frontend_returns_data</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4323,14 +4357,14 @@ it.</p>
       <pre class="lines">
 
 
-571
-572
-573
-574
-575</pre>
+592
+593
+594
+595
+596</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 571</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 592</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_idle'>oo_frontend_idle</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_from_args'>with_frontend_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4357,14 +4391,14 @@ it.</p>
       <pre class="lines">
 
 
-596
-597
-598
-599
-600</pre>
+617
+618
+619
+620
+621</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 596</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 617</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_no_sts'>oo_frontend_no_sts</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_from_args'>with_frontend_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4402,16 +4436,16 @@ it.</p>
       <pre class="lines">
 
 
-668
-669
-670
-671
-672
-673
-674</pre>
+689
+690
+691
+692
+693
+694
+695</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 668</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 689</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_restore'>oo_frontend_restore</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_backup'>backup</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-backup</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4440,15 +4474,15 @@ it.</p>
       <pre class="lines">
 
 
-589
-590
-591
-592
-593
-594</pre>
+610
+611
+612
+613
+614
+615</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 589</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 610</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_sts'>oo_frontend_sts</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_max_age'>max_age</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-max-age</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4476,14 +4510,14 @@ it.</p>
       <pre class="lines">
 
 
-652
-653
-654
-655
-656</pre>
+673
+674
+675
+676
+677</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 652</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 673</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_to_hash'>oo_frontend_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_returns_data'>with_frontend_returns_data</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4510,14 +4544,14 @@ it.</p>
       <pre class="lines">
 
 
-577
-578
-579
-580
-581</pre>
+598
+599
+600
+601
+602</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 577</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 598</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_unidle'>oo_frontend_unidle</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_from_args'>with_frontend_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -4544,15 +4578,15 @@ it.</p>
       <pre class="lines">
 
 
-535
-536
-537
-538
-539
-540</pre>
+556
+557
+558
+559
+560
+561</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 535</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 556</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_frontend_update_name'>oo_frontend_update_name</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new_container_name'>new_container_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-new-container-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4580,23 +4614,23 @@ it.</p>
       <pre class="lines">
 
 
-434
-435
-436
-437
-438
-439
-440
-441
-442
-443
-444
-445
-446
-447</pre>
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 434</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 455</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_get_quota'>oo_get_quota</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_uuid'>uuid</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4632,17 +4666,17 @@ it.</p>
       <pre class="lines">
 
 
-720
-721
-722
-723
-724
-725
-726
-727</pre>
+741
+742
+743
+744
+745
+746
+747
+748</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 720</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 741</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_post_configure'>oo_post_configure</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4672,16 +4706,16 @@ it.</p>
       <pre class="lines">
 
 
-809
-810
-811
-812
-813
-814
-815</pre>
+830
+831
+832
+833
+834
+835
+836</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 809</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 830</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_reload'>oo_reload</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4710,15 +4744,15 @@ it.</p>
       <pre class="lines">
 
 
-615
-616
-617
-618
-619
-620</pre>
+636
+637
+638
+639
+640
+641</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 615</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 636</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_remove_alias'>oo_remove_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_alias_name'>alias_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-alias-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4746,16 +4780,16 @@ it.</p>
       <pre class="lines">
 
 
-754
-755
-756
-757
-758
-759
-760</pre>
+775
+776
+777
+778
+779
+780
+781</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 754</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 775</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_remove_httpd_proxy'>oo_remove_httpd_proxy</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4784,16 +4818,16 @@ it.</p>
       <pre class="lines">
 
 
-801
-802
-803
-804
-805
-806
-807</pre>
+822
+823
+824
+825
+826
+827
+828</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 801</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 822</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_restart'>oo_restart</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4822,16 +4856,16 @@ it.</p>
       <pre class="lines">
 
 
-762
-763
-764
-765
-766
-767
-768</pre>
+783
+784
+785
+786
+787
+788
+789</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 762</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 783</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_restart_httpd_proxy'>oo_restart_httpd_proxy</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4860,25 +4894,25 @@ it.</p>
       <pre class="lines">
 
 
-449
-450
-451
-452
-453
-454
-455
-456
-457
-458
-459
-460
-461
-462
-463
-464</pre>
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 449</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 470</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_set_quota'>oo_set_quota</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_uuid'>uuid</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4916,19 +4950,19 @@ it.</p>
       <pre class="lines">
 
 
-628
-629
-630
-631
-632
-633
-634
-635
-636
-637</pre>
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 628</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 649</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_ssl_cert_add'>oo_ssl_cert_add</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ssl_cert'>ssl_cert</span>     <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-ssl-cert</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4960,15 +4994,15 @@ it.</p>
       <pre class="lines">
 
 
-639
-640
-641
-642
-643
-644</pre>
+660
+661
+662
+663
+664
+665</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 639</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 660</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_ssl_cert_remove'>oo_ssl_cert_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_server_alias'>server_alias</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-alias-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -4996,14 +5030,14 @@ it.</p>
       <pre class="lines">
 
 
-646
-647
-648
-649
-650</pre>
+667
+668
+669
+670
+671</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 646</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 667</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_ssl_certs'>oo_ssl_certs</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_returns_data'>with_frontend_returns_data</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -5030,16 +5064,16 @@ it.</p>
       <pre class="lines">
 
 
-785
-786
-787
-788
-789
-790
-791</pre>
+806
+807
+808
+809
+810
+811
+812</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 785</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 806</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_start'>oo_start</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -5068,16 +5102,16 @@ it.</p>
       <pre class="lines">
 
 
-817
-818
-819
-820
-821
-822
-823</pre>
+838
+839
+840
+841
+842
+843
+844</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 817</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 838</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_status'>oo_status</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -5106,16 +5140,16 @@ it.</p>
       <pre class="lines">
 
 
-793
-794
-795
-796
-797
-798
-799</pre>
+814
+815
+816
+817
+818
+819
+820</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 793</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 814</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_stop'>oo_stop</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -5144,23 +5178,23 @@ it.</p>
       <pre class="lines">
 
 
-770
-771
-772
-773
-774
-775
-776
-777
-778
-779
-780
-781
-782
-783</pre>
+791
+792
+793
+794
+795
+796
+797
+798
+799
+800
+801
+802
+803
+804</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 770</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 791</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_system_messages'>oo_system_messages</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -5196,26 +5230,26 @@ it.</p>
       <pre class="lines">
 
 
-825
-826
-827
-828
-829
-830
-831
-832
-833
-834
-835
-836
-837
-838
-839
-840
-841</pre>
+846
+847
+848
+849
+850
+851
+852
+853
+854
+855
+856
+857
+858
+859
+860
+861
+862</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 825</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 846</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_threaddump'>oo_threaddump</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -5254,14 +5288,14 @@ it.</p>
       <pre class="lines">
 
 
-676
-677
-678
-679
-680</pre>
+697
+698
+699
+700
+701</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 676</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 697</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_tidy'>oo_tidy</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_container_from_args'>with_container_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_container'>container</span><span class='op'>|</span>
@@ -5288,17 +5322,17 @@ it.</p>
       <pre class="lines">
 
 
-737
-738
-739
-740
-741
-742
-743
-744</pre>
+758
+759
+760
+761
+762
+763
+764
+765</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 737</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 758</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_oo_unsubscribe'>oo_unsubscribe</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cart_name'>cart_name</span>     <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--cart-name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -5308,6 +5342,65 @@ it.</p>
     <span class='id identifier rubyid_output'>output</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_unsubscribe'>unsubscribe</span><span class='lparen'>(</span><span class='id identifier rubyid_cart_name'>cart_name</span><span class='comma'>,</span> <span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="report_quota-instance_method">
+  
+    - (<tt>Object</tt>) <strong>report_quota</strong>(buffer, uuid) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>report approaching quota overage.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 195</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_report_quota'>report_quota</span><span class='lparen'>(</span><span class='id identifier rubyid_buffer'>buffer</span><span class='comma'>,</span> <span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_quota'>quota</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>Runtime</span><span class='op'>::</span><span class='const'>Node</span><span class='period'>.</span><span class='id identifier rubyid_get_quota'>get_quota</span><span class='lparen'>(</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_watermark'>watermark</span> <span class='op'>=</span> <span class='cvar'>@@config</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>QUOTA_WARNING_PERCENT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>90.0</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span>
+
+  <span class='id identifier rubyid_usage'>usage</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_quota'>quota</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>/</span> <span class='id identifier rubyid_quota'>quota</span><span class='lbracket'>[</span><span class='int'>3</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span><span class='rparen'>)</span> <span class='op'>*</span> <span class='float'>100.0</span>
+  <span class='id identifier rubyid_buffer'>buffer</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>CLIENT_MESSAGE: Warning gear </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> is using </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_usage'>usage</span><span class='embexpr_end'>}</span><span class='tstring_content'> of disk quota\n</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_watermark'>watermark</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_usage'>usage</span>
+
+  <span class='id identifier rubyid_usage'>usage</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_quota'>quota</span><span class='lbracket'>[</span><span class='int'>4</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>/</span> <span class='id identifier rubyid_quota'>quota</span><span class='lbracket'>[</span><span class='int'>6</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span><span class='rparen'>)</span> <span class='op'>*</span> <span class='float'>100.0</span>
+  <span class='id identifier rubyid_buffer'>buffer</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>CLIENT_MESSAGE: Warning gear </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> is using </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_usage'>usage</span><span class='embexpr_end'>}</span><span class='tstring_content'> of inodes allowed\n</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_watermark'>watermark</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_usage'>usage</span>
+<span class='kw'>rescue</span> <span class='const'>Exception</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='comment'># do nothing
+</span><span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -5339,27 +5432,6 @@ it.</p>
       <pre class="lines">
 
 
-846
-847
-848
-849
-850
-851
-852
-853
-854
-855
-856
-857
-858
-859
-860
-861
-862
-863
-864
-865
-866
 867
 868
 869
@@ -5369,10 +5441,31 @@ it.</p>
 873
 874
 875
-876</pre>
+876
+877
+878
+879
+880
+881
+882
+883
+884
+885
+886
+887
+888
+889
+890
+891
+892
+893
+894
+895
+896
+897</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 846</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 867</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_district_action'>set_district_action</span>
   <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>set_district call / action: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'>, agent=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_agent'>agent</span><span class='embexpr_end'>}</span><span class='tstring_content'>, data=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_pretty_inspect'>pretty_inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -5436,27 +5529,6 @@ it.</p>
       <pre class="lines">
 
 
-225
-226
-227
-228
-229
-230
-231
-232
-233
-234
-235
-236
-237
-238
-239
-240
-241
-242
-243
-244
-245
 246
 247
 248
@@ -5472,10 +5544,31 @@ it.</p>
 258
 259
 260
-261</pre>
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 225</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 246</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_upgrade_action'>upgrade_action</span>
   <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>upgrade_action call / action=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'>, agent=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_agent'>agent</span><span class='embexpr_end'>}</span><span class='tstring_content'>, data=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_pretty_inspect'>pretty_inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -5534,23 +5627,23 @@ it.</p>
       <pre class="lines">
 
 
-293
-294
-295
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306</pre>
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 293</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 314</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_container_from_args'>with_container_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_output'>output</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
@@ -5586,19 +5679,19 @@ it.</p>
       <pre class="lines">
 
 
-501
-502
-503
-504
-505
-506
-507
-508
-509
-510</pre>
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 501</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 522</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_frontend_from_args'>with_frontend_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_container_uuid'>container_uuid</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>--with-container-uuid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -5642,29 +5735,29 @@ exception handling pattern.</p>
       <pre class="lines">
 
 
-480
-481
-482
-483
-484
-485
-486
-487
-488
-489
-490
-491
-492
-493
-494
-495
-496
-497
-498
-499</pre>
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 480</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 501</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_frontend_rescue_pattern'>with_frontend_rescue_pattern</span>
   <span class='id identifier rubyid_output'>output</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
@@ -5706,15 +5799,15 @@ exception handling pattern.</p>
       <pre class="lines">
 
 
-512
-513
-514
-515
-516
-517</pre>
+533
+534
+535
+536
+537
+538</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 512</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/msg-node/mcollective/src/openshift.rb', line 533</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_frontend_returns_data'>with_frontend_returns_data</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_frontend_from_args'>with_frontend_from_args</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span> <span class='id identifier rubyid_o'>o</span><span class='op'>|</span>
@@ -5732,7 +5825,7 @@ exception handling pattern.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Aug  6 22:41:01 2013 by
+  Generated on Wed Aug  7 22:06:53 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
