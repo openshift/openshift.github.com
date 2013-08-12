@@ -1651,13 +1651,13 @@ lsof, otherwise false.</p>
       <pre class="lines">
 
 
-838
-839
-840
-841</pre>
+843
+844
+845
+846</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 838</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 843</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_address_bound?'>address_bound?</span><span class='lparen'>(</span><span class='id identifier rubyid_ip'>ip</span><span class='comma'>,</span> <span class='id identifier rubyid_port'>port</span><span class='rparen'>)</span>
   <span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_rc'>rc</span> <span class='op'>=</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_run_in_container_context'>run_in_container_context</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/usr/sbin/lsof -i @</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_ip'>ip</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_port'>port</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>timeout:</span> <span class='ivar'>@hourglass</span><span class='period'>.</span><span class='id identifier rubyid_remaining'>remaining</span><span class='rparen'>)</span>
@@ -1705,18 +1705,18 @@ lsof, otherwise false.</p>
       <pre class="lines">
 
 
-843
-844
-845
-846
-847
 848
 849
 850
-851</pre>
+851
+852
+853
+854
+855
+856</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 843</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 848</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_addresses_bound?'>addresses_bound?</span><span class='lparen'>(</span><span class='id identifier rubyid_addresses'>addresses</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_command'>command</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/usr/sbin/lsof</span><span class='tstring_end'>&quot;</span></span>
@@ -1846,7 +1846,12 @@ Raises exception if script fails
 643
 644
 645
-646</pre>
+646
+647
+648
+649
+650
+651</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 621</span>
@@ -1861,11 +1866,16 @@ Raises exception if script fails
   <span class='id identifier rubyid_gear_env'>gear_env</span>           <span class='op'>=</span> <span class='op'>::</span><span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>Runtime</span><span class='op'>::</span><span class='const'>Utils</span><span class='op'>::</span><span class='const'>Environ</span><span class='period'>.</span><span class='id identifier rubyid_for_gear'>for_gear</span><span class='lparen'>(</span><span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_container_dir'>container_dir</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cartridge_env_home'>cartridge_env_home</span> <span class='op'>=</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_home'>cartridge_home</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>env</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
 
-  <span class='id identifier rubyid_cartridge_env'>cartridge_env</span> <span class='op'>=</span> <span class='id identifier rubyid_gear_env'>gear_env</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='const'>Utils</span><span class='op'>::</span><span class='const'>Environ</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env_home'>cartridge_env_home</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_cartridge_env'>cartridge_env</span> <span class='op'>=</span> <span class='const'>Utils</span><span class='op'>::</span><span class='const'>Environ</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env_home'>cartridge_env_home</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_cartridge_env'>cartridge_env</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>PATH</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_cartridge_env'>cartridge_env</span> <span class='op'>=</span> <span class='id identifier rubyid_gear_env'>gear_env</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env'>cartridge_env</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_render_erbs'>render_erbs</span>
     <span class='id identifier rubyid_erbs'>erbs</span> <span class='op'>=</span> <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_glob'>glob</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env_home'>cartridge_env_home</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/*.erb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>File</span><span class='op'>::</span><span class='const'>FNM_DOTMATCH</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_file?'>file?</span><span class='lparen'>(</span><span class='id identifier rubyid_f'>f</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
     <span class='id identifier rubyid_render_erbs'>render_erbs</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env'>cartridge_env</span><span class='comma'>,</span> <span class='id identifier rubyid_erbs'>erbs</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_cartridge_env'>cartridge_env</span> <span class='op'>=</span> <span class='id identifier rubyid_gear_env'>gear_env</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='const'>Utils</span><span class='op'>::</span><span class='const'>Environ</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env_home'>cartridge_env_home</span><span class='rparen'>)</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_cartridge_env'>cartridge_env</span> <span class='op'>=</span> <span class='const'>Utils</span><span class='op'>::</span><span class='const'>Environ</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env_home'>cartridge_env_home</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_cartridge_env'>cartridge_env</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>PATH</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_cartridge_env'>cartridge_env</span> <span class='op'>=</span> <span class='id identifier rubyid_gear_env'>gear_env</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_env'>cartridge_env</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='id identifier rubyid_action'>action</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> --version </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_software_version'>software_version</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -1937,21 +1947,21 @@ Raises exception if script fails
       <pre class="lines">
 
 
-1177
-1178
-1179
-1180
-1181
 1182
 1183
 1184
 1185
 1186
 1187
-1188</pre>
+1188
+1189
+1190
+1191
+1192
+1193</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1177</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1182</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cartridge_hooks'>cartridge_hooks</span><span class='lparen'>(</span><span class='id identifier rubyid_action_hooks'>action_hooks</span><span class='comma'>,</span> <span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_hooks'>hooks</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='label'>pre:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>post:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rbrace'>}</span>
@@ -2002,11 +2012,6 @@ Raises exception if script fails
       <pre class="lines">
 
 
-676
-677
-678
-679
-680
 681
 682
 683
@@ -2022,10 +2027,15 @@ Raises exception if script fails
 693
 694
 695
-696</pre>
+696
+697
+698
+699
+700
+701</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 676</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 681</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cartridge_teardown'>cartridge_teardown</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='comma'>,</span> <span class='id identifier rubyid_remove_cartridge_dir'>remove_cartridge_dir</span><span class='op'>=</span><span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cartridge_home'>cartridge_home</span> <span class='op'>=</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_container_dir'>container_dir</span><span class='comma'>,</span> <span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='rparen'>)</span>
@@ -2230,11 +2240,6 @@ configure(&#39;php-666&#39;, &#39;git://&#39;, &#39;git://&#39;)</p>
       <pre class="lines">
 
 
-894
-895
-896
-897
-898
 899
 900
 901
@@ -2268,10 +2273,15 @@ configure(&#39;php-666&#39;, &#39;git://&#39;, &#39;git://&#39;)</p>
 929
 930
 931
-932</pre>
+932
+933
+934
+935
+936
+937</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 894</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 899</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connect_frontend'>connect_frontend</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_frontend'>frontend</span>       <span class='op'>=</span> <span class='const'>FrontendHttpServer</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@container</span><span class='rparen'>)</span>
@@ -2359,11 +2369,6 @@ configure(&#39;php-666&#39;, &#39;git://&#39;, &#39;git://&#39;)</p>
       <pre class="lines">
 
 
-1017
-1018
-1019
-1020
-1021
 1022
 1023
 1024
@@ -2407,10 +2412,15 @@ configure(&#39;php-666&#39;, &#39;git://&#39;, &#39;git://&#39;)</p>
 1062
 1063
 1064
-1065</pre>
+1065
+1066
+1067
+1068
+1069
+1070</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1017</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1022</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connector_execute'>connector_execute</span><span class='lparen'>(</span><span class='id identifier rubyid_cart_name'>cart_name</span><span class='comma'>,</span> <span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span><span class='comma'>,</span> <span class='id identifier rubyid_connection_type'>connection_type</span><span class='comma'>,</span> <span class='id identifier rubyid_connector'>connector</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cart_name cannot be nil</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_cart_name'>cart_name</span>
@@ -2493,17 +2503,17 @@ form of args</p>
       <pre class="lines">
 
 
-1005
-1006
-1007
-1008
-1009
 1010
 1011
-1012</pre>
+1012
+1013
+1014
+1015
+1016
+1017</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1005</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1010</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_convert_to_shell_arguments'>convert_to_shell_arguments</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new_args'>new_args</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -2669,11 +2679,6 @@ errors here are considered fatal.</p>
       <pre class="lines">
 
 
-733
-734
-735
-736
-737
 738
 739
 740
@@ -2734,10 +2739,15 @@ errors here are considered fatal.</p>
 795
 796
 797
-798</pre>
+798
+799
+800
+801
+802
+803</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 733</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 738</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_private_endpoints'>create_private_endpoints</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Cartridge is required</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_cartridge'>cartridge</span>
@@ -2839,16 +2849,16 @@ errors here are considered fatal.</p>
       <pre class="lines">
 
 
-702
-703
-704
-705
-706
 707
-708</pre>
+708
+709
+710
+711
+712
+713</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 702</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 707</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_public_endpoint'>create_public_endpoint</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='comma'>,</span> <span class='id identifier rubyid_endpoint'>endpoint</span><span class='comma'>,</span> <span class='id identifier rubyid_private_ip'>private_ip</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_public_port'>public_port</span> <span class='op'>=</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_create_public_endpoint'>create_public_endpoint</span><span class='lparen'>(</span><span class='id identifier rubyid_private_ip'>private_ip</span><span class='comma'>,</span> <span class='id identifier rubyid_endpoint'>endpoint</span><span class='period'>.</span><span class='id identifier rubyid_private_port'>private_port</span><span class='rparen'>)</span>
@@ -2889,16 +2899,16 @@ gear user.</p>
       <pre class="lines">
 
 
-1355
-1356
-1357
-1358
-1359
 1360
-1361</pre>
+1361
+1362
+1363
+1364
+1365
+1366</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1355</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1360</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_stop_lock'>create_stop_lock</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_stop_lock?'>stop_lock?</span>
@@ -3104,19 +3114,19 @@ directory will be deleted.</p>
       <pre class="lines">
 
 
-800
-801
-802
-803
-804
 805
 806
 807
 808
-809</pre>
+809
+810
+811
+812
+813
+814</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 800</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 805</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_private_endpoints'>delete_private_endpoints</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Deleting private endpoints for </span><span class='embexpr_beg'>#{</span><span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='period'>.</span><span class='id identifier rubyid_directory'>directory</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -3257,11 +3267,6 @@ delete</p>
       <pre class="lines">
 
 
-880
-881
-882
-883
-884
 885
 886
 887
@@ -3269,10 +3274,15 @@ delete</p>
 889
 890
 891
-892</pre>
+892
+893
+894
+895
+896
+897</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 880</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 885</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disconnect_frontend'>disconnect_frontend</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_mappings'>mappings</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -3323,11 +3333,6 @@ returns a non-zero return code.</p>
       <pre class="lines">
 
 
-1151
-1152
-1153
-1154
-1155
 1156
 1157
 1158
@@ -3347,10 +3352,15 @@ returns a non-zero return code.</p>
 1172
 1173
 1174
-1175</pre>
+1175
+1176
+1177
+1178
+1179
+1180</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1151</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1156</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_do_action_hook'>do_action_hook</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_env'>env</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_action'>action</span> <span class='op'>=</span> <span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>-</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -3397,11 +3407,6 @@ returns a non-zero return code.</p>
       <pre class="lines">
 
 
-951
-952
-953
-954
-955
 956
 957
 958
@@ -3410,10 +3415,15 @@ returns a non-zero return code.</p>
 961
 962
 963
-964</pre>
+964
+965
+966
+967
+968
+969</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 951</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 956</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_do_control'>do_control</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_cartridge'>cartridge</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_cartridge'>cartridge</span>
@@ -3479,11 +3489,6 @@ hooks if found.</p>
       <pre class="lines">
 
 
-1083
-1084
-1085
-1086
-1087
 1088
 1089
 1090
@@ -3539,10 +3544,15 @@ hooks if found.</p>
 1140
 1141
 1142
-1143</pre>
+1143
+1144
+1145
+1146
+1147
+1148</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1083</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1088</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_do_control_with_directory'>do_control_with_directory</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cartridge_dir'>cartridge_dir</span>             <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:cartridge_dir</span><span class='rbracket'>]</span>
@@ -3878,12 +3888,12 @@ cartridge author</p>
       <pre class="lines">
 
 
-1434
-1435
-1436</pre>
+1439
+1440
+1441</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1434</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1439</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_empty_repository?'>empty_repository?</span>
   <span class='const'>ApplicationRepository</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@container</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -3925,11 +3935,6 @@ the given port, or returns nil if IP is available.</p>
       <pre class="lines">
 
 
-817
-818
-819
-820
-821
 822
 823
 824
@@ -3942,10 +3947,15 @@ the given port, or returns nil if IP is available.</p>
 831
 832
 833
-834</pre>
+834
+835
+836
+837
+838
+839</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 817</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 822</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_find_open_ip'>find_open_ip</span><span class='lparen'>(</span><span class='id identifier rubyid_port'>port</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_allocated_ips'>allocated_ips</span> <span class='op'>=</span> <span class='id identifier rubyid_get_allocated_private_ips'>get_allocated_private_ips</span>
@@ -3996,11 +4006,6 @@ the given port, or returns nil if IP is available.</p>
       <pre class="lines">
 
 
-1365
-1366
-1367
-1368
-1369
 1370
 1371
 1372
@@ -4031,10 +4036,15 @@ the given port, or returns nil if IP is available.</p>
 1397
 1398
 1399
-1400</pre>
+1400
+1401
+1402
+1403
+1404
+1405</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1365</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1370</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_generate_ssh_key'>generate_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ssh_dir'>ssh_dir</span>        <span class='op'>=</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_container_dir'>container_dir</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.openshift_ssh</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -4105,11 +4115,6 @@ none are currently defined.</p>
       <pre class="lines">
 
 
-856
-857
-858
-859
-860
 861
 862
 863
@@ -4124,10 +4129,15 @@ none are currently defined.</p>
 872
 873
 874
-875</pre>
+875
+876
+877
+878
+879
+880</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 856</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 861</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_allocated_private_ips'>get_allocated_private_ips</span>
   <span class='id identifier rubyid_env'>env</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>Runtime</span><span class='op'>::</span><span class='const'>Utils</span><span class='op'>::</span><span class='const'>Environ</span><span class='op'>::</span><span class='id identifier rubyid_for_gear'>for_gear</span><span class='lparen'>(</span><span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_container_dir'>container_dir</span><span class='rparen'>)</span>
@@ -4368,11 +4378,6 @@ none are currently defined.</p>
       <pre class="lines">
 
 
-710
-711
-712
-713
-714
 715
 716
 717
@@ -4384,10 +4389,15 @@ none are currently defined.</p>
 723
 724
 725
-726</pre>
+726
+727
+728
+729
+730
+731</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 710</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 715</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_proxy_mappings'>list_proxy_mappings</span>
   <span class='id identifier rubyid_proxied_ports'>proxied_ports</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -4732,21 +4742,21 @@ this hack must go away</p>
       <pre class="lines">
 
 
-938
-939
-940
-941
-942
 943
 944
 945
 946
 947
 948
-949</pre>
+949
+950
+951
+952
+953
+954</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 938</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 943</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_process_cartridges'>process_cartridges</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge_dir'>cartridge_dir</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='comment'># : yields cartridge_path
 </span>  <span class='kw'>if</span> <span class='id identifier rubyid_cartridge_dir'>cartridge_dir</span>
@@ -4844,11 +4854,6 @@ this hack must go away</p>
       <pre class="lines">
 
 
-1404
-1405
-1406
-1407
-1408
 1409
 1410
 1411
@@ -4872,10 +4877,15 @@ this hack must go away</p>
 1429
 1430
 1431
-1432</pre>
+1432
+1433
+1434
+1435
+1436
+1437</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1404</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1409</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_publish_gear_endpoint'>publish_gear_endpoint</span>
   <span class='kw'>begin</span>
@@ -4942,11 +4952,6 @@ this hack must go away</p>
       <pre class="lines">
 
 
-653
-654
-655
-656
-657
 658
 659
 660
@@ -4957,10 +4962,15 @@ this hack must go away</p>
 665
 666
 667
-668</pre>
+668
+669
+670
+671
+672
+673</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 653</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 658</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_render_erbs'>render_erbs</span><span class='lparen'>(</span><span class='id identifier rubyid_env'>env</span><span class='comma'>,</span> <span class='id identifier rubyid_erbs'>erbs</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_erbs'>erbs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_file'>file</span><span class='op'>|</span>
@@ -5054,11 +5064,6 @@ this hack must go away</p>
       <pre class="lines">
 
 
-983
-984
-985
-986
-987
 988
 989
 990
@@ -5072,10 +5077,15 @@ this hack must go away</p>
 998
 999
 1000
-1001</pre>
+1001
+1002
+1003
+1004
+1005
+1006</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 983</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 988</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_connection_hook_env_vars'>set_connection_hook_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_cart_name'>cart_name</span><span class='comma'>,</span> <span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Setting env vars for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_cart_name'>cart_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> from </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -5138,18 +5148,18 @@ this hack must go away</p>
       <pre class="lines">
 
 
-966
-967
-968
-969
-970
 971
 972
 973
-974</pre>
+974
+975
+976
+977
+978
+979</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 966</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 971</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_short_name_from_full_cart_name'>short_name_from_full_cart_name</span><span class='lparen'>(</span><span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>pub_cart_name cannot be nil</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span>
@@ -5214,11 +5224,6 @@ If start of the primary cartridge is invoked and
       <pre class="lines">
 
 
-1276
-1277
-1278
-1279
-1280
 1281
 1282
 1283
@@ -5244,10 +5249,15 @@ If start of the primary cartridge is invoked and
 1303
 1304
 1305
-1306</pre>
+1306
+1307
+1308
+1309
+1310
+1311</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1276</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1281</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_start_cartridge'>start_cartridge</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_cartridge'>cartridge</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:user_initiated</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_has_key?'>has_key?</span><span class='lparen'>(</span><span class='symbol'>:user_initiated</span><span class='rparen'>)</span>
@@ -5332,11 +5342,6 @@ a <code>String</code>.</p>
       <pre class="lines">
 
 
-1235
-1236
-1237
-1238
-1239
 1240
 1241
 1242
@@ -5348,10 +5353,15 @@ a <code>String</code>.</p>
 1248
 1249
 1250
-1251</pre>
+1251
+1252
+1253
+1254
+1255
+1256</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1235</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1240</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_start_gear'>start_gear</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:user_initiated</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_has_key?'>has_key?</span><span class='lparen'>(</span><span class='symbol'>:user_initiated</span><span class='rparen'>)</span>
@@ -5422,11 +5432,6 @@ is true, the stop lock is removed.</p>
       <pre class="lines">
 
 
-1329
-1330
-1331
-1332
-1333
 1334
 1335
 1336
@@ -5444,10 +5449,15 @@ is true, the stop lock is removed.</p>
 1348
 1349
 1350
-1351</pre>
+1351
+1352
+1353
+1354
+1355
+1356</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1329</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1334</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_stop_cartridge'>stop_cartridge</span><span class='lparen'>(</span><span class='id identifier rubyid_cartridge'>cartridge</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:user_initiated</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_has_key?'>has_key?</span><span class='lparen'>(</span><span class='symbol'>:user_initiated</span><span class='rparen'>)</span>
@@ -5517,20 +5527,20 @@ action for each cartridge in the gear.</p>
       <pre class="lines">
 
 
-1203
-1204
-1205
-1206
-1207
 1208
 1209
 1210
 1211
 1212
-1213</pre>
+1213
+1214
+1215
+1216
+1217
+1218</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1203</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 1208</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_stop_gear'>stop_gear</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:user_initiated</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_has_key?'>has_key?</span><span class='lparen'>(</span><span class='symbol'>:user_initiated</span><span class='rparen'>)</span>
@@ -5773,13 +5783,13 @@ is used to cleanup environment variables</p>
       <pre class="lines">
 
 
-978
-979
-980
-981</pre>
+983
+984
+985
+986</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 978</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/v2_cart_model.rb', line 983</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unsubscribe'>unsubscribe</span><span class='lparen'>(</span><span class='id identifier rubyid_cart_name'>cart_name</span><span class='comma'>,</span> <span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_env_dir_path'>env_dir_path</span> <span class='op'>=</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_container_dir'>container_dir</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.env</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_short_name_from_full_cart_name'>short_name_from_full_cart_name</span><span class='lparen'>(</span><span class='id identifier rubyid_pub_cart_name'>pub_cart_name</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -5958,7 +5968,7 @@ flag is set to true, nil otherwise</p>
 </div>
 
     <div id="footer">
-  Generated on Sun Aug 11 22:05:10 2013 by
+  Generated on Mon Aug 12 22:05:04 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
