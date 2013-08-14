@@ -611,18 +611,18 @@ authorized keys file</p>
       <pre class="lines">
 
 
-179
-180
-181
-182
 183
 184
 185
 186
-187</pre>
+187
+188
+189
+190
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 179</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 183</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_ssh_key_cmd_entry'>get_ssh_key_cmd_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_key_type'>key_type</span><span class='comma'>,</span> <span class='id identifier rubyid_comment'>comment</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_key_type'>key_type</span>    <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ssh-rsa</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_key_type'>key_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>==</span> <span class='int'>0</span>
@@ -698,10 +698,6 @@ authorized keys file</p>
       <pre class="lines">
 
 
-211
-212
-213
-214
 215
 216
 217
@@ -735,10 +731,14 @@ authorized keys file</p>
 245
 246
 247
-248</pre>
+248
+249
+250
+251
+252</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 211</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 215</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_modify_ssh_keys'>modify_ssh_keys</span>
   <span class='id identifier rubyid_authorized_keys_file'>authorized_keys_file</span> <span class='op'>=</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@container_dir</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.ssh</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>authorized_keys</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -954,7 +954,11 @@ comment associated with the key.</p>
 144
 145
 146
-147</pre>
+147
+148
+149
+150
+151</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 139</span>
@@ -963,7 +967,11 @@ comment associated with the key.</p>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_notify_observers'>notify_observers</span><span class='lparen'>(</span><span class='symbol'>:before_remove_ssh_key</span><span class='comma'>,</span> <span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_modify_ssh_keys'>modify_ssh_keys</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_keys'>keys</span><span class='op'>|</span>
-    <span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span><span class='rbrace'>}</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_comment'>comment</span>
+      <span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_comment'>comment</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_notify_observers'>notify_observers</span><span class='lparen'>(</span><span class='symbol'>:after_remove_ssh_key</span><span class='comma'>,</span> <span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
@@ -1023,10 +1031,6 @@ authorized_keys file.</p>
       <pre class="lines">
 
 
-159
-160
-161
-162
 163
 164
 165
@@ -1040,10 +1044,14 @@ authorized_keys file.</p>
 173
 174
 175
-176</pre>
+176
+177
+178
+179
+180</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 159</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 163</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_replace_ssh_keys'>replace_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Exception</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The provided ssh keys do not have the required attributes</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_validate_ssh_keys'>validate_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='rparen'>)</span>
@@ -1094,10 +1102,6 @@ authorized_keys file.</p>
       <pre class="lines">
 
 
-190
-191
-192
-193
 194
 195
 196
@@ -1105,10 +1109,14 @@ authorized_keys file.</p>
 198
 199
 200
-201</pre>
+201
+202
+203
+204
+205</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 190</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/application_container_ext/environment.rb', line 194</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate_ssh_keys'>validate_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span>
@@ -1132,7 +1140,7 @@ authorized_keys file.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Aug 13 22:05:47 2013 by
+  Generated on Wed Aug 14 22:05:54 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
