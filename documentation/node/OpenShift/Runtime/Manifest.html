@@ -864,6 +864,28 @@ the cartridge will be rejected.</p>
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#project_version_overrides-instance_method" title="#project_version_overrides (instance method)">- (Object) <strong>project_version_overrides</strong>(version, repository_base_path) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#public_endpoints-instance_method" title="#public_endpoints (instance method)">- (Object) <strong>public_endpoints</strong> </a>
     
 
@@ -1165,7 +1187,10 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
 283
 284
 285
-286</pre>
+286
+287
+288
+289</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 195</span>
@@ -1206,7 +1231,7 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
           <span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_versions'>versions</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
 
     <span class='ivar'>@version</span> <span class='op'>=</span> <span class='id identifier rubyid_version'>version</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
-
+    <span class='ivar'>@manifest</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Version</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='ivar'>@version</span>
   <span class='kw'>else</span>
     <span class='ivar'>@version</span> <span class='op'>=</span> <span class='ivar'>@manifest</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Version</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
   <span class='kw'>end</span>
@@ -1217,8 +1242,11 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
 
   <span class='comment'># If version overrides are present, merge them on top of the manifest
 </span>  <span class='kw'>if</span> <span class='ivar'>@manifest</span><span class='period'>.</span><span class='id identifier rubyid_has_key?'>has_key?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Version-Overrides</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_vtree'>vtree</span> <span class='op'>=</span> <span class='ivar'>@manifest</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Version-Overrides</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='id identifier rubyid_version'>version</span><span class='rbracket'>]</span>
-    <span class='ivar'>@manifest</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_vtree'>vtree</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_vtree'>vtree</span>
+    <span class='id identifier rubyid_vtree'>vtree</span> <span class='op'>=</span> <span class='ivar'>@manifest</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Version-Overrides</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='ivar'>@version</span><span class='rbracket'>]</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_vtree'>vtree</span>
+      <span class='ivar'>@manifest</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_vtree'>vtree</span><span class='rparen'>)</span> 
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
   <span class='ivar'>@cartridge_vendor</span>       <span class='op'>=</span> <span class='ivar'>@manifest</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Cartridge-Vendor</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -1982,13 +2010,13 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
       <pre class="lines">
 
 
-312
-313
-314
-315</pre>
+315
+316
+317
+318</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 312</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 315</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_ident'>build_ident</span><span class='lparen'>(</span><span class='id identifier rubyid_vendor'>vendor</span><span class='comma'>,</span> <span class='id identifier rubyid_software'>software</span><span class='comma'>,</span> <span class='id identifier rubyid_software_version'>software_version</span><span class='comma'>,</span> <span class='id identifier rubyid_cartridge_version'>cartridge_version</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_vendor'>vendor</span> <span class='op'>=</span> <span class='id identifier rubyid_vendor'>vendor</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s+</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
@@ -2066,14 +2094,14 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
       <pre class="lines">
 
 
-317
-318
-319
 320
-321</pre>
+321
+322
+323
+324</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 317</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 320</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ident'>parse_ident</span><span class='lparen'>(</span><span class='id identifier rubyid_ident'>ident</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_cooked'>cooked</span> <span class='op'>=</span> <span class='id identifier rubyid_ident'>ident</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -2111,14 +2139,14 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
       <pre class="lines">
 
 
-375
-376
-377
-378
-379</pre>
+382
+383
+384
+385
+386</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 375</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 382</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sort_versions'>sort_versions</span><span class='lparen'>(</span><span class='id identifier rubyid_array'>array</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_copy'>copy</span> <span class='op'>=</span> <span class='const'>Marshal</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span><span class='lparen'>(</span><span class='const'>Marshal</span><span class='period'>.</span><span class='id identifier rubyid_dump'>dump</span><span class='lparen'>(</span><span class='id identifier rubyid_array'>array</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -2151,14 +2179,14 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
       <pre class="lines">
 
 
-364
-365
-366
 367
-368</pre>
+368
+369
+370
+371</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 364</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 367</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_check_reserved_cartridge_name'>check_reserved_cartridge_name</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>=~</span> <span class='const'>RESERVED_CARTRIDGE_NAME_PATTERN</span>
@@ -2185,14 +2213,14 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
       <pre class="lines">
 
 
-358
-359
-360
 361
-362</pre>
+362
+363
+364
+365</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 358</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 361</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_check_reserved_vendor_name'>check_reserved_vendor_name</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_cartridge_vendor'>cartridge_vendor</span> <span class='op'>=~</span> <span class='const'>RESERVED_VENDOR_NAME_PATTERN</span>
@@ -2245,15 +2273,45 @@ Cartridge.new(&#39;Name: ...&#39;, &#39;3.5&#39;) -&gt; Cartridge</code></pre>
       <pre class="lines">
 
 
-301
-302
-303</pre>
+304
+305
+306</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 301</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 304</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deployable?'>deployable?</span>
   <span class='ivar'>@is_deployable</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="project_version_overrides-instance_method">
+  
+    - (<tt>Object</tt>) <strong>project_version_overrides</strong>(version, repository_base_path) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+377
+378
+379</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 377</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_project_version_overrides'>project_version_overrides</span><span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='comma'>,</span> <span class='id identifier rubyid_repository_base_path'>repository_base_path</span><span class='rparen'>)</span>
+  <span class='const'>Runtime</span><span class='op'>::</span><span class='const'>Manifest</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_manifest_path'>manifest_path</span><span class='comma'>,</span> <span class='id identifier rubyid_version'>version</span><span class='comma'>,</span> <span class='symbol'>:file</span><span class='comma'>,</span> <span class='id identifier rubyid_repository_base_path'>repository_base_path</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2287,12 +2345,12 @@ which have a public_port_name specified.</p>
       <pre class="lines">
 
 
-297
-298
-299</pre>
+300
+301
+302</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 297</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 300</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_public_endpoints'>public_endpoints</span>
   <span class='ivar'>@endpoints</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_public_port_name'>public_port_name</span> <span class='rbrace'>}</span>
@@ -2328,14 +2386,14 @@ which have a public_port_name specified.</p>
       <pre class="lines">
 
 
-289
-290
-291
 292
-293</pre>
+293
+294
+295
+296</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 289</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 292</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_raw_versions'>raw_versions</span>
   <span class='id identifier rubyid_seed'>seed</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='ivar'>@manifest</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Versions</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
@@ -2362,14 +2420,14 @@ which have a public_port_name specified.</p>
       <pre class="lines">
 
 
-323
-324
-325
 326
-327</pre>
+327
+328
+329
+330</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 323</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 326</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_instance_variables'>instance_variables</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;Cartridge: </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_a'>a</span><span class='op'>|</span>
@@ -2396,12 +2454,12 @@ which have a public_port_name specified.</p>
       <pre class="lines">
 
 
-370
-371
-372</pre>
+373
+374
+375</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 370</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 373</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid_version_number'>valid_version_number</span><span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_version'>version</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^\A(\d+\.*)+\Z</span><span class='regexp_end'>/</span></span>
@@ -2426,9 +2484,6 @@ which have a public_port_name specified.</p>
       <pre class="lines">
 
 
-345
-346
-347
 348
 349
 350
@@ -2437,10 +2492,13 @@ which have a public_port_name specified.</p>
 353
 354
 355
-356</pre>
+356
+357
+358
+359</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 345</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 348</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate_cartridge_name'>validate_cartridge_name</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>!~</span> <span class='const'>VALID_CARTRIDGE_NAME_PATTERN</span>
@@ -2474,9 +2532,6 @@ which have a public_port_name specified.</p>
       <pre class="lines">
 
 
-329
-330
-331
 332
 333
 334
@@ -2488,10 +2543,13 @@ which have a public_port_name specified.</p>
 340
 341
 342
-343</pre>
+343
+344
+345
+346</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 329</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 332</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validate_vendor_name'>validate_vendor_name</span><span class='lparen'>(</span><span class='id identifier rubyid_check_reserved_name'>check_reserved_name</span> <span class='op'>=</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_cartridge_vendor'>cartridge_vendor</span> <span class='op'>!~</span> <span class='const'>VALID_VENDOR_NAME_PATTERN</span>
@@ -2550,12 +2608,12 @@ which have a public_port_name specified.</p>
       <pre class="lines">
 
 
-308
-309
-310</pre>
+311
+312
+313</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 308</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/common/lib/openshift-origin-common/models/manifest.rb', line 311</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_web_proxy?'>web_proxy?</span>
   <span class='ivar'>@is_web_proxy</span>
@@ -2570,7 +2628,7 @@ which have a public_port_name specified.</p>
 </div>
 
     <div id="footer">
-  Generated on Wed Aug 14 22:06:06 2013 by
+  Generated on Thu Aug 15 22:06:45 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
