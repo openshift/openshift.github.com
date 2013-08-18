@@ -548,13 +548,14 @@ application</p>
 133
 134
 135
-136</pre>
+136
+137
+138</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/applications_controller.rb', line 52</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create'>create</span>
-
   <span class='id identifier rubyid_app_name'>app_name</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span> <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
   <span class='id identifier rubyid_features'>features</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_downloaded_cart_urls'>downloaded_cart_urls</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -580,6 +581,7 @@ application</p>
   <span class='id identifier rubyid_default_gear_size'>default_gear_size</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:gear_size</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:gear_profile</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:default_gear_size</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_default_gear_size'>default_gear_size</span><span class='period'>.</span><span class='id identifier rubyid_downcase!'>downcase!</span> <span class='kw'>if</span> <span class='id identifier rubyid_default_gear_size'>default_gear_size</span>
   <span class='id identifier rubyid_valid_sizes'>valid_sizes</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_valid_gear_sizes'>valid_gear_sizes</span> <span class='op'>&amp;</span> <span class='ivar'>@domain</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>&amp;</span> <span class='ivar'>@domain</span><span class='period'>.</span><span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
+  <span class='id identifier rubyid_builder_id'>builder_id</span> <span class='op'>=</span> <span class='kw'>nil</span>
 
   <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_authorized?'>authorized?</span><span class='lparen'>(</span><span class='symbol'>:create_application</span><span class='comma'>,</span> <span class='ivar'>@domain</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_authorized?'>authorized?</span><span class='lparen'>(</span><span class='symbol'>:create_builder_application</span><span class='comma'>,</span> <span class='ivar'>@domain</span><span class='comma'>,</span> <span class='lbrace'>{</span>
@@ -588,8 +590,10 @@ application</p>
           <span class='symbol'>:valid_gear_sizes</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_valid_sizes'>valid_sizes</span><span class='comma'>,</span>
           <span class='symbol'>:domain_id</span> <span class='op'>=&gt;</span> <span class='ivar'>@domain</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span>
         <span class='rbrace'>}</span><span class='rparen'>)</span>
-      <span class='comment'># TODO: record this as a builder
-</span>    <span class='kw'>else</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_scope'>scope</span> <span class='op'>=</span> <span class='id identifier rubyid_current_user'>current_user</span><span class='period'>.</span><span class='id identifier rubyid_scopes'>scopes</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='op'>|</span> <span class='id identifier rubyid_s'>s</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:builder_id</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+        <span class='id identifier rubyid_builder_id'>builder_id</span> <span class='op'>=</span> <span class='id identifier rubyid_scope'>scope</span><span class='period'>.</span><span class='id identifier rubyid_builder_id'>builder_id</span>
+      <span class='kw'>end</span>
+    <span class='kw'>else</span>
       <span class='id identifier rubyid_authorize!'>authorize!</span> <span class='symbol'>:create_application</span><span class='comma'>,</span> <span class='ivar'>@domain</span> <span class='comment'># raise the proper error
 </span>    <span class='kw'>end</span>
   <span class='kw'>end</span>
@@ -623,7 +627,7 @@ application</p>
   <span class='kw'>begin</span>
     <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
     <span class='id identifier rubyid_scalable'>scalable</span> <span class='op'>=</span> <span class='id identifier rubyid_get_bool'>get_bool</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:scale</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-    <span class='ivar'>@application</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_create_app'>create_app</span><span class='lparen'>(</span><span class='id identifier rubyid_app_name'>app_name</span><span class='comma'>,</span> <span class='id identifier rubyid_features'>features</span><span class='comma'>,</span> <span class='ivar'>@domain</span><span class='comma'>,</span> <span class='id identifier rubyid_default_gear_size'>default_gear_size</span><span class='comma'>,</span> <span class='id identifier rubyid_scalable'>scalable</span><span class='comma'>,</span> <span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='comma'>,</span> <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>User-Agent</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_downloaded_cart_urls'>downloaded_cart_urls</span><span class='rparen'>)</span>
+    <span class='ivar'>@application</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_create_app'>create_app</span><span class='lparen'>(</span><span class='id identifier rubyid_app_name'>app_name</span><span class='comma'>,</span> <span class='id identifier rubyid_features'>features</span><span class='comma'>,</span> <span class='ivar'>@domain</span><span class='comma'>,</span> <span class='id identifier rubyid_default_gear_size'>default_gear_size</span><span class='comma'>,</span> <span class='id identifier rubyid_scalable'>scalable</span><span class='comma'>,</span> <span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='comma'>,</span> <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>User-Agent</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_downloaded_cart_urls'>downloaded_cart_urls</span><span class='comma'>,</span> <span class='id identifier rubyid_builder_id'>builder_id</span><span class='rparen'>)</span>
 
   <span class='kw'>rescue</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>UnfulfilledRequirementException</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
     <span class='kw'>return</span> <span class='id identifier rubyid_render_error'>render_error</span><span class='lparen'>(</span><span class='symbol'>:unprocessable_entity</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to create application for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_feature'>feature</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='int'>109</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cartridges</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -673,8 +677,6 @@ application</p>
       <pre class="lines">
 
 
-144
-145
 146
 147
 148
@@ -686,10 +688,12 @@ application</p>
 154
 155
 156
-157</pre>
+157
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/applications_controller.rb', line 144</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/applications_controller.rb', line 146</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_destroy'>destroy</span>
   <span class='kw'>if</span> <span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_quarantined'>quarantined</span>
@@ -876,7 +880,7 @@ is supported at the moment.</p>
 </div>
 
     <div id="footer">
-  Generated on Sat Aug 17 22:05:35 2013 by
+  Generated on Sun Aug 18 22:05:39 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
