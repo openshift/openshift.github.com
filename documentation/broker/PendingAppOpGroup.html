@@ -986,7 +986,24 @@ transactional manner.</p>
 429
 430
 431
-432</pre>
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -1116,6 +1133,10 @@ transactional manner.</p>
         <span class='kw'>when</span> <span class='symbol'>:remove_alias</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+        <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+          <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
         <span class='kw'>when</span> <span class='symbol'>:add_ssl_cert</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_remove_ssl_cert'>remove_ssl_cert</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -1307,6 +1328,19 @@ transactional manner.</p>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_has_private_ssl_certificate'>has_private_ssl_certificate</span> <span class='op'>=</span> <span class='kw'>false</span>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_certificate_added_at'>certificate_added_at</span> <span class='op'>=</span> <span class='kw'>nil</span>
             <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+          <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+            <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+            <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+              <span class='comment'># save overlapped user env vars for rollback
+</span>              <span class='id identifier rubyid_existing_vars'>existing_vars</span> <span class='op'>=</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_list_user_env_variables'>list_user_env_variables</span>
+              <span class='id identifier rubyid_new_keys'>new_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_ev'>ev</span><span class='op'>|</span> <span class='id identifier rubyid_ev'>ev</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>&amp;</span> <span class='id identifier rubyid_new_keys'>new_keys</span>
+              <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='rbrace'>}</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+            <span class='kw'>end</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='kw'>or</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>push</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
           <span class='kw'>when</span> <span class='symbol'>:replace_all_ssh_keys</span>
             <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>op_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
             <span class='id identifier rubyid_job'>job</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_get_fix_authorized_ssh_keys_job'>get_fix_authorized_ssh_keys_job</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>keys_attrs</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -1887,7 +1921,24 @@ transactional manner.</p>
 429
 430
 431
-432</pre>
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -2017,6 +2068,10 @@ transactional manner.</p>
         <span class='kw'>when</span> <span class='symbol'>:remove_alias</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+        <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+          <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
         <span class='kw'>when</span> <span class='symbol'>:add_ssl_cert</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_remove_ssl_cert'>remove_ssl_cert</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -2208,6 +2263,19 @@ transactional manner.</p>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_has_private_ssl_certificate'>has_private_ssl_certificate</span> <span class='op'>=</span> <span class='kw'>false</span>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_certificate_added_at'>certificate_added_at</span> <span class='op'>=</span> <span class='kw'>nil</span>
             <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+          <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+            <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+            <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+              <span class='comment'># save overlapped user env vars for rollback
+</span>              <span class='id identifier rubyid_existing_vars'>existing_vars</span> <span class='op'>=</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_list_user_env_variables'>list_user_env_variables</span>
+              <span class='id identifier rubyid_new_keys'>new_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_ev'>ev</span><span class='op'>|</span> <span class='id identifier rubyid_ev'>ev</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>&amp;</span> <span class='id identifier rubyid_new_keys'>new_keys</span>
+              <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='rbrace'>}</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+            <span class='kw'>end</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='kw'>or</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>push</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
           <span class='kw'>when</span> <span class='symbol'>:replace_all_ssh_keys</span>
             <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>op_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
             <span class='id identifier rubyid_job'>job</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_get_fix_authorized_ssh_keys_job'>get_fix_authorized_ssh_keys_job</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>keys_attrs</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -2788,7 +2856,24 @@ transactional manner.</p>
 429
 430
 431
-432</pre>
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -2918,6 +3003,10 @@ transactional manner.</p>
         <span class='kw'>when</span> <span class='symbol'>:remove_alias</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+        <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+          <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
         <span class='kw'>when</span> <span class='symbol'>:add_ssl_cert</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_remove_ssl_cert'>remove_ssl_cert</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -3109,6 +3198,19 @@ transactional manner.</p>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_has_private_ssl_certificate'>has_private_ssl_certificate</span> <span class='op'>=</span> <span class='kw'>false</span>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_certificate_added_at'>certificate_added_at</span> <span class='op'>=</span> <span class='kw'>nil</span>
             <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+          <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+            <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+            <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+              <span class='comment'># save overlapped user env vars for rollback
+</span>              <span class='id identifier rubyid_existing_vars'>existing_vars</span> <span class='op'>=</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_list_user_env_variables'>list_user_env_variables</span>
+              <span class='id identifier rubyid_new_keys'>new_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_ev'>ev</span><span class='op'>|</span> <span class='id identifier rubyid_ev'>ev</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>&amp;</span> <span class='id identifier rubyid_new_keys'>new_keys</span>
+              <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='rbrace'>}</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+            <span class='kw'>end</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='kw'>or</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>push</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
           <span class='kw'>when</span> <span class='symbol'>:replace_all_ssh_keys</span>
             <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>op_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
             <span class='id identifier rubyid_job'>job</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_get_fix_authorized_ssh_keys_job'>get_fix_authorized_ssh_keys_job</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>keys_attrs</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -3689,7 +3791,24 @@ transactional manner.</p>
 429
 430
 431
-432</pre>
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -3819,6 +3938,10 @@ transactional manner.</p>
         <span class='kw'>when</span> <span class='symbol'>:remove_alias</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+        <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+          <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
         <span class='kw'>when</span> <span class='symbol'>:add_ssl_cert</span>
           <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_remove_ssl_cert'>remove_ssl_cert</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -4010,6 +4133,19 @@ transactional manner.</p>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_has_private_ssl_certificate'>has_private_ssl_certificate</span> <span class='op'>=</span> <span class='kw'>false</span>
             <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_certificate_added_at'>certificate_added_at</span> <span class='op'>=</span> <span class='kw'>nil</span>
             <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+          <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+            <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+            <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+              <span class='comment'># save overlapped user env vars for rollback
+</span>              <span class='id identifier rubyid_existing_vars'>existing_vars</span> <span class='op'>=</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_list_user_env_variables'>list_user_env_variables</span>
+              <span class='id identifier rubyid_new_keys'>new_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_ev'>ev</span><span class='op'>|</span> <span class='id identifier rubyid_ev'>ev</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>&amp;</span> <span class='id identifier rubyid_new_keys'>new_keys</span>
+              <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+              <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='rbrace'>}</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+            <span class='kw'>end</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+            <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='kw'>or</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>push</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
           <span class='kw'>when</span> <span class='symbol'>:replace_all_ssh_keys</span>
             <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>op_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
             <span class='id identifier rubyid_job'>job</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_get_fix_authorized_ssh_keys_job'>get_fix_authorized_ssh_keys_job</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>keys_attrs</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -4228,10 +4364,6 @@ transactional manner.</p>
       <pre class="lines">
 
 
-159
-160
-161
-162
 163
 164
 165
@@ -4468,10 +4600,27 @@ transactional manner.</p>
 396
 397
 398
-399</pre>
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 159</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 163</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -4640,6 +4789,19 @@ transactional manner.</p>
           <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_has_private_ssl_certificate'>has_private_ssl_certificate</span> <span class='op'>=</span> <span class='kw'>false</span>
           <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_certificate_added_at'>certificate_added_at</span> <span class='op'>=</span> <span class='kw'>nil</span>
           <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+        <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+          <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+            <span class='comment'># save overlapped user env vars for rollback
+</span>            <span class='id identifier rubyid_existing_vars'>existing_vars</span> <span class='op'>=</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_list_user_env_variables'>list_user_env_variables</span>
+            <span class='id identifier rubyid_new_keys'>new_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_ev'>ev</span><span class='op'>|</span> <span class='id identifier rubyid_ev'>ev</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+            <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>&amp;</span> <span class='id identifier rubyid_new_keys'>new_keys</span>
+            <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+            <span class='id identifier rubyid_overlapped_keys'>overlapped_keys</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_existing_vars'>existing_vars</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span><span class='rbrace'>}</span><span class='rbrace'>}</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_saved_vars'>saved_vars</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+          <span class='kw'>end</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+          <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='kw'>or</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>push</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
         <span class='kw'>when</span> <span class='symbol'>:replace_all_ssh_keys</span>
           <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>op_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
           <span class='id identifier rubyid_job'>job</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_get_fix_authorized_ssh_keys_job'>get_fix_authorized_ssh_keys_job</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>keys_attrs</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -4833,7 +4995,11 @@ transactional manner.</p>
 154
 155
 156
-157</pre>
+157
+158
+159
+160
+161</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 58</span>
@@ -4915,6 +5081,10 @@ transactional manner.</p>
       <span class='kw'>when</span> <span class='symbol'>:remove_alias</span>
         <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
         <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='kw'>when</span> <span class='symbol'>:patch_user_env_vars</span>
+        <span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_unset_vars'>unset_vars</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_sanitize_user_env_variables'>sanitize_user_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>user_env_vars</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_unset_user_env_vars'>unset_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_set_vars'>set_vars</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_set_vars'>set_vars</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_app_dns_gear'>get_app_dns_gear</span><span class='period'>.</span><span class='id identifier rubyid_set_user_env_vars'>set_user_env_vars</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='comma'>,</span> <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_get_gears_ssh_endpoint'>get_gears_ssh_endpoint</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_saved_values'>saved_values</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
       <span class='kw'>when</span> <span class='symbol'>:add_ssl_cert</span>
         <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
         <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_remove_ssl_cert'>remove_ssl_cert</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>abstract</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>fqdn</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -4958,19 +5128,19 @@ transactional manner.</p>
       <pre class="lines">
 
 
-410
-411
-412
-413
-414
-415
-416
-417
-418
-419</pre>
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 410</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 427</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_component_instance_for_rollback'>get_component_instance_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_component_instance'>component_instance</span> <span class='op'>=</span> <span class='kw'>nil</span>
@@ -5002,13 +5172,13 @@ transactional manner.</p>
       <pre class="lines">
 
 
-405
-406
-407
-408</pre>
+422
+423
+424
+425</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 405</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 422</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_gear_for_rollback'>get_gear_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_group_instance'>group_instance</span> <span class='op'>=</span> <span class='id identifier rubyid_get_group_instance_for_rollback'>get_group_instance_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
@@ -5034,12 +5204,12 @@ transactional manner.</p>
       <pre class="lines">
 
 
-401
-402
-403</pre>
+418
+419
+420</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 401</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 418</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_group_instance_for_rollback'>get_group_instance_for_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instance_id</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span> 
@@ -5064,20 +5234,20 @@ transactional manner.</p>
       <pre class="lines">
 
 
-421
-422
-423
-424
-425
-426
-427
-428
-429
-430
-431</pre>
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 421</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 438</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span>
   <span class='id identifier rubyid_s_hash'>s_hash</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span>
@@ -5100,7 +5270,7 @@ transactional manner.</p>
 </div>
 
     <div id="footer">
-  Generated on Mon Aug 19 22:05:50 2013 by
+  Generated on Tue Aug 20 22:05:36 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
