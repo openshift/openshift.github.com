@@ -1,0 +1,1120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: OpenShift::Runtime::ApacheDB
+  
+    &mdash; Documentation by YARD 0.8.5.2
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../../';
+  framesUrl = "../../frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../OpenShift.html" title="OpenShift (module)">OpenShift</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Runtime.html" title="OpenShift::Runtime (module)">Runtime</a></span></span>
+     &raquo; 
+    <span class="title">ApacheDB</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: OpenShift::Runtime::ApacheDB
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Hash</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Hash</li>
+          
+            <li class="next">OpenShift::Runtime::ApacheDB</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+      <dt class="r2">Includes:</dt>
+      <dd class="r2"><span class='object_link'><a href="NodeLogger.html" title="OpenShift::Runtime::NodeLogger (module)">NodeLogger</a></span></dd>
+      
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Present an API to Apache&#39;s DB files for mod_rewrite.</p>
+
+<p>The process to update database files is complicated and hand-editing is
+strongly discouraged for the following reasons:</p>
+<ol><li>
+<p>There did not appear to be a corruption free database format in</p>
+</li></ol>
+
+<p>common between ruby and Apache that had a guaranteed consistent API.  Even
+BerkeleyDB and the BDB module corrupted each other on testing.</p>
+<ol><li>
+<p>Every effort was made to ensure that a crash, even due to a</p>
+</li></ol>
+
+<p>system issue such as disk space or memory starvation did not result in a
+corrupt database and the loss of old information.</p>
+<ol><li>
+<p>Every effort was made to ensure that multiple threads and</p>
+</li></ol>
+
+<p>processes could not corrupt or step on each other.</p>
+<ol><li>
+<p>While the httxt2dbm tool can run on an existing database, that</p>
+</li></ol>
+
+<p>will result in additions but not removals from the database.  Only some of
+your changes will take unless the entire db is recreated each time.</p>
+<ol><li>
+<p>In order for BerkeleyDB to be safe for multiple processes to</p>
+</li></ol>
+
+<p>access/edit, the environment must be specifically set up to allow locking. 
+An audit of the Apache source code shows that it does not do that.  And an
+strace of Apache shows no attempt to either lock or establish a mutex on
+the BerkeleyDB file.  I believe the claim that BerkeleyDB is safe to have
+multiple processess reading/writing it is simply not true the way its used
+by Apache.</p>
+
+<p>This locks down to one thread for safety.  You MUST ensure that close is
+called to release all locks.  Close also syncs changes to Apache if data
+was modified.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="ApacheDBAliases.html" title="OpenShift::Runtime::ApacheDBAliases (class)">ApacheDBAliases</a></span>, <span class='object_link'><a href="ApacheDBIdler.html" title="OpenShift::Runtime::ApacheDBIdler (class)">ApacheDBIdler</a></span>, <span class='object_link'><a href="ApacheDBJSON.html" title="OpenShift::Runtime::ApacheDBJSON (class)">ApacheDBJSON</a></span>, <span class='object_link'><a href="ApacheDBNodes.html" title="OpenShift::Runtime::ApacheDBNodes (class)">ApacheDBNodes</a></span>, <span class='object_link'><a href="ApacheDBSTS.html" title="OpenShift::Runtime::ApacheDBSTS (class)">ApacheDBSTS</a></span></p>
+</div>
+
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="READER-constant" class="">READER =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_RDONLY</span></pre></dd>
+      
+        <dt id="WRITER-constant" class="">WRITER =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_RDWR</span></pre></dd>
+      
+        <dt id="WRCREAT-constant" class="">WRCREAT =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_RDWR</span> <span class='op'>|</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_CREAT</span></pre></dd>
+      
+        <dt id="NEWDB-constant" class="">NEWDB =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_RDWR</span> <span class='op'>|</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_CREAT</span> <span class='op'>|</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_TRUNC</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="NodeLogger.html" title="OpenShift::Runtime::NodeLogger (module)">NodeLogger</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="NodeLogger.html#DEFAULT_LOGGER_CLASS-constant" title="OpenShift::Runtime::NodeLogger::DEFAULT_LOGGER_CLASS (constant)">NodeLogger::DEFAULT_LOGGER_CLASS</a></span></p>
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#open-class_method" title="open (class method)">+ (Object) <strong>open</strong>(flags = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Preferred method of access is to feed a block to open so we can guarantee
+the close.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#callout-instance_method" title="#callout (instance method)">- (Object) <strong>callout</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#close-instance_method" title="#close (instance method)">- (Object) <strong>close</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#closed%3F-instance_method" title="#closed? (instance method)">- (Boolean) <strong>closed?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#decode_contents-instance_method" title="#decode_contents (instance method)">- (Object) <strong>decode_contents</strong>(f) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#encode_contents-instance_method" title="#encode_contents (instance method)">- (Object) <strong>encode_contents</strong>(f) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#flush-instance_method" title="#flush (instance method)">- (Object) <strong>flush</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (ApacheDB) <strong>initialize</strong>(flags = nil) </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of ApacheDB.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#reload-instance_method" title="#reload (instance method)">- (Object) <strong>reload</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#writable%3F-instance_method" title="#writable? (instance method)">- (Boolean) <strong>writable?</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="NodeLogger.html" title="OpenShift::Runtime::NodeLogger (module)">NodeLogger</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="NodeLogger.html#context-class_method" title="OpenShift::Runtime::NodeLogger.context (method)">context</a></span>, <span class='object_link'><a href="NodeLogger.html#create_logger-class_method" title="OpenShift::Runtime::NodeLogger.create_logger (method)">create_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#disable-class_method" title="OpenShift::Runtime::NodeLogger.disable (method)">disable</a></span>, <span class='object_link'><a href="NodeLogger.html#load_config-class_method" title="OpenShift::Runtime::NodeLogger.load_config (method)">load_config</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-class_method" title="OpenShift::Runtime::NodeLogger.logger (method)">logger</a></span>, <span class='object_link'><a href="NodeLogger.html#logger-instance_method" title="OpenShift::Runtime::NodeLogger#logger (method)">#logger</a></span>, <span class='object_link'><a href="NodeLogger.html#set_logger-class_method" title="OpenShift::Runtime::NodeLogger.set_logger (method)">set_logger</a></span>, <span class='object_link'><a href="NodeLogger.html#stderr-class_method" title="OpenShift::Runtime::NodeLogger.stderr (method)">stderr</a></span></p>
+
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="OpenShift::Runtime::ApacheDB (class)">ApacheDB</a></span></tt>) <strong>initialize</strong>(flags = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>A new instance of ApacheDB</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+926
+927
+928
+929
+930
+931
+932
+933
+934
+935
+936
+937
+938
+939
+940
+941
+942
+943
+944
+945
+946
+947
+948
+949
+950
+951
+952
+953
+954
+955
+956
+957
+958
+959
+960
+961
+962
+963
+964
+965
+966
+967
+968
+969
+970
+971
+972
+973
+974
+975
+976
+977</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 926</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_flags'>flags</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@closed</span> <span class='op'>=</span> <span class='kw'>false</span>
+
+  <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>MAPNAME</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NotImplementedError</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Must subclass with proper map name.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='ivar'>@config</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>Config</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='ivar'>@basedir</span> <span class='op'>=</span> <span class='ivar'>@config</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>OPENSHIFT_HTTP_CONF_DIR</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@mode</span> <span class='op'>=</span> <span class='int'>0640</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_flags'>flags</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='ivar'>@flags</span> <span class='op'>=</span> <span class='const'>READER</span>
+  <span class='kw'>else</span>
+    <span class='ivar'>@flags</span> <span class='op'>=</span> <span class='id identifier rubyid_flags'>flags</span>
+  <span class='kw'>end</span>
+
+  <span class='ivar'>@filename</span> <span class='op'>=</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@basedir</span><span class='comma'>,</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>MAPNAME</span><span class='rparen'>)</span>
+
+  <span class='ivar'>@lockfile</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>LOCKFILEBASE</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>MAPNAME</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.lock</span><span class='tstring_end'>&#39;</span></span>
+
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='rparen'>)</span>
+
+  <span class='comment'># Each filename needs its own mutex and lockfile
+</span>  <span class='kw'>self</span><span class='period'>.</span><span class='const'>LOCK</span><span class='period'>.</span><span class='id identifier rubyid_lock'>lock</span>
+
+  <span class='kw'>begin</span>
+    <span class='ivar'>@lfd</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@lockfile</span><span class='comma'>,</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_RDWR</span> <span class='op'>|</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_CREAT</span><span class='comma'>,</span> <span class='int'>0640</span><span class='rparen'>)</span>
+
+    <span class='ivar'>@lfd</span><span class='period'>.</span><span class='id identifier rubyid_fcntl'>fcntl</span><span class='lparen'>(</span><span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>F_SETFD</span><span class='comma'>,</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>FD_CLOEXEC</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_writable?'>writable?</span>
+      <span class='ivar'>@lfd</span><span class='period'>.</span><span class='id identifier rubyid_flock'>flock</span><span class='lparen'>(</span><span class='const'>File</span><span class='op'>::</span><span class='const'>LOCK_EX</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='ivar'>@lfd</span><span class='period'>.</span><span class='id identifier rubyid_flock'>flock</span><span class='lparen'>(</span><span class='const'>File</span><span class='op'>::</span><span class='const'>LOCK_SH</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='ivar'>@flags</span> <span class='op'>!=</span> <span class='const'>NEWDB</span>
+      <span class='id identifier rubyid_reload'>reload</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>rescue</span>
+    <span class='kw'>begin</span>
+      <span class='kw'>if</span> <span class='kw'>not</span> <span class='ivar'>@lfd</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+        <span class='ivar'>@lfd</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span><span class='lparen'>(</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>ensure</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='const'>LOCK</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_raise'>raise</span>
+  <span class='kw'>end</span>
+
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="open-class_method">
+  
+    + (<tt>Object</tt>) <strong>open</strong>(flags = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Preferred method of access is to feed a block to open so we can guarantee
+the close.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1083
+1084
+1085
+1086
+1087
+1088
+1089
+1090
+1091
+1092
+1093
+1094
+1095
+1096
+1097
+1098</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1083</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='id identifier rubyid_flags'>flags</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_inst'>inst</span> <span class='op'>=</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_flags'>flags</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+    <span class='kw'>begin</span>
+      <span class='kw'>return</span> <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_inst'>inst</span><span class='rparen'>)</span>
+    <span class='kw'>rescue</span>
+      <span class='ivar'>@flags</span> <span class='op'>=</span> <span class='kw'>nil</span> <span class='comment'># Disable flush
+</span>      <span class='id identifier rubyid_raise'>raise</span>
+    <span class='kw'>ensure</span>
+      <span class='kw'>if</span> <span class='kw'>not</span> <span class='id identifier rubyid_inst'>inst</span><span class='period'>.</span><span class='id identifier rubyid_closed?'>closed?</span>
+        <span class='id identifier rubyid_inst'>inst</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_inst'>inst</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="callout-instance_method">
+  
+    - (<tt>Object</tt>) <strong>callout</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1010
+1011
+1012
+1013
+1014
+1015
+1016
+1017
+1018
+1019
+1020
+1021
+1022
+1023
+1024
+1025
+1026
+1027
+1028
+1029
+1030
+1031
+1032
+1033
+1034
+1035
+1036
+1037
+1038
+1039</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1010</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_callout'>callout</span>
+  <span class='comment'># Use Berkeley DB so that there&#39;s no race condition between
+</span>  <span class='comment'># multiple file moves.  The Berkeley DB implementation creates a
+</span>  <span class='comment'># scratch working file under certain circumstances.  Use a
+</span>  <span class='comment'># scratch dir to protect it.
+</span>  <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_mktmpdir'>mktmpdir</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_basename'>basename</span><span class='lparen'>(</span><span class='ivar'>@filename</span><span class='rparen'>)</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.db-</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_dirname'>dirname</span><span class='lparen'>(</span><span class='ivar'>@filename</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_wd'>wd</span><span class='op'>|</span>
+    <span class='id identifier rubyid_tmpdb'>tmpdb</span> <span class='op'>=</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_wd'>wd</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new.db</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_httxt2dbm'>httxt2dbm</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/usr/bin</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/usr/sbin</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/bin</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/sbin</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='const'>PathUtils</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_d'>d</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>httxt2dbm</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_p'>p</span><span class='op'>|</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span><span class='rparen'>)</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_pop'>pop</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_httxt2dbm'>httxt2dbm</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+      <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>WARNING: no httxt2dbm command found, relying on PATH</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_httxt2dbm'>httxt2dbm</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>httxt2dbm</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_cmd'>cmd</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>%{</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_httxt2dbm'>httxt2dbm</span><span class='embexpr_end'>}</span><span class='tstring_content'> -f DB -i </span><span class='embexpr_beg'>#{</span><span class='ivar'>@filename</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span><span class='embexpr_end'>}</span><span class='tstring_content'> -o </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tmpdb'>tmpdb</span><span class='embexpr_end'>}</span><span class='tstring_end'>}</span></span>
+    <span class='id identifier rubyid_out'>out</span><span class='comma'>,</span><span class='id identifier rubyid_err'>err</span><span class='comma'>,</span><span class='id identifier rubyid_rc'>rc</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>Runtime</span><span class='op'>::</span><span class='const'>Utils</span><span class='op'>::</span><span class='id identifier rubyid_oo_spawn'>oo_spawn</span><span class='lparen'>(</span><span class='id identifier rubyid_cmd'>cmd</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_rc'>rc</span> <span class='op'>==</span> <span class='int'>0</span>
+      <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>httxt2dbm: </span><span class='embexpr_beg'>#{</span><span class='ivar'>@filename</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_rc'>rc</span><span class='embexpr_end'>}</span><span class='tstring_content'>: stdout: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_out'>out</span><span class='embexpr_end'>}</span><span class='tstring_content'> stderr:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_err'>err</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='kw'>begin</span>
+        <span class='id identifier rubyid_oldstat'>oldstat</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_stat'>stat</span><span class='lparen'>(</span><span class='ivar'>@filename</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.db</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_chown'>chown</span><span class='lparen'>(</span><span class='id identifier rubyid_oldstat'>oldstat</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='comma'>,</span> <span class='id identifier rubyid_oldstat'>oldstat</span><span class='period'>.</span><span class='id identifier rubyid_gid'>gid</span><span class='comma'>,</span> <span class='id identifier rubyid_tmpdb'>tmpdb</span><span class='rparen'>)</span>
+        <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_chmod'>chmod</span><span class='lparen'>(</span><span class='id identifier rubyid_oldstat'>oldstat</span><span class='period'>.</span><span class='id identifier rubyid_mode'>mode</span> <span class='op'>&amp;</span> <span class='int'>0777</span><span class='comma'>,</span> <span class='id identifier rubyid_tmpdb'>tmpdb</span><span class='rparen'>)</span>
+      <span class='kw'>rescue</span> <span class='const'>Errno</span><span class='op'>::</span><span class='const'>ENOENT</span>
+      <span class='kw'>end</span>
+      <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_mv'>mv</span><span class='lparen'>(</span><span class='id identifier rubyid_tmpdb'>tmpdb</span><span class='comma'>,</span> <span class='ivar'>@filename</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.db</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='symbol'>:force</span><span class='op'>=&gt;</span><span class='kw'>true</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ERROR: failure httxt2dbm </span><span class='embexpr_beg'>#{</span><span class='ivar'>@filename</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_rc'>rc</span><span class='embexpr_end'>}</span><span class='tstring_content'>: stdout: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_out'>out</span><span class='embexpr_end'>}</span><span class='tstring_content'> stderr:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_err'>err</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_rc'>rc</span> <span class='op'>==</span> <span class='int'>0</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="close-instance_method">
+  
+    - (<tt>Object</tt>) <strong>close</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1064
+1065
+1066
+1067
+1068
+1069
+1070
+1071
+1072
+1073
+1074
+1075</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1064</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_close'>close</span>
+  <span class='ivar'>@closed</span><span class='op'>=</span><span class='kw'>true</span>
+  <span class='kw'>begin</span>
+    <span class='kw'>begin</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_flush'>flush</span>
+    <span class='kw'>ensure</span>
+      <span class='ivar'>@lfd</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span><span class='lparen'>(</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='ivar'>@lfd</span><span class='period'>.</span><span class='id identifier rubyid_closed?'>closed?</span>
+    <span class='kw'>end</span>
+  <span class='kw'>ensure</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='const'>LOCK</span><span class='period'>.</span><span class='id identifier rubyid_unlock'>unlock</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>LOCK</span><span class='period'>.</span><span class='id identifier rubyid_locked?'>locked?</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="closed?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>closed?</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1077
+1078
+1079</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1077</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_closed?'>closed?</span>
+  <span class='ivar'>@closed</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="decode_contents-instance_method">
+  
+    - (<tt>Object</tt>) <strong>decode_contents</strong>(f) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+979
+980
+981
+982
+983
+984
+985
+986</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 979</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_decode_contents'>decode_contents</span><span class='lparen'>(</span><span class='id identifier rubyid_f'>f</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_l'>l</span><span class='op'>|</span>
+    <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_dest'>dest</span> <span class='op'>=</span> <span class='id identifier rubyid_l'>l</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span>
+    <span class='kw'>if</span> <span class='lparen'>(</span><span class='kw'>not</span> <span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span><span class='rparen'>)</span> <span class='kw'>and</span> <span class='lparen'>(</span><span class='kw'>not</span> <span class='id identifier rubyid_dest'>dest</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_dest'>dest</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="encode_contents-instance_method">
+  
+    - (<tt>Object</tt>) <strong>encode_contents</strong>(f) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+988
+989
+990
+991
+992</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 988</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_encode_contents'>encode_contents</span><span class='lparen'>(</span><span class='id identifier rubyid_f'>f</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span>
+    <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="flush-instance_method">
+  
+    - (<tt>Object</tt>) <strong>flush</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1041
+1042
+1043
+1044
+1045
+1046
+1047
+1048
+1049
+1050
+1051
+1052
+1053
+1054
+1055
+1056
+1057
+1058
+1059
+1060
+1061
+1062</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1041</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_flush'>flush</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_writable?'>writable?</span>
+    <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_RDWR</span> <span class='op'>|</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_CREAT</span> <span class='op'>|</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_TRUNC</span><span class='comma'>,</span> <span class='int'>0640</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span>
+      <span class='id identifier rubyid_encode_contents'>encode_contents</span><span class='lparen'>(</span><span class='id identifier rubyid_f'>f</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_fsync'>fsync</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Ruby 1.9 Hash preserves order, compare files to see if anything changed
+</span>    <span class='kw'>if</span> <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_compare_file'>compare_file</span><span class='lparen'>(</span><span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span><span class='rparen'>)</span>
+      <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_rm'>rm</span><span class='lparen'>(</span><span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='symbol'>:force</span><span class='op'>=&gt;</span><span class='kw'>true</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='kw'>begin</span>
+        <span class='id identifier rubyid_oldstat'>oldstat</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_stat'>stat</span><span class='lparen'>(</span><span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span><span class='rparen'>)</span>
+        <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_chown'>chown</span><span class='lparen'>(</span><span class='id identifier rubyid_oldstat'>oldstat</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='comma'>,</span> <span class='id identifier rubyid_oldstat'>oldstat</span><span class='period'>.</span><span class='id identifier rubyid_gid'>gid</span><span class='comma'>,</span> <span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_chmod'>chmod</span><span class='lparen'>(</span><span class='id identifier rubyid_oldstat'>oldstat</span><span class='period'>.</span><span class='id identifier rubyid_mode'>mode</span> <span class='op'>&amp;</span> <span class='int'>0777</span><span class='comma'>,</span> <span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='kw'>rescue</span> <span class='const'>Errno</span><span class='op'>::</span><span class='const'>ENOENT</span>
+      <span class='kw'>end</span>
+      <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_mv'>mv</span><span class='lparen'>(</span><span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span><span class='comma'>,</span> <span class='symbol'>:force</span><span class='op'>=&gt;</span><span class='kw'>true</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_callout'>callout</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reload-instance_method">
+  
+    - (<tt>Object</tt>) <strong>reload</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+994
+995
+996
+997
+998
+999
+1000
+1001
+1002
+1003
+1004</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 994</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_reload'>reload</span>
+  <span class='kw'>begin</span>
+    <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='ivar'>@filename</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>SUFFIX</span><span class='comma'>,</span> <span class='const'>Fcntl</span><span class='op'>::</span><span class='const'>O_RDONLY</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span>
+      <span class='id identifier rubyid_decode_contents'>decode_contents</span><span class='lparen'>(</span><span class='id identifier rubyid_f'>f</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>rescue</span> <span class='const'>Errno</span><span class='op'>::</span><span class='const'>ENOENT</span>
+    <span class='kw'>if</span> <span class='kw'>not</span> <span class='lbracket'>[</span><span class='const'>WRCREAT</span><span class='comma'>,</span> <span class='const'>NEWDB</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='ivar'>@flags</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_raise'>raise</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="writable?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>writable?</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1006
+1007
+1008</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 1006</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_writable?'>writable?</span>
+  <span class='lbracket'>[</span><span class='const'>WRITER</span><span class='comma'>,</span> <span class='const'>WRCREAT</span><span class='comma'>,</span> <span class='const'>NEWDB</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='ivar'>@flags</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Fri Aug 23 23:17:39 2013 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.5.2 (ruby-2.0.0).
+</div>
+
+  </body>
+</html>
