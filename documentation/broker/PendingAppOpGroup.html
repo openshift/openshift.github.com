@@ -1149,7 +1149,7 @@ transactional manner.</p>
         <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
       <span class='kw'>end</span>
 
@@ -1186,7 +1186,7 @@ transactional manner.</p>
           <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Execute </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
           <span class='comment'># set the pending_op state to queued
-</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:queued</span><span class='rparen'>)</span>
+</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
 
           <span class='kw'>case</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span>
           <span class='kw'>when</span> <span class='symbol'>:create_group_instance</span>
@@ -1244,7 +1244,7 @@ transactional manner.</p>
             <span class='kw'>begin</span>
               <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_register_dns'>register_dns</span>
             <span class='kw'>rescue</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>DNSLoginException</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
               <span class='id identifier rubyid_raise'>raise</span>
             <span class='kw'>end</span>
           <span class='kw'>when</span> <span class='symbol'>:deregister_dns</span>
@@ -1355,14 +1355,14 @@ transactional manner.</p>
           <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span> 
             <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
           <span class='kw'>elsif</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_hasUserActionableError'>hasUserActionableError</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>UserException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
           <span class='kw'>end</span>
         <span class='kw'>end</span>
 
@@ -1396,9 +1396,9 @@ transactional manner.</p>
           <span class='kw'>end</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> 
             <span class='kw'>if</span> <span class='id identifier rubyid_failed_ops'>failed_ops</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> 
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='rbrace'>}</span>
           <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
@@ -2084,7 +2084,7 @@ transactional manner.</p>
         <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
       <span class='kw'>end</span>
 
@@ -2121,7 +2121,7 @@ transactional manner.</p>
           <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Execute </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
           <span class='comment'># set the pending_op state to queued
-</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:queued</span><span class='rparen'>)</span>
+</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
 
           <span class='kw'>case</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span>
           <span class='kw'>when</span> <span class='symbol'>:create_group_instance</span>
@@ -2179,7 +2179,7 @@ transactional manner.</p>
             <span class='kw'>begin</span>
               <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_register_dns'>register_dns</span>
             <span class='kw'>rescue</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>DNSLoginException</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
               <span class='id identifier rubyid_raise'>raise</span>
             <span class='kw'>end</span>
           <span class='kw'>when</span> <span class='symbol'>:deregister_dns</span>
@@ -2290,14 +2290,14 @@ transactional manner.</p>
           <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span> 
             <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
           <span class='kw'>elsif</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_hasUserActionableError'>hasUserActionableError</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>UserException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
           <span class='kw'>end</span>
         <span class='kw'>end</span>
 
@@ -2331,9 +2331,9 @@ transactional manner.</p>
           <span class='kw'>end</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> 
             <span class='kw'>if</span> <span class='id identifier rubyid_failed_ops'>failed_ops</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> 
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='rbrace'>}</span>
           <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
@@ -3019,7 +3019,7 @@ transactional manner.</p>
         <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
       <span class='kw'>end</span>
 
@@ -3056,7 +3056,7 @@ transactional manner.</p>
           <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Execute </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
           <span class='comment'># set the pending_op state to queued
-</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:queued</span><span class='rparen'>)</span>
+</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
 
           <span class='kw'>case</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span>
           <span class='kw'>when</span> <span class='symbol'>:create_group_instance</span>
@@ -3114,7 +3114,7 @@ transactional manner.</p>
             <span class='kw'>begin</span>
               <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_register_dns'>register_dns</span>
             <span class='kw'>rescue</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>DNSLoginException</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
               <span class='id identifier rubyid_raise'>raise</span>
             <span class='kw'>end</span>
           <span class='kw'>when</span> <span class='symbol'>:deregister_dns</span>
@@ -3225,14 +3225,14 @@ transactional manner.</p>
           <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span> 
             <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
           <span class='kw'>elsif</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_hasUserActionableError'>hasUserActionableError</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>UserException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
           <span class='kw'>end</span>
         <span class='kw'>end</span>
 
@@ -3266,9 +3266,9 @@ transactional manner.</p>
           <span class='kw'>end</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> 
             <span class='kw'>if</span> <span class='id identifier rubyid_failed_ops'>failed_ops</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> 
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='rbrace'>}</span>
           <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
@@ -3954,7 +3954,7 @@ transactional manner.</p>
         <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
       <span class='kw'>end</span>
 
@@ -3991,7 +3991,7 @@ transactional manner.</p>
           <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Execute </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
           <span class='comment'># set the pending_op state to queued
-</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:queued</span><span class='rparen'>)</span>
+</span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
 
           <span class='kw'>case</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span>
           <span class='kw'>when</span> <span class='symbol'>:create_group_instance</span>
@@ -4049,7 +4049,7 @@ transactional manner.</p>
             <span class='kw'>begin</span>
               <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_register_dns'>register_dns</span>
             <span class='kw'>rescue</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>DNSLoginException</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
               <span class='id identifier rubyid_raise'>raise</span>
             <span class='kw'>end</span>
           <span class='kw'>when</span> <span class='symbol'>:deregister_dns</span>
@@ -4160,14 +4160,14 @@ transactional manner.</p>
           <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span> 
             <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
           <span class='kw'>elsif</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_hasUserActionableError'>hasUserActionableError</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>UserException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
               <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
           <span class='kw'>end</span>
         <span class='kw'>end</span>
 
@@ -4201,9 +4201,9 @@ transactional manner.</p>
           <span class='kw'>end</span>
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> 
             <span class='kw'>if</span> <span class='id identifier rubyid_failed_ops'>failed_ops</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> 
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span> 
             <span class='kw'>else</span>
-              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span> 
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span> 
             <span class='kw'>end</span>
           <span class='rbrace'>}</span>
           <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
@@ -4647,7 +4647,7 @@ transactional manner.</p>
         <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Execute </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
         <span class='comment'># set the pending_op state to queued
-</span>        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:queued</span><span class='rparen'>)</span>
+</span>        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
 
         <span class='kw'>case</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span>
         <span class='kw'>when</span> <span class='symbol'>:create_group_instance</span>
@@ -4705,7 +4705,7 @@ transactional manner.</p>
           <span class='kw'>begin</span>
             <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_register_dns'>register_dns</span>
           <span class='kw'>rescue</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>DNSLoginException</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
             <span class='id identifier rubyid_raise'>raise</span>
           <span class='kw'>end</span>
         <span class='kw'>when</span> <span class='symbol'>:deregister_dns</span>
@@ -4816,14 +4816,14 @@ transactional manner.</p>
         <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span> 
           <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
         <span class='kw'>elsif</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
           <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_hasUserActionableError'>hasUserActionableError</span>
             <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>UserException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
           <span class='kw'>else</span>
             <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_op_type'>op_type</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> 
           <span class='kw'>end</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
       <span class='kw'>end</span>
 
@@ -4857,9 +4857,9 @@ transactional manner.</p>
         <span class='kw'>end</span>
         <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> 
           <span class='kw'>if</span> <span class='id identifier rubyid_failed_ops'>failed_ops</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> 
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:failed</span><span class='rparen'>)</span> 
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span> 
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rparen'>)</span> 
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span> 
           <span class='kw'>end</span>
         <span class='rbrace'>}</span>
         <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
@@ -5097,7 +5097,7 @@ transactional manner.</p>
       <span class='kw'>if</span> <span class='id identifier rubyid_use_parallel_job'>use_parallel_job</span>
         <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
       <span class='kw'>else</span>
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='comma'>,</span> <span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
       <span class='kw'>end</span>
     <span class='kw'>end</span>
 
@@ -5270,7 +5270,7 @@ transactional manner.</p>
 </div>
 
     <div id="footer">
-  Generated on Fri Aug 23 23:16:59 2013 by
+  Generated on Sat Aug 24 22:04:51 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

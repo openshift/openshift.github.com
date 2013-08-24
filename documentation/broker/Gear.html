@@ -839,6 +839,28 @@ gear.</p>
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#update_with_retries-instance_method" title="#update_with_retries (instance method)">- (Object) <strong>update_with_retries</strong>(num_retries, failure_message, &amp;block) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -955,15 +977,15 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-185
-186
-187
-188
-189
-190</pre>
+201
+202
+203
+204
+205
+206</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 185</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 201</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_method_missing'>method_missing</span><span class='lparen'>(</span><span class='id identifier rubyid_sym'>sym</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_sym'>sym</span> <span class='op'>=</span> <span class='symbol'>:reload</span> <span class='kw'>if</span> <span class='id identifier rubyid_sym'>sym</span> <span class='op'>==</span> <span class='symbol'>:reload_config</span>
@@ -1297,7 +1319,58 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 278
 279
 280
-281</pre>
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -1350,7 +1423,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_gear_sizes_display_string'>gear_sizes_display_string</span>
-    <span class='comment'># Ex: (small(default)|jumbo|exlarge|large|medium|micro)
+    <span class='comment'># Ex: (small(default)|medium|large)
 </span>    <span class='id identifier rubyid_out'>out</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>(</span><span class='tstring_end'>&#39;</span></span>
     <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
       <span class='id identifier rubyid_out'>out</span> <span class='op'>+=</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
@@ -1366,14 +1439,30 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 
   <span class='kw'>def</span> <span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
     <span class='ivar'>@container</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_find_available'>find_available</span><span class='lparen'>(</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_server_identities'>server_identities</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+    <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span> <span class='op'>=</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to set UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span>
     <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='kw'>nil</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='kw'>nil</span>
+    
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to unset UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_create_gear'>create_gear</span>
@@ -1395,7 +1484,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_publish'>publish</span>
     <span class='kw'>ensure</span>
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
-    <span class='kw'>end</span>  
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_deregister_dns'>deregister_dns</span>
@@ -1571,6 +1660,41 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
     <span class='id identifier rubyid_identities'>identities</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_gear'>gear</span><span class='op'>|</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span><span class='rbrace'>}</span>
     <span class='id identifier rubyid_identities'>identities</span><span class='period'>.</span><span class='id identifier rubyid_uniq!'>uniq!</span>
     <span class='id identifier rubyid_identities'>identities</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='id identifier rubyid_num_retries'>num_retries</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_retries'>retries</span> <span class='op'>=</span> <span class='int'>0</span>
+    <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>false</span>
+    <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='kw'>self</span>
+    <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span>
+    <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span>
+
+    <span class='comment'># find the index and do an atomic update
+</span>    <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+    <span class='kw'>while</span> <span class='id identifier rubyid_retries'>retries</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_num_retries'>num_retries</span>
+      <span class='id identifier rubyid_retval'>retval</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='rparen'>)</span>
+
+      <span class='comment'># the gear needs to be reloaded to find the updated index as well as to return the updated document
+</span>      <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>uuid:</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_retries'>retries</span> <span class='op'>+=</span> <span class='int'>1</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_retval'>retval</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>updatedExisting</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+        <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>true</span>
+        <span class='kw'>break</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># log the details in case we cannot update the pending_op
+</span>    <span class='kw'>unless</span> <span class='id identifier rubyid_success'>success</span>
+      <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    
+    <span class='kw'>return</span> <span class='id identifier rubyid_current_gear'>current_gear</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1897,7 +2021,58 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 278
 279
 280
-281</pre>
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -1950,7 +2125,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_gear_sizes_display_string'>gear_sizes_display_string</span>
-    <span class='comment'># Ex: (small(default)|jumbo|exlarge|large|medium|micro)
+    <span class='comment'># Ex: (small(default)|medium|large)
 </span>    <span class='id identifier rubyid_out'>out</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>(</span><span class='tstring_end'>&#39;</span></span>
     <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
       <span class='id identifier rubyid_out'>out</span> <span class='op'>+=</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
@@ -1966,14 +2141,30 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 
   <span class='kw'>def</span> <span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
     <span class='ivar'>@container</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_find_available'>find_available</span><span class='lparen'>(</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_server_identities'>server_identities</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+    <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span> <span class='op'>=</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to set UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span>
     <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='kw'>nil</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='kw'>nil</span>
+    
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to unset UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_create_gear'>create_gear</span>
@@ -1995,7 +2186,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_publish'>publish</span>
     <span class='kw'>ensure</span>
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
-    <span class='kw'>end</span>  
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_deregister_dns'>deregister_dns</span>
@@ -2171,6 +2362,41 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
     <span class='id identifier rubyid_identities'>identities</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_gear'>gear</span><span class='op'>|</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span><span class='rbrace'>}</span>
     <span class='id identifier rubyid_identities'>identities</span><span class='period'>.</span><span class='id identifier rubyid_uniq!'>uniq!</span>
     <span class='id identifier rubyid_identities'>identities</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='id identifier rubyid_num_retries'>num_retries</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_retries'>retries</span> <span class='op'>=</span> <span class='int'>0</span>
+    <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>false</span>
+    <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='kw'>self</span>
+    <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span>
+    <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span>
+
+    <span class='comment'># find the index and do an atomic update
+</span>    <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+    <span class='kw'>while</span> <span class='id identifier rubyid_retries'>retries</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_num_retries'>num_retries</span>
+      <span class='id identifier rubyid_retval'>retval</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='rparen'>)</span>
+
+      <span class='comment'># the gear needs to be reloaded to find the updated index as well as to return the updated document
+</span>      <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>uuid:</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_retries'>retries</span> <span class='op'>+=</span> <span class='int'>1</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_retval'>retval</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>updatedExisting</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+        <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>true</span>
+        <span class='kw'>break</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># log the details in case we cannot update the pending_op
+</span>    <span class='kw'>unless</span> <span class='id identifier rubyid_success'>success</span>
+      <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    
+    <span class='kw'>return</span> <span class='id identifier rubyid_current_gear'>current_gear</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2494,7 +2720,58 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 278
 279
 280
-281</pre>
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -2547,7 +2824,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_gear_sizes_display_string'>gear_sizes_display_string</span>
-    <span class='comment'># Ex: (small(default)|jumbo|exlarge|large|medium|micro)
+    <span class='comment'># Ex: (small(default)|medium|large)
 </span>    <span class='id identifier rubyid_out'>out</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>(</span><span class='tstring_end'>&#39;</span></span>
     <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
       <span class='id identifier rubyid_out'>out</span> <span class='op'>+=</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
@@ -2563,14 +2840,30 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 
   <span class='kw'>def</span> <span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
     <span class='ivar'>@container</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_find_available'>find_available</span><span class='lparen'>(</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_server_identities'>server_identities</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+    <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span> <span class='op'>=</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to set UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span>
     <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='kw'>nil</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='kw'>nil</span>
+    
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to unset UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_create_gear'>create_gear</span>
@@ -2592,7 +2885,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_publish'>publish</span>
     <span class='kw'>ensure</span>
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
-    <span class='kw'>end</span>  
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_deregister_dns'>deregister_dns</span>
@@ -2768,6 +3061,41 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
     <span class='id identifier rubyid_identities'>identities</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_gear'>gear</span><span class='op'>|</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span><span class='rbrace'>}</span>
     <span class='id identifier rubyid_identities'>identities</span><span class='period'>.</span><span class='id identifier rubyid_uniq!'>uniq!</span>
     <span class='id identifier rubyid_identities'>identities</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='id identifier rubyid_num_retries'>num_retries</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_retries'>retries</span> <span class='op'>=</span> <span class='int'>0</span>
+    <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>false</span>
+    <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='kw'>self</span>
+    <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span>
+    <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span>
+
+    <span class='comment'># find the index and do an atomic update
+</span>    <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+    <span class='kw'>while</span> <span class='id identifier rubyid_retries'>retries</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_num_retries'>num_retries</span>
+      <span class='id identifier rubyid_retval'>retval</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='rparen'>)</span>
+
+      <span class='comment'># the gear needs to be reloaded to find the updated index as well as to return the updated document
+</span>      <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>uuid:</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_retries'>retries</span> <span class='op'>+=</span> <span class='int'>1</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_retval'>retval</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>updatedExisting</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+        <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>true</span>
+        <span class='kw'>break</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># log the details in case we cannot update the pending_op
+</span>    <span class='kw'>unless</span> <span class='id identifier rubyid_success'>success</span>
+      <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    
+    <span class='kw'>return</span> <span class='id identifier rubyid_current_gear'>current_gear</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -3091,7 +3419,58 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 278
 279
 280
-281</pre>
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -3144,7 +3523,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_gear_sizes_display_string'>gear_sizes_display_string</span>
-    <span class='comment'># Ex: (small(default)|jumbo|exlarge|large|medium|micro)
+    <span class='comment'># Ex: (small(default)|medium|large)
 </span>    <span class='id identifier rubyid_out'>out</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>(</span><span class='tstring_end'>&#39;</span></span>
     <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
       <span class='id identifier rubyid_out'>out</span> <span class='op'>+=</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
@@ -3160,14 +3539,30 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 
   <span class='kw'>def</span> <span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
     <span class='ivar'>@container</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_find_available'>find_available</span><span class='lparen'>(</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_server_identities'>server_identities</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+    <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span> <span class='op'>=</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to set UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span>
     <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='kw'>nil</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='kw'>nil</span>
+    
+    <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to unset UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+      <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_create_gear'>create_gear</span>
@@ -3189,7 +3584,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_publish'>publish</span>
     <span class='kw'>ensure</span>
       <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
-    <span class='kw'>end</span>  
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_deregister_dns'>deregister_dns</span>
@@ -3366,6 +3761,41 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
     <span class='id identifier rubyid_identities'>identities</span><span class='period'>.</span><span class='id identifier rubyid_uniq!'>uniq!</span>
     <span class='id identifier rubyid_identities'>identities</span>
   <span class='kw'>end</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='id identifier rubyid_num_retries'>num_retries</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_retries'>retries</span> <span class='op'>=</span> <span class='int'>0</span>
+    <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>false</span>
+    <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='kw'>self</span>
+    <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span>
+    <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span>
+
+    <span class='comment'># find the index and do an atomic update
+</span>    <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+    <span class='kw'>while</span> <span class='id identifier rubyid_retries'>retries</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_num_retries'>num_retries</span>
+      <span class='id identifier rubyid_retval'>retval</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='rparen'>)</span>
+
+      <span class='comment'># the gear needs to be reloaded to find the updated index as well as to return the updated document
+</span>      <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>uuid:</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_retries'>retries</span> <span class='op'>+=</span> <span class='int'>1</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_retval'>retval</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>updatedExisting</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+        <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>true</span>
+        <span class='kw'>break</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># log the details in case we cannot update the pending_op
+</span>    <span class='kw'>unless</span> <span class='id identifier rubyid_success'>success</span>
+      <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    
+    <span class='kw'>return</span> <span class='id identifier rubyid_current_gear'>current_gear</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -3487,7 +3917,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_gear_sizes_display_string'>gear_sizes_display_string</span>
-  <span class='comment'># Ex: (small(default)|jumbo|exlarge|large|medium|micro)
+  <span class='comment'># Ex: (small(default)|medium|large)
 </span>  <span class='id identifier rubyid_out'>out</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>(</span><span class='tstring_end'>&#39;</span></span>
   <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
     <span class='id identifier rubyid_out'>out</span> <span class='op'>+=</span> <span class='id identifier rubyid_gear_size'>gear_size</span>
@@ -3537,30 +3967,30 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-214
-215
-216
-217
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228
-229
 230
 231
 232
 233
-234</pre>
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 214</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 230</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_gear_states'>get_gear_states</span><span class='lparen'>(</span><span class='id identifier rubyid_gears'>gears</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_gear_states'>gear_states</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -3703,17 +4133,17 @@ codes:</p>
       <pre class="lines">
 
 
-131
-132
-133
-134
-135
-136
-137
-138</pre>
+147
+148
+149
+150
+151
+152
+153
+154</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 131</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 147</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
@@ -3754,12 +4184,12 @@ codes:</p>
       <pre class="lines">
 
 
-264
-265
-266</pre>
+280
+281
+282</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 264</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 280</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_app'>app</span>
   <span class='ivar'>@app</span> <span class='op'>||=</span> <span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span>
@@ -3784,14 +4214,14 @@ codes:</p>
       <pre class="lines">
 
 
-85
-86
-87
-88
-89</pre>
+101
+102
+103
+104
+105</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 85</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_gear'>create_gear</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_create'>create</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
@@ -3818,18 +4248,18 @@ codes:</p>
       <pre class="lines">
 
 
-107
-108
-109
-110
-111
-112
-113
-114
-115</pre>
+123
+124
+125
+126
+127
+128
+129
+130
+131</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 107</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 123</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deregister_dns'>deregister_dns</span>
   <span class='id identifier rubyid_dns'>dns</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>DnsService</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span>
@@ -3860,14 +4290,14 @@ codes:</p>
       <pre class="lines">
 
 
-91
-92
-93
-94
-95</pre>
+107
+108
+109
+110
+111</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 91</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 107</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_destroy_gear'>destroy_gear</span><span class='lparen'>(</span><span class='id identifier rubyid_keep_uid'>keep_uid</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_destroy'>destroy</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_keep_uid'>keep_uid</span><span class='rparen'>)</span>
@@ -3910,18 +4340,18 @@ this gear</p>
       <pre class="lines">
 
 
-240
-241
-242
-243
-244
-245
-246
-247
-248</pre>
+256
+257
+258
+259
+260
+261
+262
+263
+264</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 240</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 256</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span>
   <span class='kw'>if</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='kw'>and</span> <span class='op'>!</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -3983,12 +4413,12 @@ this gear</p>
       <pre class="lines">
 
 
-202
-203
-204</pre>
+218
+219
+220</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 202</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 218</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_public_ip_address'>get_public_ip_address</span>
   <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_get_public_ip_address'>get_public_ip_address</span>
@@ -4056,16 +4486,16 @@ codes:</p>
       <pre class="lines">
 
 
-150
-151
-152
-153
-154
-155
-156</pre>
+166
+167
+168
+169
+170
+171
+172</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 150</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 166</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_post_configure_component'>post_configure_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_post_configure_component'>post_configure_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
@@ -4125,12 +4555,12 @@ codes:</p>
       <pre class="lines">
 
 
-195
-196
-197</pre>
+211
+212
+213</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 195</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 211</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_public_hostname'>public_hostname</span>
   <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_get_public_hostname'>get_public_hostname</span>
@@ -4155,18 +4585,18 @@ codes:</p>
       <pre class="lines">
 
 
-97
-98
-99
-100
-101
-102
-103
-104
-105</pre>
+113
+114
+115
+116
+117
+118
+119
+120
+121</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 97</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_register_dns'>register_dns</span>
   <span class='id identifier rubyid_dns'>dns</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>DnsService</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span>
@@ -4175,7 +4605,7 @@ codes:</p>
     <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_publish'>publish</span>
   <span class='kw'>ensure</span>
     <span class='id identifier rubyid_dns'>dns</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
-  <span class='kw'>end</span>  
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -4239,15 +4669,15 @@ codes:</p>
       <pre class="lines">
 
 
-168
-169
-170
-171
-172
-173</pre>
+184
+185
+186
+187
+188
+189</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 168</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 184</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
@@ -4279,15 +4709,33 @@ codes:</p>
 74
 75
 76
-77</pre>
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 73</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
   <span class='ivar'>@container</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_find_available'>find_available</span><span class='lparen'>(</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_server_identities'>server_identities</span><span class='rparen'>)</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+  <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span> <span class='op'>=</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_reserve_uid'>reserve_uid</span>
+
+  <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to set UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  
+  <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+    <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_reserved_gear_uid'>reserved_gear_uid</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -4343,12 +4791,12 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-178
-179
-180</pre>
+194
+195
+196</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 178</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 194</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_sym'>sym</span><span class='comma'>,</span> <span class='id identifier rubyid_include_private'>include_private</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_sym'>sym</span><span class='comma'>,</span> <span class='id identifier rubyid_include_private'>include_private</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='kw'>super</span>
@@ -4373,14 +4821,14 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-276
-277
-278
-279
-280</pre>
+292
+293
+294
+295
+296</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 276</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 292</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_identities'>server_identities</span>
   <span class='id identifier rubyid_identities'>identities</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_gear'>gear</span><span class='op'>|</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span><span class='rbrace'>}</span>
@@ -4407,16 +4855,16 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-268
-269
-270
-271
-272
-273
-274</pre>
+284
+285
+286
+287
+288
+289
+290</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 268</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 284</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_addtl_fs_gb'>set_addtl_fs_gb</span><span class='lparen'>(</span><span class='id identifier rubyid_additional_filesystem_gb'>additional_filesystem_gb</span><span class='comma'>,</span> <span class='id identifier rubyid_remote_job_handle'>remote_job_handle</span><span class='comma'>,</span> <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>addtl-fs-gb</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_base_filesystem_gb'>base_filesystem_gb</span> <span class='op'>=</span> <span class='const'>Gear</span><span class='period'>.</span><span class='id identifier rubyid_base_filesystem_gb'>base_filesystem_gb</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
@@ -4445,12 +4893,12 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-117
-118
-119</pre>
+133
+134
+135</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 117</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 133</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_status'>status</span><span class='lparen'>(</span><span class='id identifier rubyid_component_instance'>component_instance</span><span class='rparen'>)</span>
   <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='rparen'>)</span>
@@ -4475,19 +4923,33 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-79
-80
-81
-82
-83</pre>
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 79</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 88</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span>
   <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_unreserve_uid'>unreserve_uid</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:server_identity</span><span class='comma'>,</span> <span class='kw'>nil</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_set'>set</span> <span class='symbol'>:uid</span><span class='comma'>,</span> <span class='kw'>nil</span>
+  
+  <span class='id identifier rubyid_failure_message'>failure_message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to unset UID and server_identity for gear </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_updated_gear'>updated_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='int'>5</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='op'>|</span>
+    <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>._id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uuid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$set</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.uid</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>group_instances.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.gears.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_g_index'>g_index</span><span class='embexpr_end'>}</span><span class='tstring_content'>.server_identity</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># set the server_identity and uid attributes in the gear object in mongoid memory for access by the caller
+</span>  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span> <span class='op'>=</span> <span class='id identifier rubyid_updated_gear'>updated_gear</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -4509,21 +4971,21 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-250
-251
-252
-253
-254
-255
-256
-257
-258
-259
-260
-261</pre>
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 250</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 266</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_configuration'>update_configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='id identifier rubyid_remote_job_handle'>remote_job_handle</span><span class='comma'>,</span> <span class='id identifier rubyid_tag'>tag</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_keys'>add_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>add_keys_attrs</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
@@ -4542,12 +5004,104 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="update_with_retries-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>update_with_retries</strong>(num_retries, failure_message, &amp;block) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 298</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='id identifier rubyid_num_retries'>num_retries</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_retries'>retries</span> <span class='op'>=</span> <span class='int'>0</span>
+  <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>false</span>
+  <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='kw'>self</span>
+  <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span>
+  <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span>
+
+  <span class='comment'># find the index and do an atomic update
+</span>  <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+  <span class='kw'>while</span> <span class='id identifier rubyid_retries'>retries</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_num_retries'>num_retries</span>
+    <span class='id identifier rubyid_retval'>retval</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_current_app'>current_app</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='comma'>,</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_gi_index'>gi_index</span><span class='comma'>,</span> <span class='id identifier rubyid_g_index'>g_index</span><span class='rparen'>)</span>
+
+    <span class='comment'># the gear needs to be reloaded to find the updated index as well as to return the updated document
+</span>    <span class='id identifier rubyid_current_app'>current_app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>_id</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_current_gi'>current_gi</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_current_gi'>current_gi</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_gi_index'>gi_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gi'>current_gi</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_current_gear'>current_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>uuid:</span> <span class='id identifier rubyid_current_gear'>current_gear</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_g_index'>g_index</span> <span class='op'>=</span> <span class='id identifier rubyid_current_app'>current_app</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='lbracket'>[</span><span class='id identifier rubyid_gi_index'>gi_index</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_current_gear'>current_gear</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_retries'>retries</span> <span class='op'>+=</span> <span class='int'>1</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_retval'>retval</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>updatedExisting</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_success'>success</span> <span class='op'>=</span> <span class='kw'>true</span>
+      <span class='kw'>break</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># log the details in case we cannot update the pending_op
+</span>  <span class='kw'>unless</span> <span class='id identifier rubyid_success'>success</span>
+    <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_failure_message'>failure_message</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  
+  <span class='kw'>return</span> <span class='id identifier rubyid_current_gear'>current_gear</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
     <div id="footer">
-  Generated on Fri Aug 23 23:16:20 2013 by
+  Generated on Sat Aug 24 22:04:05 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
