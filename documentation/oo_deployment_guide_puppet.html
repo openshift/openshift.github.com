@@ -654,11 +654,17 @@ code { font-family: source_code_pro; }
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ol type="none" class="sectlevel1">
-<li><a href="#installing-puppet">1. Installing Puppet</a></li>
+<li><a href="#puppet-setup">1. Puppet Setup</a></li>
+<li>
+<ol type="none" class="sectlevel2">
+<li><a href="#enterprise-prerequisites">1.1. Enterprise Prerequisites</a></li>
+<li><a href="#install-puppet">1.2. Install Puppet</a></li>
+</ol>
+</li>
 <li><a href="#generating-bind-tsig-key">2. Generating BIND TSIG Key</a></li>
 <li><a href="#update-the-machines-hostname">3. Update the Machines Hostname</a></li>
 <li><a href="#configuring-an-all-in-one-host">4. Configuring an all-in-one host</a></li>
-<li><a href="#configuring-seperate-hosts-for-broker-node">5. Configuring seperate hosts for broker/node</a></li>
+<li><a href="#configuring-separate-hosts-for-broker-node">5. Configuring separate hosts for broker/node</a></li>
 <li>
 <ol type="none" class="sectlevel2">
 <li><a href="#broker-host">5.1. Broker host</a></li>
@@ -716,8 +722,10 @@ For OpenShift Origin broker/nodes to be configured properly you will need the ho
 </div>
 </div>
 <div class="sect1">
-<h2 id="installing-puppet"><a class="anchor" href="#installing-puppet"></a>1. Installing Puppet</h2>
+<h2 id="puppet-setup"><a class="anchor" href="#puppet-setup"></a>1. Puppet Setup</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="enterprise-prerequisites"><a class="anchor" href="#enterprise-prerequisites"></a>1.1. Enterprise Prerequisites</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -726,10 +734,18 @@ For OpenShift Origin broker/nodes to be configured properly you will need the ho
 </td>
 <td class="content">
 
-For RHEL systems you will need to include the <a href="http://fedoraproject.org/wiki/EPEL">EPEL repository</a> to install puppet. To do so install the latest <a href="http://download.fedoraproject.org/pub/epel/6/i386/repoview/epel-release.html">epel-release package</a>.
+For Enterprise Linux systems you will need some extra repositories to install the necessary version of puppet. This is unnecessary for Fedora 19 systems.
 </td>
 </tr>
 </table>
+</div>
+<div class="ulist">
+
+<ul>
+<li>
+<p><a href="http://fedoraproject.org/wiki/EPEL">EPEL repository</a> - install the latest <a href="http://download.fedoraproject.org/pub/epel/6/i386/repoview/epel-release.html">epel-release package</a>.</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 
@@ -737,6 +753,44 @@ For RHEL systems you will need to include the <a href="http://fedoraproject.org/
 <pre>yum install -y --nogpgcheck ${url_of_the_latest_epel-release_rpm}</pre>
 </div>
 </div>
+<div class="ulist">
+
+<ul>
+<li>
+<p><a href="http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html">PuppetLabs enterprise repository</a> - install the latest <a href="http://yum.puppetlabs.com/el/6/products/i386/">puppetlabs-release package</a>.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+
+<div class="content monospaced">
+<pre>yum install -y --nogpgcheck ${url_of_the_latest_puppet-release_rpm}</pre>
+</div>
+</div>
+<div class="ulist">
+
+<ul>
+<li>
+<p>"Optional" repository - enable depending on your source:</p>
+<div class="ulist">
+
+<ul>
+<li>
+<p>yum-config-manager --enable rhel-6-server-optional-rpms</p>
+</li>
+<li>
+<p>Under RHN classic, enable the rhel-x86_64-server-optional-6 channel</p>
+</li>
+</ul>
+</div>
+
+</li>
+</ul>
+</div>
+
+</div>
+<div class="sect2">
+<h3 id="install-puppet"><a class="anchor" href="#install-puppet"></a>1.2. Install Puppet</h3>
 <div class="paragraph">
 <p>Run the following to install puppet and facter</p>
 </div>
@@ -763,6 +817,8 @@ For RHEL systems you will need to include the <a href="http://fedoraproject.org/
 <div class="content monospaced">
 <pre>puppet module install openshift/openshift_origin</pre>
 </div>
+</div>
+
 </div>
 
 </div>
@@ -889,11 +945,27 @@ Furthermore, TSIG key that we generated above should be inserted.</p>
 <pre>puppet apply --verbose configure_origin.pp</pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Assuming everything runs cleanly, installation is complete. Otherwise, you can resolve the errors shown (warnings can often be ignored)
+and re-run puppet until it runs cleanly.</p>
+</div>
+<div class="paragraph">
+<p>If you have not already arranged for the DNS resolution of this host, you can now use the oo-register-dns tool to do so:</p>
+</div>
+<div class="listingblock">
+
+<div class="content monospaced">
+<pre>oo-register-dns --with-node-hostname broker --with-node-ip &lt;broker IP&gt; --domain example.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Assuming everything runs cleanly, reboot the system for all settings and services to go into effect.</p>
+</div>
 
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuring-seperate-hosts-for-broker-node"><a class="anchor" href="#configuring-seperate-hosts-for-broker-node"></a>5. Configuring seperate hosts for broker/node</h2>
+<h2 id="configuring-separate-hosts-for-broker-node"><a class="anchor" href="#configuring-separate-hosts-for-broker-node"></a>5. Configuring separate hosts for broker/node</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="broker-host"><a class="anchor" href="#broker-host"></a>5.1. Broker host</h3>
@@ -967,6 +1039,9 @@ modified if necessary.</p>
 <div class="content monospaced">
 <pre>puppet apply --verbose configure_origin.pp</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>As with the all-in-one host, ensure DNS resolves this host and puppet runs cleanly, then reboot.</p>
 </div>
 
 </div>
@@ -1043,6 +1118,9 @@ values should be modified.</p>
 <div class="content monospaced">
 <pre>puppet apply --verbose configure_origin.pp</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>As with the all-in-one host, ensure DNS resolves this host and puppet runs cleanly, then reboot.</p>
 </div>
 
 </div>
