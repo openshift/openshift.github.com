@@ -3,7 +3,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="Asciidoctor 0.1.3" name="generator">
+<meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
 <title>OpenShift PEP 006: Zero downtime for scaled applications during deployment and restarts</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
@@ -651,12 +651,12 @@ code { font-family: source_code_pro; }
 <br>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#motivation">Motivation</a></li>
 <li><a href="#specification">Specification</a></li>
 <li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
-</ol>
+</ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
@@ -672,7 +672,6 @@ Affected Components: web, api, runtime, broker, cli<br>
 Affected Teams: Runtime (40), UI (20), Broker (8), Enterprise (5)<br>
 User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://trello.com/c/krgSeomK</a></p>
 </div>
-
 </div>
 </div>
 <div class="sect2">
@@ -680,7 +679,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 <div class="paragraph">
 <p>Today in OpenShift, when a user pushes an update to an application, the application is taken offline temporarily during the deployment of the new code. This means incoming requests may fail for a short period of time. With some improvements to the application lifecycle, OpenShift users should be able to push updates or restart their scaled applications with zero downtime.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
@@ -691,7 +689,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 <p>The goal of this PEP is to improve the operational experience of managing applications in OpenShift. It will include features such as:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>zero downtime during a deployment or restart</p>
@@ -713,7 +710,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 </li>
 </ul>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
@@ -741,7 +737,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 <p>New application configuration options are required to support the improved build and deployment features. These should be maintained in the broker and made available to the gears as environment variables.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><strong>auto_deploy</strong></p>
@@ -751,7 +746,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 <div class="paragraph">
 <p>Indicates if OpenShift should build and deploy automatically whenever the user executes <code>git push</code>. If not explicitly disabled, the current default behavior (to auto deploy) will remain the same.</p>
 </div>
-
 </li>
 </ul>
 </div>
@@ -762,7 +756,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 <p>Additionally, the following marker files in the application git repository will be deprecated and replaced by optional arguments that can be passed to <code>rhc deploy</code>:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>force_clean_build</code></p>
@@ -776,7 +769,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 <p>Any future options that are appropriate for a per deploy decision will only be added as deploy options such as:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>a non-clean Maven build</p>
@@ -795,7 +787,6 @@ User Impact: medium Epic: E05 <a href="https://trello.com/c/krgSeomK">https://tr
 <div class="paragraph">
 <p>Pushes of branches other than the value specified by <code>deployment_branch</code> will not trigger an automatic deployment.</p>
 </div>
-
 </li>
 <li>
 <p><strong>keep_deployments</strong></p>
@@ -806,7 +797,6 @@ Default: 1</p>
 <div class="paragraph">
 <p>Indicates how many total deployments to preserve. If not specified, the current default behavior of only preserving the current/active deployment will remain the same. This value must be &gt;= 2 for rollbacks to work.</p>
 </div>
-
 </li>
 <li>
 <p><strong>deployment_type</strong></p>
@@ -817,7 +807,6 @@ Default: git</p>
 <div class="paragraph">
 <p>Indicates whether the app is setup for binary or git based deployments. Deployments attempted of the type not configured will result in an error.</p>
 </div>
-
 </li>
 </ul>
 </div>
@@ -830,7 +819,6 @@ Default: git</p>
 <div class="paragraph">
 <p>For example: <code>rhc config -a myapp auto_deploy false</code></p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="new-ways-to-deploy"><a class="anchor" href="#new-ways-to-deploy"></a>New ways to deploy</h4>
@@ -838,7 +826,6 @@ Default: git</p>
 <p>The following describes new ways to deploy a new version of code to an application. These assume that auto_deploy is false.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>rhc deploy -a myapp &lt;git ref&gt;</code></p>
@@ -848,25 +835,21 @@ Default: git</p>
 </strong> a commit id, such as d34dbe3f. That specific commit will be deployed.
 ** a tag, such as v1.0. That specific tag will be deployed.</p>
 </div>
-
 </li>
 <li>
 <p><code>rhc deploy -a myapp http://example.com/artifact_id-1.0.tar.gz</code></p>
 <div class="paragraph">
 <p>Makes the binary deployment artifact at the specified URL the active deployment for the application.</p>
 </div>
-
 </li>
 <li>
 <p><code>rhc deploy -a myapp myartifact.tar.gz</code></p>
 <div class="paragraph">
 <p>Uploads a binary deployment artifact located on the user&#8217;s computer to the application and makes it the active deployment.</p>
 </div>
-
 </li>
 </ul>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="deployment-directory-structure"><a class="anchor" href="#deployment-directory-structure"></a>Deployment directory structure</h4>
@@ -874,8 +857,7 @@ Default: git</p>
 <p>The following directory structure is proposed:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>app-deployments/
   2013-08-16_14-36-36.881/
     dependencies/
@@ -918,7 +900,6 @@ app-root/
 <div class="paragraph">
 <p>The <strong>app-archives</strong> directory contains binary deployment artifacts that are the inputs to the <code>prepare</code> platform action.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="git-deployments---current-openshift-workflow"><a class="anchor" href="#git-deployments---current-openshift-workflow"></a>Git deployments - current OpenShift workflow</h4>
@@ -926,7 +907,6 @@ app-root/
 <p>The following process will take place when <code>auto_deploy</code> is enabled, <code>keep_deployments</code> = 1, and the user pushes code to the git repository:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>User invokes <code>git push</code></p>
@@ -1023,7 +1003,6 @@ app-root/
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="git-deployments---preserving-previous-deployments"><a class="anchor" href="#git-deployments---preserving-previous-deployments"></a>Git deployments - preserving previous deployments</h4>
@@ -1031,7 +1010,6 @@ app-root/
 <p>The following process will take place when <code>auto_deploy</code> is enabled, <code>keep_deployments</code> &gt; 1, and the user pushes code to the git repository:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>User invokes <code>git push</code></p>
@@ -1128,7 +1106,6 @@ app-root/
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="binary-deployments"><a class="anchor" href="#binary-deployments"></a>Binary deployments</h4>
@@ -1139,7 +1116,6 @@ app-root/
 <p>A binary deployment artifact could be one of the following formats:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>tar</p>
@@ -1165,8 +1141,7 @@ app-root/
 <p>The proposed format of a binary artifact is as follows:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>repo
   .openshift
     ...
@@ -1179,8 +1154,7 @@ dependencies
 <p>A .war binary deployment artifact might look like this:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>repo
   .openshift
     ...
@@ -1197,7 +1171,6 @@ dependencies
 <p>The following process will take place when <code>auto_deploy</code> is disabled, <code>keep_deployments</code> &gt; 1, and the user executes <code>rhc deploy -a myapp &lt;url&gt;</code>:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>User invokes <code>rhc deploy -a myapp &lt;url&gt;</code></p>
@@ -1270,7 +1243,6 @@ dependencies
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="deployment-rollback-capability"><a class="anchor" href="#deployment-rollback-capability"></a>Deployment rollback capability</h4>
@@ -1284,7 +1256,6 @@ dependencies
 <p>This will execute the following sequence of actions:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Ensure that a previous deployment exists; return error to the user if not</p>
@@ -1309,7 +1280,6 @@ dependencies
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="types-of-applications-and-deployments"><a class="anchor" href="#types-of-applications-and-deployments"></a>Types of applications and deployments</h4>
@@ -1317,7 +1287,6 @@ dependencies
 <p>There are three likely scenarios under which applications are deployed:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>A simple, non scalable app that may have limited disk space</p>
@@ -1337,21 +1306,18 @@ dependencies
 <p>In addition, users may desire to deploy using two distinct methods:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p><strong>Scale-replace</strong></p>
 <div class="paragraph">
 <p>Create new gears with the new deployment artifact and scale down gears running the older deployment. The new gears must have the new deployment artifact copied after creation.</p>
 </div>
-
 </li>
 <li>
 <p><strong>In-place</strong></p>
 <div class="paragraph">
 <p>Change gears in place, with or without altering the scale factor. Predeploys the new deployment artifact to a temporary location, stops the gear, symlinks the new artifact to become the active deployment, and the starts the gear.</p>
 </div>
-
 </li>
 </ol>
 </div>
@@ -1362,8 +1328,7 @@ dependencies
 <p>The minimum deployment time for scale-replace is described by</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>T(deploy) = ( N(gears) / N(extra_cap) - 1 ) * ( T(gear_create) + T(gear_deploy) + T(gear_activate) )</pre>
 </div>
 </div>
@@ -1374,8 +1339,7 @@ dependencies
 <p>The minimum deployment time for in-place is:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>T(deploy) = ( N(gears) / ( N(extra_cap) + N(fraction) ) - 1 ) * ( T(gear_activate) )</pre>
 </div>
 </div>
@@ -1388,14 +1352,12 @@ dependencies
 <div class="paragraph">
 <p>Therefore, we recommend scale-replace when per-gear disk space (i.e., quota) is limited and availability is desired (category 2), and in-place for unscaled, disk limited apps (category 1) and high scale, disk unlimited apps (category 3). It is recommended that application owners must provision sufficient capacity for in-place and opt-in to that deployment method.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="zero-downtime-deployments"><a class="anchor" href="#zero-downtime-deployments"></a>Zero-downtime deployments</h4>
 <div class="paragraph">
 <p>It should be possible to deploy to a scaled application without incurring application downtime. To accomplish this, either scale-replace or in-place deployments could be used. If in-place, the application must have at least 2 gears to avoid downtime.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="broker-involvement"><a class="anchor" href="#broker-involvement"></a>Broker involvement</h4>
@@ -1415,8 +1377,7 @@ dependencies
 <p>An example application might consist of 3 redundant head gears, with 10 other scaled web gears. The coordinator would be able to execute the following SSH session to reproduce the in-place deploy of a commit f03435b:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>$ ssh gearid1@myapp-mydomain.rhcloud.com
 Connecting to gearid1@myapp-mydomain.rhcloud.com...
 &gt; build f03435b
@@ -1449,7 +1410,6 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div class="paragraph">
 <p>This operation will perform the build and deploy and take the same options provided through ssh (force_clean_build, git ref, etc). Output will need to be accessible through standard gear logging facilities.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="storage-considerations"><a class="anchor" href="#storage-considerations"></a>Storage considerations</h4>
@@ -1459,7 +1419,6 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div class="paragraph">
 <p>If a gear runs out of disk space during a deployment, the platform will remove 1 or more previous deployments (if they exist) in an effort to keep the gear below its quota limit.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="haproxy-changes"><a class="anchor" href="#haproxy-changes"></a>HAProxy changes</h4>
@@ -1469,7 +1428,6 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div class="paragraph">
 <p>When the platform synchronizes files, the synchronization will happen before all cartridge and user deploy hooks are executed.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="additional-dependencies"><a class="anchor" href="#additional-dependencies"></a>Additional dependencies</h4>
@@ -1487,28 +1445,24 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div class="paragraph">
 <p>Publisher gears would need to be redundant to avoid being a single point of failure.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="deployment-failureserrors"><a class="anchor" href="#deployment-failureserrors"></a>Deployment failures/errors</h5>
 <div class="paragraph">
 <p>In the event that a deployment to a gear fails, the user should be notified of the failure. No attempt at auto-correcting the failure will be made, and the user will be required to fix whatever the issue is.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="deployment-validation"><a class="anchor" href="#deployment-validation"></a>Deployment validation</h5>
 <div class="paragraph">
 <p>At the end of a deployment, the platform should validate that the deployment succeeded. This could be as simple as validating the contents of a deployment status file on a gear.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="targeting-specific-gears"><a class="anchor" href="#targeting-specific-gears"></a>Targeting specific gears</h5>
 <div class="paragraph">
 <p>It may be desirable to allow the user to target one or more specific gears when performing a deployment/restart. A potential scenario would involve deploying a new release to 10% of an application&#8217;s gears, smoke testing the new release on those gears, and then continuing to deploy to the remaining gears if the smoke test passed.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="graceful-shutdowns-draining-connections"><a class="anchor" href="#graceful-shutdowns-draining-connections"></a>Graceful shutdowns / draining connections</h5>
@@ -1518,7 +1472,6 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div class="paragraph">
 <p>There may potentially be issues if versions <em>n</em> and <em>n+1</em> are both active at the same time and HTTP session replication is in use. Dealing with these is out of scope of this PEP.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="health-checks"><a class="anchor" href="#health-checks"></a>Health Checks</h5>
@@ -1528,7 +1481,6 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div class="paragraph">
 <p>In this file, the user could specify 1 or more health checks. Each health check could be performed by the load balancer (haproxy) for web applications, or by the platform for non web applications. Non web health checks would require the platform to execute a script specified by the user in the configuration file. If the script returns success (0), the application is considered healthy. Any nonzero return code indicates unhealthy/failure.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="build-when-notified-by-an-external-source-push"><a class="anchor" href="#build-when-notified-by-an-external-source-push"></a>Build when notified by an external source push</h5>
@@ -1539,8 +1491,7 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <p>A user desires to deploy when commits are pushed to an external GitHub repository. They configure their application for build-on-push to "master", and ensure their internal application repository is a clone of the upstream. They then enable web hook support via the broker for their application by creating a new authorization with application web-hook scope. The broker will then accept a POST request to</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>/broker/rest/applications/&lt;appuuid&gt;/webhooks/&lt;token_value&gt;/&lt;action&gt;</pre>
 </div>
 </div>
@@ -1548,17 +1499,14 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <p>which is passed directly to one of the application web gears for processing. The platform code would look for a .openshift/action_hooks/webhook script and execute it with the arguments</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>&lt;action&gt; &lt;payload&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>where payload is is the payload parameter passed to the broker in JSON. The webhook script would execute a simple git fetch against an upstream, and then git push that upstream to the local repository in the background and return.</p>
 </div>
-
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="distributed-publishing-multi-master-multi-ha"><a class="anchor" href="#distributed-publishing-multi-master-multi-ha"></a>Distributed Publishing (Multi-Master / Multi-HA)</h4>
@@ -1568,19 +1516,18 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div class="paragraph">
 <p>**Details to follow HA implementation</p>
 </div>
-
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="backwards-compatibility"><a class="anchor" href="#backwards-compatibility"></a>Backwards Compatibility</h3>
 <div class="paragraph">
 <p>The details and changes described in this PEP should be fully backwards compatible with previous releases. None of the default behaviors change (<code>git push</code> still builds and deploys master). It is possible, maybe even likely that the directory structure for deployments may have to change slightly, and this could be addressed as part of a migration/upgrade script. Newer features, such as the ability to deploy binary artifacts, would only be available to a fully upgraded OpenShift installation. Older clients should continue to function without anything breaking.</p>
 </div>
-
 </div></div>
 <div id="footer">
 <div id="footer-text">
+<br>
+Last updated 2013-09-06 22:07:00 UTC
 </div>
 <!-- Google Analytics -->
 <script>

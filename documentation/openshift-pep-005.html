@@ -3,7 +3,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="Asciidoctor 0.1.3" name="generator">
+<meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
 <title>OpenShift PEP 005: Highly Available Web Applications</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
@@ -651,14 +651,14 @@ code { font-family: source_code_pro; }
 <br>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#motivation">Motivation</a></li>
 <li><a href="#terms">Terms</a></li>
 <li><a href="#specification">Specification</a></li>
 <li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
 <li><a href="#rationale">Rationale</a></li>
-</ol>
+</ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
@@ -675,7 +675,6 @@ Affected Teams: Runtime (5), UI (3), Broker (4), Enterprise (1)<br>
 User Impact: high<br>
 Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with-a-highly-available-web-tier-ha/512a75379a7ef45063008db9/4">https://trello.com/card/epic-01-i-can-run-an-application-with-a-highly-available-web-tier-ha/512a75379a7ef45063008db9/4</a></p>
 </div>
-
 </div>
 </div>
 <div class="sect2">
@@ -683,7 +682,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>Provide highly available web support for OpenShift applications to ensure that single node and gear failures do not result in downtime, and allow integration into existing routing and load-balancer infrastructures in customer environments. At high scale, applications should remain manageable and problems with individual gears can be corrected.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
@@ -693,7 +691,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>Many customer environments include infrastructure that may offer availability and/or load balancing to HTTP servers. Leveraging that infrastructure will allow deployments of OpenShift that can fit into existing production environments.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="terms"><a class="anchor" href="#terms"></a>Terms</h3>
@@ -709,7 +706,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p><strong>head gear</strong> - in OSE 1.2, the web gear within an application that has HAProxy and corresponds to the node the DNS entry for the app points to. In this pep, referred to as "web load balancer gear"</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
@@ -726,7 +722,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>This PEP specifies:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>A reliable system programming interface (routing SPI) on the OpenShift broker for notifying an external system of changes to the global routing table. The interface will be a Ruby plugin to the broker, and receive a stream of change notifications for the routing table of all applications. A series of default implementations and examples will be provided, starting simply with a message queue and moving up to full OpenStack Quantum API integration. A set of REST APIs for retrieving the application routing tables will also be provided for clients.</p>
@@ -748,8 +743,7 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="sect4">
 <h5 id="topology-diagram"><a class="anchor" href="#topology-diagram"></a>Topology diagram</h5>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>           | Web HTTP traffic to                           | Changes to application (1)
            | app1-me.ha.rhcloud.com                        | Scale, add cart, etc
            |                                               v
@@ -781,7 +775,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>Changing an application:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>A user changing an application via the REST API invokes a command to scale up a PHP web application</p>
@@ -803,7 +796,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>In this hypothetical configuration, proxy 1 and proxy 2 are both configured to virtual host route HTTP requests to app1-me.ha-rhcloud.com to any of the web load balancer gears within app1 (gear1 and gear2). Proxy 1 and proxy 2 are in a heartbeat IP failover setup - if proxy2 detects that proxy1 is not responding, it will be assigned IP address 1 and continue handling traffic. This is just one possible configuration. Other applications may be routed via proxy1 and proxy2, but a large system may choose to deploy multiple sets of proxies, each handling a different subset of applications.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="related-peps"><a class="anchor" href="#related-peps"></a>Related PEPs</h5>
@@ -811,7 +803,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>This PEP interacts with the deploy/zero-downtime PEP and the Geo PEP. This PEP does not attempt to define the following topics:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>TCP load balancing within OpenShift applications or at the infrastructure level. It is assmued that external TCP balancing will require public ports to be exposed, and also must define how the endpoints are described to clients. The routing SPI and the REST API will be built to support the possibility of TCP load balancing.</p>
@@ -827,7 +818,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>Flowchart for websockets with proxy servers <a href="http://imgur.com/cZOuS1Y">http://imgur.com/cZOuS1Y</a> (from The Definitive Guide to HTML5 WebSocket)</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="routing-system-programming-interface-spi"><a class="anchor" href="#routing-system-programming-interface-spi"></a>Routing System Programming Interface (SPI)</h4>
@@ -835,7 +825,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>OpenShift will reliably distribute notifications of the following changes to applications:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Creation of an application</p>
@@ -846,7 +835,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>lists the application DNS and the web load balancer / web gear it points to. Also lists any other routes created with the app</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Deletion of an application</p>
@@ -857,7 +845,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>lists the application DNS and the web load balancer / web gear it points to. Also lists any other routes created with the app</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Addition/removal of routes to an application</p>
@@ -868,7 +855,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>When a new cartridge is added or removed to an app, additional routes may be available on individual gears. Those changes would be sent as a list of dns + port entries, types of traffic on that port (http, ssh, https), and whether it&#8217;s a load-balancer or not</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Addition/removal/changes to SSL certs of aliases from an application</p>
@@ -879,7 +865,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>An alias is an external route - the mapping between the alias DNS and the application DNS must be known to a routing implementor. Sends the alias+port and the underlying DNS address+port it should map to.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Addition/removal of geography changes to an application</p>
@@ -890,7 +875,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>A geo (see <a href="https://github.com/openshift/openshift-pep/blob/master/openshift-pep-004.md">Geo PEP 004</a>) may convey information about the placement of an application. Sends the application DNS, the Geo, and the application id</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Changes to the stop/start/rotate-in/rotate-out status of an application or gear</p>
@@ -912,7 +896,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>The developer clients and consumers of the routing SPI need to be able to answer the following questions:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>What is the public http URL for this app? (what if there are multiple?)</p>
@@ -923,7 +906,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>answers: app dns url, aliases, ha app dns url. Aliases should take priority, but all need to be listed with the appropriate endpoints (what they resolve to)</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>What are the hosts and ports of my web load balancers?</p>
@@ -934,7 +916,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>The mongo data model will contain information about the external HTTP port and host for each load balancer.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>What are the proxy-ports for each of my db gears? Do I get a display name for the type of what this is (since most time it&#8217;s pretty simple)</p>
@@ -957,7 +938,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>Possible API is a list of all endpoints. Each endpoint has:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>One or more types/roles - i.e. web, load-balanced, ssh, git, tcp (generic), mysql:master, mysql:slave, redis</p>
@@ -988,9 +968,7 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 </li>
 </ul>
 </div>
-
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="openshift-router-component"><a class="anchor" href="#openshift-router-component"></a>OpenShift Router component</h4>
@@ -1001,7 +979,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>A router component MUST perform the following operations:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Provide HTTP virtual host passing to individual web backends for one or more applications. The router is expected to map external DNS aliases (including application aliases) as well as the application DNS entry associated with high availability. The standard model would be the external web load balancer port (not via the system proxy) as backends, although implementors may consider external availability and load balancing by going directly to web gears.</p>
@@ -1015,7 +992,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>A router component SHOULD perform the following operations:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Provide HTTPS termination including SNI for individual aliases</p>
@@ -1026,7 +1002,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>A router component MAY perform the following operations:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Divide traffic among multiple frontends via multihomed DNS entries</p>
@@ -1039,7 +1014,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>It is expected that integrators may choose to use commercial load balancer hardware or software load balancers.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="multiple-web-load-balancer-gears-per-application"><a class="anchor" href="#multiple-web-load-balancer-gears-per-application"></a>Multiple web load balancer gears per application</h4>
@@ -1059,7 +1033,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>There are a few important limits to be aware of:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Network traffic a single, in-gear load balancer can handle - effective bandwidth limit of the node (1GB/s)</p>
@@ -1070,7 +1043,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>Traffic to a single load balancer is limited by the inbound/outbound traffic supported by the kernel/machine. There may be competition between gears on that node for a fair share of bandwidth.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Number of backends HAProxy can performantly monitor - at least hundreds</p>
@@ -1081,7 +1053,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>HAProxy should scale reasonably well to hundreds of backends, but every change to the config (backends) requires a SIGUSR1 signal and a reload of the config, which can affect uptime and status.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Number of HAProxies that must drain an individual gear of traffic before a restart can continue - expect to limit to 3-10</p>
@@ -1095,7 +1066,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>We define a few variables:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>M - the number of web load balancer gears in the application</p>
@@ -1121,8 +1091,7 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>At larger scales, with C=100% (each balancer talks to all web gears), the last constraint is the most important - all masters have to drain the traffic for a single gear to be rotated out. The gear limit is expressed (for a given value of X) as:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>N = X * R / C</pre>
 </div>
 </div>
@@ -1149,7 +1118,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>In all scenarios, manual scaling can be used to increase capacity temporarily in the event of a failure on a head gear.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="data-model-changes"><a class="anchor" href="#data-model-changes"></a>Data Model Changes</h5>
@@ -1159,9 +1127,7 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>To change to the number of load balancer gears within an application, a user may set either the minimum and maximum scale on the web load balancer cartridge, or rely on a simple ratio provided by the cartridge. That ratio determines how many web gears should exist for each one load balancer, and is applied when a new gear is created. A user may be able to set that ratio directly on the load balancer cartridge. In both cases, the scale factors are modelled with the gear group and are applied through the cartridge REST API.</p>
 </div>
-
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="new-gear-operations"><a class="anchor" href="#new-gear-operations"></a>New gear operations</h4>
@@ -1173,19 +1139,16 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>In the event that a node or gear is permanently lost, or a sustained network outage, it should be possible for an application owner to instruct the REST API / platform to remove/scale down a specific gear. This should include load-balancer gears, and the platform should recognize that that removal requires a replacement. It should not be possible to remove the last gear or the last node.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="restart-an-individual-gear"><a class="anchor" href="#restart-an-individual-gear"></a>Restart an individual gear</h5>
 <div class="paragraph">
 <p>It should be possible via the REST API to restart an individual gear in order to clear wedged processes.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="instruct-the-web-load-balancers-andor-router-to-take-backends-in-and-out-of-rotation"><a class="anchor" href="#instruct-the-web-load-balancers-andor-router-to-take-backends-in-and-out-of-rotation"></a>Instruct the web load balancers and/or router to take backends in and out of rotation</h5>
 <div class="ulist">
-
 <ul>
 <li>
 <p><strong>Rotate-Out</strong></p>
@@ -1198,7 +1161,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>The operation must always be provided a timeout, since some clients will refuse to release their connection. The default timeout should be reasonable for HTTP traffic (minutes) and should be configurable per application (env var)</p>
 </div>
-
 </li>
 <li>
 <p><strong>Rotate-In</strong></p>
@@ -1208,7 +1170,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>The operation is expected to complete deterministically in a short (&lt; 3s?) timeframe, and thus does not need a timeout.</p>
 </div>
-
 </li>
 </ul>
 </div>
@@ -1216,7 +1177,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>A number of other operations within OpenShift will use these two actions either individually or in bulk to protect the users of an application from errors and downtime. Parallel operation (instructing an application to rotate-out multiple gears) will be important at scale.</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Restarting a gear without downtime requires the following operations today:</p>
@@ -1226,7 +1186,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>!! Many web technologies do not require full restarts to pick up new versions - we should be prepared to allow individual cartridges to make that decision, by sending a gear level event to restart and let the cartridges decide whether they need to be rotated out. !!</p>
 </div>
-
 </li>
 <li>
 <p>Deploying a new version of code requires the following operations today:</p>
@@ -1236,25 +1195,21 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>!! Some consumers may have cartridges or applications that can cleanly reload new code without any of these steps being executed (because they fully load source into memory) - we should look for opportunities to enable this</p>
 </div>
-
 </li>
 <li>
 <p>If a problematic gear is detected, administrators of an application may wish to take it out of rotation in order to troubleshoot problems.</p>
 <div class="paragraph">
 <p>The gear may not be down as seen by HAProxy - instead it may be functioning incorrectly. Stop / delete may destroy important debugging info.</p>
 </div>
-
 </li>
 <li>
 <p>Administrators of an application may take large sets of gears out of rotation to perform special, non-deployment operations</p>
 <div class="paragraph">
 <p>This may include driving a deployment outside of OpenShift&#8217;s control, by targeting discrete operations.</p>
 </div>
-
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="resilience-of-the-application-pending-operations-queue"><a class="anchor" href="#resilience-of-the-application-pending-operations-queue"></a>Resilience of the application pending operations queue</h5>
@@ -1262,7 +1217,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>The application pending operations queue (used to transactionally manage distributed resources like gears) must be resilient to node failures, and allow certain operations to continue even in the presence of operations that cannot complete at the current time. The minimal operations are:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Scale down a specific gear</p>
@@ -1275,9 +1229,7 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>It <strong>must</strong> be possible for an administrator to unblock a specific application so it may continue to scale in a deployment of OpenShift. Application owners <strong>should</strong> have the capability to cancel operations that cannot complete. The infrastructure and job infrastructure <strong>should</strong> be designed so that operations that must operate on gears that are not available can be bypassed / skipped / delayed correctly.</p>
 </div>
-
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="broker-operations-for-multiple-web-load-balancers"><a class="anchor" href="#broker-operations-for-multiple-web-load-balancers"></a>Broker operations for multiple web load balancers</h4>
@@ -1285,7 +1237,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>Coordination for the router and the web load balancer gears (HAProxy) will be managed by the broker in a series of events managed by the operation queue. The create HA application flow would be:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Create app called through the rest api</p>
@@ -1308,14 +1259,12 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <li>
 <p>Configure connections with additional HAProxy gear with all existing gears (so identical haproxy.cfg in both haproxy gears)</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Expose HAProxy servers on external ports will need to be an additional connection for HA apps)</p>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>Add HAProxy servers of app to the routing layer tables. Note: The communication between the routing layer and the HAProxy servers should skip the apache proxy on the nodes and go directly to HAProxy on an exposed port.</p>
@@ -1335,7 +1284,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>Remove HA from an application:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Pending ops to remove HA are elaborated. Rough steps are:</p>
@@ -1364,7 +1312,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <p>Git Push/Build/Deployments</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>A build / Deployment PEP is being designed that will cover more exotic changes to the build process.</p>
@@ -1374,14 +1321,11 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 </li>
 </ul>
 </div>
-
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="backwards-compatibility"><a class="anchor" href="#backwards-compatibility"></a>Backwards Compatibility</h3>
 <div class="ulist">
-
 <ul>
 <li>
 <p>No backward incompatible API changes are planned. All APIs and SPIs are new.</p>
@@ -1394,7 +1338,6 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 </li>
 </ul>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="rationale"><a class="anchor" href="#rationale"></a>Rationale</h3>
@@ -1407,10 +1350,11 @@ Epic: E01 <a href="https://trello.com/card/epic-01-i-can-run-an-application-with
 <div class="paragraph">
 <p>Instead of having a thick or smart routing tier, OpenShift has picked a more traditional route using light weight existing technologies to balance applications across different load balancers. Users will not be able to ssh in to these servers and won&#8217;t have access to them just as they don&#8217;t the system reverse proxy tier today. An implementor may choose to develop a more complex infrastructure using the routing SPI.</p>
 </div>
-
 </div></div>
 <div id="footer">
 <div id="footer-text">
+<br>
+Last updated 2013-09-06 22:07:01 UTC
 </div>
 <!-- Google Analytics -->
 <script>

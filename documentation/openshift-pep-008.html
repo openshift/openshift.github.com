@@ -3,7 +3,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="Asciidoctor 0.1.3" name="generator">
+<meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
 <title>OpenShift PEP 008: OpenShift Installation Tool</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
@@ -651,13 +651,13 @@ code { font-family: source_code_pro; }
 <br>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#motivation">Motivation</a></li>
 <li><a href="#specification">Specification</a></li>
 <li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
 <li><a href="#rationale">Rationale</a></li>
-</ol>
+</ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
@@ -674,7 +674,6 @@ Affected Teams: UI (1), Origin (1)<br>
 User Impact: High<br>
 Epic: <a href="https://trello.com/c/H01J2eo4/30-origin-v3-installation-wizard-design">Origin v3 Installation Wizard</a></p>
 </div>
-
 </div>
 </div>
 <div class="sect2">
@@ -682,7 +681,6 @@ Epic: <a href="https://trello.com/c/H01J2eo4/30-origin-v3-installation-wizard-de
 <div class="paragraph">
 <p>This document describes an improved installation system for OpenShift. The proposed system will use a CLI-based installer and <a href="#installer-workflows">Workflow</a> model to deploy OpenShift onto one or more hosts. As an example of this, one Workflow will target the the VM that is currently used to deliver an all-in-one OpenShift Origin instance. This Workflow will enable the Origin VM to selectively serve one role (Broker, Node, or Message Queue Server) in a multi-instance deployment.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
@@ -692,7 +690,6 @@ Epic: <a href="https://trello.com/c/H01J2eo4/30-origin-v3-installation-wizard-de
 <div class="paragraph">
 <p>After an initial peer review, this PEP has been revised to clarify the standalone nature of this installer. Through the instrumentation of Workflows and Tasks, the first release of the installer will include support for the most popular install methods from the Origin survey. However, the installer is designed to be extensible enough to support other scenarios.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
@@ -700,12 +697,10 @@ Epic: <a href="https://trello.com/c/H01J2eo4/30-origin-v3-installation-wizard-de
 <p>In broad terms, the design proposal for this installation tool is as follows:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The installer will consist of a text-based wizard that guides a user to:</p>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Define their OpenShift configuration</p>
@@ -718,12 +713,10 @@ Epic: <a href="https://trello.com/c/H01J2eo4/30-origin-v3-installation-wizard-de
 </li>
 </ol>
 </div>
-
 </li>
 <li>
 <p>The initial Workflows provided with the installer will include:</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p><a href="#workflow-use-an-origin-vm-in-a-distributed-deployment">Origin VM Role assignment</a> - Specific to the Origin VM, the VM takes on one Role in a multi-VM Origin deployment (Broker, Node or Message Queue Server)</p>
@@ -739,7 +732,6 @@ Epic: <a href="https://trello.com/c/H01J2eo4/30-origin-v3-installation-wizard-de
 </li>
 </ul>
 </div>
-
 </li>
 </ul>
 </div>
@@ -752,8 +744,7 @@ Epic: <a href="https://trello.com/c/H01J2eo4/30-origin-v3-installation-wizard-de
 <p>The Origin VM completes its boot-up procedure by invoking <a href="https://github.com/openshift/puppet-openshift_origin/blob/master/templates/custom_shell/oo-login">oo-login#login()</a>. This is the method that presents the user with some summary information about the running system:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OpenShift Installer
 ----------------
 
@@ -775,8 +766,7 @@ Press any key for root console</pre>
 <p>The new installer will begin with an intro screen that summarizes the user&#8217;s options:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OpenShift Installer
 ----------------
 
@@ -789,11 +779,11 @@ https://broker.openshift.local/console
 
 To do more with this VM, select from the following options:
 
-<i class="conum">1</i> Use this VM in a multi-instance deployment
-<i class="conum">2</i> Install OpenShift on another system
-<i class="conum">3</i> Download Puppet templates
-<i class="conum">4</i> See login information for this Origin VM
-<i class="conum">5</i> Exit the installer</pre>
+&lt;1&gt; Use this VM in a multi-instance deployment
+&lt;2&gt; Install OpenShift on another system
+&lt;3&gt; Download Puppet templates
+&lt;4&gt; See login information for this Origin VM
+&lt;5&gt; Exit the installer</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -807,18 +797,19 @@ To do more with this VM, select from the following options:
 <div class="paragraph">
 <p>When invoked, the oo-install utility will look for a configuration file at <code>~/.openshift/oo-install-cfg.yml</code>. Users can manually specify a config file location by passing an argument to oo-install. As users work with the utility, general information about the Origin system and specific information about the configuration choices the user is making will be recorded here. The Origin VM will be shipped with a default configuration file that describes the all-in-one Origin system running on the VM itself.</p>
 </div>
-<hr><div class="paragraph">
+<hr>
+<div class="paragraph">
 <p><strong>NOTE</strong>: The installer will also keep a logfile at <code>~/.openshift/oo-install-cfg.log</code>. This will be overwritten every time the installer is invoked.</p>
 </div>
-<hr><div id="default-configuration" class="paragraph">
+<hr>
+<div id="default-configuration" class="paragraph">
 <p>Default Configuration</p>
 </div>
 <div class="paragraph">
 <p>The default configuration file for the OpenShift VM will look something like this:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>---
 Name: OpenShift Installer Configuration
 Vendor: OpenShift Origin Community
@@ -859,7 +850,8 @@ Workflows:
 <div class="paragraph">
 <p>The configuration file will always contain a Deployment section. This section is intended to store the complete OpenShift deployment in a way that can be used by any Workflow. When a user begins working with a given <a href="#installer-workflows">Workflow</a>, the answers to any Workflow-specific questions will be stored in the Workflows section in a subgroup that is keyed to the Workflow&#8217;s ID.</p>
 </div>
-<hr><div class="paragraph">
+<hr>
+<div class="paragraph">
 <p><strong>Limitations</strong>: For the first iteration of the installer, multiple hosts will only be supported for the Node role.</p>
 </div>
 <hr>
@@ -870,7 +862,6 @@ Workflows:
 <p>Each installation option presented by the installer will come from a different <code>Installer::Workflow</code> object defined in the installer codebase. The function of each Workflow is to do the following:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Provide an installation option on the text-based installer main page</p>
@@ -896,8 +887,7 @@ Workflows:
 <p>The format for every workflow defined in <code>workflows.yml</code> is as follows:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>Name: The name of the workflow
 Description: The text displayed by the installer in the workflow list
 ID: A distinct alphanumeric ID for the workflow, used in oo-install-cfg.yml and &lt;gem_root&gt;/workflows/&lt;workflow_id&gt; for namespacing
@@ -939,7 +929,6 @@ RequiredRPMS:
 <p>After asking the user to verify the Deployment, the installer starts iterating through the Workflow questions. When an answer already exists in the <code>oo-install-cfg.yml</code> file, the installer will present the question using Highline&#8217;s <a href="http://highline.rubyforge.org/doc/classes/HighLine/Question.html#M000030">answer_or_default()</a> method. All answers are validated according to the AnswerType setting. A few special AnswerTypes will trigger specific test behaviors as well:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><strong><em>remotehost</em></strong> will expect a response of the form "username@:". When the answer is supplied, the system will attempt to SSH to the target system as the indicated user. If the SSH attempt requires a password, the user will be prompted to enter the password. Once connected, the Installer attempts to determine if the target system meets the <a href="#target-system-requirements">Target System Requirements</a>.</p>
@@ -962,8 +951,7 @@ RequiredRPMS:
 <p>In the "Executable" string, the keyword "<code>&lt;workflow_path&gt;</code>" will be automatically expanded to the full path of "<code>&lt;gem_root&gt;/workflows/&lt;workflow_id&gt;</code>". The answers to workflow questions can also be included using the notation "<code>&lt;q:question_variable&gt;</code>". For example, if one question had a Variable "openshift_role", its value could be used in the executable like this:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>&lt;workflow_path&gt;/installerific -role &lt;q:openshift_role&gt;</pre>
 </div>
 </div>
@@ -985,14 +973,12 @@ RequiredRPMS:
 <div class="paragraph">
 <p>The RPMs listed here should only be the RPMs that must be installed before the Executable can even run (like Ruby or Puppet, for instance). Additional RPM checks, like for the presence of MongoDB on a system to be used for the DBServer <a href="#simplified-deployment-roles">Role</a>, should be checked by the Executable.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="installation-methodology"><a class="anchor" href="#installation-methodology"></a>Installation Methodology</h5>
 <div class="paragraph">
 <p>The specific installation methodology used by a given Workflow is entirely at the discretion of the Workflow&#8217;s author. As long as the Workflow&#8217;s "Executable" string results in the completion of the installation task using values from <code>oo-install-cfg.yml</code> (or exits with a non-zero error code in the event of a problem), the installer will function correctly. Three of the <a href="#provided-workflows">Provided Workflows</a> will use <a href="http://puppetlabs.com/">Puppet</a> and <a href="http://docs.puppetlabs.com/hiera/1/puppet.html">hiera</a> to perform installations, but these tools only represent one method of extracting values from the config file and using them complete a Workflow.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="unattended-installations"><a class="anchor" href="#unattended-installations"></a>Unattended Installations</h5>
@@ -1000,7 +986,6 @@ RequiredRPMS:
 <p>The installer supports unattended installation for a given Workflow assuming the following requirements are met:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The Deployment section of the <code>oo-install-cfg.yml</code> file is complete</p>
@@ -1017,17 +1002,16 @@ RequiredRPMS:
 <p>To perform an unattended installation, the user invokes the installer with an additional argument:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>oo-install -w &lt;workflow ID&gt;</pre>
 </div>
 </div>
-<hr><div class="paragraph">
+<hr>
+<div class="paragraph">
 <p><strong>The SSH password caveat</strong>: The installer never records SSH passwords in the <code>oo-install-cfg.yml</code> file. However, each host entry in the <a href="#default-configuration">Deployment section</a> of the config file supports the presence of a <em>pass</em> key. When this key is present, the installer will attempt to start the SSH session using this as the password. In this manner, a user can manually edit their config file to add these values and enable unattended installation for these systems.</p>
 </div>
 <hr>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="provided-workflows"><a class="anchor" href="#provided-workflows"></a>Provided Workflows</h4>
@@ -1043,16 +1027,15 @@ RequiredRPMS:
 <p>The goal of this Workflow is to make it possible for a user to set up an entire distributed, multi-instance OpenShift system using multiple pre-built OpenShift VMs. By default each VM runs its own complete system, but this installation path turns off services and configures the remaining services to interact with other hosts. Whether the other hosts are Origin VMs or some other system instances is not important as long as they all meet the <a href="#target-system-requirements">Target System Requirements</a>.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OpenShift Installer: Multi-Instance Deployment
 ----------------------------------------------
 
 What role should this VM fill in the Origin system?
-<i class="conum">1</i> Database server
-<i class="conum">2</i> Message queueing server
-<i class="conum">3</i> Broker
-<i class="conum">4</i> Node
+&lt;1&gt; Database server
+&lt;2&gt; Message queueing server
+&lt;3&gt; Broker
+&lt;4&gt; Node
 
 &lt;esc&gt; - Go to main menu</pre>
 </div>
@@ -1060,7 +1043,6 @@ What role should this VM fill in the Origin system?
 <div class="paragraph">
 <p>Once a user selects the role for this VM, the installer calls the Workflow Executable to configure the current Origin VM instance.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="workflow-install-a-role-on-a-remote-system"><a class="anchor" href="#workflow-install-a-role-on-a-remote-system"></a>Workflow: Install a Role on a Remote System</h5>
@@ -1068,15 +1050,14 @@ What role should this VM fill in the Origin system?
 <p>This Workflow causes the Installer to copy data over to a target host and then configure that host to act as one of the <a href="#simplified-deployment-roles">Simplified Deployment Roles</a> as specified in the <a href="#default-configuration">Deployment section</a> of the installer configuration.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OpenShift Installer: Remote System Setup
 
 Which role do you want to deploy?
-<i class="conum">1</i> Database server
-<i class="conum">2</i> Message queueing server
-<i class="conum">3</i> Broker
-<i class="conum">4</i> Node
+&lt;1&gt; Database server
+&lt;2&gt; Message queueing server
+&lt;3&gt; Broker
+&lt;4&gt; Node
 
 &lt;return&gt; - Continue
 &lt;esc&gt; - Go to main menu</pre>
@@ -1088,7 +1069,6 @@ Which role do you want to deploy?
 <div class="paragraph">
 <p>When the target host is identified, the installer will attempt to connect to the remote system via SSH. Because this Workflow starts with confirmation of the Deployment settings, the installer can assume at this point that the target host meets the <a href="#target-system-requirements">Target System Requirements</a>.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="workflow-install-a-role-on-the-local-system"><a class="anchor" href="#workflow-install-a-role-on-the-local-system"></a>Workflow: Install a Role on the Local System</h5>
@@ -1096,15 +1076,14 @@ Which role do you want to deploy?
 <p>This Workflow is almost identical to the <a href="#workflow-install-a-role-on-a-remote-system">remote system installation</a>, however, it does not require SSH access to any other system. The user indicates the Role that the current system should assume, and the <a href="#executable">Workflow Executable</a> performs the necessary work on the local system to establish it in the overall OpenShift system.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OpenShift Installer: Local System Setup
 
 Which role do you want to deploy?
-<i class="conum">1</i> Database server
-<i class="conum">2</i> Message queueing server
-<i class="conum">3</i> Broker
-<i class="conum">4</i> Node
+&lt;1&gt; Database server
+&lt;2&gt; Message queueing server
+&lt;3&gt; Broker
+&lt;4&gt; Node
 
 &lt;return&gt; - Continue
 &lt;esc&gt; - Go to main menu</pre>
@@ -1113,7 +1092,6 @@ Which role do you want to deploy?
 <div class="paragraph">
 <p>This Workflow is intended for networks where remote, SSH-based deployments from a single host are not possible. This scenario benefits from the portability of the <code>oo-install-cfg.yml</code> file; by copying this into each participating system, a user can bring up each piece of the OpenShift deployment without having to re-define the Role definitions on each host.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="workflow-download-puppet-templates"><a class="anchor" href="#workflow-download-puppet-templates"></a>Workflow: Download Puppet Templates</h5>
@@ -1121,8 +1099,7 @@ Which role do you want to deploy?
 <p>This workflow exists simply to call attention to the various ways that users can gain access to the Puppet templates that are used by the installer. For OpenShift Origin, the output of this workflow may look like this:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OpenShift Installer: Puppet Templates Download
 ----------------------------------------------
 
@@ -1140,7 +1117,6 @@ The latest versions of the puppet templates are always available on GitHub:
 <div class="paragraph">
 <p>The only technical requirement for Origin is that the VM packager will need to be instrumented to create and place the zip file referenced in the installer.</p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="workflow-display-vm-login-info"><a class="anchor" href="#workflow-display-vm-login-info"></a>Workflow: Display VM Login Info</h5>
@@ -1148,8 +1124,7 @@ The latest versions of the puppet templates are always available on GitHub:
 <p><em>(Origin VM only)</em> This workflow simply displays the login information that the <code>oo-login</code> utility displayed by default.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OpenShift Origin VM Login Details
 ---------------------------------
 
@@ -1164,18 +1139,14 @@ SSH user:   openshift
 Password:   openshift</pre>
 </div>
 </div>
-
 </div>
-
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="backwards-compatibility"><a class="anchor" href="#backwards-compatibility"></a>Backwards Compatibility</h3>
 <div class="paragraph">
 <p>This PEP describes functionality that was not previously available in OpenShift. From that perspective, backwards compatibility is not a factor in this design. However, anyone wishing to create a <a href="#installer-workflows">Workflow</a> that leverages previously existing scripts will need to adjust them to read system configuration information from the installer&#8217;s <a href="#recording-the-system-configuration">configuration file</a> file.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="rationale"><a class="anchor" href="#rationale"></a>Rationale</h3>
@@ -1187,14 +1158,12 @@ Password:   openshift</pre>
 <div class="paragraph">
 <p>The choice to use a text-based installer for this installer was two-fold. First off, per the <a href="https://www.openshift.com/blogs/survey-results-the-openshift-origin-unboxing-experience">survey</a>, the option of a more graphical installer was low in popularity. Second, being command-line invokable, the installer lends itself to use with <a href="#unattended-installations">unattended installations</a>.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="workflows"><a class="anchor" href="#workflows"></a>Workflows</h4>
 <div class="paragraph">
 <p>The Workflow concept enables this OpenShift installer to be easily reconfigured different deployment scenarios. By providing different <code>workflow.yml</code> files, oo-install RPMs can be customized to different distributions and environments.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="simplified-deployment-roles"><a class="anchor" href="#simplified-deployment-roles"></a>Simplified Deployment Roles</h4>
@@ -1202,12 +1171,10 @@ Password:   openshift</pre>
 <p>In order to deliver a basic, functional deployment on one or more target hosts, the Workflows that initially ship with the installer will split all of the components of OpenShift into four basic roles, using the specific software as indicated:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Role: Broker</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Broker RPM</p>
@@ -1220,12 +1187,10 @@ Password:   openshift</pre>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>Role: Node</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Node RPM</p>
@@ -1235,12 +1200,10 @@ Password:   openshift</pre>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>Role: MQServer</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>ActiveMQ</p>
@@ -1250,26 +1213,22 @@ Password:   openshift</pre>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>Role: DBServer</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>MongoDB</p>
 </li>
 </ul>
 </div>
-
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>This division of labor will not satisfy every deployment. The intent is to provide the administrator with a working OpenShift system that can be incrementally adjusted to suit the specific needs of a given environment.</p>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="target-system-requirements"><a class="anchor" href="#target-system-requirements"></a>Target System Requirements</h4>
@@ -1277,7 +1236,6 @@ Password:   openshift</pre>
 <p>The following expectations are tested by the installer for every target system, with respect to relevant <a href="#remotedeployment">workflow settings</a>.</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p><strong>For remote deployments only</strong>, the target system must be running and accessible via SSH with the specified user and ssh port. If the SSH session requires password authentication, the installer will ask the user for the password and pass it through to the SSH authentication but will not record it in the <code>oo-install-cfg.yml</code> file. See <a href="#unattended-installations">Unattended Installations</a> for more comments on this.</p>
@@ -1290,12 +1248,12 @@ Password:   openshift</pre>
 </li>
 </ol>
 </div>
-
 </div>
-
 </div></div>
 <div id="footer">
 <div id="footer-text">
+<br>
+Last updated 2013-09-06 22:07:00 UTC
 </div>
 <!-- Google Analytics -->
 <script>
