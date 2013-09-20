@@ -929,6 +929,21 @@ options], …].</p>
       <pre class="lines">
 
 
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
 156
 157
 158
@@ -943,25 +958,10 @@ options], …].</p>
 167
 168
 169
-170
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181
-182
-183
-184
-185</pre>
+170</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 156</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 141</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_container'>container</span><span class='rparen'>)</span>
   <span class='ivar'>@config</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>Config</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
@@ -1178,49 +1178,19 @@ each gear which has run create.</p>
 136
 137
 138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154</pre>
+139</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 127</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span>
   <span class='const'>Enumerator</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_yielder'>yielder</span><span class='op'>|</span>
-
-    <span class='comment'># Avoid deadlocks by listing the gears first
-</span>    <span class='id identifier rubyid_gearlist'>gearlist</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_plugins'>plugins</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_pl'>pl</span><span class='op'>|</span>
+    <span class='const'>ApplicationContainer</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_container'>container</span><span class='op'>|</span>
       <span class='kw'>begin</span>
-        <span class='id identifier rubyid_pl'>pl</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_obj'>obj</span><span class='op'>|</span>
-          <span class='id identifier rubyid_gearlist'>gearlist</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_obj'>obj</span><span class='period'>.</span><span class='id identifier rubyid_container_uuid'>container_uuid</span>
-        <span class='kw'>end</span>
-      <span class='kw'>rescue</span> <span class='const'>NoMethodError</span>
-      <span class='kw'>end</span>
-    <span class='kw'>end</span>
-
-    <span class='id identifier rubyid_gearlist'>gearlist</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_uuid'>uuid</span><span class='op'>|</span>
-      <span class='id identifier rubyid_frontend'>frontend</span> <span class='op'>=</span> <span class='kw'>nil</span>
-      <span class='kw'>begin</span>
-        <span class='id identifier rubyid_frontend'>frontend</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>ApplicationContainer</span><span class='period'>.</span><span class='id identifier rubyid_from_uuid'>from_uuid</span><span class='lparen'>(</span><span class='id identifier rubyid_uuid'>uuid</span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_yielder'>yielder</span><span class='period'>.</span><span class='id identifier rubyid_yield'>yield</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_container'>container</span><span class='rparen'>)</span><span class='rparen'>)</span>
       <span class='kw'>rescue</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-        <span class='const'>NodeLogger</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to instantiate FrontendHttpServer for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+        <span class='const'>NodeLogger</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Failed to instantiate FrontendHttpServer for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
         <span class='const'>NodeLogger</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Backtrace: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_backtrace'>backtrace</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-      <span class='kw'>else</span>
-        <span class='id identifier rubyid_yielder'>yielder</span><span class='period'>.</span><span class='id identifier rubyid_yield'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_frontend'>frontend</span><span class='rparen'>)</span>
       <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
@@ -1257,6 +1227,21 @@ each gear which has run create.</p>
       <pre class="lines">
 
 
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
 235
 236
 237
@@ -1282,25 +1267,10 @@ each gear which has run create.</p>
 257
 258
 259
-260
-261
-262
-263
-264
-265
-266
-267
-268
-269
-270
-271
-272
-273
-274
-275</pre>
+260</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 235</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 220</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_json_create'>json_create</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_obj'>obj</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -1418,12 +1388,12 @@ each gear which has run create.</p>
       <pre class="lines">
 
 
-472
-473
-474</pre>
+457
+458
+459</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 472</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 457</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:add_alias</span><span class='comma'>,</span> <span class='id identifier rubyid_clean_server_name'>clean_server_name</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -1459,6 +1429,21 @@ each gear which has run create.</p>
       <pre class="lines">
 
 
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
 494
 495
 496
@@ -1488,25 +1473,10 @@ each gear which has run create.</p>
 520
 521
 522
-523
-524
-525
-526
-527
-528
-529
-530
-531
-532
-533
-534
-535
-536
-537
-538</pre>
+523</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 494</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 479</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_ssl_cert'>add_ssl_cert</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_cert'>ssl_cert</span><span class='comma'>,</span> <span class='id identifier rubyid_priv_key'>priv_key</span><span class='comma'>,</span> <span class='id identifier rubyid_server_alias'>server_alias</span><span class='comma'>,</span> <span class='id identifier rubyid_passphrase'>passphrase</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_server_alias_clean'>server_alias_clean</span> <span class='op'>=</span> <span class='id identifier rubyid_clean_server_name'>clean_server_name</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
@@ -1590,12 +1560,12 @@ each gear which has run create.</p>
       <pre class="lines">
 
 
-460
-461
-462</pre>
+445
+446
+447</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 460</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 445</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_aliases'>aliases</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:aliases</span><span class='rparen'>)</span>
@@ -1631,24 +1601,24 @@ each gear which has run create.</p>
       <pre class="lines">
 
 
-550
-551
-552
-553
-554
-555
-556
-557
-558
-559
-560
-561
-562
-563
-564</pre>
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 550</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 535</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='id identifier rubyid_call'>call</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='ivar'>@plugins</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_pl'>pl</span><span class='op'>|</span>
@@ -1700,6 +1670,21 @@ address.</p>
       <pre class="lines">
 
 
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
 571
 572
 573
@@ -1713,25 +1698,10 @@ address.</p>
 581
 582
 583
-584
-585
-586
-587
-588
-589
-590
-591
-592
-593
-594
-595
-596
-597
-598
-599</pre>
+584</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 571</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 556</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clean_server_name'>clean_server_name</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_dname'>dname</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span><span class='period'>.</span><span class='id identifier rubyid_chomp'>chomp</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -1816,6 +1786,21 @@ address.</p>
       <pre class="lines">
 
 
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
 301
 302
 303
@@ -1826,25 +1811,10 @@ address.</p>
 308
 309
 310
-311
-312
-313
-314
-315
-316
-317
-318
-319
-320
-321
-322
-323
-324
-325
-326</pre>
+311</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 301</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 286</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connect'>connect</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_elements'>elements</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_elems'>elems</span> <span class='op'>=</span> <span class='id identifier rubyid_elements'>elements</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_enum_for'>enum_for</span><span class='lparen'>(</span><span class='symbol'>:each_slice</span><span class='comma'>,</span> <span class='int'>3</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_uri'>uri</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_uri'>uri</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
@@ -1904,18 +1874,18 @@ options], …]</p>
       <pre class="lines">
 
 
-330
-331
-332
-333
-334
-335
-336
-337
-338</pre>
+315
+316
+317
+318
+319
+320
+321
+322
+323</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 330</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 315</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connections'>connections</span>
   <span class='id identifier rubyid_conset'>conset</span> <span class='op'>=</span> <span class='const'>Hash</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_h'>h</span><span class='comma'>,</span><span class='id identifier rubyid_k'>k</span><span class='op'>|</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span> <span class='rbrace'>}</span>
@@ -1965,12 +1935,12 @@ options], …]</p>
       <pre class="lines">
 
 
-195
-196
-197</pre>
+180
+181
+182</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 195</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 180</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create'>create</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:create</span><span class='rparen'>)</span>
@@ -2014,12 +1984,12 @@ options], …]</p>
       <pre class="lines">
 
 
-207
-208
-209</pre>
+192
+193
+194</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 207</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 192</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_destroy'>destroy</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:destroy</span><span class='rparen'>)</span>
@@ -2067,12 +2037,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-352
-353
-354</pre>
+337
+338
+339</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 352</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 337</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disconnect'>disconnect</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_paths'>paths</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:disconnect</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_paths'>paths</span><span class='rparen'>)</span>
@@ -2117,15 +2087,15 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-446
-447
-448
-449
-450
-451</pre>
+431
+432
+433
+434
+435
+436</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 446</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 431</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_sts'>get_sts</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:get_sts</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_val'>val</span><span class='op'>|</span>
@@ -2173,12 +2143,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-365
-366
-367</pre>
+350
+351
+352</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 365</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 350</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_idle'>idle</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:idle</span><span class='rparen'>)</span>
@@ -2236,15 +2206,15 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-404
-405
-406
-407
-408
-409</pre>
+389
+390
+391
+392
+393
+394</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 404</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 389</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_idle?'>idle?</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:idle?</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_val'>val</span><span class='op'>|</span>
@@ -2292,12 +2262,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-434
-435
-436</pre>
+419
+420
+421</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 434</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 419</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_no_sts'>no_sts</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:no_sts</span><span class='rparen'>)</span>
@@ -2341,12 +2311,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-484
-485
-486</pre>
+469
+470
+471</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 484</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 469</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_alias'>remove_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:remove_alias</span><span class='comma'>,</span> <span class='id identifier rubyid_clean_server_name'>clean_server_name</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -2382,12 +2352,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-541
-542
-543</pre>
+526
+527
+528</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 541</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 526</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssl_cert'>remove_ssl_cert</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:remove_ssl_cert</span><span class='comma'>,</span> <span class='id identifier rubyid_clean_server_name'>clean_server_name</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -2423,12 +2393,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-489
-490
-491</pre>
+474
+475
+476</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 489</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 474</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ssl_certs'>ssl_certs</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:ssl_certs</span><span class='rparen'>)</span>
@@ -2473,12 +2443,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-421
-422
-423</pre>
+406
+407
+408</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 421</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 406</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sts'>sts</span><span class='lparen'>(</span><span class='id identifier rubyid_max_age'>max_age</span><span class='op'>=</span><span class='int'>15768000</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:sts</span><span class='comma'>,</span> <span class='id identifier rubyid_max_age'>max_age</span><span class='rparen'>)</span>
@@ -2514,22 +2484,22 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-212
-213
-214
-215
-216
-217
-218
-219
-220
-221
-222
-223
-224</pre>
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 212</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 197</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='lbrace'>{</span>
@@ -2575,15 +2545,15 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-227
-228
-229
-230
-231
-232</pre>
+212
+213
+214
+215
+216
+217</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 227</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 212</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_json'>to_json</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='lbrace'>{</span>
@@ -2631,12 +2601,12 @@ disconnect(&#39;</span><span class="ruby-operator">/</span><span class="ruby-ide
       <pre class="lines">
 
 
-378
-379
-380</pre>
+363
+364
+365</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 378</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 363</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unidle'>unidle</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:unidle</span><span class='rparen'>)</span>
@@ -2682,12 +2652,12 @@ but the call may take over a minute to complete.</p>
       <pre class="lines">
 
 
-392
-393
-394</pre>
+377
+378
+379</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 392</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/node/lib/openshift-origin-node/model/frontend_httpd.rb', line 377</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unprivileged_unidle'>unprivileged_unidle</span>
   <span class='id identifier rubyid_call_plugins'>call_plugins</span><span class='lparen'>(</span><span class='symbol'>:unprivileged_unidle</span><span class='rparen'>)</span>
@@ -2702,7 +2672,7 @@ but the call may take over a minute to complete.</p>
 </div>
 
     <div id="footer">
-  Generated on Thu Sep 19 22:06:15 2013 by
+  Generated on Fri Sep 20 22:06:23 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

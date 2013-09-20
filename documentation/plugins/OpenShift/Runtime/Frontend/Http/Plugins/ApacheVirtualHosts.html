@@ -260,6 +260,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#add_alias_impl-instance_method" title="#add_alias_impl (instance method)">- (Object) <strong>add_alias_impl</strong>(server_alias) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#add_ssl_cert-instance_method" title="#add_ssl_cert (instance method)">- (Object) <strong>add_ssl_cert</strong>(ssl_cert, priv_key, server_alias) </a>
     
 
@@ -792,6 +814,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#ssl_conf_prefix-instance_method" title="#ssl_conf_prefix (instance method)">- (Object) <strong>ssl_conf_prefix</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#ssl_key_path-instance_method" title="#ssl_key_path (instance method)">- (Object) <strong>ssl_key_path</strong>(server_alias) </a>
     
 
@@ -1123,24 +1167,58 @@
       <pre class="lines">
 
 
-250
-251
-252
-253
-254
-255
-256
-257</pre>
+265
+266
+267
+268
+269
+270
+271</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 250</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 265</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
-    <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='id identifier rubyid_alias_path'>alias_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='const'>File</span><span class='op'>::</span><span class='const'>RDWR</span> <span class='op'>|</span> <span class='const'>File</span><span class='op'>::</span><span class='const'>CREAT</span> <span class='op'>|</span> <span class='const'>File</span><span class='op'>::</span><span class='const'>TRUNC</span><span class='comma'>,</span> <span class='int'>0644</span> <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span>
-      <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ServerAlias </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_fsync'>fsync</span>
+    <span class='kw'>if</span> <span class='kw'>not</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_conf_path'>ssl_conf_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_add_alias_impl'>add_alias_impl</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="add_alias_impl-instance_method">
+  
+    - (<tt>Object</tt>) <strong>add_alias_impl</strong>(server_alias) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+258
+259
+260
+261
+262
+263</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 258</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_add_alias_impl'>add_alias_impl</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='id identifier rubyid_alias_path'>alias_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='const'>File</span><span class='op'>::</span><span class='const'>RDWR</span> <span class='op'>|</span> <span class='const'>File</span><span class='op'>::</span><span class='const'>CREAT</span> <span class='op'>|</span> <span class='const'>File</span><span class='op'>::</span><span class='const'>TRUNC</span><span class='comma'>,</span> <span class='int'>0644</span> <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span>
+    <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ServerAlias </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_fsync'>fsync</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1163,25 +1241,6 @@
       <pre class="lines">
 
 
-295
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306
-307
-308
-309
-310
-311
-312
-313
 314
 315
 316
@@ -1191,10 +1250,31 @@
 320
 321
 322
-323</pre>
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 295</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 314</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_ssl_cert'>add_ssl_cert</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_cert'>ssl_cert</span><span class='comma'>,</span> <span class='id identifier rubyid_priv_key'>priv_key</span><span class='comma'>,</span> <span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
@@ -1223,6 +1303,8 @@
       <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
       <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_fsync'>fsync</span>
     <span class='kw'>end</span>
+
+    <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_rm_f'>rm_f</span><span class='lparen'>(</span><span class='id identifier rubyid_alias_path'>alias_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1245,12 +1327,12 @@
       <pre class="lines">
 
 
-240
-241
-242</pre>
+246
+247
+248</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 240</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 246</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_alias_path'>alias_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@app_path</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_alias_path_prefix'>alias_path_prefix</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='embexpr_end'>}</span><span class='tstring_content'>.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1275,12 +1357,12 @@
       <pre class="lines">
 
 
-236
-237
-238</pre>
+242
+243
+244</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 236</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 242</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_alias_path_prefix'>alias_path_prefix</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>888888_server_alias-</span><span class='tstring_end'>&quot;</span></span>
@@ -1305,18 +1387,22 @@
       <pre class="lines">
 
 
-244
-245
-246
-247
-248</pre>
+250
+251
+252
+253
+254
+255
+256</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 244</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 250</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_aliases'>aliases</span>
   <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_glob'>glob</span><span class='lparen'>(</span><span class='id identifier rubyid_alias_path'>alias_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span>
     <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_basename'>basename</span><span class='lparen'>(</span><span class='id identifier rubyid_f'>f</span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='id identifier rubyid_alias_path_prefix'>alias_path_prefix</span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='rbrace'>}</span> <span class='op'>+</span> <span class='id identifier rubyid_ssl_certs'>ssl_certs</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_ssl_cert'>ssl_cert</span><span class='comma'>,</span> <span class='id identifier rubyid_priv_key'>priv_key</span><span class='comma'>,</span> <span class='id identifier rubyid_server_alias'>server_alias</span><span class='op'>|</span>
+    <span class='id identifier rubyid_server_alias'>server_alias</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1347,7 +1433,7 @@
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_conf_path'>conf_path</span>
-  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@basedir</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@container_uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>_</span><span class='embexpr_beg'>#{</span><span class='ivar'>@namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>_9_</span><span class='embexpr_beg'>#{</span><span class='ivar'>@container_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@basedir</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@container_uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>_</span><span class='embexpr_beg'>#{</span><span class='ivar'>@namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>_0_</span><span class='embexpr_beg'>#{</span><span class='ivar'>@container_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1433,7 +1519,13 @@
 156
 157
 158
-159</pre>
+159
+160
+161
+162
+163
+164
+165</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 95</span>
@@ -1462,7 +1554,8 @@
         <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'># ELEMENT: </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
         <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_uri'>uri</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='rparen'>)</span>
         <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-        
+
+        <span class='id identifier rubyid_gen_default_rule'>gen_default_rule</span><span class='op'>=</span><span class='kw'>false</span>
         <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gone</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
           <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RewriteRule ^</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_content'>(/.*)?$ - [NS,G]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
         <span class='kw'>elsif</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>forbidden</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
@@ -1478,7 +1571,12 @@
         <span class='kw'>elsif</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>tohttps</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
           <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RewriteCond %{HTTPS} =off</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
           <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RewriteRule ^</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_content'>(/.*)?$ https://%{HTTP_HOST}$1 [R,NS,L]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_gen_default_rule'>gen_default_rule</span> <span class='op'>=</span> <span class='kw'>true</span>
         <span class='kw'>else</span>
+          <span class='id identifier rubyid_gen_default_rule'>gen_default_rule</span> <span class='op'>=</span> <span class='kw'>true</span>
+        <span class='kw'>end</span>
+
+        <span class='kw'>if</span> <span class='id identifier rubyid_gen_default_rule'>gen_default_rule</span>
           <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RewriteRule ^</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_content'>(/.*)?$ http://</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uri'>uri</span><span class='embexpr_end'>}</span><span class='tstring_content'>$1 [P,NS]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
           <span class='kw'>if</span> <span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -1523,14 +1621,14 @@
       <pre class="lines">
 
 
-161
-162
-163
-164
-165</pre>
+167
+168
+169
+170
+171</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 161</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 167</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connections'>connections</span>
   <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_glob'>glob</span><span class='lparen'>(</span><span class='id identifier rubyid_element_path'>element_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_p'>p</span><span class='op'>|</span>
@@ -1621,16 +1719,16 @@
       <pre class="lines">
 
 
-167
-168
-169
-170
-171
-172
-173</pre>
+173
+174
+175
+176
+177
+178
+179</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 167</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 173</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disconnect'>disconnect</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_paths'>paths</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
@@ -1703,20 +1801,20 @@
       <pre class="lines">
 
 
-222
-223
-224
-225
-226
-227
 228
 229
 230
 231
-232</pre>
+232
+233
+234
+235
+236
+237
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 222</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 228</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_sts'>get_sts</span>
   <span class='kw'>begin</span>
@@ -1749,16 +1847,16 @@
       <pre class="lines">
 
 
-181
-182
-183
-184
-185
-186
-187</pre>
+187
+188
+189
+190
+191
+192
+193</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 181</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 187</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_idle'>idle</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
@@ -1809,12 +1907,12 @@
       <pre class="lines">
 
 
-195
-196
-197</pre>
+201
+202
+203</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 195</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 201</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_idle?'>idle?</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_idle_path'>idle_path</span><span class='rparen'>)</span>
@@ -1839,12 +1937,12 @@
       <pre class="lines">
 
 
-177
-178
-179</pre>
+183
+184
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 177</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 183</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_idle_path'>idle_path</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@app_path</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>000000_idler.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1869,14 +1967,14 @@
       <pre class="lines">
 
 
-216
-217
-218
-219
-220</pre>
+222
+223
+224
+225
+226</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 216</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 222</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_no_sts'>no_sts</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
@@ -1949,15 +2047,15 @@
       <pre class="lines">
 
 
-259
-260
-261
-262
-263
-264</pre>
+273
+274
+275
+276
+277
+278</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 259</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 273</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_alias'>remove_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
@@ -1985,17 +2083,23 @@
       <pre class="lines">
 
 
-331
-332
-333
-334
-335</pre>
+352
+353
+354
+355
+356
+357
+358
+359</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 331</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 352</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssl_cert'>remove_ssl_cert</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
+    <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_conf_path'>ssl_conf_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_add_alias_impl'>add_alias_impl</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_remove_ssl_cert_impl'>remove_ssl_cert_impl</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -2019,14 +2123,14 @@
       <pre class="lines">
 
 
-325
-326
-327
-328
-329</pre>
+346
+347
+348
+349
+350</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 325</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 346</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssl_cert_impl'>remove_ssl_cert_impl</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_rm_f'>rm_f</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_conf_path'>ssl_conf_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -2053,12 +2157,12 @@
       <pre class="lines">
 
 
-273
-274
-275</pre>
+290
+291
+292</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 273</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 290</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ssl_certificate_path'>ssl_certificate_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@app_path</span><span class='comma'>,</span> <span class='id identifier rubyid_server_alias'>server_alias</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.crt</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -2083,24 +2187,28 @@
       <pre class="lines">
 
 
-282
-283
-284
-285
-286
-287
-288
-289
-290
-291
-292
-293</pre>
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 282</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 299</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ssl_certs'>ssl_certs</span>
-  <span class='id identifier rubyid_aliases'>aliases</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='op'>|</span>
+  <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_glob'>glob</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_conf_path'>ssl_conf_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='op'>|</span>
+    <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_basename'>basename</span><span class='lparen'>(</span><span class='id identifier rubyid_conf_path'>conf_path</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_conf_prefix'>ssl_conf_prefix</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='op'>|</span>
     <span class='kw'>begin</span>
       <span class='id identifier rubyid_ssl_cert'>ssl_cert</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_certificate_path'>ssl_certificate_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_priv_key'>priv_key</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_ssl_key_path'>ssl_key_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -2131,17 +2239,45 @@
       <pre class="lines">
 
 
-268
-269
-270
-271</pre>
+286
+287
+288</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 268</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 286</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ssl_conf_path'>ssl_conf_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
-  <span class='ivar'>@token</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@container_uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>_</span><span class='embexpr_beg'>#{</span><span class='ivar'>@namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>_0_</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@basedir</span><span class='comma'>,</span> <span class='id identifier rubyid_token'>token</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@basedir</span><span class='comma'>,</span> <span class='id identifier rubyid_ssl_conf_prefix'>ssl_conf_prefix</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='embexpr_end'>}</span><span class='tstring_content'>.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="ssl_conf_prefix-instance_method">
+  
+    - (<tt>Object</tt>) <strong>ssl_conf_prefix</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+282
+283
+284</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 282</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_ssl_conf_prefix'>ssl_conf_prefix</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@container_uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>_</span><span class='embexpr_beg'>#{</span><span class='ivar'>@namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>_9_</span><span class='tstring_end'>&quot;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2163,12 +2299,12 @@
       <pre class="lines">
 
 
-277
-278
-279</pre>
+294
+295
+296</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 277</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 294</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ssl_key_path'>ssl_key_path</span><span class='lparen'>(</span><span class='id identifier rubyid_server_alias'>server_alias</span><span class='rparen'>)</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@app_path</span><span class='comma'>,</span> <span class='id identifier rubyid_server_alias'>server_alias</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.key</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -2193,19 +2329,19 @@
       <pre class="lines">
 
 
-205
-206
-207
-208
-209
-210
 211
 212
 213
-214</pre>
+214
+215
+216
+217
+218
+219
+220</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 205</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 211</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sts'>sts</span><span class='lparen'>(</span><span class='id identifier rubyid_max_age'>max_age</span><span class='op'>=</span><span class='int'>15768000</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
@@ -2237,12 +2373,12 @@
       <pre class="lines">
 
 
-201
-202
-203</pre>
+207
+208
+209</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 201</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 207</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sts_path'>sts_path</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@app_path</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>000001_sts_header.conf</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -2267,14 +2403,14 @@
       <pre class="lines">
 
 
-189
-190
-191
-192
-193</pre>
+195
+196
+197
+198
+199</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 189</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 195</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unidle'>unidle</span>
   <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span> <span class='kw'>do</span>
@@ -2312,25 +2448,25 @@
       <pre class="lines">
 
 
-338
-339
-340
-341
-342
-343
-344
-345
-346
-347
-348
-349
-350
-351
-352
-353</pre>
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 338</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/plugins/frontend/apache-vhost/lib/openshift/runtime/frontend/http/plugins/apache-vhost.rb', line 362</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_lock_and_reload'>with_lock_and_reload</span>
   <span class='const'>LOCK</span><span class='period'>.</span><span class='id identifier rubyid_synchronize'>synchronize</span> <span class='kw'>do</span>
@@ -2358,7 +2494,7 @@
 </div>
 
     <div id="footer">
-  Generated on Thu Sep 19 22:06:36 2013 by
+  Generated on Fri Sep 20 22:06:51 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
