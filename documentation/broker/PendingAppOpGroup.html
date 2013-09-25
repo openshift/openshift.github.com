@@ -300,7 +300,7 @@ transactional manner.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#execute-instance_method" title="#execute (instance method)">- (Object) <strong>execute</strong>(result_io = nil) </a>
+      <a href="#execute-instance_method" title="#execute (instance method)">- (Object) <strong>execute</strong>(result_io = nil, skip_node_ops = false) </a>
     
 
     
@@ -322,7 +322,7 @@ transactional manner.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#execute_rollback-instance_method" title="#execute_rollback (instance method)">- (Object) <strong>execute_rollback</strong>(result_io = nil) </a>
+      <a href="#execute_rollback-instance_method" title="#execute_rollback (instance method)">- (Object) <strong>execute_rollback</strong>(result_io = nil, skip_node_ops = false) </a>
     
 
     
@@ -471,7 +471,6 @@ are available on the domain owner.</p>
       <pre class="lines">
 
 
-26
 27
 28
 29
@@ -479,10 +478,11 @@ are available on the domain owner.</p>
 31
 32
 33
-34</pre>
+34
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 26</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 27</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attrs'>attrs</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_parent_opid'>parent_opid</span> <span class='op'>=</span> <span class='kw'>nil</span>
@@ -764,7 +764,16 @@ are available on the domain owner.</p>
 222
 223
 224
-225</pre>
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -784,6 +793,7 @@ are available on the domain owner.</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_destroyed</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_rolled_back</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:user_agent</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:skip_node_ops</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Boolean</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attrs'>attrs</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_parent_opid'>parent_opid</span> <span class='op'>=</span> <span class='kw'>nil</span>
@@ -815,7 +825,7 @@ are available on the domain owner.</p>
     <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:_id</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_prereq'>prereq</span><span class='comma'>,</span> <span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>==</span> <span class='int'>0</span><span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>begin</span>
@@ -830,10 +840,14 @@ are available on the domain owner.</p>
 </span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
           
           <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>else</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
             <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
               <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
@@ -868,7 +882,7 @@ are available on the domain owner.</p>
                   <span class='rbrace'>}</span>
                   <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_process_gear'>process_gear</span>
                 <span class='rbrace'>}</span>
-                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='rparen'>)</span>
+                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
               <span class='kw'>end</span>
             <span class='kw'>else</span>
               <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_id'>gear_id</span><span class='rparen'>)</span>
@@ -897,7 +911,7 @@ are available on the domain owner.</p>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
   
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>while</span><span class='lparen'>(</span><span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&gt;</span> <span class='int'>0</span><span class='rparen'>)</span> <span class='kw'>do</span>
@@ -909,10 +923,14 @@ are available on the domain owner.</p>
         <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Rollback </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
         <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>else</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='kw'>end</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
           <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
@@ -1251,7 +1269,16 @@ are available on the domain owner.</p>
 222
 223
 224
-225</pre>
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -1271,6 +1298,7 @@ are available on the domain owner.</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_destroyed</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_rolled_back</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:user_agent</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:skip_node_ops</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Boolean</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attrs'>attrs</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_parent_opid'>parent_opid</span> <span class='op'>=</span> <span class='kw'>nil</span>
@@ -1302,7 +1330,7 @@ are available on the domain owner.</p>
     <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:_id</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_prereq'>prereq</span><span class='comma'>,</span> <span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>==</span> <span class='int'>0</span><span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>begin</span>
@@ -1317,10 +1345,14 @@ are available on the domain owner.</p>
 </span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
           
           <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>else</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
             <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
               <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
@@ -1355,7 +1387,7 @@ are available on the domain owner.</p>
                   <span class='rbrace'>}</span>
                   <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_process_gear'>process_gear</span>
                 <span class='rbrace'>}</span>
-                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='rparen'>)</span>
+                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
               <span class='kw'>end</span>
             <span class='kw'>else</span>
               <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_id'>gear_id</span><span class='rparen'>)</span>
@@ -1384,7 +1416,7 @@ are available on the domain owner.</p>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
   
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>while</span><span class='lparen'>(</span><span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&gt;</span> <span class='int'>0</span><span class='rparen'>)</span> <span class='kw'>do</span>
@@ -1396,10 +1428,14 @@ are available on the domain owner.</p>
         <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Rollback </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
         <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>else</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='kw'>end</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
           <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
@@ -1738,7 +1774,16 @@ are available on the domain owner.</p>
 222
 223
 224
-225</pre>
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -1758,6 +1803,7 @@ are available on the domain owner.</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_destroyed</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_rolled_back</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:user_agent</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:skip_node_ops</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Boolean</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attrs'>attrs</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_parent_opid'>parent_opid</span> <span class='op'>=</span> <span class='kw'>nil</span>
@@ -1789,7 +1835,7 @@ are available on the domain owner.</p>
     <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:_id</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_prereq'>prereq</span><span class='comma'>,</span> <span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>==</span> <span class='int'>0</span><span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>begin</span>
@@ -1804,10 +1850,14 @@ are available on the domain owner.</p>
 </span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
           
           <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>else</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
             <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
               <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
@@ -1842,7 +1892,7 @@ are available on the domain owner.</p>
                   <span class='rbrace'>}</span>
                   <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_process_gear'>process_gear</span>
                 <span class='rbrace'>}</span>
-                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='rparen'>)</span>
+                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
               <span class='kw'>end</span>
             <span class='kw'>else</span>
               <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_id'>gear_id</span><span class='rparen'>)</span>
@@ -1871,7 +1921,7 @@ are available on the domain owner.</p>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
   
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>while</span><span class='lparen'>(</span><span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&gt;</span> <span class='int'>0</span><span class='rparen'>)</span> <span class='kw'>do</span>
@@ -1883,10 +1933,14 @@ are available on the domain owner.</p>
         <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Rollback </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
         <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>else</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='kw'>end</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
           <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
@@ -2225,7 +2279,16 @@ are available on the domain owner.</p>
 222
 223
 224
-225</pre>
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 10</span>
@@ -2245,6 +2308,7 @@ are available on the domain owner.</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_destroyed</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:num_gears_rolled_back</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Integer</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='int'>0</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:user_agent</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:skip_node_ops</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Boolean</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attrs'>attrs</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_parent_opid'>parent_opid</span> <span class='op'>=</span> <span class='kw'>nil</span>
@@ -2276,7 +2340,7 @@ are available on the domain owner.</p>
     <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_op'>op</span><span class='op'>|</span> <span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:_id</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_prereq'>prereq</span><span class='comma'>,</span> <span class='symbol'>:state</span><span class='period'>.</span><span class='id identifier rubyid_ne'>ne</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>==</span> <span class='int'>0</span><span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>begin</span>
@@ -2291,10 +2355,14 @@ are available on the domain owner.</p>
 </span>          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
           
           <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+            <span class='kw'>else</span>
+              <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
+            <span class='kw'>end</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
             <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
             <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
               <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
@@ -2329,7 +2397,7 @@ are available on the domain owner.</p>
                   <span class='rbrace'>}</span>
                   <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_process_gear'>process_gear</span>
                 <span class='rbrace'>}</span>
-                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='rparen'>)</span>
+                <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
               <span class='kw'>end</span>
             <span class='kw'>else</span>
               <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_id'>gear_id</span><span class='rparen'>)</span>
@@ -2358,7 +2426,7 @@ are available on the domain owner.</p>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
   
-  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
     <span class='kw'>while</span><span class='lparen'>(</span><span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&gt;</span> <span class='int'>0</span><span class='rparen'>)</span> <span class='kw'>do</span>
@@ -2370,10 +2438,14 @@ are available on the domain owner.</p>
         <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Rollback </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
         <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>else</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+          <span class='kw'>end</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
           <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
         <span class='kw'>end</span>
@@ -2473,7 +2545,6 @@ are available on the domain owner.</p>
       <pre class="lines">
 
 
-46
 47
 48
 49
@@ -2481,10 +2552,11 @@ are available on the domain owner.</p>
 51
 52
 53
-54</pre>
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 46</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eligible_ops'>eligible_ops</span>
   <span class='comment'># reloading the op_group reloads the application and then incorrectly reloads (potentially)
@@ -2515,7 +2587,6 @@ are available on the domain owner.</p>
       <pre class="lines">
 
 
-36
 37
 38
 39
@@ -2523,10 +2594,11 @@ are available on the domain owner.</p>
 41
 42
 43
-44</pre>
+44
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 36</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eligible_rollback_ops'>eligible_rollback_ops</span>
   <span class='comment'># reloading the op_group reloads the application and then incorrectly reloads (potentially)
@@ -2545,7 +2617,7 @@ are available on the domain owner.</p>
       <div class="method_details ">
   <h3 class="signature " id="execute-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>execute</strong>(result_io = nil) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>execute</strong>(result_io = nil, skip_node_ops = false) 
   
 
   
@@ -2557,7 +2629,6 @@ are available on the domain owner.</p>
       <pre class="lines">
 
 
-56
 57
 58
 59
@@ -2637,12 +2708,17 @@ are available on the domain owner.</p>
 133
 134
 135
-136</pre>
+136
+137
+138
+139
+140
+141</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 56</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 57</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
   <span class='kw'>begin</span>
@@ -2657,10 +2733,14 @@ are available on the domain owner.</p>
 </span>        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:queued</span><span class='rparen'>)</span>
         
         <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-          <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelExecuteJob'>addParallelExecuteJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+          <span class='kw'>else</span>
+            <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:completed</span><span class='rparen'>)</span>
+          <span class='kw'>end</span>
         <span class='kw'>else</span>
-          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
           <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
           <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
             <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:failed</span><span class='rparen'>)</span>
@@ -2695,7 +2775,7 @@ are available on the domain owner.</p>
                 <span class='rbrace'>}</span>
                 <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_process_gear'>process_gear</span>
               <span class='rbrace'>}</span>
-              <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='rparen'>)</span>
+              <span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_component_instance'>component_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_process_gear'>process_gear</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
             <span class='kw'>end</span>
           <span class='kw'>else</span>
             <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_id'>gear_id</span><span class='rparen'>)</span>
@@ -2731,7 +2811,7 @@ are available on the domain owner.</p>
       <div class="method_details ">
   <h3 class="signature " id="execute_rollback-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>execute_rollback</strong>(result_io = nil) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>execute_rollback</strong>(result_io = nil, skip_node_ops = false) 
   
 
   
@@ -2743,11 +2823,6 @@ are available on the domain owner.</p>
       <pre class="lines">
 
 
-138
-139
-140
-141
-142
 143
 144
 145
@@ -2770,12 +2845,21 @@ are available on the domain owner.</p>
 162
 163
 164
-165</pre>
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 138</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 143</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_execute_rollback'>execute_rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
   <span class='kw'>while</span><span class='lparen'>(</span><span class='id identifier rubyid_pending_ops'>pending_ops</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='symbol'>:state</span> <span class='op'>=&gt;</span> <span class='symbol'>:completed</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&gt;</span> <span class='int'>0</span><span class='rparen'>)</span> <span class='kw'>do</span>
@@ -2787,10 +2871,14 @@ are available on the domain owner.</p>
       <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Rollback </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 
       <span class='kw'>if</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_isParallelExecutable'>isParallelExecutable</span><span class='lparen'>(</span><span class='rparen'>)</span>
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
-        <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+        <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_addParallelRollbackJob'>addParallelRollbackJob</span><span class='lparen'>(</span><span class='id identifier rubyid_handle'>handle</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_parallel_job_ops'>parallel_job_ops</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_op'>op</span>
+        <span class='kw'>else</span>
+          <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
+        <span class='kw'>end</span>
       <span class='kw'>else</span>
-        <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_return_val'>return_val</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
         <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_append'>append</span> <span class='id identifier rubyid_return_val'>return_val</span> <span class='kw'>if</span> <span class='id identifier rubyid_return_val'>return_val</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>ResultIO</span>
         <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_set_state'>set_state</span><span class='lparen'>(</span><span class='symbol'>:rolledback</span><span class='rparen'>)</span>
       <span class='kw'>end</span>
@@ -2823,22 +2911,22 @@ are available on the domain owner.</p>
       <pre class="lines">
 
 
-212
-213
-214
-215
-216
-217
-218
-219
-220
 221
 222
 223
-224</pre>
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 212</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 221</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span>
   <span class='id identifier rubyid_s_hash'>s_hash</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span>
@@ -2894,15 +2982,6 @@ are available on the domain owner</p>
       <pre class="lines">
 
 
-176
-177
-178
-179
-180
-181
-182
-183
-184
 185
 186
 187
@@ -2913,10 +2992,19 @@ are available on the domain owner</p>
 192
 193
 194
-195</pre>
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 176</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 185</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_try_reserve_gears'>try_reserve_gears</span><span class='lparen'>(</span><span class='id identifier rubyid_num_gears_added'>num_gears_added</span><span class='comma'>,</span> <span class='id identifier rubyid_num_gears_removed'>num_gears_removed</span><span class='comma'>,</span> <span class='id identifier rubyid_app'>app</span><span class='comma'>,</span> <span class='id identifier rubyid_ops'>ops</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_owner'>owner</span>
@@ -2958,23 +3046,23 @@ are available on the domain owner</p>
       <pre class="lines">
 
 
-197
-198
-199
-200
-201
-202
-203
-204
-205
 206
 207
 208
 209
-210</pre>
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 197</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_app_op_group.rb', line 206</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unreserve_gears'>unreserve_gears</span><span class='lparen'>(</span><span class='id identifier rubyid_num_gears_removed'>num_gears_removed</span><span class='comma'>,</span> <span class='id identifier rubyid_app'>app</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_num_gears_removed'>num_gears_removed</span> <span class='op'>==</span> <span class='int'>0</span>
@@ -3000,7 +3088,7 @@ are available on the domain owner</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Sep 24 22:07:37 2013 by
+  Generated on Wed Sep 25 22:06:35 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

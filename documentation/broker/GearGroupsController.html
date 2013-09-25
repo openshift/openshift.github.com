@@ -326,14 +326,16 @@ href="http://application_id">applications/</a>/gear_groups</p>
 10
 11
 12
-13</pre>
+13
+14</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/gear_groups_controller.rb', line 9</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_index'>index</span>
   <span class='id identifier rubyid_gear_states'>gear_states</span> <span class='op'>=</span> <span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_get_gear_states'>get_gear_states</span><span class='lparen'>(</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_group_instances'>group_instances</span> <span class='op'>=</span> <span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_group_instances_with_scale'>group_instances_with_scale</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_group_inst'>group_inst</span><span class='op'>|</span> <span class='id identifier rubyid_get_rest_gear_group'>get_rest_gear_group</span><span class='lparen'>(</span><span class='id identifier rubyid_group_inst'>group_inst</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_states'>gear_states</span><span class='comma'>,</span> <span class='ivar'>@application</span><span class='comma'>,</span> <span class='id identifier rubyid_get_url'>get_url</span><span class='comma'>,</span> <span class='id identifier rubyid_nolinks'>nolinks</span><span class='rparen'>)</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_include_endpoints'>include_endpoints</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:include</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>endpoints</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_group_instances'>group_instances</span> <span class='op'>=</span> <span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_group_instances_with_scale'>group_instances_with_scale</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_group_inst'>group_inst</span><span class='op'>|</span> <span class='id identifier rubyid_get_rest_gear_group'>get_rest_gear_group</span><span class='lparen'>(</span><span class='id identifier rubyid_group_inst'>group_inst</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_states'>gear_states</span><span class='comma'>,</span> <span class='ivar'>@application</span><span class='comma'>,</span> <span class='id identifier rubyid_get_url'>get_url</span><span class='comma'>,</span> <span class='id identifier rubyid_nolinks'>nolinks</span><span class='comma'>,</span> <span class='id identifier rubyid_include_endpoints'>include_endpoints</span><span class='rparen'>)</span><span class='rbrace'>}</span>
   <span class='id identifier rubyid_render_success'>render_success</span><span class='lparen'>(</span><span class='symbol'>:ok</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_groups</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_group_instances'>group_instances</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Showing gear groups for application &#39;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; with domain &#39;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_domain_namespace'>domain_namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -369,7 +371,6 @@ href="http://id">gear_groups/</a></p>
       <pre class="lines">
 
 
-16
 17
 18
 19
@@ -378,20 +379,23 @@ href="http://id">gear_groups/</a></p>
 22
 23
 24
-25</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/gear_groups_controller.rb', line 16</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/gear_groups_controller.rb', line 17</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_show'>show</span>
   <span class='id identifier rubyid_gear_group_id'>gear_group_id</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='id identifier rubyid_include_endpoints'>include_endpoints</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:include</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>endpoints</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='comment'># validate the gear group ID using regex to avoid a mongo call, if it is malformed
 </span>  <span class='kw'>if</span> <span class='id identifier rubyid_gear_group_id'>gear_group_id</span> <span class='op'>!~</span> <span class='const'>GROUP_INSTANCE_ID_COMPATIBILITY_REGEX</span>
     <span class='kw'>return</span> <span class='id identifier rubyid_render_error'>render_error</span><span class='lparen'>(</span><span class='symbol'>:not_found</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Gear group &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_group_id'>gear_group_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; not found for application </span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'> on domain &#39;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_domain_namespace'>domain_namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='int'>101</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
   <span class='id identifier rubyid_gear_states'>gear_states</span> <span class='op'>=</span> <span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_get_gear_states'>get_gear_states</span><span class='lparen'>(</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_group_instance'>group_instance</span> <span class='op'>=</span> <span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_group_instances'>group_instances</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_group_id'>gear_group_id</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_render_success'>render_success</span><span class='lparen'>(</span><span class='symbol'>:ok</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_group</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_get_rest_gear_group'>get_rest_gear_group</span><span class='lparen'>(</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_states'>gear_states</span><span class='comma'>,</span> <span class='ivar'>@application</span><span class='comma'>,</span> <span class='id identifier rubyid_get_url'>get_url</span><span class='comma'>,</span> <span class='id identifier rubyid_nolinks'>nolinks</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Showing gear group </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_group_id'>gear_group_id</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application &#39;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; with domain &#39;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_domain_namespace'>domain_namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_render_success'>render_success</span><span class='lparen'>(</span><span class='symbol'>:ok</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_group</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_get_rest_gear_group'>get_rest_gear_group</span><span class='lparen'>(</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='comma'>,</span> <span class='id identifier rubyid_gear_states'>gear_states</span><span class='comma'>,</span> <span class='ivar'>@application</span><span class='comma'>,</span> <span class='id identifier rubyid_get_url'>get_url</span><span class='comma'>,</span> <span class='id identifier rubyid_nolinks'>nolinks</span><span class='comma'>,</span> <span class='id identifier rubyid_include_endpoints'>include_endpoints</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Showing gear group </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_gear_group_id'>gear_group_id</span><span class='embexpr_end'>}</span><span class='tstring_content'> for application &#39;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; with domain &#39;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@application</span><span class='period'>.</span><span class='id identifier rubyid_domain_namespace'>domain_namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -403,7 +407,7 @@ href="http://id">gear_groups/</a></p>
 </div>
 
     <div id="footer">
-  Generated on Tue Sep 24 22:08:01 2013 by
+  Generated on Wed Sep 25 22:06:58 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

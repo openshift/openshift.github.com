@@ -124,7 +124,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#execute-instance_method" title="#execute (instance method)">- (Object) <strong>execute</strong> </a>
+      <a href="#execute-instance_method" title="#execute (instance method)">- (Object) <strong>execute</strong>(skip_node_ops = false) </a>
     
 
     
@@ -146,7 +146,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#rollback-instance_method" title="#rollback (instance method)">- (Object) <strong>rollback</strong> </a>
+      <a href="#rollback-instance_method" title="#rollback (instance method)">- (Object) <strong>rollback</strong>(skip_node_ops = false) </a>
     
 
     
@@ -189,7 +189,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="execute-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>execute</strong> 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>execute</strong>(skip_node_ops = false) 
   
 
   
@@ -207,14 +207,20 @@
 10
 11
 12
-13</pre>
+13
+14
+15
+16</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_ops/add_alias_op.rb', line 7</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear'>get_gear</span><span class='lparen'>(</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_fqdn'>fqdn</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+    <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear'>get_gear</span><span class='lparen'>(</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_add_alias'>add_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_fqdn'>fqdn</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
   <span class='id identifier rubyid_pending_app_op_group'>pending_app_op_group</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_aliases'>aliases</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='const'>Alias</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>fqdn:</span> <span class='id identifier rubyid_fqdn'>fqdn</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_pending_app_op_group'>pending_app_op_group</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
   <span class='id identifier rubyid_result_io'>result_io</span>
@@ -227,7 +233,7 @@
       <div class="method_details ">
   <h3 class="signature " id="rollback-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>rollback</strong> 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>rollback</strong>(skip_node_ops = false) 
   
 
   
@@ -239,9 +245,6 @@
       <pre class="lines">
 
 
-15
-16
-17
 18
 19
 20
@@ -252,15 +255,21 @@
 25
 26
 27
-28</pre>
+28
+29
+30
+31
+32</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_ops/add_alias_op.rb', line 15</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/pending_ops/add_alias_op.rb', line 18</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear'>get_gear</span><span class='lparen'>(</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_remove_alias'>remove_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_fqdn'>fqdn</span><span class='rparen'>)</span>
-
+<span class='kw'>def</span> <span class='id identifier rubyid_rollback'>rollback</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+    <span class='id identifier rubyid_gear'>gear</span> <span class='op'>=</span> <span class='id identifier rubyid_get_gear'>get_gear</span><span class='lparen'>(</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_remove_alias'>remove_alias</span><span class='lparen'>(</span><span class='id identifier rubyid_fqdn'>fqdn</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
   <span class='kw'>begin</span>
     <span class='id identifier rubyid_a'>a</span> <span class='op'>=</span> <span class='id identifier rubyid_pending_app_op_group'>pending_app_op_group</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_aliases'>aliases</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>fqdn:</span> <span class='id identifier rubyid_fqdn'>fqdn</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_pending_app_op_group'>pending_app_op_group</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_aliases'>aliases</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_a'>a</span><span class='rparen'>)</span>
@@ -268,7 +277,6 @@
   <span class='kw'>rescue</span> <span class='const'>Mongoid</span><span class='op'>::</span><span class='const'>Errors</span><span class='op'>::</span><span class='const'>DocumentNotFound</span>
     <span class='comment'># ignore if alias is not found
 </span>  <span class='kw'>end</span>
-  
   <span class='id identifier rubyid_result_io'>result_io</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -281,7 +289,7 @@
 </div>
 
     <div id="footer">
-  Generated on Tue Sep 24 22:07:58 2013 by
+  Generated on Wed Sep 25 22:06:55 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

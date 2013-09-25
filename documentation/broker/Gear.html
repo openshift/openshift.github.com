@@ -374,7 +374,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#add_component-instance_method" title="#add_component (instance method)">- (Object) <strong>add_component</strong>(component, init_git_url = nil) </a>
+      <a href="#add_component-instance_method" title="#add_component (instance method)">- (Object) <strong>add_component</strong>(component, init_git_url = nil, skip_node_ops = false) </a>
     
 
     
@@ -684,7 +684,7 @@ gear.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#remove_component-instance_method" title="#remove_component (instance method)">- (Object) <strong>remove_component</strong>(component) </a>
+      <a href="#remove_component-instance_method" title="#remove_component (instance method)">- (Object) <strong>remove_component</strong>(component, skip_node_ops = false) </a>
     
 
     
@@ -999,15 +999,15 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-207
-208
-209
-210
-211
-212</pre>
+219
+220
+221
+222
+223
+224</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 207</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 219</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_method_missing'>method_missing</span><span class='lparen'>(</span><span class='id identifier rubyid_sym'>sym</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_sym'>sym</span> <span class='op'>=</span> <span class='symbol'>:reload</span> <span class='kw'>if</span> <span class='id identifier rubyid_sym'>sym</span> <span class='op'>==</span> <span class='symbol'>:reload_config</span>
@@ -1398,7 +1398,19 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 335
 336
 337
-338</pre>
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -1507,7 +1519,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
  
   <span class='kw'>def</span> <span class='id identifier rubyid_publish_routing_info'>publish_routing_info</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_port_interfaces'>port_interfaces</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_pi'>pi</span><span class='op'>|</span>
-        <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
     <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
@@ -1545,12 +1557,18 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -1582,10 +1600,16 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -2112,7 +2136,19 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 335
 336
 337
-338</pre>
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -2221,7 +2257,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
  
   <span class='kw'>def</span> <span class='id identifier rubyid_publish_routing_info'>publish_routing_info</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_port_interfaces'>port_interfaces</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_pi'>pi</span><span class='op'>|</span>
-        <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
     <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
@@ -2259,12 +2295,18 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -2296,10 +2338,16 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -2823,7 +2871,19 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 335
 336
 337
-338</pre>
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -2932,7 +2992,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
  
   <span class='kw'>def</span> <span class='id identifier rubyid_publish_routing_info'>publish_routing_info</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_port_interfaces'>port_interfaces</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_pi'>pi</span><span class='op'>|</span>
-        <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
     <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
@@ -2970,12 +3030,18 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -3007,10 +3073,16 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -3534,7 +3606,19 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 335
 336
 337
-338</pre>
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 11</span>
@@ -3643,7 +3727,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
  
   <span class='kw'>def</span> <span class='id identifier rubyid_publish_routing_info'>publish_routing_info</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_port_interfaces'>port_interfaces</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_pi'>pi</span><span class='op'>|</span>
-        <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
     <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
@@ -3681,12 +3765,18 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -3718,10 +3808,16 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </span>  <span class='comment'># Exit codes:
 </span>  <span class='comment'>#   success = 0
 </span>  <span class='comment'># @raise [OpenShift::NodeException] on failure
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+      <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+    <span class='kw'>end</span>
     <span class='id identifier rubyid_result_io'>result_io</span>
   <span class='kw'>end</span>
 
@@ -4037,18 +4133,6 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-236
-237
-238
-239
-240
-241
-242
-243
-244
-245
-246
-247
 248
 249
 250
@@ -4057,10 +4141,22 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 253
 254
 255
-256</pre>
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 236</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 248</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_gear_states'>get_gear_states</span><span class='lparen'>(</span><span class='id identifier rubyid_gears'>gears</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_gear_states'>gear_states</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -4149,7 +4245,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <div class="method_details first">
   <h3 class="signature first" id="add_component-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>add_component</strong>(component, init_git_url = nil) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>add_component</strong>(component, init_git_url = nil, skip_node_ops = false) 
   
 
   
@@ -4210,17 +4306,29 @@ codes:</p>
 157
 158
 159
-160</pre>
+160
+161
+162
+163
+164
+165
+166</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 153</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_add_component'>add_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_process_properties'>process_properties</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>NodeException</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to add component </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_cartridge_name'>cartridge_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_component_name'>component_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span><span class='comma'>,</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_result_io'>result_io</span><span class='period'>.</span><span class='id identifier rubyid_exitcode'>exitcode</span> <span class='op'>!=</span> <span class='int'>0</span>
+  <span class='kw'>end</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+  <span class='kw'>end</span>
   <span class='id identifier rubyid_result_io'>result_io</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -4254,12 +4362,12 @@ codes:</p>
       <pre class="lines">
 
 
-286
-287
-288</pre>
+298
+299
+300</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 286</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 298</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_app'>app</span>
   <span class='ivar'>@app</span> <span class='op'>||=</span> <span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span>
@@ -4410,18 +4518,18 @@ this gear</p>
       <pre class="lines">
 
 
-262
-263
-264
-265
-266
-267
-268
-269
-270</pre>
+274
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 262</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 274</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span>
   <span class='kw'>if</span> <span class='ivar'>@container</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='kw'>and</span> <span class='op'>!</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -4483,12 +4591,12 @@ this gear</p>
       <pre class="lines">
 
 
-224
-225
-226</pre>
+236
+237
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 224</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 236</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_public_ip_address'>get_public_ip_address</span>
   <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_get_public_ip_address'>get_public_ip_address</span>
@@ -4556,16 +4664,16 @@ codes:</p>
       <pre class="lines">
 
 
-172
-173
-174
-175
-176
-177
-178</pre>
+178
+179
+180
+181
+182
+183
+184</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 172</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 178</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_post_configure_component'>post_configure_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='op'>=</span><span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_post_configure_component'>post_configure_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_init_git_url'>init_git_url</span><span class='rparen'>)</span>
@@ -4625,12 +4733,12 @@ codes:</p>
       <pre class="lines">
 
 
-217
-218
-219</pre>
+229
+230
+231</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 217</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 229</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_public_hostname'>public_hostname</span>
   <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_get_public_hostname'>get_public_hostname</span>
@@ -4666,7 +4774,7 @@ codes:</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_publish_routing_info'>publish_routing_info</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_port_interfaces'>port_interfaces</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_pi'>pi</span><span class='op'>|</span>
-      <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_pi'>pi</span><span class='period'>.</span><span class='id identifier rubyid_publish_endpoint'>publish_endpoint</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='rparen'>)</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -4719,7 +4827,7 @@ codes:</p>
       <div class="method_details ">
   <h3 class="signature " id="remove_component-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>remove_component</strong>(component) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>remove_component</strong>(component, skip_node_ops = false) 
   
 
   
@@ -4773,20 +4881,32 @@ codes:</p>
       <pre class="lines">
 
 
-190
-191
-192
-193
-194
-195</pre>
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 190</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 196</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='const'>ResultIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
+    <span class='id identifier rubyid_result_io'>result_io</span> <span class='op'>=</span> <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_remove_component'>remove_component</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_process_commands'>process_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_result_io'>result_io</span><span class='comma'>,</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_sparse?'>is_sparse?</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sparse_carts'>sparse_carts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
+  <span class='kw'>end</span>
   <span class='id identifier rubyid_result_io'>result_io</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -4895,12 +5015,12 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-200
-201
-202</pre>
+212
+213
+214</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 200</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 212</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_sym'>sym</span><span class='comma'>,</span> <span class='id identifier rubyid_include_private'>include_private</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_get_proxy'>get_proxy</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_sym'>sym</span><span class='comma'>,</span> <span class='id identifier rubyid_include_private'>include_private</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='kw'>super</span>
@@ -4925,14 +5045,14 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-298
-299
-300
-301
-302</pre>
+310
+311
+312
+313
+314</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 298</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 310</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_identities'>server_identities</span>
   <span class='id identifier rubyid_identities'>identities</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gears'>gears</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_gear'>gear</span><span class='op'>|</span> <span class='id identifier rubyid_gear'>gear</span><span class='period'>.</span><span class='id identifier rubyid_server_identity'>server_identity</span><span class='rbrace'>}</span>
@@ -4959,16 +5079,16 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-290
-291
-292
-293
-294
-295
-296</pre>
+302
+303
+304
+305
+306
+307
+308</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 290</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 302</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_addtl_fs_gb'>set_addtl_fs_gb</span><span class='lparen'>(</span><span class='id identifier rubyid_additional_filesystem_gb'>additional_filesystem_gb</span><span class='comma'>,</span> <span class='id identifier rubyid_remote_job_handle'>remote_job_handle</span><span class='comma'>,</span> <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>addtl-fs-gb</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_base_filesystem_gb'>base_filesystem_gb</span> <span class='op'>=</span> <span class='const'>Gear</span><span class='period'>.</span><span class='id identifier rubyid_base_filesystem_gb'>base_filesystem_gb</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_group_instance'>group_instance</span><span class='period'>.</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
@@ -5075,21 +5195,21 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-272
-273
-274
-275
-276
-277
-278
-279
-280
-281
-282
-283</pre>
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 272</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 284</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_configuration'>update_configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='comma'>,</span> <span class='id identifier rubyid_remote_job_handle'>remote_job_handle</span><span class='comma'>,</span> <span class='id identifier rubyid_tag'>tag</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_add_keys'>add_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_add_keys_attrs'>add_keys_attrs</span>
@@ -5123,18 +5243,6 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
       <pre class="lines">
 
 
-304
-305
-306
-307
-308
-309
-310
-311
-312
-313
-314
-315
 316
 317
 318
@@ -5156,10 +5264,22 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 334
 335
 336
-337</pre>
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 304</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/gear.rb', line 316</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_with_retries'>update_with_retries</span><span class='lparen'>(</span><span class='id identifier rubyid_num_retries'>num_retries</span><span class='comma'>,</span> <span class='id identifier rubyid_failure_message'>failure_message</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_retries'>retries</span> <span class='op'>=</span> <span class='int'>0</span>
@@ -5205,7 +5325,7 @@ transparently by an <span class='object_link'><a href="OpenShift/ApplicationCont
 </div>
 
     <div id="footer">
-  Generated on Tue Sep 24 22:06:39 2013 by
+  Generated on Wed Sep 25 22:05:37 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
