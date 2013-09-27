@@ -214,6 +214,33 @@ domain.</p>
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#available_gears-instance_method" title="#available_gears (instance method)">- (Object) <strong>available_gears</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute available_gears.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#env_vars-instance_method" title="#env_vars (instance method)">- (Array[Hash]) <strong>env_vars</strong> </a>
     
 
@@ -263,6 +290,33 @@ domain.</p>
   
     <span class="summary_desc"><div class='inline'>
 <p>Returns the value of attribute gear_counts.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#max_storage_per_gear-instance_method" title="#max_storage_per_gear (instance method)">- (Object) <strong>max_storage_per_gear</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute max_storage_per_gear.</p>
 </div></span>
   
 </li>
@@ -421,28 +475,6 @@ domain.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#legacy_accessible-class_method" title="legacy_accessible (class method)">+ (Object) <strong>legacy_accessible</strong>(to) </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#sort_by_original-class_method" title="sort_by_original (class method)">+ (Object) <strong>sort_by_original</strong>(user) </a>
     
 
@@ -487,7 +519,7 @@ domain.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#with_gear_counts-class_method" title="with_gear_counts (class method)">+ (Object) <strong>with_gear_counts</strong>(domains = queryable.to_a) </a>
+      <a href="#with_gear_counts-class_method" title="with_gear_counts (class method)">+ (Object) <strong>with_gear_counts</strong>(domains = queryable) </a>
     
 
     
@@ -1071,7 +1103,13 @@ domain</p>
 246
 247
 248
-249</pre>
+249
+250
+251
+252
+253
+254
+255</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 18</span>
@@ -1096,7 +1134,7 @@ domain</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:canonical_namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:env_vars</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span>
   <span class='id identifier rubyid_embeds_many'>embeds_many</span> <span class='symbol'>:system_ssh_keys</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>SystemSshKey</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_belongs_to'>belongs_to</span> <span class='symbol'>:owner</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_has_many'>has_many</span> <span class='symbol'>:applications</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>dependent:</span> <span class='symbol'>:restrict</span>
@@ -1111,6 +1149,8 @@ domain</p>
   <span class='comment'># non-persisted fields used to store info about the applications in this domain
 </span>  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:application_count</span>
   <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:gear_counts</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:available_gears</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:max_storage_per_gear</span>  
 
   <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:namespace</span><span class='comma'>,</span>
     <span class='comment'>#presence: {message: &quot;Namespace is required and cannot be blank.&quot;},
@@ -1139,7 +1179,9 @@ domain</p>
     <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='op'>==</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_created_at'>created_at</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_domains'>domains</span> <span class='op'>=</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+    <span class='id identifier rubyid_owners_by_id'>owners_by_id</span> <span class='op'>=</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:owner_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_info_by_domain'>info_by_domain</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>domain_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>domain_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
     <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
       <span class='kw'>if</span> <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='id identifier rubyid_info_by_domain'>info_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rbracket'>]</span>
@@ -1155,6 +1197,12 @@ domain</p>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_application_count'>application_count</span> <span class='op'>=</span> <span class='int'>0</span>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_gear_counts'>gear_counts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
       <span class='kw'>end</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_available_gears'>available_gears</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_gears'>max_gears</span> <span class='op'>-</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_consumed_gears'>consumed_gears</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_storage'>max_storage</span>
+      <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -1164,8 +1212,8 @@ domain</p>
 
   <span class='id identifier rubyid_before_save'>before_save</span> <span class='label'>prepend:</span> <span class='kw'>true</span> <span class='kw'>do</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_canonical_namespace'>canonical_namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span> <span class='op'>:</span> <span class='kw'>nil</span>
-    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span>
-      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='kw'>if</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_persisted?'>persisted?</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_persisted?'>persisted?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -1195,11 +1243,7 @@ domain</p>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_inherit_membership'>inherit_membership</span>
-    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_legacy_accessible'>legacy_accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_scope_limited'>scope_limited</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='comma'>,</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:domains</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_scoped'>scoped</span> <span class='op'>:</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_add_system_ssh_keys'>add_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
@@ -1307,6 +1351,49 @@ domain</p>
       <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_e'>e</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="available_gears=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="available_gears-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>available_gears</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute available_gears</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+53
+54
+55</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 53</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_available_gears'>available_gears</span>
+  <span class='ivar'>@available_gears</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1594,7 +1681,13 @@ domain</p>
 246
 247
 248
-249</pre>
+249
+250
+251
+252
+253
+254
+255</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 18</span>
@@ -1619,7 +1712,7 @@ domain</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:canonical_namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:env_vars</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span>
   <span class='id identifier rubyid_embeds_many'>embeds_many</span> <span class='symbol'>:system_ssh_keys</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>SystemSshKey</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_belongs_to'>belongs_to</span> <span class='symbol'>:owner</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_has_many'>has_many</span> <span class='symbol'>:applications</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>dependent:</span> <span class='symbol'>:restrict</span>
@@ -1634,6 +1727,8 @@ domain</p>
   <span class='comment'># non-persisted fields used to store info about the applications in this domain
 </span>  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:application_count</span>
   <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:gear_counts</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:available_gears</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:max_storage_per_gear</span>  
 
   <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:namespace</span><span class='comma'>,</span>
     <span class='comment'>#presence: {message: &quot;Namespace is required and cannot be blank.&quot;},
@@ -1662,7 +1757,9 @@ domain</p>
     <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='op'>==</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_created_at'>created_at</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_domains'>domains</span> <span class='op'>=</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+    <span class='id identifier rubyid_owners_by_id'>owners_by_id</span> <span class='op'>=</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:owner_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_info_by_domain'>info_by_domain</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>domain_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>domain_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
     <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
       <span class='kw'>if</span> <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='id identifier rubyid_info_by_domain'>info_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rbracket'>]</span>
@@ -1678,6 +1775,12 @@ domain</p>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_application_count'>application_count</span> <span class='op'>=</span> <span class='int'>0</span>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_gear_counts'>gear_counts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
       <span class='kw'>end</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_available_gears'>available_gears</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_gears'>max_gears</span> <span class='op'>-</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_consumed_gears'>consumed_gears</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_storage'>max_storage</span>
+      <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -1687,8 +1790,8 @@ domain</p>
 
   <span class='id identifier rubyid_before_save'>before_save</span> <span class='label'>prepend:</span> <span class='kw'>true</span> <span class='kw'>do</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_canonical_namespace'>canonical_namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span> <span class='op'>:</span> <span class='kw'>nil</span>
-    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span>
-      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='kw'>if</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_persisted?'>persisted?</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_persisted?'>persisted?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -1718,11 +1821,7 @@ domain</p>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_inherit_membership'>inherit_membership</span>
-    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_legacy_accessible'>legacy_accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_scope_limited'>scope_limited</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='comma'>,</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:domains</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_scoped'>scoped</span> <span class='op'>:</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_add_system_ssh_keys'>add_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
@@ -1873,6 +1972,49 @@ domain</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_gear_counts'>gear_counts</span>
   <span class='ivar'>@gear_counts</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="max_storage_per_gear=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="max_storage_per_gear-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>max_storage_per_gear</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute max_storage_per_gear</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+54
+55
+56</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 54</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span>
+  <span class='ivar'>@max_storage_per_gear</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2156,7 +2298,13 @@ domain</p>
 246
 247
 248
-249</pre>
+249
+250
+251
+252
+253
+254
+255</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 18</span>
@@ -2181,7 +2329,7 @@ domain</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:canonical_namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:env_vars</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span>
   <span class='id identifier rubyid_embeds_many'>embeds_many</span> <span class='symbol'>:system_ssh_keys</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>SystemSshKey</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_belongs_to'>belongs_to</span> <span class='symbol'>:owner</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_has_many'>has_many</span> <span class='symbol'>:applications</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>dependent:</span> <span class='symbol'>:restrict</span>
@@ -2196,6 +2344,8 @@ domain</p>
   <span class='comment'># non-persisted fields used to store info about the applications in this domain
 </span>  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:application_count</span>
   <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:gear_counts</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:available_gears</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:max_storage_per_gear</span>  
 
   <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:namespace</span><span class='comma'>,</span>
     <span class='comment'>#presence: {message: &quot;Namespace is required and cannot be blank.&quot;},
@@ -2224,7 +2374,9 @@ domain</p>
     <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='op'>==</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_created_at'>created_at</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_domains'>domains</span> <span class='op'>=</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+    <span class='id identifier rubyid_owners_by_id'>owners_by_id</span> <span class='op'>=</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:owner_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_info_by_domain'>info_by_domain</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>domain_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>domain_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
     <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
       <span class='kw'>if</span> <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='id identifier rubyid_info_by_domain'>info_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rbracket'>]</span>
@@ -2240,6 +2392,12 @@ domain</p>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_application_count'>application_count</span> <span class='op'>=</span> <span class='int'>0</span>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_gear_counts'>gear_counts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
       <span class='kw'>end</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_available_gears'>available_gears</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_gears'>max_gears</span> <span class='op'>-</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_consumed_gears'>consumed_gears</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_storage'>max_storage</span>
+      <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -2249,8 +2407,8 @@ domain</p>
 
   <span class='id identifier rubyid_before_save'>before_save</span> <span class='label'>prepend:</span> <span class='kw'>true</span> <span class='kw'>do</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_canonical_namespace'>canonical_namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span> <span class='op'>:</span> <span class='kw'>nil</span>
-    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span>
-      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='kw'>if</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_persisted?'>persisted?</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_persisted?'>persisted?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -2280,11 +2438,7 @@ domain</p>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_inherit_membership'>inherit_membership</span>
-    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_legacy_accessible'>legacy_accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_scope_limited'>scope_limited</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='comma'>,</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:domains</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_scoped'>scoped</span> <span class='op'>:</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_add_system_ssh_keys'>add_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
@@ -2675,7 +2829,13 @@ domain</p>
 246
 247
 248
-249</pre>
+249
+250
+251
+252
+253
+254
+255</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 18</span>
@@ -2700,7 +2860,7 @@ domain</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:canonical_namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:env_vars</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span>
   <span class='id identifier rubyid_embeds_many'>embeds_many</span> <span class='symbol'>:system_ssh_keys</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>SystemSshKey</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_belongs_to'>belongs_to</span> <span class='symbol'>:owner</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_has_many'>has_many</span> <span class='symbol'>:applications</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>dependent:</span> <span class='symbol'>:restrict</span>
@@ -2715,6 +2875,8 @@ domain</p>
   <span class='comment'># non-persisted fields used to store info about the applications in this domain
 </span>  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:application_count</span>
   <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:gear_counts</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:available_gears</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:max_storage_per_gear</span>  
 
   <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:namespace</span><span class='comma'>,</span>
     <span class='comment'>#presence: {message: &quot;Namespace is required and cannot be blank.&quot;},
@@ -2743,7 +2905,9 @@ domain</p>
     <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='op'>==</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_created_at'>created_at</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_domains'>domains</span> <span class='op'>=</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+    <span class='id identifier rubyid_owners_by_id'>owners_by_id</span> <span class='op'>=</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:owner_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_info_by_domain'>info_by_domain</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>domain_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>domain_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
     <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
       <span class='kw'>if</span> <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='id identifier rubyid_info_by_domain'>info_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rbracket'>]</span>
@@ -2759,6 +2923,12 @@ domain</p>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_application_count'>application_count</span> <span class='op'>=</span> <span class='int'>0</span>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_gear_counts'>gear_counts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
       <span class='kw'>end</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_available_gears'>available_gears</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_gears'>max_gears</span> <span class='op'>-</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_consumed_gears'>consumed_gears</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_storage'>max_storage</span>
+      <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -2768,8 +2938,8 @@ domain</p>
 
   <span class='id identifier rubyid_before_save'>before_save</span> <span class='label'>prepend:</span> <span class='kw'>true</span> <span class='kw'>do</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_canonical_namespace'>canonical_namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span> <span class='op'>:</span> <span class='kw'>nil</span>
-    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span>
-      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='kw'>if</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_persisted?'>persisted?</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_persisted?'>persisted?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -2799,11 +2969,7 @@ domain</p>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_inherit_membership'>inherit_membership</span>
-    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_legacy_accessible'>legacy_accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_scope_limited'>scope_limited</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='comma'>,</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:domains</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_scoped'>scoped</span> <span class='op'>:</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_add_system_ssh_keys'>add_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
@@ -3194,7 +3360,13 @@ domain</p>
 246
 247
 248
-249</pre>
+249
+250
+251
+252
+253
+254
+255</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 18</span>
@@ -3219,7 +3391,7 @@ domain</p>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:canonical_namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:env_vars</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span>
   <span class='id identifier rubyid_embeds_many'>embeds_many</span> <span class='symbol'>:system_ssh_keys</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>SystemSshKey</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_belongs_to'>belongs_to</span> <span class='symbol'>:owner</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_has_many'>has_many</span> <span class='symbol'>:applications</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>dependent:</span> <span class='symbol'>:restrict</span>
@@ -3234,6 +3406,8 @@ domain</p>
   <span class='comment'># non-persisted fields used to store info about the applications in this domain
 </span>  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:application_count</span>
   <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:gear_counts</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:available_gears</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:max_storage_per_gear</span>  
 
   <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:namespace</span><span class='comma'>,</span>
     <span class='comment'>#presence: {message: &quot;Namespace is required and cannot be blank.&quot;},
@@ -3262,7 +3436,9 @@ domain</p>
     <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='op'>==</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_created_at'>created_at</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_domains'>domains</span> <span class='op'>=</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+    <span class='id identifier rubyid_owners_by_id'>owners_by_id</span> <span class='op'>=</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:owner_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_info_by_domain'>info_by_domain</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>domain_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>domain_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
     <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
       <span class='kw'>if</span> <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='id identifier rubyid_info_by_domain'>info_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rbracket'>]</span>
@@ -3278,6 +3454,12 @@ domain</p>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_application_count'>application_count</span> <span class='op'>=</span> <span class='int'>0</span>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_gear_counts'>gear_counts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
       <span class='kw'>end</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_available_gears'>available_gears</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_gears'>max_gears</span> <span class='op'>-</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_consumed_gears'>consumed_gears</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_storage'>max_storage</span>
+      <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -3287,8 +3469,8 @@ domain</p>
 
   <span class='id identifier rubyid_before_save'>before_save</span> <span class='label'>prepend:</span> <span class='kw'>true</span> <span class='kw'>do</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_canonical_namespace'>canonical_namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span> <span class='op'>:</span> <span class='kw'>nil</span>
-    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span>
-      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='kw'>if</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_persisted?'>persisted?</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_persisted?'>persisted?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -3318,11 +3500,7 @@ domain</p>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_inherit_membership'>inherit_membership</span>
-    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_legacy_accessible'>legacy_accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_scope_limited'>scope_limited</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='comma'>,</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:domains</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_scoped'>scoped</span> <span class='op'>:</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_add_system_ssh_keys'>add_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
@@ -3719,7 +3897,13 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 246
 247
 248
-249</pre>
+249
+250
+251
+252
+253
+254
+255</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 18</span>
@@ -3744,7 +3928,7 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:canonical_namespace</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>String</span>
   <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:env_vars</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_field'>field</span> <span class='symbol'>:allowed_gear_sizes</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Array</span>
   <span class='id identifier rubyid_embeds_many'>embeds_many</span> <span class='symbol'>:system_ssh_keys</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>SystemSshKey</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_belongs_to'>belongs_to</span> <span class='symbol'>:owner</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
   <span class='id identifier rubyid_has_many'>has_many</span> <span class='symbol'>:applications</span><span class='comma'>,</span> <span class='label'>class_name:</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>dependent:</span> <span class='symbol'>:restrict</span>
@@ -3759,6 +3943,8 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
   <span class='comment'># non-persisted fields used to store info about the applications in this domain
 </span>  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:application_count</span>
   <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:gear_counts</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:available_gears</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span> <span class='symbol'>:max_storage_per_gear</span>  
 
   <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:namespace</span><span class='comma'>,</span>
     <span class='comment'>#presence: {message: &quot;Namespace is required and cannot be blank.&quot;},
@@ -3787,7 +3973,9 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
     <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='op'>==</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_created_at'>created_at</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_domains'>domains</span> <span class='op'>=</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+    <span class='id identifier rubyid_owners_by_id'>owners_by_id</span> <span class='op'>=</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:owner_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_info_by_domain'>info_by_domain</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>domain_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>domain_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
     <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
       <span class='kw'>if</span> <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='id identifier rubyid_info_by_domain'>info_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rbracket'>]</span>
@@ -3803,6 +3991,12 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_application_count'>application_count</span> <span class='op'>=</span> <span class='int'>0</span>
         <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_gear_counts'>gear_counts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
       <span class='kw'>end</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_available_gears'>available_gears</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_gears'>max_gears</span> <span class='op'>-</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_consumed_gears'>consumed_gears</span>
+        <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_storage'>max_storage</span>
+      <span class='kw'>end</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -3812,8 +4006,8 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 
   <span class='id identifier rubyid_before_save'>before_save</span> <span class='label'>prepend:</span> <span class='kw'>true</span> <span class='kw'>do</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_canonical_namespace'>canonical_namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span> <span class='op'>:</span> <span class='kw'>nil</span>
-    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span>
-      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='kw'>if</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_persisted?'>persisted?</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_has_owner?'>has_owner?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_persisted?'>persisted?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_owner_id_changed?'>owner_id_changed?</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 
@@ -3843,11 +4037,7 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_inherit_membership'>inherit_membership</span>
-    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_legacy_accessible'>legacy_accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_scope_limited'>scope_limited</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='comma'>,</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:domains</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_scoped'>scoped</span> <span class='op'>:</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_add_system_ssh_keys'>add_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
@@ -4005,36 +4195,6 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="legacy_accessible-class_method">
-  
-    + (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>legacy_accessible</strong>(to) 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-140
-141
-142</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 140</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_legacy_accessible'>legacy_accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_scope_limited'>scope_limited</span><span class='lparen'>(</span><span class='id identifier rubyid_to'>to</span><span class='comma'>,</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:domains</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_to'>to</span><span class='period'>.</span><span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_scoped'>scoped</span> <span class='op'>:</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_to'>to</span><span class='rparen'>)</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
   <h3 class="signature " id="sort_by_original-class_method">
   
     + (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>sort_by_original</strong>(user) 
@@ -4049,12 +4209,12 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-77
-78
-79</pre>
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 77</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sort_by_original'>sort_by_original</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span> <span class='op'>==</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_created_at'>created_at</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
@@ -4079,12 +4239,12 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-73
-74
-75</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 73</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_validation_map'>validation_map</span>
   <span class='lbrace'>{</span><span class='label'>namespace:</span> <span class='int'>106</span><span class='comma'>,</span> <span class='label'>allowed_gear_sizes:</span> <span class='int'>110</span><span class='rbrace'>}</span>
@@ -4097,7 +4257,7 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <div class="method_details ">
   <h3 class="signature " id="with_gear_counts-class_method">
   
-    + (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>with_gear_counts</strong>(domains = queryable.to_a) 
+    + (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>with_gear_counts</strong>(domains = queryable) 
   
 
   
@@ -4109,8 +4269,6 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-81
-82
 83
 84
 85
@@ -4126,12 +4284,24 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 95
 96
 97
-98</pre>
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 81</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 83</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='id identifier rubyid_domains'>domains</span><span class='op'>=</span><span class='id identifier rubyid_queryable'>queryable</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_domains'>domains</span> <span class='op'>=</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+  <span class='id identifier rubyid_owners_by_id'>owners_by_id</span> <span class='op'>=</span> <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:owner_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_info_by_domain'>info_by_domain</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_in'>in</span><span class='lparen'>(</span><span class='label'>domain_id:</span> <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:_id</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>domain_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
   <span class='id identifier rubyid_domains'>domains</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_info'>info</span> <span class='op'>=</span> <span class='id identifier rubyid_info_by_domain'>info_by_domain</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid__id'>_id</span><span class='rbracket'>]</span>
@@ -4146,6 +4316,12 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
     <span class='kw'>else</span>
       <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_application_count'>application_count</span> <span class='op'>=</span> <span class='int'>0</span>
       <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_gear_counts'>gear_counts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+      <span class='id identifier rubyid_owner'>owner</span> <span class='op'>=</span> <span class='id identifier rubyid_owners_by_id'>owners_by_id</span><span class='lbracket'>[</span><span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_owner_id'>owner_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+      <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_available_gears'>available_gears</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_gears'>max_gears</span> <span class='op'>-</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_consumed_gears'>consumed_gears</span>
+      <span class='id identifier rubyid_d'>d</span><span class='period'>.</span><span class='id identifier rubyid_max_storage_per_gear'>max_storage_per_gear</span> <span class='op'>=</span> <span class='id identifier rubyid_owner'>owner</span><span class='period'>.</span><span class='id identifier rubyid_max_storage'>max_storage</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -4175,12 +4351,6 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-169
-170
-171
-172
-173
-174
 175
 176
 177
@@ -4192,10 +4362,16 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 183
 184
 185
-186</pre>
+186
+187
+188
+189
+190
+191
+192</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 169</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 175</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_env_variables'>add_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_variables'>variables</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_env_vars_to_rm'>env_vars_to_rm</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -4235,17 +4411,17 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-144
-145
-146
-147
-148
-149
 150
-151</pre>
+151
+152
+153
+154
+155
+156
+157</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 144</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 150</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_system_ssh_keys'>add_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='comment'>#keys_attrs = ssh_keys.map{|k| k.attributes.dup}
@@ -4275,15 +4451,15 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-136
-137
-138</pre>
+146
+147
+148</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 136</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 146</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inherit_membership'>inherit_membership</span>
-  <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
+  <span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -4305,13 +4481,13 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-201
-202
-203
-204</pre>
+207
+208
+209
+210</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 201</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 207</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_members_changed'>members_changed</span><span class='lparen'>(</span><span class='id identifier rubyid_added'>added</span><span class='comma'>,</span> <span class='id identifier rubyid_removed'>removed</span><span class='comma'>,</span> <span class='id identifier rubyid_changed_roles'>changed_roles</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>ChangeMembersDomainOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>members_added:</span> <span class='id identifier rubyid_added'>added</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='comma'>,</span> <span class='label'>members_removed:</span> <span class='id identifier rubyid_removed'>removed</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='comma'>,</span> <span class='label'>roles_changed:</span> <span class='id identifier rubyid_changed_roles'>changed_roles</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='rparen'>)</span>
@@ -4337,21 +4513,21 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-188
-189
-190
-191
-192
-193
 194
 195
 196
 197
 198
-199</pre>
+199
+200
+201
+202
+203
+204
+205</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 188</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 194</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_env_variables'>remove_env_variables</span><span class='lparen'>(</span><span class='id identifier rubyid_remove_key'>remove_key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_remove_key'>remove_key</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Array</span>
@@ -4385,12 +4561,6 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
       <pre class="lines">
 
 
-153
-154
-155
-156
-157
-158
 159
 160
 161
@@ -4399,10 +4569,16 @@ other. Eg: Jenkins @see #add_domain_ssh_keys,
 164
 165
 166
-167</pre>
+167
+168
+169
+170
+171
+172
+173</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 153</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 159</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_system_ssh_keys'>remove_system_ssh_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_remove_key'>remove_key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_remove_key'>remove_key</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Array</span>
@@ -4459,12 +4635,6 @@ pending_ops</p>
       <pre class="lines">
 
 
-213
-214
-215
-216
-217
-218
 219
 220
 221
@@ -4494,10 +4664,16 @@ pending_ops</p>
 245
 246
 247
-248</pre>
+248
+249
+250
+251
+252
+253
+254</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 213</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 219</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_run_jobs'>run_jobs</span>
   <span class='kw'>begin</span>
@@ -4570,15 +4746,15 @@ pending_ops</p>
       <pre class="lines">
 
 
-129
-130
-131
-132
-133
-134</pre>
+139
+140
+141
+142
+143
+144</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 129</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 139</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_save_with_duplicate_check!'>save_with_duplicate_check!</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_save!'>save!</span>
@@ -4606,12 +4782,12 @@ pending_ops</p>
       <pre class="lines">
 
 
-100
-101
-102</pre>
+110
+111
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 100</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/domain.rb', line 110</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_with_gear_counts'>with_gear_counts</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='kw'>self</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -4626,7 +4802,7 @@ pending_ops</p>
 </div>
 
     <div id="footer">
-  Generated on Thu Sep 26 22:04:37 2013 by
+  Generated on Fri Sep 27 22:05:48 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

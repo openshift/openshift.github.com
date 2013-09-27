@@ -378,13 +378,13 @@ the specific resource or resources?</p>
       <pre class="lines">
 
 
-112
-113
-114
-115</pre>
+117
+118
+119
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/ability.rb', line 112</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/ability.rb', line 117</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class_for_resource'>class_for_resource</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_resource'>resource</span> <span class='kw'>if</span> <span class='id identifier rubyid_resource'>resource</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Class</span>
@@ -491,7 +491,12 @@ automatically inherited.</code></pre>
 106
 107
 108
-109</pre>
+109
+110
+111
+112
+113
+114</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/ability.rb', line 59</span>
@@ -517,7 +522,8 @@ automatically inherited.</code></pre>
          <span class='symbol'>:change_environment_variables</span>
       <span class='const'>Role</span><span class='period'>.</span><span class='id identifier rubyid_in?'>in?</span><span class='lparen'>(</span><span class='symbol'>:edit</span><span class='comma'>,</span> <span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span>
 
-    <span class='kw'>when</span> <span class='symbol'>:change_members</span>
+    <span class='kw'>when</span> <span class='symbol'>:change_members</span><span class='comma'>,</span>
+         <span class='symbol'>:leave</span>
       <span class='kw'>false</span>
 
     <span class='kw'>end</span>
@@ -532,7 +538,10 @@ automatically inherited.</code></pre>
       <span class='const'>Role</span><span class='period'>.</span><span class='id identifier rubyid_in?'>in?</span><span class='lparen'>(</span><span class='symbol'>:admin</span><span class='comma'>,</span> <span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span>
 
     <span class='kw'>when</span> <span class='symbol'>:change_members</span>
-      <span class='const'>Role</span><span class='period'>.</span><span class='id identifier rubyid_in?'>in?</span><span class='lparen'>(</span><span class='symbol'>:admin</span><span class='comma'>,</span> <span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:membership_enabled</span><span class='rbracket'>]</span>
+      <span class='const'>Role</span><span class='period'>.</span><span class='id identifier rubyid_in?'>in?</span><span class='lparen'>(</span><span class='symbol'>:admin</span><span class='comma'>,</span> <span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span>
+
+    <span class='kw'>when</span> <span class='symbol'>:leave</span>
+      <span class='const'>Role</span><span class='period'>.</span><span class='id identifier rubyid_in?'>in?</span><span class='lparen'>(</span><span class='symbol'>:view</span><span class='comma'>,</span> <span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span>
 
     <span class='kw'>when</span> <span class='symbol'>:change_gear_sizes</span><span class='comma'>,</span> <span class='symbol'>:destroy</span>
       <span class='id identifier rubyid_resource'>resource</span><span class='period'>.</span><span class='id identifier rubyid_owned_by?'>owned_by?</span><span class='lparen'>(</span><span class='id identifier rubyid_actor_or_id'>actor_or_id</span><span class='rparen'>)</span>
@@ -543,6 +552,7 @@ automatically inherited.</code></pre>
     <span class='kw'>case</span> <span class='id identifier rubyid_permission'>permission</span>
     <span class='kw'>when</span> <span class='symbol'>:create_key</span><span class='comma'>,</span> <span class='symbol'>:update_key</span><span class='comma'>,</span> <span class='symbol'>:destroy_key</span><span class='comma'>,</span> <span class='symbol'>:create_domain</span> <span class='kw'>then</span> <span class='id identifier rubyid_resource'>resource</span> <span class='op'>===</span> <span class='id identifier rubyid_actor_or_id'>actor_or_id</span>
     <span class='kw'>when</span> <span class='symbol'>:create_authorization</span><span class='comma'>,</span> <span class='symbol'>:update_authorization</span><span class='comma'>,</span> <span class='symbol'>:destroy_authorization</span> <span class='kw'>then</span> <span class='id identifier rubyid_resource'>resource</span> <span class='op'>===</span> <span class='id identifier rubyid_actor_or_id'>actor_or_id</span>
+    <span class='kw'>when</span> <span class='symbol'>:change_plan</span> <span class='kw'>then</span> <span class='id identifier rubyid_resource'>resource</span> <span class='op'>===</span> <span class='id identifier rubyid_actor_or_id'>actor_or_id</span>
     <span class='kw'>when</span> <span class='symbol'>:destroy</span> <span class='kw'>then</span> <span class='id identifier rubyid_resource'>resource</span><span class='period'>.</span><span class='id identifier rubyid_parent_user_id'>parent_user_id</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_resource'>resource</span> <span class='op'>===</span> <span class='id identifier rubyid_actor_or_id'>actor_or_id</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
@@ -557,7 +567,7 @@ automatically inherited.</code></pre>
 </div>
 
     <div id="footer">
-  Generated on Thu Sep 26 22:04:31 2013 by
+  Generated on Fri Sep 27 22:05:42 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

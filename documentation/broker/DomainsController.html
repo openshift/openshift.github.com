@@ -464,8 +464,7 @@
 71
 72
 73
-74
-75</pre>
+74</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/domains_controller.rb', line 53</span>
@@ -474,17 +473,16 @@
   <span class='id identifier rubyid_authorize!'>authorize!</span> <span class='symbol'>:create_domain</span><span class='comma'>,</span> <span class='id identifier rubyid_current_user'>current_user</span>
 
   <span class='id identifier rubyid_namespace'>namespace</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:namespace</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
-  <span class='id identifier rubyid_new_gear_sizes'>new_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:allowed_gear_sizes</span><span class='rbracket'>]</span>
 
   <span class='id identifier rubyid_allowed_domains'>allowed_domains</span> <span class='op'>=</span> <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_max_user_domains'>max_user_domains</span><span class='lparen'>(</span><span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_allowed_domains'>allowed_domains</span> <span class='op'>=</span> <span class='int'>1</span> <span class='kw'>if</span> <span class='id identifier rubyid_requested_api_version'>requested_api_version</span> <span class='op'>&lt;</span> <span class='float'>1.5</span>
 
   <span class='ivar'>@domain</span> <span class='op'>=</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>namespace:</span> <span class='id identifier rubyid_namespace'>namespace</span><span class='comma'>,</span> <span class='label'>owner:</span> <span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_new_gear_sizes'>new_gear_sizes</span> <span class='kw'>unless</span> <span class='id identifier rubyid_new_gear_sizes'>new_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:allowed_gear_sizes</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='period'>.</span><span class='id identifier rubyid_has_key?'>has_key?</span> <span class='symbol'>:allowed_gear_sizes</span>
 
   <span class='kw'>unless</span> <span class='id identifier rubyid_pre_and_post_condition'>pre_and_post_condition</span><span class='lparen'>(</span>
-           <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_allowed_domains'>allowed_domains</span> <span class='rbrace'>}</span><span class='comma'>,</span> 
-           <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&lt;=</span> <span class='id identifier rubyid_allowed_domains'>allowed_domains</span> <span class='rbrace'>}</span><span class='comma'>,</span> 
+           <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_allowed_domains'>allowed_domains</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+           <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&lt;=</span> <span class='id identifier rubyid_allowed_domains'>allowed_domains</span> <span class='rbrace'>}</span><span class='comma'>,</span>
            <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_save_with_duplicate_check!'>save_with_duplicate_check!</span> <span class='rbrace'>}</span><span class='comma'>,</span>
            <span class='id identifier rubyid_lambda'>lambda</span><span class='lbrace'>{</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_destroy'>destroy</span> <span class='kw'>rescue</span> <span class='kw'>nil</span> <span class='rbrace'>}</span>
          <span class='rparen'>)</span>
@@ -550,11 +548,6 @@ delete the domain</p>
       <pre class="lines">
 
 
-119
-120
-121
-122
-123
 124
 125
 126
@@ -574,10 +567,15 @@ delete the domain</p>
 140
 141
 142
-143</pre>
+143
+144
+145
+146
+147
+148</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/domains_controller.rb', line 119</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/domains_controller.rb', line 124</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_destroy'>destroy</span>
   <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>
@@ -735,12 +733,12 @@ returns the current user.</p>
       <pre class="lines">
 
 
-148
-149
-150</pre>
+153
+154
+155</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/domains_controller.rb', line 148</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/domains_controller.rb', line 153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_log_tag'>set_log_tag</span>
   <span class='ivar'>@log_tag</span> <span class='op'>=</span> <span class='id identifier rubyid_get_log_tag_prepend'>get_log_tag_prepend</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>DOMAIN</span><span class='tstring_end'>&quot;</span></span>
@@ -925,6 +923,7 @@ returns the current user.</p>
       <pre class="lines">
 
 
+86
 87
 88
 89
@@ -948,34 +947,45 @@ returns the current user.</p>
 107
 108
 109
-110</pre>
+110
+111
+112
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/domains_controller.rb', line 87</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/controllers/domains_controller.rb', line 86</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span>
   <span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:existing_name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:existing_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
 
-  <span class='id identifier rubyid_new_gear_sizes'>new_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:allowed_gear_sizes</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_new_namespace'>new_namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>
 
   <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_accessible'>accessible</span><span class='lparen'>(</span><span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>canonical_namespace:</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_check_name!'>check_name!</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span><span class='rparen'>)</span>
 
+  <span class='id identifier rubyid_messages'>messages</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+
   <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_new_namespace'>new_namespace</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
     <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_namespace'>namespace</span> <span class='op'>=</span> <span class='id identifier rubyid_new_namespace'>new_namespace</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
-    <span class='id identifier rubyid_authorize!'>authorize!</span><span class='lparen'>(</span><span class='symbol'>:change_namespace</span><span class='comma'>,</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_namespace_changed?'>namespace_changed?</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_namespace_changed?'>namespace_changed?</span>
+      <span class='id identifier rubyid_authorize!'>authorize!</span><span class='lparen'>(</span><span class='symbol'>:change_namespace</span><span class='comma'>,</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_messages'>messages</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Changed namespace to &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_namespace'>namespace</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;.</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_new_gear_sizes'>new_gear_sizes</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-    <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='id identifier rubyid_new_gear_sizes'>new_gear_sizes</span>
-    <span class='id identifier rubyid_authorize!'>authorize!</span><span class='lparen'>(</span><span class='symbol'>:change_gear_sizes</span><span class='comma'>,</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes_changed?'>allowed_gear_sizes_changed?</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_params'>params</span><span class='period'>.</span><span class='id identifier rubyid_has_key?'>has_key?</span> <span class='symbol'>:allowed_gear_sizes</span>
+    <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span> <span class='op'>=</span> <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:allowed_gear_sizes</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:presence</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_allowed_gear_sizes_changed?'>allowed_gear_sizes_changed?</span>
+      <span class='id identifier rubyid_authorize!'>authorize!</span><span class='lparen'>(</span><span class='symbol'>:change_gear_sizes</span><span class='comma'>,</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_messages'>messages</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Updated allowed gear sizes.</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>return</span> <span class='id identifier rubyid_render_error'>render_error</span><span class='lparen'>(</span><span class='symbol'>:unprocessable_entity</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No changes specified to the domain.</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='int'>106</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_changed?'>changed?</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_render_error'>render_error</span><span class='lparen'>(</span><span class='symbol'>:unprocessable_entity</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No changes specified to the domain.</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='int'>133</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_changed?'>changed?</span>
 
   <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_save_with_duplicate_check!'>save_with_duplicate_check!</span>
-
-  <span class='id identifier rubyid_render_success'>render_success</span><span class='lparen'>(</span><span class='symbol'>:ok</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>domain</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_get_rest_domain'>get_rest_domain</span><span class='lparen'>(</span><span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Updated domain </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_namespace'>namespace</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_render_success'>render_success</span><span class='lparen'>(</span><span class='symbol'>:ok</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>domain</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_get_rest_domain'>get_rest_domain</span><span class='lparen'>(</span><span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_messages'>messages</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -987,7 +997,7 @@ returns the current user.</p>
 </div>
 
     <div id="footer">
-  Generated on Thu Sep 26 22:05:52 2013 by
+  Generated on Fri Sep 27 22:06:57 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>

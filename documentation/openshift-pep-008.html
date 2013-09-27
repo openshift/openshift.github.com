@@ -799,7 +799,8 @@ To do more with this VM, select from the following options:
 </div>
 <hr>
 <div class="paragraph">
-<p><strong>NOTE</strong>: The installer will also keep a logfile at <code>~/.openshift/oo-install-cfg.log</code>. This will be overwritten every time the installer is invoked.</p>
+<p><strong>NOTE</strong>:<br>
+The installer will also keep a logfile at <code>~/.openshift/oo-install-cfg.log</code>. This will be overwritten every time the installer is invoked.</p>
 </div>
 <hr>
 <div id="default-configuration" class="paragraph">
@@ -838,7 +839,16 @@ Deployment:
       ssh_port: 22
       user: admin
       messaging_port: 61616
-Workflows:
+Subscription:
+  type: none</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The configuration file will always contain a Deployment section. This section is intended to store the complete OpenShift deployment in a way that can be used by any Workflow. The file will also start with a default Subscription section with type <em>none</em> (more on this below, see <a href="#subscriptions">Subscriptions</a>. When a user begins working with a given Workflow, the answers to any Workflow-specific questions will be stored in the Workflows section in a subgroup that is keyed to <a href="#installer-workflows">Installer Workflow</a> IDs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Workflows:
   &lt;Workflow ID 1&gt;:
     &lt;Question ID 1&gt;: Answer value 1
     &lt;Question ID 2&gt;: Answer value 2
@@ -847,12 +857,10 @@ Workflows:
     &lt;Question ID N&gt;: Answer value N</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The configuration file will always contain a Deployment section. This section is intended to store the complete OpenShift deployment in a way that can be used by any Workflow. When a user begins working with a given <a href="#installer-workflows">Workflow</a>, the answers to any Workflow-specific questions will be stored in the Workflows section in a subgroup that is keyed to the Workflow&#8217;s ID.</p>
-</div>
 <hr>
 <div class="paragraph">
-<p><strong>Limitations</strong>: For the first iteration of the installer, multiple hosts will only be supported for the Node role.</p>
+<p><strong>Limitations</strong>:<br>
+For the first iteration of the installer, multiple hosts will only be supported for the Node role.</p>
 </div>
 <hr>
 </div>
@@ -904,6 +912,7 @@ Questions:
   - Question 3...
 Executable: The full command to be executed to complete the Workflow.
 RemoteDeployment: "Y" or "N"; indicates whether the Executable is run locally or on the target system
+SubscriptionCheck: "Y" or "N"; for installations on RHEL, indicates whether or not software subscription channels are required for the workflow.
 RequiredRPMS:
   - &lt;RPM Name&gt; (The name as used by the command "yum install &lt;RPM Name&gt;")
   - RPM 2
@@ -967,6 +976,12 @@ RequiredRPMS:
 <div class="paragraph">
 <p>This flag also determines whether or not the <a href="#skipdeploymentcheck">Deployment Check</a> will attempt to connect to target systems via SSH. A value of <em>N</em> indicates that this Workflow is local only.</p>
 </div>
+<div id="subscriptioncheck" class="paragraph">
+<p>SubscriptionCheck</p>
+</div>
+<div class="paragraph">
+<p>When set to "Y", the installer will ensure that the user has provided valid subscription information, either through the <a href="#default-configuration">configuration file</a> file or through direct input. Read the section on Subscriptions for more information.</p>
+</div>
 <div id="requiredrpms" class="paragraph">
 <p>RequiredRPMS</p>
 </div>
@@ -1006,11 +1021,6 @@ RequiredRPMS:
 <pre>oo-install -w &lt;workflow ID&gt;</pre>
 </div>
 </div>
-<hr>
-<div class="paragraph">
-<p><strong>The SSH password caveat</strong>: The installer never records SSH passwords in the <code>oo-install-cfg.yml</code> file. However, each host entry in the <a href="#default-configuration">Deployment section</a> of the config file supports the presence of a <em>pass</em> key. When this key is present, the installer will attempt to start the SSH session using this as the password. In this manner, a user can manually edit their config file to add these values and enable unattended installation for these systems.</p>
-</div>
-<hr>
 </div>
 </div>
 <div class="sect3">
@@ -1141,6 +1151,158 @@ Password:   openshift</pre>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="subscriptions"><a class="anchor" href="#subscriptions"></a>Subscriptions</h4>
+<div class="paragraph">
+<p>On Fedora-based systems, Installation Workflows can focus on using <code>yum</code> as their primary source for software package downloads. However, the situation is more complex on RHEL. Enterprise systems may still be configured to use <code>yum</code> directly, but there are other ways of establishing software channels that Installation Workflows must be aware of.</p>
+</div>
+<div class="paragraph">
+<p>When a <a href="#installer-workflows">Workflow configuration</a> indicates that a subscription check should be performed, this cues the installer to ask questions that will help to establish one of the four possible software channel sources:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>none - The Workflow can assume that all necessary packages are already available on the target system.</p>
+</li>
+<li>
+<p>yum - The Workflow will use <code>yum</code> to install packages, and will create new repo files under <code>/etc/yum.repos.d/</code> if necessary.</p>
+</li>
+<li>
+<p>rhn - The Workflow will use Red Hat Network to add necessary software channels.</p>
+</li>
+<li>
+<p>rhsm - The Workflow will use Red Hat Subscription Manager to add necessary software channels.</p>
+</li>
+</ul>
+</div>
+<div class="sect4">
+<h5 id="getting-and-storing-subscription-information"><a class="anchor" href="#getting-and-storing-subscription-information"></a>Getting and Storing Subscription Information</h5>
+<div class="paragraph">
+<p>The "none" and "yum" subscription methods do not require the installer to store particularly sensitive data. However, connecting to RHN or the Red Hat Subscription manager will require the user to provide a username and password. The installer will provide the user with a few different ways of handling this. However, it is first important to understand the difference between <em>temporary</em> and <em>configured</em> subscription settings.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="temporary-and-configured-subscription-settings"><a class="anchor" href="#temporary-and-configured-subscription-settings"></a>Temporary and Configured Subscription Settings</h5>
+<div class="paragraph">
+<p>Storing subscription info in the <code>oo-install</code> <a href="#default-configuration">configuration file</a> is convenient but inherently insecure. Taking subscription info at runtime is more secure, but limits the feasibility of unattended deployments. The approach taken by the installer will be to support <em>both</em>.</p>
+</div>
+<div class="paragraph">
+<p>Supporting both methods means that the installer will offer to store subscription information, but will also accept values at runtime that will <em>replace</em> the configured values. The values supplied at runtime can either be provided as arguments to the <code>oo-install</code> command, or can be provided during the course of Workflow configuration.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="command-line-options"><a class="anchor" href="#command-line-options"></a>Command-Line Options</h5>
+<div class="paragraph">
+<p>The installer will support three command-line options relevant to subscription info:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-s --subscription-type [TYPE]</code> - <em>none</em>, <em>yum</em>, <em>rhn</em> or <em>rhsm</em></p>
+</li>
+<li>
+<p><code>-u --username USERNAME</code> - Red Hat Login username</p>
+</li>
+<li>
+<p><code>-p --password PASSWORD</code> - Red Hat Login password</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>On the subject of <a href="#unattended-installations">unattended installations</a>: Other than the <em>none</em> subscription type, each type will require additional information to work correctly. However, because this information is not as sensitive, it should be added to the installer configuration file.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="runtime-evaluation"><a class="anchor" href="#runtime-evaluation"></a>Runtime Evaluation</h5>
+<div class="paragraph">
+<p>When the user is manually stepping through a Workflow, the Subscription information is compiled and evaluated in this order:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Configuration file</p>
+</li>
+<li>
+<p>Command line</p>
+</li>
+<li>
+<p>User modifications at runtime</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In other words, at runtime, config file subscription info can be superseded by command line arguments, and the user can trump both while configuring the selected Workflow.</p>
+</div>
+<div class="paragraph">
+<p>Additionally, the installer will give the user the opportunity to save their runtime configurations back to the config file, <em>or to only use them for this run of the installer</em>. This behavior supports the need for security in some deployments.</p>
+</div>
+<div class="paragraph">
+<p>When the installer is running unattended, the evaluation order is almost the same, but there is no opportunity for runtime modifications:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Configuration file</p>
+</li>
+<li>
+<p>Command line</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This does not guarantee that a given Workflow can run unattended; it is the Workflow&#8217;s "responsibility" to provide questions for capturing and storing other necessary info for unattended operation.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="passing-subscription-settings-to-workflow-executables"><a class="anchor" href="#passing-subscription-settings-to-workflow-executables"></a>Passing Subscription Settings to Workflow Executables</h5>
+<div class="paragraph">
+<p>The runtime subscription settings can include a mixture of information that isn&#8217;t necessarily stored in the installer configuration file. For this reason, a workflow executable can&#8217;t inspect the <em>Subscription</em> section of the installer configuration file (if the section is even there) to get at the data that it needs.</p>
+</div>
+<div class="paragraph">
+<p>For this reason, subscription information is passed to the workflow executable as a set of environment variables. All environment variables set by the installer are prefixed with <em>OO_INSTALL_</em> so they can be grepped out of the complete environment.</p>
+</div>
+<div class="paragraph">
+<p>The installer will pass the following environment variables:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OO_INSTALL_SUBSCRIPTION_TYPE - <em>none</em>, <em>yum</em>, <em>rhn</em>, or <em>rhsm</em></p>
+</li>
+<li>
+<p>OO_INSTALL_RH_USERNAME - Red Hat Login username for <em>rhn</em> and <em>rhsm</em> subscriptions</p>
+</li>
+<li>
+<p>OO_INSTALL_RH_PASSWORD - Red Hat Login password for <em>rhn</em> and <em>rhsm</em> subscriptions</p>
+</li>
+<li>
+<p>OO_INSTALL_REPOS_BASE - For <em>yum</em>; the base URL for the OpenShift repositories</p>
+</li>
+<li>
+<p>OO_INSTALL_RHEL_REPO - For <em>yum</em>; the URL for a RHEL repository</p>
+</li>
+<li>
+<p>OO_INSTALL_JBOSS_REPO_BASE - For <em>yum</em>; the base URL for a JBoss repository</p>
+</li>
+<li>
+<p>OO_INSTALL_RHEL_OPTIONAL_REPO - For <em>yum</em>; the URL for an unsupported RHEL "optional" repo</p>
+</li>
+<li>
+<p>OO_INSTALL_SM_REG_POOL - For <em>rhsm</em>; pool ID for OpenShift subscription</p>
+</li>
+<li>
+<p>OO_INSTALL_SM_REG_POOL_RHEL - For <em>rhsm</em>; pool ID for RHEL subscription</p>
+</li>
+<li>
+<p>OO_INSTALL_RHN_REG_ACTKEY - For <em>rhn</em>; channel activation key</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In practice, not all environment variables may be necessary for the Workflow. That is up to the workflow to decide. The installer passes along all of these values that have been set at runtime.</p>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="backwards-compatibility"><a class="anchor" href="#backwards-compatibility"></a>Backwards Compatibility</h3>
@@ -1253,7 +1415,7 @@ Password:   openshift</pre>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2013-09-26 22:08:11 UTC
+Last updated 2013-09-27 22:09:09 UTC
 </div>
 <!-- Google Analytics -->
 <script>
