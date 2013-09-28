@@ -671,7 +671,7 @@ return the stored capabilities.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#add_ssh_key-instance_method" title="#add_ssh_key (instance method)">- (Object) <strong>add_ssh_key</strong>(key, skip_node_ops = false) </a>
+      <a href="#add_ssh_key-instance_method" title="#add_ssh_key (instance method)">- (Object) <strong>add_ssh_key</strong>(key) </a>
     
 
     
@@ -739,7 +739,7 @@ return the stored capabilities.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#force_delete-instance_method" title="#force_delete (instance method)">- (Object) <strong>force_delete</strong>(skip_node_ops = false) </a>
+      <a href="#force_delete-instance_method" title="#force_delete (instance method)">- (Object) <strong>force_delete</strong> </a>
     
 
     
@@ -1028,7 +1028,7 @@ with the user.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#remove_ssh_key-instance_method" title="#remove_ssh_key (instance method)">- (Object) <strong>remove_ssh_key</strong>(name, skip_node_ops = false) </a>
+      <a href="#remove_ssh_key-instance_method" title="#remove_ssh_key (instance method)">- (Object) <strong>remove_ssh_key</strong>(name) </a>
     
 
     
@@ -1098,7 +1098,7 @@ with the user.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#update_ssh_key-instance_method" title="#update_ssh_key (instance method)">- (Object) <strong>update_ssh_key</strong>(key, skip_node_ops = false) </a>
+      <a href="#update_ssh_key-instance_method" title="#update_ssh_key (instance method)">- (Object) <strong>update_ssh_key</strong>(key) </a>
     
 
     
@@ -1610,9 +1610,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -1787,11 +1785,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -1801,19 +1798,18 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -1927,10 +1923,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -1961,7 +1957,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -2395,9 +2391,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -2572,11 +2566,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -2586,19 +2579,18 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -2712,10 +2704,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -2746,7 +2738,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -3180,9 +3172,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -3357,11 +3347,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -3371,19 +3360,18 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -3497,10 +3485,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -3531,7 +3519,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -3965,9 +3953,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -4142,11 +4128,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -4156,19 +4141,18 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -4282,10 +4266,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -4316,7 +4300,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -4750,9 +4734,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -4927,11 +4909,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -4941,19 +4922,18 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -5067,10 +5047,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -5101,7 +5081,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -5518,9 +5498,7 @@ capabilities and ssh-keys for the user.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -5695,11 +5673,10 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -5709,19 +5686,18 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -5835,10 +5811,10 @@ capabilities and ssh-keys for the user.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -5869,7 +5845,7 @@ capabilities and ssh-keys for the user.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -6286,9 +6262,7 @@ capabilities and ssh-keys for the user.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -6463,11 +6437,10 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -6477,19 +6450,18 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -6603,10 +6575,10 @@ capabilities and ssh-keys for the user.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -6637,7 +6609,7 @@ capabilities and ssh-keys for the user.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -7054,9 +7026,7 @@ capabilities and ssh-keys for the user.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -7231,11 +7201,10 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -7245,19 +7214,18 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -7371,10 +7339,10 @@ capabilities and ssh-keys for the user.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -7405,7 +7373,7 @@ capabilities and ssh-keys for the user.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -7888,9 +7856,7 @@ by the supplied scope.  All other actions are forbidden.  Type is Scopes</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -8065,11 +8031,10 @@ by the supplied scope.  All other actions are forbidden.  Type is Scopes</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -8079,19 +8044,18 @@ by the supplied scope.  All other actions are forbidden.  Type is Scopes</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -8205,10 +8169,10 @@ by the supplied scope.  All other actions are forbidden.  Type is Scopes</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -8239,7 +8203,7 @@ by the supplied scope.  All other actions are forbidden.  Type is Scopes</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -8656,9 +8620,7 @@ capabilities and ssh-keys for the user.</p>
 378
 379
 380
-381
-382
-383</pre>
+381</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 19</span>
@@ -8833,11 +8795,10 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -8847,19 +8808,18 @@ capabilities and ssh-keys for the user.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -8973,10 +8933,10 @@ capabilities and ssh-keys for the user.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -9007,7 +8967,7 @@ capabilities and ssh-keys for the user.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -9374,6 +9334,8 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
       <pre class="lines">
 
 
+268
+269
 270
 271
 272
@@ -9734,14 +9696,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 627
 628
 629
-630
-631
-632
-633
-634</pre>
+630</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 270</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 268</span>
 
 <span class='kw'>class</span> <span class='const'>CloudUser</span>
   <span class='id identifier rubyid_include'>include</span> <span class='const'>Mongoid</span><span class='op'>::</span><span class='const'>Document</span>
@@ -9913,11 +9871,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to add an ssh-key to the user. Use this instead of ssh_keys= so that the key can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -9927,19 +9884,18 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
 
   <span class='comment'># Used to update an ssh-key on the user. Use this instead of ssh_keys= so that the key update can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='comment'># Used to remove an ssh-key from the user. Use this instead of ssh_keys= so that the key removal can be propagated to the
 </span>  <span class='comment'># domains/application that the user has access to.
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
       <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>      <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
       <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
     <span class='kw'>else</span>
@@ -10053,10 +10009,10 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
   <span class='kw'>end</span>
 
   <span class='comment'># Delete user and all its artifacts like domains, applications associated with the user 
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
       <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
       <span class='kw'>end</span>
       <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
     <span class='kw'>end</span>
@@ -10087,7 +10043,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
           <span class='kw'>next</span>
         <span class='kw'>end</span>
 
-        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
         <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>        <span class='comment'># the op based on its position within the pending_ops list
@@ -10128,16 +10084,16 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
       <pre class="lines">
 
 
+296
+297
 298
 299
 300
 301
-302
-303
-304</pre>
+302</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 298</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 296</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_gear_size'>add_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_available_sizes'>available_sizes</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_openshift'>openshift</span><span class='lbracket'>[</span><span class='symbol'>:gear_sizes</span><span class='rbracket'>]</span>
@@ -10154,7 +10110,7 @@ oo-admin-ctl-user scripts or when a plan changes.</p>
       <div class="method_details ">
   <h3 class="signature " id="add_ssh_key-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>add_ssh_key</strong>(key, skip_node_ops = false) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>add_ssh_key</strong>(key) 
   
 
   
@@ -10188,17 +10144,15 @@ access to.</p>
 195
 196
 197
-198
-199</pre>
+198</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 189</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
     <span class='comment'>#pending_op = PendingUserOps.new(op_type: :add_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>    <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>AddSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
     <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='comma'>,</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
   <span class='kw'>else</span>
@@ -10225,12 +10179,12 @@ access to.</p>
       <pre class="lines">
 
 
-294
-295
-296</pre>
+292
+293
+294</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 294</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 292</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_allowed_gear_sizes'>allowed_gear_sizes</span>
   <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gear_sizes</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
@@ -10255,17 +10209,17 @@ access to.</p>
       <pre class="lines">
 
 
+221
+222
 223
 224
 225
 226
 227
-228
-229
-230</pre>
+228</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 223</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 221</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_capabilities'>default_capabilities</span>
   <span class='lbrace'>{</span>
@@ -10283,7 +10237,7 @@ access to.</p>
       <div class="method_details ">
   <h3 class="signature " id="force_delete-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>force_delete</strong>(skip_node_ops = false) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>force_delete</strong> 
   
 
   
@@ -10307,6 +10261,8 @@ with the user</p>
       <pre class="lines">
 
 
+327
+328
 329
 330
 331
@@ -10316,17 +10272,15 @@ with the user</p>
 335
 336
 337
-338
-339
-340</pre>
+338</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 329</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 327</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
   <span class='kw'>while</span> <span class='id identifier rubyid_domain'>domain</span> <span class='op'>=</span> <span class='const'>Domain</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>owner:</span> <span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
     <span class='kw'>while</span> <span class='id identifier rubyid_app'>app</span> <span class='op'>=</span> <span class='const'>Application</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>domain:</span> <span class='id identifier rubyid_domain'>domain</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span><span class='lparen'>(</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_app'>app</span><span class='period'>.</span><span class='id identifier rubyid_destroy_app'>destroy_app</span>
     <span class='kw'>end</span>
     <span class='id identifier rubyid_domain'>domain</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
   <span class='kw'>end</span>
@@ -10355,12 +10309,12 @@ with the user</p>
       <pre class="lines">
 
 
-278
-279
-280</pre>
+276
+277
+278</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 278</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 276</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ha'>ha</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ha</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='kw'>false</span>
@@ -10415,18 +10369,18 @@ with the user</p>
       <pre class="lines">
 
 
+230
+231
 232
 233
 234
 235
 236
 237
-238
-239
-240</pre>
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 232</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 230</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inherited_capabilities'>inherited_capabilities</span>
   <span class='ivar'>@inherited_capabilities</span> <span class='op'>||=</span> <span class='kw'>begin</span>
@@ -10457,12 +10411,12 @@ with the user</p>
       <pre class="lines">
 
 
-290
-291
-292</pre>
+288
+289
+290</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 290</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 288</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_domains'>max_domains</span>
   <span class='const'>OpenShift</span><span class='op'>::</span><span class='const'>ApplicationContainerProxy</span><span class='period'>.</span><span class='id identifier rubyid_max_user_domains'>max_user_domains</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
@@ -10487,12 +10441,12 @@ with the user</p>
       <pre class="lines">
 
 
-282
-283
-284</pre>
+280
+281
+282</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 282</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 280</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_gears'>max_gears</span>
   <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>max_gears</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
@@ -10517,12 +10471,12 @@ with the user</p>
       <pre class="lines">
 
 
-286
-287
-288</pre>
+284
+285
+286</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 286</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 284</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_gears='>max_gears=</span><span class='lparen'>(</span><span class='id identifier rubyid_m'>m</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>max_gears</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_m'>m</span>
@@ -10547,12 +10501,12 @@ with the user</p>
       <pre class="lines">
 
 
-316
-317
-318</pre>
+314
+315
+316</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 316</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 314</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_storage'>max_storage</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_max_tracked_additional_storage'>max_tracked_additional_storage</span> <span class='op'>+</span> <span class='id identifier rubyid_max_untracked_additional_storage'>max_untracked_additional_storage</span><span class='rparen'>)</span>
@@ -10577,12 +10531,12 @@ with the user</p>
       <pre class="lines">
 
 
-324
-325
-326</pre>
+322
+323
+324</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 324</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 322</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_tracked_additional_storage'>max_tracked_additional_storage</span>
   <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_tracked_addtl_storage_per_gear</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>0</span>
@@ -10607,12 +10561,12 @@ with the user</p>
       <pre class="lines">
 
 
-320
-321
-322</pre>
+318
+319
+320</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 320</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 318</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_untracked_additional_storage'>max_untracked_additional_storage</span>
   <span class='id identifier rubyid_capabilities'>capabilities</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>max_untracked_addtl_storage_per_gear</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='int'>0</span>
@@ -10693,18 +10647,18 @@ with the user</p>
       <pre class="lines">
 
 
+304
+305
 306
 307
 308
 309
 310
 311
-312
-313
-314</pre>
+312</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 306</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 304</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_gear_size'>remove_gear_size</span><span class='lparen'>(</span><span class='id identifier rubyid_gear_size'>gear_size</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_caps'>caps</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_capabilities'>capabilities</span>
@@ -10723,7 +10677,7 @@ with the user</p>
       <div class="method_details ">
   <h3 class="signature " id="remove_ssh_key-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>remove_ssh_key</strong>(name, skip_node_ops = false) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>remove_ssh_key</strong>(name) 
   
 
   
@@ -10748,6 +10702,7 @@ user has access to.</p>
       <pre class="lines">
 
 
+209
 210
 211
 212
@@ -10757,19 +10712,16 @@ user has access to.</p>
 216
 217
 218
-219
-220
-221</pre>
+219</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 210</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 209</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_persisted?'>persisted?</span>
     <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_ssh_keys'>ssh_keys</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
     <span class='comment'>#pending_op = PendingUserOps.new(op_type: :delete_ssh_key, arguments: key.attributes.dup, state: :init, on_domain_ids: self.domains.map{|d|d._id.to_s}, created_at: Time.new)
 </span>    <span class='id identifier rubyid_pending_op'>pending_op</span> <span class='op'>=</span> <span class='const'>RemoveSshKeysUserOp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>keys_attrs:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_key_hash'>to_key_hash</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span>
     <span class='const'>CloudUser</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='label'>_id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_update_all'>update_all</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$push</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>pending_ops:</span> <span class='id identifier rubyid_pending_op'>pending_op</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash_with_timestamp'>serializable_hash_with_timestamp</span> <span class='rbrace'>}</span> <span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>$pull</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span> <span class='label'>ssh_keys:</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_serializable_hash'>serializable_hash</span> <span class='rbrace'>}</span><span class='rbrace'>}</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_reload'>reload</span><span class='period'>.</span><span class='id identifier rubyid_run_jobs'>run_jobs</span>
   <span class='kw'>else</span>
@@ -10811,6 +10763,8 @@ user has access to.</p>
       <pre class="lines">
 
 
+344
+345
 346
 347
 348
@@ -10845,12 +10799,10 @@ user has access to.</p>
 377
 378
 379
-380
-381
-382</pre>
+380</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 346</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 344</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_run_jobs'>run_jobs</span>
   <span class='kw'>begin</span>
@@ -10869,7 +10821,7 @@ user has access to.</p>
         <span class='kw'>next</span>
       <span class='kw'>end</span>
 
-      <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_op'>op</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span>
 
       <span class='comment'># reloading the op reloads the cloud_user and then incorrectly reloads (potentially)
 </span>      <span class='comment'># the op based on its position within the pending_ops list
@@ -10963,7 +10915,7 @@ user has access to.</p>
       <div class="method_details ">
   <h3 class="signature " id="update_ssh_key-instance_method">
   
-    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>update_ssh_key</strong>(key, skip_node_ops = false) 
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>update_ssh_key</strong>(key) 
   
 
   
@@ -10988,17 +10940,17 @@ user has access to.</p>
       <pre class="lines">
 
 
+202
 203
 204
-205
-206</pre>
+205</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 203</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-server/controller/app/models/cloud_user.rb', line 202</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='op'>=</span><span class='kw'>false</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_skip_node_ops'>skip_node_ops</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_key'>update_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_remove_ssh_key'>remove_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_add_ssh_key'>add_ssh_key</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -11010,7 +10962,7 @@ user has access to.</p>
 </div>
 
     <div id="footer">
-  Generated on Fri Sep 27 22:05:53 2013 by
+  Generated on Sat Sep 28 22:04:49 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
