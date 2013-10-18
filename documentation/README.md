@@ -1,83 +1,200 @@
-# OpenShift Origin Manuals #
+# OpenShift Origin Build Tools
 
-This repo contains AsciiDoc versions of the OpenShift Origin manuals. The included "index.txt" file is the home page for the complete set of OpenShift Origin documentation.
+Origin-dev-tools contains the scripts necessary for building OpenShift Origin PaaS from source. 
 
-## Building the Manuals ##
-The manuals themselves are .txt files written in [AsciiDoc](http://asciidoc.org/), so they are easily human-readable. However, they are intended to be published in various formats, notably HTML. 
+## Usage
 
-### build ###
-To generate the HTML document set, first install the necessary gems:
+The build tools require rubygem-thor and git to be installed:
 
-    bundle install
+		yum install -y rubygem-thor git
 
-Then run the "build" rake task:
+The tools can be invoked using [/build/devenv](https://github.com/openshift/origin-dev-tools/blob/master/build/devenv) script.
 
-    bundle exec rake build
+### EC2 build and test options
 
-This will create html files from the AsciiDoc files, including an index.html.
+  * ./build/devenv build [NAME] [BUILD_NUM]
 
-Note that you may see the following error:
+	Build a new devenv AMI with the given NAME
 
-    Processing index.txt
-    asciidoctor: WARNING: line N: include file not found: /path/to/origin-server/documentation/_pep_list.adoc
+		Options:
+		  [--register]                             # Register the instance
+		  [--terminate]                            # Terminate the instance on exit
+		  [--branch=BRANCH]                        # Build instance off the specified branch
+		                                           # Default: master
+		  [--yum-repo=YUM_REPO]                    # Build instance off the specified yum repository
+		                                           # Default: candidate
+		  [--reboot]                               # Reboot the instance after updating
+		  [--verbose]                              # Enable verbose logging
+		  [--official]                             # For official use.  Send emails, etc.
+		  [--exclude-broker]                       # Exclude broker tests
+		  [--exclude-runtime]                      # Exclude runtime tests
+		  [--exclude-site]                         # Exclude site tests
+		  [--exclude-rhc]                          # Exclude rhc tests
+		  [--include-web]                          # Include running Selenium tests
+		  [--include-coverage]                     # Include coverage analysis on unit tests
+		  [--include-extended=INCLUDE_EXTENDED]    # Include extended tests
+		  [--base-image-filter=BASE_IMAGE_FILTER]  # Filter for the base image to use EX: devenv-base_*
+		  [--region=REGION]                        # Amazon region override (default us-east-1)
+		  [--install-from-source]                  # Indicates whether to build based off origin/master
+		  [--install-from-local-source]            # Indicates whether to build based on your local source
+		  [--install-required-packages]            # Create an instance with all the packages required by OpenShift
+		  [--skip-verify]                          # Skip running tests to verify the build
+		  [--instance-type=INSTANCE_TYPE]          # Amazon machine type override (default c1.medium)
 
-If you are not working with the `openshift-pep` repository, you can ignore this.
+  * ./build/devenv launch [NAME]
 
-### build_all ###
-When the documentation is deployed to [openshift.github.io](http://openshift.github.io/documentation/), this build command:
+	Launches the latest DevEnv instance, tagging with NAME
 
-* Copies in the [REST API docs](https://github.com/openshift/origin-server/tree/master/broker/doc/html/16)
-* Collects and builds the PEPs from the [openshift-pep](https://github.com/openshift/openshift-pep) repository.
+		Options:
+		  [--verifier]                     # Add verifier functionality (private IP setup and local tests)
+		  [--branch=BRANCH]                # Launch a devenv image from a particular branch
+		                                   # Default: master
+		  [--verbose]                      # Enable verbose logging
+		  [--express-server]               # Set as express server in express.conf
+		  [--ssh-config-verifier]          # Set as verifier in .ssh/config
+		  [--instance-type=INSTANCE_TYPE]  # Amazon machine type override (default 'm1.large')
+		  [--region=REGION]                # Amazon region override (default us-east-1)
+		  [--image-name=IMAGE_NAME]        # AMI ID or DEVENV name to launch
+		  [--v2-carts]                     # Launch Origin AMI with v2 cartridges enabled
 
-To make this work in your local build environment, first ensure that you have cloned the openshift-pep repository into the same directory as your clone of the origin-server repository. Then you can run:
+  * ./build/devenv sanity_check [TAG]
 
-    bundle exec rake build_all
+	Runs a set of sanity check tests on a tagged instance
 
-This task does the following:
+		Options:
+		  [--verbose]        # Enable verbose logging
+		  [--region=REGION]  # Amazon region override (default us-east-1)
 
-* Copies the REST API documents to `documentation/rest_api/`
-* Converts the Markdown-based PEPs to HTML via AsciiDoc and writes the generated HTML to the documentation directory.
-* Creates a listing of those files in an AsciiDoc "partial" called `_pep_list.adoc`.
-* Calls the regular `build` task to generate the rest of the doc set and include the PEP list in the documentation home page. 
+  * ./build/devenv terminate [TAG]
 
-You can also trigger just the REST API work and just the PEP work using `bundle exec rake build_rest` and `bundle exec rake build_peps`, respectively.
+	Terminates the instance with the specified tag
 
-### clean ###
-If you want to quickly clean up all of the generated HTML files, run:
+		Options:
+		  [--verbose]        # Enable verbose logging
+		  [--region=REGION]  # Amazon region override (default us-east-1)
 
-    bundle exec rake clean
+  * ./build/devenv test [TAG]
 
-## Editing with LivePreview ##
+	Runs the tests on a tagged instance and downloads the results
 
-For ease of editing in AsciiDoc and checking the results in a web browser, a live preview environment has been set up using [Guard](http://guardgem.org/) and [LiveReload](http://livereload.com/).
+		Options:
+		  [--terminate]                          # Terminate the instance when finished
+		  [--verbose]                            # Enable verbose logging
+		  [--official]                           # For official use.  Send emails, etc.
+		  [--exclude-broker]                     # Exclude broker tests
+		  [--exclude-runtime]                    # Exclude runtime tests
+		  [--exclude-site]                       # Exclude site tests
+		  [--exclude-rhc]                        # Exclude rhc tests
+		  [--include-cucumber=INCLUDE_CUCUMBER]  # Include a specific cucumber test (verify, internal, node, api, etc)
+		  [--include-coverage]                   # Include coverage analysis on unit tests
+		  [--include-extended=INCLUDE_EXTENDED]  # Include extended tests
+		  [--disable-charlie]                    # Disable idle shutdown timer on dev instance (charlie)
+		  [--mcollective-logs]                   # Don't allow mcollective logs to be deleted on rotation
+		  [--profile-broker]                     # Enable profiling code on broker
+		  [--include-web]                        # Include running Selenium tests
+		  [--sauce-username=SAUCE_USERNAME]      # Sauce Labs username
+		  [--sauce-access-key=SAUCE_ACCESS_KEY]  # Sauce Labs access key
+		  [--sauce-overage]                      # Run Sauce Labs tests even if we are over our monthly minute quota
+		  [--region=REGION]                      # Amazon region override (default us-east-1)
 
-To begin, install the LiveReload extension in your web browser (Firefox, Chrome and Safari are supported). Then build the docs following the [Building the Manuals] instructions.
+  * ./build/devenv sync [NAME]
 
-Next, start the guard process:
+	Synchronize a local git repo with a remote DevEnv instance. NAME should be ssh resolvable.
 
-    bundle exec guard
+		Options:
+		  [--tag]             # NAME is an Amazon tag
+		  [--verbose]         # Enable verbose logging
+		  [--skip-build]      # Indicator to skip the rpm build/install
+		  [--clean-metadata]  # Cleans metadata before running yum commands
+		  [--region=REGION]   # Amazon region override (default us-east-1)
 
-Now open the _html_ version of a local file that you are working with in your browser and enable the LivePreview add-on for that file.
+### Local build and test options
+	
+  * ./build/devenv clone_addtl_repos [BRANCH]
 
-At this point, you can begin editing the AsciiDoc version of the file in your text editor. Every time you save the AsciiDoc file, you will see output from the guard process as it detects the change and regenerates the HTML file. The LivePreview browser add-on detects the updated file and automatically reloads it into the browser.
+	Clones any additional repos not including this repo and any other repos that extend these dev tools
+	
+		Options:
+		  [--replace]  # Replace the addtl repos if the already exist
 
-## Creating New Documents ##
-The build environment is configured to process any file with a ".txt" extension as an AsciiDoc file. At a minimum, the first several lines of a new document must follow this pattern:
+  * ./build/devenv install_local_client
 
-    = Document Title
-    Author Name <author.name@example.com>
-    vN.N, Month YYYY
-    :data-uri:
-    :toc2:
-    :icons:
-    :numbered:
-    
-    Start writing your content here.
+	Builds and installs the local client rpm (uses sudo)
+	
+		Options:
+		  [--verbose]  # Enable verbose logging
 
-* If you do not want the sections of the new document to be auto-numbered, remove the `:numbered:` line.
-* Be sure to add a link to your document in `index.txt` or an appropriate referencing document.
+  * ./build/devenv install_required_packages
 
-For the rest of the document, make sure that you are following proper [AsciiDoc syntax](http://asciidoctor.org/docs/asciidoc-writers-guide/) and preview your document before submitting a pull request. There's no magic in how the documentation is built, so if it doesn't look right in your sandbox, it won't look right on the documentation site.
+	Install the packages required, as specified in the spec files
+	
+		Options:
+		  [--verbose]  # Enable verbose logging
 
-## Old Manuals ##
-The `archive` subdirectory contains older manuals that were written in Markdown. Over time, the contents of these files will be updated to AsciiDoc and assimilated into the documents in this directory.
+  * ./build/devenv local_build
+
+	Builds and installs all packages locally
+	
+		Options:
+		  [--verbose]          # Enable verbose logging
+		  [--clean-packages]   # Erase existing packages before install?
+		  [--update-packages]  # Run yum update before install?
+		  [--incremental]      # Build only the changed packages
+
+  devenv update                     # Update current instance by installing RPMs from local git tree
+
+		Options:
+		  [--include-stale]           # Include packages that have been tagged but not synced to the repo
+		  [--verbose]                 # Enable verbose logging
+		  [--retry-failure-with-tag]  # If a package fails to build, tag it and retry the build.
+		                              # Default: true
+
+
+### Fedora 17 Remix
+
+  * ./build/devenv build_livecd
+
+	Build a Feodra 17 remix CD with OpenShift Origin installed and configured on it
+
+
+## Related repositories
+
+ * [Origin-Server](https://github.com/openshift/origin-server) Origin-server contains the core server components of the OpenShift service released under the [OpenShift Origin source
+project](https://openshift.redhat.com/community/open-source).
+ * [Origin Community Cartridges](https://github.com/openshift/origin-community-cartridges) Collection of OpenShift Origin cartridges contributed by community members.
+ * [RHC](https://github.com/openshift/rhc) The OpenShift command line tools allow you to manage your OpenShift applications from the command line.
+ * [puppet-openshift_origin](https://github.com/openshift/puppet-openshift_origin) Puppet scripts to install and configure OpenShift Origin on Fedora 17.
+
+## Contributing
+
+Visit the [OpenShift Origin Open Source
+page](https://openshift.redhat.com/community/open-source) for more
+information on the community process and how you can get involved.
+
+
+## Copyright
+
+OpenShift Origin, except where otherwise noted, is released under the
+[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+See the LICENSE file located in each component directory.
+
+## Export Control
+
+This software distribution includes cryptographic software that is
+subject to the U.S. Export Administration Regulations (the “*EAR*”) and
+other U.S. and foreign laws and may not be exported, re-exported or
+transferred (a) to any country listed in Country Group E:1 in Supplement
+No. 1 to part 740 of the EAR (currently, Cuba, Iran, North Korea, Sudan,
+and Syria); (b) to any prohibited destination or to any end user who has
+been prohibited from participating in U.S. export transactions by any
+federal agency of the U.S. government; or (c) for use in connection with
+the design, development or production of nuclear, chemical or biological
+weapons, or rocket systems, space launch vehicles, or sounding rockets,
+or unmanned air vehicle systems. You may not download this software or
+technical information if you are located in one of these countries or
+otherwise subject to these restrictions. You may not provide this
+software or technical information to individuals or entities located in
+one of these countries or otherwise subject to these restrictions. You
+are also responsible for compliance with foreign law requirements
+applicable to the import, export and use of this software and technical
+information.

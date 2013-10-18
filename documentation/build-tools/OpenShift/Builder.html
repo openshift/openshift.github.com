@@ -399,6 +399,28 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#update_ssh_config-instance_method" title="#update_ssh_config (instance method)">- (Object) <strong>update_ssh_config</strong>(tag) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -469,15 +491,6 @@
       <pre class="lines">
 
 
-128
-129
-130
-131
-132
-133
-134
-135
-136
 137
 138
 139
@@ -502,10 +515,19 @@
 158
 159
 160
-161</pre>
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 128</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 137</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build'>build</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_build_num'>build_num</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_verbose?'>verbose?</span> <span class='op'>?</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>DEBUG</span> <span class='op'>:</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>ERROR</span>
@@ -561,27 +583,27 @@
       <pre class="lines">
 
 
-362
-363
-364
-365
-366
-367
-368
-369
-370
-371
-372
-373
-374
-375
-376
-377
-378
-379</pre>
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 362</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 382</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clone_addtl_repos'>clone_addtl_repos</span><span class='lparen'>(</span><span class='id identifier rubyid_branch'>branch</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_git_clone_commands'>git_clone_commands</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>set -e\n </span><span class='tstring_end'>&quot;</span></span>
@@ -676,7 +698,16 @@
 80
 81
 82
-83</pre>
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 28</span>
@@ -725,9 +756,18 @@
   <span class='id identifier rubyid_phases'>phases</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_phase'>phase</span><span class='comma'>,</span><span class='id identifier rubyid_i'>i</span><span class='op'>|</span>
     <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>=</span><span class='tstring_end'>&#39;</span></span><span class='op'>*</span><span class='int'>60</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n\nBuilding phase </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_i'>i</span><span class='op'>+</span><span class='int'>1</span><span class='embexpr_end'>}</span><span class='tstring_content'> packages</span><span class='tstring_end'>&quot;</span></span>
     <span class='id identifier rubyid_phase'>phase</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_package'>package</span><span class='op'>|</span>
+
+      <span class='id identifier rubyid_gem_build'>gem_build</span> <span class='op'>=</span> <span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_spec_file'>spec_file</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^Source0(.+).gem(\s*)$</span><span class='regexp_end'>/</span></span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_gem_build'>gem_build</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+        <span class='id identifier rubyid_tito_cmd'>tito_cmd</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>tito build --rpm --test</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_tito_cmd'>tito_cmd</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>tito build --builder=tito.builder.GemBuilder --rpm --test</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>end</span>
+
       <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_chdir'>chdir</span><span class='lparen'>(</span><span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_dir'>dir</span><span class='rparen'>)</span> <span class='kw'>do</span>
         <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='op'>*</span><span class='int'>60</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-        <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to build </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_system'>system</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>tito build --rpm --test</span><span class='tstring_end'>&quot;</span></span>
+        <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unable to build </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_package'>package</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_system'>system</span> <span class='id identifier rubyid_tito_cmd'>tito_cmd</span>
         <span class='kw'>if</span> <span class='id identifier rubyid_prereqs'>prereqs</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_package'>package</span>
           <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n    Installing...</span><span class='tstring_end'>&quot;</span></span>
           <span class='comment'>#FileUtils.rm_rf &quot;/tmp/tito/**&quot;
@@ -757,32 +797,32 @@
       <pre class="lines">
 
 
-383
-384
-385
-386
-387
-388
-389
-390
-391
-392
-393
-394
-395
-396
-397
-398
-399
-400
-401
-402
 403
 404
-405</pre>
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 383</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 403</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_install_local_client'>install_local_client</span>
   <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_verbose?'>verbose?</span> <span class='op'>?</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>DEBUG</span> <span class='op'>:</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>ERROR</span>
@@ -827,23 +867,23 @@
       <pre class="lines">
 
 
-89
-90
-91
-92
-93
-94
-95
-96
-97
 98
 99
 100
 101
-102</pre>
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 89</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 98</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_install_required_packages'>install_required_packages</span>
   <span class='id identifier rubyid_def_constants'>def_constants</span><span class='lparen'>(</span><span class='id identifier rubyid_guess_os'>guess_os</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_base_os'>base_os</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -879,25 +919,6 @@
       <pre class="lines">
 
 
-254
-255
-256
-257
-258
-259
-260
-261
-262
-263
-264
-265
-266
-267
-268
-269
-270
-271
-272
 273
 274
 275
@@ -925,10 +946,29 @@
 297
 298
 299
-300</pre>
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 254</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 273</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_launch'>launch</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_verbose?'>verbose?</span> <span class='op'>?</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>DEBUG</span> <span class='op'>:</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>ERROR</span>
@@ -997,21 +1037,23 @@
       <pre class="lines">
 
 
-352
-353
-354
-355
-356
-357
-358</pre>
+371
+372
+373
+374
+375
+376
+377
+378</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 352</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 371</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_print_hostname'>print_hostname</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>ERROR</span>
   <span class='id identifier rubyid_conn'>conn</span> <span class='op'>=</span> <span class='id identifier rubyid_connect'>connect</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_region'>region</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_instance'>instance</span> <span class='op'>=</span> <span class='id identifier rubyid_find_instance'>find_instance</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_tag'>tag</span><span class='comma'>,</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_ssh_user'>ssh_user</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Could not find an instance that matches </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tag'>tag</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_instance'>instance</span>
   <span class='id identifier rubyid_hostname'>hostname</span> <span class='op'>=</span> <span class='id identifier rubyid_instance'>instance</span><span class='period'>.</span><span class='id identifier rubyid_dns_name'>dns_name</span>
   <span class='id identifier rubyid_print'>print</span> <span class='id identifier rubyid_hostname'>hostname</span>
 <span class='kw'>end</span></pre>
@@ -1035,20 +1077,20 @@
       <pre class="lines">
 
 
-337
-338
-339
-340
-341
-342
-343
-344
-345
-346
-347</pre>
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 337</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 356</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sanity_check'>sanity_check</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_verbose?'>verbose?</span> <span class='op'>?</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>DEBUG</span> <span class='op'>:</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>ERROR</span>
@@ -1081,15 +1123,15 @@
       <pre class="lines">
 
 
-219
-220
-221
-222
-223
-224</pre>
+228
+229
+230
+231
+232
+233</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 219</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 228</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sync'>sync</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_def_constants'>def_constants</span><span class='lparen'>(</span><span class='id identifier rubyid_guess_os'>guess_os</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_base_os'>base_os</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -1117,19 +1159,19 @@
       <pre class="lines">
 
 
-232
-233
-234
-235
-236
-237
-238
-239
-240
-241</pre>
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 232</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 241</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_terminate'>terminate</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_def_constants'>def_constants</span><span class='lparen'>(</span><span class='id identifier rubyid_guess_os'>guess_os</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_base_os'>base_os</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -1161,19 +1203,19 @@
       <pre class="lines">
 
 
-321
-322
-323
-324
-325
-326
-327
-328
-329
-330</pre>
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 321</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 340</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_test'>test</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_verbose?'>verbose?</span> <span class='op'>?</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>DEBUG</span> <span class='op'>:</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>ERROR</span>
@@ -1205,15 +1247,6 @@
       <pre class="lines">
 
 
-168
-169
-170
-171
-172
-173
-174
-175
-176
 177
 178
 179
@@ -1246,10 +1279,19 @@
 206
 207
 208
-209</pre>
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 168</span>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 177</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span>
   <span class='id identifier rubyid_def_constants'>def_constants</span><span class='lparen'>(</span><span class='id identifier rubyid_guess_os'>guess_os</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -1298,12 +1340,48 @@
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="update_ssh_config-instance_method">
+  
+    - (<tt>Object</tt>) <strong>update_ssh_config</strong>(tag) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+255
+256
+257
+258
+259
+260</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '/home/fedora/origin-dev-tools/build/builder.rb', line 255</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_update_ssh_config'>update_ssh_config</span><span class='lparen'>(</span><span class='id identifier rubyid_tag'>tag</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_verbose?'>verbose?</span> <span class='op'>?</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>DEBUG</span> <span class='op'>:</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>ERROR</span>
+  <span class='id identifier rubyid_conn'>conn</span> <span class='op'>=</span> <span class='id identifier rubyid_connect'>connect</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_region'>region</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_instance'>instance</span> <span class='op'>=</span> <span class='id identifier rubyid_find_instance'>find_instance</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_tag'>tag</span><span class='comma'>,</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_update_ssh_config_verifier'>update_ssh_config_verifier</span><span class='lparen'>(</span><span class='id identifier rubyid_instance'>instance</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
     <div id="footer">
-  Generated on Thu Oct  3 22:07:34 2013 by
+  Generated on Fri Oct 18 21:37:34 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.5.2 (ruby-2.0.0).
 </div>
