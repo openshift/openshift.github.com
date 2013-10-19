@@ -3,7 +3,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="Asciidoctor 0.1.3" name="generator">
+<meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
 <title>OpenShift PEP 003: Scheduling of Broker Jobs</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
@@ -651,14 +651,14 @@ code { font-family: source_code_pro; }
 <br>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#motivation">Motivation</a></li>
 <li><a href="#specification">Specification</a></li>
 <li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
 <li><a href="#rationale">Rationale</a></li>
 <li><a href="#faqs">FAQs</a></li>
-</ol>
+</ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
@@ -674,7 +674,6 @@ Affected Teams: UI 40, Broker 40<br>
 User Impact: medium<br>
 Epic:</p>
 </div>
-
 </div>
 </div>
 <div class="sect2">
@@ -682,7 +681,6 @@ Epic:</p>
 <div class="paragraph">
 <p>Today in OpenShift, every operation that goes through the broker is executed immediately. Adding a scheduler will change any potentially long running processes (anything involving node operations) to involve multiple API calls. A first call to launch the task (such as create app) and secondary calls to check the status of the associated job(s). Clients may choose to hide these requests behind a spinner/progress bar, or they might want to indicate to the user the job has been queued and have the user check the status amongst all of their jobs. The major advantage of the latter being an immediate response to the user allowing them to move on within the client.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
@@ -692,14 +690,12 @@ Epic:</p>
 <div class="paragraph">
 <p>The goal of adding a scheduler is to accomplish these long running jobs reliably in the background and allow the user to see the status of existing jobs.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
 <div class="sect3">
 <h4 id="today-the-process-for-create-application-looks-like"><a class="anchor" href="#today-the-process-for-create-application-looks-like"></a>Today the process for create application looks like:</h4>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>User clicks a button in the web UI/CLI/IDE to create an application</p>
@@ -715,14 +711,12 @@ Epic:</p>
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="adding-a-scheduler-will-change-this-process-to-be"><a class="anchor" href="#adding-a-scheduler-will-change-this-process-to-be"></a>Adding a scheduler will change this process to be:</h4>
 <div class="sect4">
 <h5 id="from-the-perspective-of-the-client"><a class="anchor" href="#from-the-perspective-of-the-client"></a>From the perspective of the client:</h5>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>User clicks a button in the web UI/CLI/IDE to create an application</p>
@@ -741,12 +735,10 @@ Epic:</p>
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="from-the-perspective-of-the-scheduler"><a class="anchor" href="#from-the-perspective-of-the-scheduler"></a>From the perspective of the scheduler</h5>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>A high level job is queued (create app) from step 2 above</p>
@@ -765,14 +757,11 @@ Epic:</p>
 </li>
 </ol>
 </div>
-
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="technology-choices"><a class="anchor" href="#technology-choices"></a>Technology Choices:</h4>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Our favored scheduling technology is beanstalkd: <a href="http://kr.github.com/beanstalkd/">http://kr.github.com/beanstalkd/</a></p>
@@ -788,7 +777,6 @@ Epic:</p>
 </li>
 </ul>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="implementation-details"><a class="anchor" href="#implementation-details"></a>Implementation Details:</h4>
@@ -797,12 +785,10 @@ Epic:</p>
 <div class="paragraph">
 <p>Prior to the scheduler implementation, the sub-ops will be converted to using their own sub-classes to allow them to manage/dictate their own retry and rollback mechanisms. A separate trello card already exists to capture the details of this effort: <a href="https://trello.com/c/ZaRSiGj4/40-subclass-pendingops-for-each-op-type">https://trello.com/c/ZaRSiGj4/40-subclass-pendingops-for-each-op-type</a></p>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="setup"><a class="anchor" href="#setup"></a>Setup</h5>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The scheduler will be implemented using beanstalkd</p>
@@ -827,12 +813,10 @@ Epic:</p>
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="adding-jobs-to-the-scheduler"><a class="anchor" href="#adding-jobs-to-the-scheduler"></a>Adding Jobs to the Scheduler</h5>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Jobs corresponding to REST API requests coming to a particular broker will be added to the scheduler specific to that broker</p>
@@ -843,31 +827,26 @@ Epic:</p>
 <li>
 <p>After adding a job to the scheduler, the field job_creation_status in the pending op document is set to <em>scheduled</em> to indicate that the job has been added to the scheduler</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>This will be a new field in the pending op embedded document</p>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>Any new user request coming in will make a check to see if there are any pending ops without the flag set to <em>scheduled</em></p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>If so, then corresponding jobs will be added to the scheduler and the field set to <em>scheduled</em></p>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>Additionally, the admin script to clear the pending ops will also check for such pending ops and create jobs, if required</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The admin script oo-admin-clear-pending-ops will have to be renamed ( new name: <strong>TBD</strong> )</p>
@@ -877,19 +856,16 @@ Epic:</p>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>The fallback mechanisms helps us avoid having to over-engineer the scheduler design for handling corner cases</p>
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="job-processing"><a class="anchor" href="#job-processing"></a>Job Processing</h5>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>A job_status document will be created in a separate collection in mongo</p>
@@ -897,7 +873,6 @@ Epic:</p>
 <li>
 <p>The job_status document will also keep tab of child/linked/dependent jobs</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>In case of domain/user jobs, this list will contain IDs of job_status corresponding to pending ops on applications</p>
@@ -907,7 +882,6 @@ Epic:</p>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>The job added to the scheduler will consist of ONLY the application/domain/user ID and not the ID for the pending operation</p>
@@ -915,19 +889,16 @@ Epic:</p>
 <li>
 <p>The workers will "reserve" a job to work on and execute the first pending operation within the application/domain/user</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>This will ensure that out of order execution of pending ops does not take place</p>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>Upon completion of the pending op:</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The job will be removed from the scheduler queue</p>
@@ -940,12 +911,10 @@ Epic:</p>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>The workers are killed/recycled after a certain number of job completions</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>This number of job completions is configurable</p>
@@ -955,11 +924,9 @@ Epic:</p>
 </li>
 </ul>
 </div>
-
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="failure-scenarios"><a class="anchor" href="#failure-scenarios"></a>Failure Scenarios:</h5>
@@ -967,7 +934,6 @@ Epic:</p>
 <p>What happens if the scheduler goes down?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>It will be respun by a watcher process</p>
@@ -996,7 +962,6 @@ Epic:</p>
 <p>What happens if worker process dies?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>A moritoring script/utility (will be created) to re-spawn workers</p>
@@ -1013,7 +978,6 @@ Epic:</p>
 <p>What happens if the job fails?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The failed pending op will be retried once immediately</p>
@@ -1066,7 +1030,6 @@ Epic:</p>
 <p>What happens if the job fails even after all retry attempts?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Upon the failure of the last retry attempt, it will be rolled back immediately</p>
@@ -1101,7 +1064,6 @@ Epic:</p>
 <p>What happens if the rollback fails for a pending op and it gets stuck?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>A failed pending op that is stuck blocks the execution of any subsequent pending ops for that user/domain/application</p>
@@ -1124,7 +1086,6 @@ Epic:</p>
 <p>What happens if a worker gets a job for an application/domain/user with a failed/stuck job?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The worker will pick up the pending op and look at its retry_count as well as last update time</p>
@@ -1140,12 +1101,10 @@ Epic:</p>
 </li>
 </ul>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="job-status"><a class="anchor" href="#job-status"></a>Job Status:</h5>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The job status will be stored in a separate collection in mongo</p>
@@ -1174,7 +1133,6 @@ Epic:</p>
 <p>The job status will contain the following fields in the response to the client:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>job_id: identifier of the corresponding job</p>
@@ -1314,7 +1272,6 @@ Epic:</p>
 <p>The format is: state(completion_state)(retry_count)(rollback_retry_count)</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Successful job completion</p>
@@ -1379,9 +1336,7 @@ GET /applications/&lt;app_id&gt;/jobs</p>
 <div class="paragraph">
 <p>The REST API could allow options for: + Sort by time (eg: most recent first) + Filter by creator (eg: show only jobs I created) + Filter by status (eg: show queued and active jobs) + Filter by IDs + The UI will typically poll status for the jobs a user has launched + Having a way to query n jobs with a single request (upto a certain limit) would be helpful</p>
 </div>
-
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="rest-api-changes"><a class="anchor" href="#rest-api-changes"></a>REST API Changes:</h4>
@@ -1408,14 +1363,11 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <div class="paragraph">
 <p>POST /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;cart_name&gt;/events</p>
 </div>
-
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="backwards-compatibility"><a class="anchor" href="#backwards-compatibility"></a>Backwards Compatibility</h3>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>This change will require a new version of the REST API.</p>
@@ -1431,14 +1383,12 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="rationale"><a class="anchor" href="#rationale"></a>Rationale</h3>
 <div class="sect3">
 <h4 id="other-scheduling-technologies-considered"><a class="anchor" href="#other-scheduling-technologies-considered"></a>Other scheduling technologies considered:</h4>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Resque</p>
@@ -1460,9 +1410,7 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 </li>
 </ul>
 </div>
-
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="faqs"><a class="anchor" href="#faqs"></a>FAQs</h3>
@@ -1470,7 +1418,6 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <p>Who maintains what queue is fed by which brokers?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Broker configuration points to the IP/Port of the queue</p>
@@ -1481,7 +1428,6 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <p>What exactly is pushed into the queue(s)?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>A "job" data structure which would primarily be a pointer to the application (application ID) and, if needed, some other details (not sure what else would be required)</p>
@@ -1492,7 +1438,6 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <p>What are the benefits of having a separate scheduler for each broker?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>automatic job load balancing</p>
@@ -1515,7 +1460,6 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <p>Who pops from the queue(s)?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The workers (queue clients) reserve jobs from the queue</p>
@@ -1529,7 +1473,6 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <p>How easy is it to add more machines/cores to start chewing more ops?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>A new broker would need to be added</p>
@@ -1543,7 +1486,6 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <p>What if a broker goes down?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>If the broker rails app goes down, the scheduler process is still running, the jobs are intact, and the worker processes can continue</p>
@@ -1557,7 +1499,6 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 <p>What if ops want to remove a broker?</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>If Ops wants to shut down a broker, similar to ensuring that the broker processes are not working, the scheduler workers will need to be monitored to make sure that workers are done and also that the queue is empty</p>
@@ -1567,10 +1508,11 @@ DELETE /domains/&lt;dom_name&gt;/applications/&lt;app_name&gt;/cartridges/&lt;ca
 </li>
 </ul>
 </div>
-
 </div></div>
 <div id="footer">
 <div id="footer-text">
+<br>
+Last updated 2013-10-19 12:03:28 EDT
 </div>
 <!-- Google Analytics -->
 <script>
