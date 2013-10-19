@@ -3,7 +3,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="Asciidoctor 0.1.3" name="generator">
+<meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
 <title>OpenShift Origin Cartridge Developer&#8217;s Guide</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
@@ -649,15 +649,15 @@ code { font-family: source_code_pro; }
 <h1>OpenShift Origin Cartridge Developer&#8217;s Guide</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
-<span id="revnumber"> 2.0,</span>
+<span id="revnumber">version 2.0,</span>
 <span id="revdate">July 2013</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
-<ol type="none" class="sectlevel1">
+<ul class="sectlevel1">
 <li><a href="#cartridge-directory-structure">1. Cartridge Directory Structure</a></li>
 <li><a href="#cartridge-metadata">2. Cartridge Metadata</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#cartridge-short-name">2.1. Cartridge-Short-Name</a></li>
 <li><a href="#cartridge-version">2.2. Cartridge-Version</a></li>
 <li><a href="#compatible-versions">2.3. Compatible-Versions</a></li>
@@ -668,34 +668,34 @@ code { font-family: source_code_pro; }
 <li><a href="#source-md5">2.8. Source-Md5</a></li>
 <li><a href="#additional-control-actions">2.9. Additional-Control-Actions</a></li>
 <li><a href="#endpoints">2.10. Endpoints</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#managed-files">3. Managed Files</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#entry-values">3.1. Entry Values</a></li>
 <li><a href="#strings">3.2. Strings</a></li>
 <li><a href="#allowed-entries">3.3. Allowed Entries</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#cartridge-locking">4. Cartridge Locking</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#lock-configuration">4.1. Lock Configuration</a></li>
 <li><a href="#reserved-directories">4.2. Reserved Directories</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#template-directories-for-language-cartridges">5. Template Directories for Language Cartridges</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#marker-example-files">5.1. Marker Example Files</a></li>
 <li><a href="#application-developer-action-hooks">5.2. Application Developer Action Hooks</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#exposing-services-tcp-endpoints">6. Exposing Services / TCP Endpoints</a></li>
 <li><a href="#cartridge-scripts">7. Cartridge Scripts</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#notes-on-script-execution">7.1. Notes on Script Execution</a></li>
 <li><a href="#mandatory-scripts">7.2. Mandatory Scripts</a></li>
 <li><a href="#optional-scripts">7.3. Optional Scripts</a></li>
@@ -707,52 +707,52 @@ code { font-family: source_code_pro; }
 <li><a href="#bin-teardown">7.9. bin/teardown</a></li>
 <li><a href="#bin-control">7.10. bin/control</a></li>
 <li><a href="#messaging-to-openshift-from-cartridge">7.11. Messaging to OpenShift from Cartridge</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#custom-http-services">8. Custom HTTP Services</a></li>
 <li><a href="#environment-variables">9. Environment Variables</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#system-provided-variables-read-only">9.1. System Provided Variables (Read Only)</a></li>
 <li><a href="#system-provided-cartridge-variables-read-only">9.2. System Provided Cartridge Variables (Read Only)</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#cartridge-events">10. Cartridge Events</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#cartridge-event-publishing">10.1. Cartridge Event Publishing</a></li>
 <li><a href="#cartridge-event-subscriptions">10.2. Cartridge Event Subscriptions</a></li>
 <li><a href="#cartridge-event-example">10.3. Cartridge Event Example</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#backing-up-and-restoring-your-cartridge">11. Backing Up and Restoring Your Cartridge</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#understanding-openshift-behavior-snapshot">11.1. Understanding OpenShift Behavior: Snapshot</a></li>
 <li><a href="#understanding-openshift-behavior-restore">11.2. Understanding OpenShift Behavior: Restore</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#sample-conf-d-openshift-conf-erb">12. Sample conf.d/openshift.conf.erb</a></li>
 <li><a href="#openshift-builds">13. OpenShift Builds</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#default-build-lifecycle">13.1. Default Build Lifecycle</a></li>
 <li><a href="#archiving-deployments">13.2. Archiving Deployments</a></li>
 <li><a href="#binary-deploy">13.3. Binary Deploy</a></li>
 <li><a href="#builder-cartridge-lifecycle">13.4. Builder Cartridge Lifecycle</a></li>
 <li><a href="#builder-tips">13.5. Builder Tips</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#openshift-upgrades">14. OpenShift Upgrades</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#upgrade-itinerary">14.1. Upgrade Itinerary</a></li>
 <li><a href="#compatible-upgrades">14.2. Compatible Upgrades</a></li>
 <li><a href="#incompatible-upgrades">14.3. Incompatible Upgrades</a></li>
 <li><a href="#cartridge-upgrade-script">14.4. Cartridge Upgrade Script</a></li>
-</ol>
+</ul>
 </li>
-</ol>
+</ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
@@ -763,7 +763,6 @@ code { font-family: source_code_pro; }
 <div class="paragraph">
 <p>Cartridge configuration and setup is convention based, with an emphasis on minimizing external dependencies in your cartridge code.</p>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -773,17 +772,16 @@ code { font-family: source_code_pro; }
 <p>This is an example structure to which your cartridge is expected to conform when written to disk. Failure to meet these expectations will cause your cartridge to not function when either installed or used on OpenShift. You may have additional directories or files as required to meet the needs of the software you are packaging and the application developers using your cartridge.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>[cartridge name]
- +- bin                        (required) <i class="conum">1</i>
- |  +- setup                   (optional) <i class="conum">2</i>
+ +- bin                        (required) <i class="conum" data-value="1"></i><b>(1)</b>
+ |  +- setup                   (optional) <i class="conum" data-value="2"></i><b>(2)</b>
  |  +- install                 (optional)
  |  +- post-install            (optional)
  |  +- teardown                (optional)
  |  +- control                 (required)
  |- hooks                      (optional)
- |  +- set-db-connection-info  (discretionary) <i class="conum">3</i>
+ |  +- set-db-connection-info  (discretionary) <i class="conum" data-value="3"></i><b>(3)</b>
  +- versions                   (discretionary)
  |  +- `software version`
  |  |  +- bin
@@ -814,18 +812,17 @@ code { font-family: source_code_pro; }
 </div>
 </div>
 <div class="colist arabic">
-
 <table>
 <tr>
-<td><i class="conum">1</i></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
 <td><code>required</code> items must exist for minimal OpenShift support of your cartridge</td>
 </tr>
 <tr>
-<td><i class="conum">2</i></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td><code>optional</code> exist to support additional functionality</td>
 </tr>
 <tr>
-<td><i class="conum">3</i></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td><code>discretionary</code> should be considered best practices for your cartridge and work. E.g., <code>conf.d</code> is the usual name for where a web framework would install its <code>httpd</code> configuration.</td>
 </tr>
 </table>
@@ -840,7 +837,6 @@ use the <code>bin/control</code> file as a shim to call the correct versioned <c
 <div class="paragraph">
 <p>Later (see Cartridge Locking) we&#8217;ll describe how, as the cartridge author, you can customize a cartridge instance.</p>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -853,8 +849,7 @@ use the <code>bin/control</code> file as a shim to call the correct versioned <c
 <p>An example <code>manifest.yml</code> file:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Name</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">PHP</span></span>
 <span style="color:#606">Cartridge-Short-Name</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">PHP</span></span>
 <span style="color:#606">Cartridge-Version</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">'1.0.1'</span></span>
@@ -930,15 +925,13 @@ use the <code>bin/control</code> file as a shim to call the correct versioned <c
 <p>OpenShift creates a number of environment variables for you when installing your cartridge. This shortened name is used when creating those variables. For example, using the example manifest, the following environment variables would be created:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OPENSHIFT_PHP_DIR
 OPENSHIFT_PHP_IP
 OPENSHIFT_PHP_PORT
 OPENSHIFT_PHP_PROXY_PORT</pre>
 </div>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="cartridge-version"><a class="anchor" href="#cartridge-version"></a>2.2. Cartridge-Version</h3>
@@ -946,15 +939,13 @@ OPENSHIFT_PHP_PROXY_PORT</pre>
 <p>The <code>Cartridge-Version</code> element is a version number identifying a release of your cartridge to OpenShift. The value follows the format:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>&lt;number&gt;[.&lt;number&gt;[.&lt;number&gt;[...]]]</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>When you publish new versions of your cartridge to OpenShift, this number will be used to determine what is necessary to upgrade the application developer&#8217;s application. YAML will assume number.number is a float; be sure to enclose it in quotes so it is read as a string.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="compatible-versions"><a class="anchor" href="#compatible-versions"></a>2.3. Compatible-Versions</h3>
@@ -962,8 +953,7 @@ OPENSHIFT_PHP_PROXY_PORT</pre>
 <p><code>Compatible-Versions</code> is a list of past cartridge versions that are <strong>compatible</strong> with this version. To be <strong>compatible</strong> with a previous version, the code changes you made in this version do not require the cartridge to be restarted or the application developer&#8217;s application to be restarted.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>Compatible-Versions: ['1.0.1']</pre>
 </div>
 </div>
@@ -973,14 +963,12 @@ OPENSHIFT_PHP_PROXY_PORT</pre>
 <div class="paragraph">
 <p>Today this is a simple list and string matching is used to determine compatible versions. If this list proves to be unmanageable, future versions of OpenShift may implement maven dependency range style checking.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="cartridge-vendor"><a class="anchor" href="#cartridge-vendor"></a>2.4. Cartridge-Vendor</h3>
 <div class="paragraph">
 <p>The <code>Cartridge-Vendor</code> element is used to differentiate cartridges when installed in the system. As an individual, you should use the same unique value for all your cartridges to identify yourself; otherwise, use your company name.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="version"><a class="anchor" href="#version"></a>2.5. Version</h3>
@@ -988,12 +976,10 @@ OPENSHIFT_PHP_PROXY_PORT</pre>
 <p>The <code>Version</code> element is the default or only version of the software packaged by this cartridge.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>Version: '5.3'</pre>
 </div>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="versions"><a class="anchor" href="#versions"></a>2.6. Versions</h3>
@@ -1001,12 +987,10 @@ OPENSHIFT_PHP_PROXY_PORT</pre>
 <p><code>Versions</code> is the list of the versions of the software packaged by this cartridge.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>Versions: ['5.3']</pre>
 </div>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="source-url"><a class="anchor" href="#source-url"></a>2.7. Source-Url</h3>
@@ -1045,20 +1029,19 @@ OPENSHIFT_PHP_PROXY_PORT</pre>
 </tr>
 </tbody>
 </table>
+
 <div class="paragraph">
 <p>All Git schemes are supported. The cartridge source will be cloned from
 the given repository.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>Source-Url: https://github.com/example/killer-cartridge.git
 Source-Url: git://github.com/chrisk/fakeweb.git
 Source-Url: https://www.example.com/killer-cartridge.zip
 Source-Url: https://github.com/example/killer-cartridge/archive/master.zip</pre>
 </div>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="source-md5"><a class="anchor" href="#source-md5"></a>2.8. Source-Md5</h3>
@@ -1066,12 +1049,10 @@ Source-Url: https://github.com/example/killer-cartridge/archive/master.zip</pre>
 <p>If <code>Source-Md5</code> is provided and a non-Git scheme is used for downloading your cartridge, OpenShift will verify the downloaded file against this MD5 digest.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>Source-Md5: 835ed97b00a61f0dae2e2b7a75c672db</pre>
 </div>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="additional-control-actions"><a class="anchor" href="#additional-control-actions"></a>2.9. Additional-Control-Actions</h3>
@@ -1079,21 +1060,17 @@ Source-Url: https://github.com/example/killer-cartridge/archive/master.zip</pre>
 <p>The <code>Additional-Control-Actions</code> element is a list of optional actions supported by your cartridge. <code>threaddump</code> is an example of one such action. OpenShift will only call optional actions if they are included in this element. Supported optional actions:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>threaddump</pre>
 </div>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="endpoints"><a class="anchor" href="#endpoints"></a>2.10. Endpoints</h3>
 <div class="paragraph">
 <p>See below.</p>
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -1103,8 +1080,7 @@ Source-Url: https://github.com/example/killer-cartridge/archive/master.zip</pre>
 <p>The <code>metadata/managed_files.yml</code> file provides an array of files or strings that are managed or used during different stages of your cartridge lifecycle. The keys for the entries (such as <code>locked_files</code>) can be specified as either strings or Ruby symbols. For example:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">locked_files</span>:
 - <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">env/</span></span>
 - <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">~/.foorc</span></span>
@@ -1126,14 +1102,12 @@ Source-Url: https://github.com/example/killer-cartridge/archive/master.zip</pre>
 <div class="paragraph">
 <p>Any lines starting with <code>~/</code> will be anchored at the gear directory; otherwise, they will be anchored to your cartridge directory.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="strings"><a class="anchor" href="#strings"></a>3.2. Strings</h3>
 <div class="paragraph">
 <p>Some entries allow for string values in the arrays. In this case, the values will be directly returned without any modification.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="allowed-entries"><a class="anchor" href="#allowed-entries"></a>3.3. Allowed Entries</h3>
@@ -1160,56 +1134,40 @@ Source-Url: https://github.com/example/killer-cartridge/archive/master.zip</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">File Pattern</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><a href="#cartridge-locking">Cartridge Locking</a></p>
-</div>
-
-
-</div></td>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">snapshot_exclusions</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">File Pattern</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><a href="#backing-up-and-restoring-your-cartridge">Backing up and Restoring your Cartridge</a></p>
-</div>
-
-
-</div></td>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">restore_transforms</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strings</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><a href="#backing-up-and-restoring-your-cartridge">Backing up and Restoring your Cartridge</a></p>
-</div>
-
-
-</div></td>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">setup_rewritten</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">File Pattern</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><a href="#binsetup">bin/setup</a></p>
-</div>
-
-
-</div></td>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">processed_templates</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">File Pattern</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><a href="#erb-processing">ERB Processing</a></p>
-</div>
-
-
-</div></td>
+</div></div></td>
 </tr>
 </tbody>
 </table>
 
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -1232,7 +1190,6 @@ sufficient.</p>
 <i class="icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-
 Cartridge file locking is not intended to be a security measure. It is a mechanism to help prevent application developers from inadvertently breaking their application by modifying files reserved for use by you, the cartridge author.
 </td>
 </tr>
@@ -1253,32 +1210,29 @@ Cartridge file locking is not intended to be a security measure. It is a mechani
 <p>Here is a <code>locked_files</code> entry for a PHP cartridge:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">locked_files</span>:
-- <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">~/.pearrc <i class="conum">1</i></span></span>
-- <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">bin/ <i class="conum">2</i></span></span>
-- <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">conf/* <i class="conum">3</i></span></span></code></pre>
+- <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">~/.pearrc </span></span><i class="conum" data-value="1"></i><b>(1)</b>
+- <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">bin/ </span></span><i class="conum" data-value="2"></i><b>(2)</b>
+- <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">conf/* </span></span><i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
-
 <table>
 <tr>
-<td><i class="conum">1</i></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>The file <code>~/.pearrc</code> will be created, if it does not exist, and be made editable by you.</td>
 </tr>
 <tr>
-<td><i class="conum">2</i></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The directory <code>php/bin</code> is locked but not the files it contains. While you can add files, both you and the application developer can edit any files contained.</td>
 </tr>
 <tr>
-<td><i class="conum">3</i></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The files in <code>php/conf</code> are locked but the directory itself is not, so you or the application developer can add files, but only you can edit them.</td>
 </tr>
 </table>
 </div>
-
 </div>
 </div>
 <div class="paragraph">
@@ -1288,7 +1242,6 @@ developer to have read and write access while the application is
 deploying and running. These directories would need to be created by the
 nodejs <code>setup</code> or <code>install</code> scripts.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="reserved-directories"><a class="anchor" href="#reserved-directories"></a>4.2. Reserved Directories</h3>
@@ -1296,7 +1249,6 @@ nodejs <code>setup</code> or <code>install</code> scripts.</p>
 <p>The following list is reserved by OpenShift in the gear&#8217;s home directory:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>~/.ssh</code></p>
@@ -1318,9 +1270,7 @@ nodejs <code>setup</code> or <code>install</code> scripts.</p>
 <div class="paragraph">
 <p>You may create any hidden file or directory (one that starts with a period) not in the reserved list in the gear&#8217;s home directory while the cartridge is unlocked.</p>
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -1337,8 +1287,7 @@ developer.</p>
 <p>A <code>ruby 1.8</code> with <code>Passenger</code> support would have a <code>public</code> sub-directory and a <code>config.ru</code> file to define the web application.</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>+- template
 |  +- config.ru
 |  +- public
@@ -1355,7 +1304,6 @@ developer.</p>
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-
 A <code>.gitignore</code> file should be placed in empty directories to ensure they survive when the file tree is loaded into a git repository.
 </td>
 </tr>
@@ -1393,10 +1341,10 @@ A <code>.gitignore</code> file should be placed in empty directories to ensure t
 </tr>
 </tbody>
 </table>
+
 <div class="paragraph">
 <p>You may add additional markers to allow an application developer to control aspects of your cartridge.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="application-developer-action-hooks"><a class="anchor" href="#application-developer-action-hooks"></a>5.2. Application Developer Action Hooks</h3>
@@ -1404,8 +1352,7 @@ A <code>.gitignore</code> file should be placed in empty directories to ensure t
 <p>The sub-directory <code>.openshift/action_hooks</code> will contain code the application developer wishes to be run during lifecycle changes. Examples would be:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>pre_start_`cartridge name`
 post_start_`cartridge name`
 pre_stop_`cartridge name`
@@ -1415,9 +1362,7 @@ pre_stop_`cartridge name`
 <div class="paragraph">
 <p>As a cartridge author you do not need to execute the default <code>action_hooks</code>. OpenShift will call them during lifecycle changes based on the actions given to the <code>control</code> script. If you wish to add additional hooks, you are expected to document them and you will need to run them explicitly in your <code>control</code> script.</p>
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -1427,7 +1372,6 @@ pre_stop_`cartridge name`
 <p>Most cartridges provide a service by binding to one or many ports. Cartridges must explicitly declare which ports they will bind to, and provide meaningful variable names to describe the following:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Any IP addresses necessary for binding</p>
@@ -1447,8 +1391,7 @@ pre_stop_`cartridge name`
 <p>These declarations represent Endpoints, and are defined in the cartridge <code>manifest.yml</code> in the <code>Endpoints</code> section using the following format:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Endpoints</span>:
   - <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">Private-IP-Name:   &lt;name of IP variable&gt;</span></span>
     <span style="color:#606">Private-Port-Name</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">&lt;name of port variable&gt;</span></span>
@@ -1472,26 +1415,24 @@ pre_stop_`cartridge name`
 <p>Each portion of the Endpoint definition becomes available via environment variables located within the gear and accessible to cartridge scripts and application code. The names of these variables are prefixed with OpenShift namespacing information in the follow the format:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
-<pre>OPENSHIFT_{Cartridge-Short-Name}_{name of IP variable} <i class="conum">1</i>
-OPENSHIFT_{Cartridge-Short-Name}_{name of port variable} <i class="conum">2</i>
-OPENSHIFT_{Cartridge-Short-Name}_{name of public port variable} <i class="conum">3</i></pre>
+<div class="content">
+<pre>OPENSHIFT_{Cartridge-Short-Name}_{name of IP variable} <i class="conum" data-value="1"></i><b>(1)</b>
+OPENSHIFT_{Cartridge-Short-Name}_{name of port variable} <i class="conum" data-value="2"></i><b>(2)</b>
+OPENSHIFT_{Cartridge-Short-Name}_{name of public port variable} <i class="conum" data-value="3"></i><b>(3)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
-
 <table>
 <tr>
-<td><i class="conum">1</i></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Assigned internal IP</td>
 </tr>
 <tr>
-<td><i class="conum">2</i></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Endpoint-specified port</td>
 </tr>
 <tr>
-<td><i class="conum">3</i></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Assigned external port</td>
 </tr>
 </table>
@@ -1503,7 +1444,6 @@ OPENSHIFT_{Cartridge-Short-Name}_{name of public port variable} <i class="conum"
 <p>If an Endpoint specifies a <code>Mappings</code> section, each mapping entry will be used to create a frontend httpd route to your cartridge using the provided options. The <code>Frontend</code> key represents a frontend path element to be connected to a backend URI specified by the <code>Backend</code> key. The optional <code>Options</code> hash for a mapping allows the route to be configured in a variety of ways:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>websocket</code> - Enable web sockets on a particular path</p>
@@ -1538,8 +1478,7 @@ OPENSHIFT_{Cartridge-Short-Name}_{name of public port variable} <i class="conum"
 <p>Given a cartridge named <code>CustomCart</code> and the following entry in <code>manifest.yml</code>:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Name</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">CustomCart</span></span>
 <span style="color:#606">Cartridge-Short-Name</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">CUSTOMCART</span></span>
 <span style="color:#777"># ...</span>
@@ -1572,8 +1511,7 @@ OPENSHIFT_{Cartridge-Short-Name}_{name of public port variable} <i class="conum"
 <p>The following environment variables will be generated:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre># Internal IP/port allocations
 OPENSHIFT_CUSTOMCART_HTTP_IP=&lt;assigned internal IP 1&gt;
 OPENSHIFT_CUSTOMCART_WEB_PORT=8080
@@ -1590,8 +1528,7 @@ OPENSHIFT_CUSTOMCART_ADMIN_PROXY_PORT=&lt;assigned public port 2&gt;</pre>
 <p>In the above example, the public proxy port mappings are as follows:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>&lt;assigned external IP&gt;:&lt;assigned public port 1&gt; =&gt; OPENSHIFT_CUSTOMCART_HTTP_IP:OPENSHIFT_CUSTOMCART_WEB_PORT
 &lt;assigned external IP&gt;:&lt;assigned public port 2&gt; =&gt; OPENSHIFT_CUSTOMCART_HTTP_IP:OPENSHIFT_CUSTOMCART_ADMIN_PORT</pre>
 </div>
@@ -1600,17 +1537,14 @@ OPENSHIFT_CUSTOMCART_ADMIN_PROXY_PORT=&lt;assigned public port 2&gt;</pre>
 <p>And finally, the following frontend httpd routes will be created:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>http://&lt;app dns&gt;/web_front    =&gt; http://OPENSHIFT_CUSTOMCART_HTTP_IP:8080/web_back
 http://&lt;app dns&gt;/socket_front =&gt; http://OPENSHIFT_CUSTOMCART_HTTP_IP:8080/socket_back
 http://&lt;app dns&gt;/admin_front  =&gt; http://OPENSHIFT_CUSTOMCART_HTTP_IP:9000/admin_back</pre>
 </div>
 </div>
-
 </div>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -1628,8 +1562,7 @@ http://&lt;app dns&gt;/admin_front  =&gt; http://OPENSHIFT_CUSTOMCART_HTTP_IP:90
 <p>To ensure this, consider setting the following <code>git</code> options (just once) so that the files have correct line endings in the git repository:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>git config --global core.autocrlf input # use `true` on Windows
 git config --global core.safecrlf true</pre>
 </div>
@@ -1638,8 +1571,7 @@ git config --global core.safecrlf true</pre>
 <p>To ensure that the excutable bit is on, on UNIX-like systems, run:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>chmod +x bin/*</pre>
 </div>
 </div>
@@ -1650,13 +1582,11 @@ git config --global core.safecrlf true</pre>
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-
 On Windows, you can achieve this by running <code>git update-index --chmod=+x bin/*</code> in the cartridge directory.
 </td>
 </tr>
 </table>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="mandatory-scripts"><a class="anchor" href="#mandatory-scripts"></a>7.2. Mandatory Scripts</h3>
@@ -1747,10 +1677,10 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </tr>
 </tbody>
 </table>
+
 <div class="paragraph">
 <p>These exit status codes will allow OpenShift to refine its behavior when returning HTTP status codes for the REST API, whether an internal operation can continue or should aborted, etc. Should your script return a value not included in this table, OpenShift will assume the problem is fatal to your cartridge.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="erb-processing"><a class="anchor" href="#erb-processing"></a>7.5. ERB Processing</h3>
@@ -1761,7 +1691,6 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 <p>Your templates will be rendered at <a href="http://www.ruby-doc.org/docs/ProgrammingRuby/html/taint.html"><code>safe_level 2</code></a>. and are processed in 2 passes.</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The first pass processes any entries in your <code>env</code> directory. This pass happens before <code>bin/setup</code> is called and is mandatory.</p>
@@ -1775,7 +1704,6 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 <div class="title">Example 3. ERB Examples</div>
 <div class="content">
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Given <code>env/OPENSHIFT_MONGODB_DB_LOG_DIR.erb</code> containing:</p>
@@ -1783,8 +1711,7 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </ol>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>erb   &lt;% ENV['OPENSHIFT_HOMEDIR'] + "/mongodb/log/" %&gt;</pre>
 </div>
 </div>
@@ -1792,13 +1719,11 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 <p>becomes <code>env/OPENSHIFT_MONGODB_DB_LOG_DIR</code> containing:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>/var/lib/openshift/aa9e0f66e6451791f86904eef0939e/mongodb/log/</pre>
 </div>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Given <code>conf/php.ini.erb</code> containing:</p>
@@ -1806,8 +1731,7 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </ol>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>erb   upload_tmp_dir = "&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/tmp/"   session.save_path = "&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/sessions/"</pre>
 </div>
 </div>
@@ -1815,12 +1739,10 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 <p>becomes <code>conf/php.ini</code> containing:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>upload_tmp_dir = "/var/lib/openshift/aa9e0f66e6451791f86904eef0939e/php/tmp/"   session.save_path = "/var/lib/openshift/aa9e0f66e6451791f86904eef0939e/php/sessions/"</pre>
 </div>
 </div>
-
 </div>
 </div>
 <div class="paragraph">
@@ -1829,7 +1751,6 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 <code>OPENSHIFT_DATA_DIR</code>, and setting the application name in the <code>pom.xml</code>
 file.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="bin-setup"><a class="anchor" href="#bin-setup"></a>7.6. bin/setup</h3>
@@ -1852,7 +1773,6 @@ file.</p>
 <div class="paragraph">
 <p>If you have used ERB templates for software configuration those files will be processed for environment variable substitution after <code>setup</code> is run.</p>
 </div>
-
 </dd>
 <dt class="hdlist1">Lock Context</dt>
 <dd>
@@ -1860,7 +1780,6 @@ file.</p>
 </dd>
 </dl>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="bin-install"><a class="anchor" href="#bin-install"></a>7.7. bin/install</h3>
@@ -1878,7 +1797,6 @@ file.</p>
 <dd>
 <p>The <code>install</code> script is responsible for creating and/or configuring the files that were copied from the cartridge repository into the gear&#8217;s directory. <code>install</code> will only be called on the initial install of a cartridge.</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Any one-time operations, such as generating passwords, creating ssh keys, or adding environment variables, should occur in <code>install</code>.<br></p>
@@ -1891,7 +1809,6 @@ file.</p>
 </li>
 </ul>
 </div>
-
 </dd>
 <dt class="hdlist1">Lock Context</dt>
 <dd>
@@ -1899,7 +1816,6 @@ file.</p>
 </dd>
 </dl>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="bin-post-install"><a class="anchor" href="#bin-post-install"></a>7.8. bin/post-install</h3>
@@ -1923,7 +1839,6 @@ file.</p>
 </dd>
 </dl>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="bin-teardown"><a class="anchor" href="#bin-teardown"></a>7.9. bin/teardown</h3>
@@ -1947,7 +1862,6 @@ file.</p>
 </dd>
 </dl>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="bin-control"><a class="anchor" href="#bin-control"></a>7.10. bin/control</h3>
@@ -2036,13 +1950,13 @@ file.</p>
 </tr>
 </tbody>
 </table>
+
 <div class="sect3">
 <h4 id="the-code-tidy-code-action"><a class="anchor" href="#the-code-tidy-code-action"></a>7.10.1. The <code>tidy</code> Action</h4>
 <div class="paragraph">
 <p>Some possible <code>tidy</code> behaviors:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>rm $OPENSHIFT_{Cartridge-Short_Name}_DIR/logs/log.[0-9]</code></p>
@@ -2056,7 +1970,6 @@ file.</p>
 <p>OpenShift has the following default <code>tidy</code> behaviors:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>the Git repository will be garbage collected</p>
@@ -2066,7 +1979,6 @@ file.</p>
 </li>
 </ul>
 </div>
-
 </div>
 <div class="sect3">
 <h4 id="the-code-status-code-action"><a class="anchor" href="#the-code-status-code-action"></a>7.10.2. The <code>status</code> Action</h4>
@@ -2119,7 +2031,6 @@ file.</p>
 </table>
 
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="messaging-to-openshift-from-cartridge"><a class="anchor" href="#messaging-to-openshift-from-cartridge"></a>7.11. Messaging to OpenShift from Cartridge</h3>
@@ -2127,7 +2038,6 @@ file.</p>
 <p>Your cartridge may provide one or more services that are consumed by multiple gears in one application. OpenShift provides the orchestration necessary for you to publish this service or services. Each message is written to stdout, one message per line.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>ENV_VAR_ADD: &lt;variable name&gt;=&lt;value&gt;</code></p>
@@ -2143,9 +2053,7 @@ file.</p>
 </li>
 </ul>
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -2158,13 +2066,11 @@ file.</p>
 <p>An example of <code>mongodb.conf.erb</code>:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>Alias /health &lt;%= ENV['OPENSHIFT_HOMEDIR'] + "/mongodb/httpd.d/health.html" %&gt;
 Alias / &lt;%= ENV['OPENSHIFT_HOMEDIR'] + "/mongodb/httpd.d/index.html" %&gt;</pre>
 </div>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -2258,10 +2164,8 @@ With the exception of <code>OPENSHIFT_SECRET_TOKEN</code>, these variables may n
 <div class="sect2">
 <h3 id="system-provided-cartridge-variables-read-only"><a class="anchor" href="#system-provided-cartridge-variables-read-only"></a>9.2. System Provided Cartridge Variables (Read Only)</h3>
 <div class="exampleblock">
-
 <div class="content">
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>OPENSHIFT_{Cartridge-Short-Name}_DIR</code></p>
@@ -2274,7 +2178,6 @@ With the exception of <code>OPENSHIFT_SECRET_TOKEN</code>, these variables may n
 </li>
 </ul>
 </div>
-
 </div>
 </div>
 <div class="sect3">
@@ -2283,7 +2186,6 @@ With the exception of <code>OPENSHIFT_SECRET_TOKEN</code>, these variables may n
 <p>These are variables provided to you for communicating to the application developer. You may add additional variables for your cartridge&#8217;s or the packaged software&#8217;s needs. You may provide these files in your cartridge&#8217;s <code>env</code> directory or choose to create them in your <code>setup</code> and <code>install</code> scripts.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>OPENSHIFT_MYSQL_DB_HOST</code> Backwards compatibility (ERB populate from <code>OPENSHIFT_MYSQL_DB_IP</code>)</p>
@@ -2321,7 +2223,6 @@ With the exception of <code>OPENSHIFT_SECRET_TOKEN</code>, these variables may n
 <p>Some variables may be dictated by the software you are packaging:</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p><code>JENKINS_URL</code></p>
@@ -2349,11 +2250,8 @@ With the exception of <code>OPENSHIFT_SECRET_TOKEN</code>, these variables may n
 <div class="paragraph">
 <p>The <code>PATH</code> variable is set by OpenShift with the base being <code>/etc/openshift/env/PATH</code>. If you provide an <code>OPENSHIFT_{Cartridge-Short-Name}_PATH_ELEMENT</code>, OpenShift will include the value when building the <code>PATH</code> when your scripts are run or an application developer does an interactive log on.</p>
 </div>
-
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -2372,8 +2270,7 @@ With the exception of <code>OPENSHIFT_SECRET_TOKEN</code>, these variables may n
 the following format:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Publishes</span>:   <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">&lt;event name&gt;:     Type: &quot;&lt;event type&gt;&quot;   ...</span></span></code></pre>
 </div>
 </div>
@@ -2381,15 +2278,13 @@ the following format:</p>
 <p>When a cartridge is added to an application, each entry in the <code>Publishes</code> section of the manifest is used to construct events dispatched to other cartridges in the application. For each publish entry, OpenShift will attempt to execute a script named <code>hooks/&lt;event name&gt;</code>:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>hooks/&lt;event name&gt; &lt;gear name&gt; &lt;namespace&gt; &lt;gear uuid&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>All lines of output (on stdout) produced by the script will be joined by single spaces and used as the input to matching subscriber scripts. All cartridges which declare a subscription whose <code>Type</code> matches that of the publish event will be notified.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="cartridge-event-subscriptions"><a class="anchor" href="#cartridge-event-subscriptions"></a>10.2. Cartridge Event Subscriptions</h3>
@@ -2397,8 +2292,7 @@ the following format:</p>
 <p>Subscriptions to events published by other carts are defined via the <code>manifest.yml</code> for the cartridge, in the following format:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Subscribes</span>:   <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">&lt;event name&gt;     Type: &quot;&lt;event type&gt;&quot;   ...</span></span></code></pre>
 </div>
 </div>
@@ -2406,8 +2300,7 @@ the following format:</p>
 <p>When a cartridge publish event is fired, the subscription entries in the <code>Subscribes</code> section whose <code>Type</code> matches that of the publish event will be processed. Subscriptions which have a <code>Type</code> that starts with <code>ENV:</code> are processed differently, as described below. For each matching subscription event, OpenShift will attempt to execute a script named <code>hooks/&lt;event name&gt;</code>:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>hooks/&lt;event name&gt; &lt;gear name&gt; &lt;namespace&gt; &lt;gear uuid&gt; &lt;publish output&gt;</pre>
 </div>
 </div>
@@ -2434,12 +2327,10 @@ the following format:</p>
 <p>The convention for adding the <code>ENV:*</code> subscription to a cartridge manifest is as follows:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Subscribes</span>:  <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">set-env:    Type: ENV:*    Required: false</span></span></code></pre>
 </div>
 </div>
-
 </div>
 <div class="sect4">
 <h5 id="targeted-env-subscription-type"><a class="anchor" href="#targeted-env-subscription-type"></a>Targeted ENV: Subscription Type</h5>
@@ -2453,8 +2344,7 @@ the following format:</p>
 <p>Suppose the fictitious "AwesomeSQL" cartridge publishes environment variables with the following manifest entry:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Publishes</span>:   <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">publish-awesomesql-connection-info:     Type: &quot;ENV:NET_TCP:db:awesomesql&quot;</span></span></code></pre>
 </div>
 </div>
@@ -2462,16 +2352,12 @@ the following format:</p>
 <p>The cooresponding subscription event would be written thus:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Subscribes</span>:   <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">set-awesomesql-connection-info:     Type: &quot;ENV:NET_TCP:db:awesomesql&quot;</span></span></code></pre>
 </div>
 </div>
-
 </div>
-
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="cartridge-event-example"><a class="anchor" href="#cartridge-event-example"></a>10.3. Cartridge Event Example</h3>
@@ -2482,8 +2368,7 @@ the following format:</p>
 <p>This requires a <code>Subscribes</code> section in the PHP cartridge <code>manifest.yml</code>:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Subscribes</span>:   <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">set-mysql-connection-info:     Type: &quot;NET_TCP:db:mysql&quot;</span></span></code></pre>
 </div>
 </div>
@@ -2491,8 +2376,7 @@ the following format:</p>
 <p>And a <code>Publishes</code> section in the MySQL cartridge <code>manifest.yml</code>:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre class="CodeRay"><code class="yaml language-yaml"><span style="color:#606">Publishes</span>:   <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">publish-mysql-connection-info:     Type: &quot;NET_TCP:db:mysql&quot;</span></span></code></pre>
 </div>
 </div>
@@ -2509,8 +2393,7 @@ the following format:</p>
 <p>For example, consider the following output from the <code>publish-mysql-connection-info</code> in the MySQL cartridge:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>OPENSHIFT_MYSQL_DB_USERNAME=username;
 OPENSHIFT_MYSQL_DB_PASSWORD=password;
 OPENSHIFT_MYSQL_DB_HOST=hostname;
@@ -2522,17 +2405,14 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>This would be fed as input to <code>hooks/publish-mysql-connection-info</code> in the PHP cartridge, as follows:</p>
 </div>
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>hooks/publish-mysql-connection-info gear_name namespace gear_uuid 'OPENSHIFT_MYSQL_DB_USERNAME=username;OPENSHIFT_MYSQL_DB_PASSWORD=password;OPENSHIFT_MYSQL_DB_HOST=hostname;OPENSHIFT_MYSQL_DB_PORT=port;OPENSHIFT_MYSQL_DB_URL=url;'</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>The <code>publish-mysql-connection-info</code> is responsible for being capable of parsing the final argument and extracting the values provided.</p>
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -2542,7 +2422,6 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>OpenShift provides a snapshot/restore feature for user applications. This feature is meant to allow OpenShift application developers to:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Capture the state (<em>snapshot</em>) of their application and produce an archive of that state.</p>
@@ -2570,7 +2449,6 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>OpenShift creates an archive during <code>snapshot</code> as follows:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>OpenShift stops the application by invoking <code>gear stop</code>.</p>
@@ -2584,7 +2462,6 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <li>
 <p>OpenShift creates an archive in tar.gz format and writes it to STDOUT for consumption by the client tools. The following exclusions are used in addition to the list created from cartridges:</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Gear user <code>.tmp</code>, <code>.ssh</code>, <code>.sandbox</code></p>
@@ -2597,7 +2474,6 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>OpenShift invokes <code>control post-snapshot</code> for each installed cartridge in the gear.</p>
@@ -2607,7 +2483,6 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="understanding-openshift-behavior-restore"><a class="anchor" href="#understanding-openshift-behavior-restore"></a>11.2. Understanding OpenShift Behavior: Restore</h3>
@@ -2615,7 +2490,6 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>OpenShift restores an application from an archive as follows:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>OpenShift prepares the application for restoration.</p>
@@ -2649,17 +2523,14 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 </li>
 </ol>
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
 <h2 id="sample-conf-d-openshift-conf-erb"><a class="anchor" href="#sample-conf-d-openshift-conf-erb"></a>12. Sample conf.d/openshift.conf.erb</h2>
 <div class="sectionbody">
 <div class="listingblock">
-
-<div class="content monospaced">
+<div class="content">
 <pre>ServerRoot "&lt;%= ENV['OPENSHIFT_HOMEDIR'] + "/ruby-1.8" %&gt;"
 DocumentRoot "&lt;%= ENV['OPENSHIFT_REPO_DIR'] + "/public" %&gt;"
 Listen &lt;%= ENV['OPENSHIFT_RUBY_IP'] + ':' + ENV['OPENSHIFT_RUBY_PORT'] %&gt;
@@ -2679,7 +2550,6 @@ PassengerUseGlobalQueue off
 &lt;/Directory&gt;</pre>
 </div>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -2703,7 +2573,6 @@ PassengerUseGlobalQueue off
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-
 User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/action_hooks</code>.
 </td>
 </tr>
@@ -2713,7 +2582,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>During the <code>build</code> phase:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The application is stopped.</p>
@@ -2727,7 +2595,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <li>
 <p>A new deployment directory <code>$OPENSHIFT_HOMEDIR/app-deployments/$date_$time</code> is created with repo and dependencies subdirectories.</p>
 <div class="ulist">
-
 <ul>
 <li>
 <p>The dependencies directory can be referred to as <code>$OPENSHIFT_DEPENDENCIES_DIR</code> in any of the cartridge scripts including setup/install/post_install.  Contents placed in this directory are synced to additional gears (both for CI and for scale-up).  If your cartridge requires a particular directory structure for dependencies, you should symlink your cartridge directory structure into <code>$OPENSHIFT_DEPENDENCIES_DIR</code>.</p>
@@ -2737,7 +2604,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 </li>
 </ul>
 </div>
-
 </li>
 <li>
 <p>All dependencies from the active deployment (<code>$OPENSHIFT_HOMEDIR/app-root/runtime/dependencies</code>) are copied (or moved if <code>$OPENSHIFT_KEEP_DEPLOYMENTS</code> == 1) to <code>$OPENSHIFT_HOMEDIR/app-deployments/$date_$time/dependencies</code></p>
@@ -2766,7 +2632,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>Next, during the <code>prepare</code> phase:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The <code>prepare</code> user action hook is executed, if present.</p>
@@ -2783,7 +2648,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>Next, during the <code>distribute</code> phase:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>If the app is scalable, the new deployment will be synced to all child gears</p>
@@ -2794,7 +2658,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>Next, during the <code>activate</code> phase:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p><code>$OPENSHIFT_HOMEDIR/app-root/runtime/repo</code> is updated to point at <code>../../app-deployments/$date_$time/repo</code></p>
@@ -2834,21 +2697,18 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <div class="paragraph">
 <p>At this point, the application has been fully built and restarted.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="archiving-deployments"><a class="anchor" href="#archiving-deployments"></a>13.2. Archiving Deployments</h3>
 <div class="paragraph">
 <p>The current deployment can be archived, creating an artifact which can be re-deployed later with <code>rhc archive-deployment</code>.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="binary-deploy"><a class="anchor" href="#binary-deploy"></a>13.3. Binary Deploy</h3>
 <div class="paragraph">
 <p>From a cartridge perspective, binary deploy is very similar to build and deploy without the build.  Instead the built artifacts and dependencies are provided and the deploy steps start at <code>prepare</code>.  Binary deployment must be enabled with <code>rhc env-set OPENSHIFT_DEPLOYMENT_TYPE=binary</code>.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="builder-cartridge-lifecycle"><a class="anchor" href="#builder-cartridge-lifecycle"></a>13.4. Builder Cartridge Lifecycle</h3>
@@ -2859,7 +2719,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>During the Git <code>pre-receive</code> hook:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The builder cartridge <code>pre-receive</code> control action is executed.</p>
@@ -2870,14 +2729,12 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>During the Git <code>post-receive</code> hook:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The builder cartridge <code>post-receive</code> control action is executed.</p>
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="builder-tips"><a class="anchor" href="#builder-tips"></a>13.5. Builder Tips</h3>
@@ -2891,9 +2748,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 [erb]: <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html</a>
 [locking_ruby]: <a href="http://www.ruby-doc.org/docs/ProgrammingRuby/html/taint.html)">http://www.ruby-doc.org/docs/ProgrammingRuby/html/taint.html)</a>.</p>
 </div>
-
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -2906,7 +2761,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>During upgrades, OpenShift follows the following high-level process to upgrade a gear:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Load the gear upgrade extension, if configured.</p>
@@ -2949,7 +2803,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>The upgrade itinerary is computed as follows for each cartridge in a gear:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Read in the current IDENT of the cartridge.</p>
@@ -2965,7 +2818,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="compatible-upgrades"><a class="anchor" href="#compatible-upgrades"></a>14.2. Compatible Upgrades</h3>
@@ -2973,7 +2825,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>The compatible upgrade process for a cartridge is as follows:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The new version of the cartridge is overlaid in the gear.</p>
@@ -2995,7 +2846,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="incompatible-upgrades"><a class="anchor" href="#incompatible-upgrades"></a>14.3. Incompatible Upgrades</h3>
@@ -3003,7 +2853,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>The incompatible upgrade process for a cartridge is as follows:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The files and directories declared in the <code>Setup-Rewritten</code> section of the cartridge&#8217;s <code>managed_files.yml</code> are removed.</p>
@@ -3037,7 +2886,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="cartridge-upgrade-script"><a class="anchor" href="#cartridge-upgrade-script"></a>14.4. Cartridge Upgrade Script</h3>
@@ -3045,7 +2893,6 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>A cartridge may provide an <code>upgrade</code> script in the <code>bin</code> directory which will be executed during the upgrade process.  The purpose of this script is to allow for arbitrary actions to occur during the upgrade process which are not accounted for by the compatible or incompatible processes.  If the <code>upgrade</code> script is provided, it will be passed the following arguments:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>The software version of the cartridge.</p>
@@ -3061,14 +2908,14 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <div class="paragraph">
 <p>A non-zero exit code from this script will result in the upgrade operation failing until the exit code is corrected.</p>
 </div>
-
 </div>
-
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
- 2.0
+Version 2.0
+<br>
+Last updated 2013-10-19 12:03:29 EDT
 </div>
 <!-- Google Analytics -->
 <script>

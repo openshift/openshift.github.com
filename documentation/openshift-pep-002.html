@@ -3,7 +3,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="Asciidoctor 0.1.3" name="generator">
+<meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
 <title>OpenShift PEP 002: Refactor cartridge and node platform code to lower entry for cartridge authors</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
@@ -651,13 +651,13 @@ code { font-family: source_code_pro; }
 <br>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#motivation">Motivation</a></li>
 <li><a href="#specification">Specification</a></li>
 <li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
 <li><a href="#rationale">Rationale</a></li>
-</ol>
+</ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
@@ -674,7 +674,6 @@ Affected Teams: Runtime (5), UI (0), Broker (1), Enterprise (5) <em>jwh: Enterpr
 User Impact: application developer (low), cartridge author (high)<br>
 Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/7579329564">US2765 Finalize Cartridge Format</a></p>
 </div>
-
 </div>
 </div>
 <div class="sect2">
@@ -682,7 +681,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <div class="paragraph">
 <p>Refactor the cartridge format to allow for the easier community development of cartridges and remove any requirements for system administration (root) level access.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
@@ -690,7 +688,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <p>The current cartridge format suffers from the following major issues:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>There is not a clean demarcation between the code needed to provide the cartridges service and the code to configure the hosting node.</p>
@@ -706,7 +703,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <div class="paragraph">
 <p>How a cartridge author makes their cartridge available for consumption by application developers is out of scope for this PEP and will be addressed in a later PEP.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
@@ -717,12 +713,10 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <p>Remove unused/empty scripts, move functionality into ruby layer to improve documentation and automated testing.</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Move all abstract cartridge functionality that is not specialized in the concrete cartridges into the node platform. This includes:</p>
 <div class="olist loweralpha">
-
 <ol class="loweralpha" type="a">
 <li>
 <p>Implement add-alias/remove-alias in ruby for node platform</p>
@@ -741,7 +735,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 </li>
 </ol>
 </div>
-
 </li>
 </ol>
 </div>
@@ -752,7 +745,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <p>Change cartridge format and supporting code to better align with community driven cartridges, faster installs, cleaner demarcation between node platform and cartridge code. High level design goals:</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>Gear-level operations are implemented in the node platform code not the cartridge</p>
@@ -771,7 +763,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <div class="paragraph">
 <p>See <a href="https://github.com/openshift/origin-server/blob/master/node/README.writing_cartridges.md">How To Write An OpenShift Origin Cartridge 2.0</a> and <a href="https://github.com/openshift/origin-server/blob/master/node/README.node_module_design.md">How To Write An OpenShift Origin Node Agent 2.0</a> for detailed work flows. and <a href="https://github.com/openshift/origin-server/blob/master/node/README.writing_applications.md">How To Write An Application To Host on OpenShift</a> for details on writing applications to be hosted on OpenShift</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="backwards-compatibility"><a class="anchor" href="#backwards-compatibility"></a>Backwards Compatibility</h3>
@@ -794,7 +785,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <p>Migration Concerns: 1. Moving env variables to cartridge dependent directories may effect applications if they are reading from the disk rather than the process environment. a. Node platform code will be modified to gather all the cartridge segregated env variables in one process space when calling new cartridge scripts..</p>
 </div>
 <div class="olist arabic">
-
 <ol class="arabic">
 <li>
 <p>It will overly complicate the migration if the version of the software controlled by the old cartridge is different than the new cartridge. This is not the time to look for a quickie upgrades.</p>
@@ -804,7 +794,6 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 </li>
 </ol>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="rationale"><a class="anchor" href="#rationale"></a>Rationale</h3>
@@ -832,10 +821,11 @@ Epic: <a href="https://rally1.rallydev.com/#/4670516379d/detail/userstory/757932
 <div class="paragraph">
 <p>Additionally, a mock-style cartridge will be written to allow testing of the new node platform code independent of any controlled software.</p>
 </div>
-
 </div></div>
 <div id="footer">
 <div id="footer-text">
+<br>
+Last updated 2013-10-19 12:03:28 EDT
 </div>
 <!-- Google Analytics -->
 <script>

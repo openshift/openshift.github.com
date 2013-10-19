@@ -3,7 +3,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<meta content="Asciidoctor 0.1.3" name="generator">
+<meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
 <title>OpenShift PEP 007: OpenStack Integration</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
@@ -651,21 +651,21 @@ code { font-family: source_code_pro; }
 <br>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
-<ol type="none" class="sectlevel1">
+<ul class="sectlevel1">
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#motivation">Motivation</a></li>
 <li><a href="#specification">Specification</a></li>
 <li>
-<ol type="none" class="sectlevel2">
+<ul class="sectlevel2">
 <li><a href="#initial-installation">Initial Installation</a></li>
 <li><a href="#autoscaling">Autoscaling</a></li>
 <li><a href="#authnauthz">AuthN/AuthZ</a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#future">Future</a></li>
 <li><a href="#backwards-compatibility">Backwards Compatibility</a></li>
 <li><a href="#rationale">Rationale</a></li>
-</ol>
+</ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
@@ -682,7 +682,6 @@ Affected Teams: Heat(1-2), Broker (1-3), Runtime(1-3), Enterprise (1-3)<br>
 User Impact:<br>
 Epic: Epic 14: OpenStack Alignment</p>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -692,7 +691,6 @@ Epic: Epic 14: OpenStack Alignment</p>
 <p>Provide several integration points between OpenShift and OpenStack, covering initial installation, capacity based scaling, authentication, and authorization.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Installation - Installation will be accomplished by pre-creating VM images and creating post-boot configuration.</p>
@@ -732,7 +730,6 @@ Epic: Epic 14: OpenStack Alignment</p>
 </li>
 </ul>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -741,7 +738,6 @@ Epic: Epic 14: OpenStack Alignment</p>
 <div class="paragraph">
 <p>OpenShift application scaling currently relies upon node hosts already being provisioned and available for picking up messages from a broker host. What this means is node hosts are online even if they are not needed. This also means once the node hosts are filled up with gears, no more applications can be created until a PaaS operator provisions another node host. When OpenShift is deployed on OpenStack resources, OpenShift should be able to provision and de-provision node hosts without PaaS operator intervention. Although OpenShift brokers aren&#8217;t typically a point of resource contention, having more than one broker available to take requests provides a level of fault tolerance as well as potential mitigation of resource contention. For this reason, we&#8217;ll introduce the ability to scale broker hosts using Heat&#8217;s autoscaling. OpenShift authentication is fairly minimal in its implementation. There is a desire to expand the feature set to handle a fine grained access control using roles, teams(tenants), and groups.</p>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -752,7 +748,6 @@ Epic: Epic 14: OpenStack Alignment</p>
 <div class="paragraph">
 <p>In order for additional features of OpenStack integration to work, the OpenShift broker hosts need to be instrumented with tooling and configuration that knows how to interact with OpenStack services. The recommended way to prepare a broker host is to use a Heat template to install and configure the host. This method of provisioning is consistent with the method of provisioning used in autoscaling as well. Node hosts will be installed in a similar manner, using Heat templates. The installation methods assume availability of rpm packages and puppet modules. Given that Red Hat Enterprise Linux installation and package updates require system registration and application of subscriptions, when using Red Hat Enterprise Linux it is necessary to use a Heat template that orchestrates the subscription management prior to any attempt to install packages. * Heat Templates - Each Heat template declares each compute resource and how they are associated with one another to create an infrastructure. * <strong>The first example template</strong> should be a single broker host and single node host, with the ability to scale the node hosts. * <strong>The second example template</strong> should include the ability to scale brokers which would include a component to monitor broker utilization, bringing brokers in and out of rotation using Heat&#8217;s load balancing (haproxy in an openstack managed host), and cross-broker node capacity checking (to avoid duplicate scale events). This template should set up a separate broker support node (activemq and mongo). The job scheduling implementation the brokers use to track scaling events should be used to ensure no duplicate scale up or down events are sent to Heat.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="autoscaling"><a class="anchor" href="#autoscaling"></a>Autoscaling</h3>
@@ -766,7 +761,6 @@ Epic: Epic 14: OpenStack Alignment</p>
 <p>We will use OpenStack&#8217;s ability to automaitically scale broker hosts when the broker is configured to use an externa broker support node (external activemq and mongo database). When the broker is set up in this manner, it is considered stateless and can be externally autoscaled. Heat will take care of the load balancing of traffic between the broker hosts.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>When a node-scale-up event is initiated by the OpenShift broker, based upon it&#8217;s own capacity checking, the OpenShift broker invokes the scaling script noted above in OpenShiftAutoScaling.yaml. On scale-up, Heat will create a node host. When the configured node host is provisioned and the MCollective service starts, it will become available to pick up messages from the broker. The broker must be able to declare which district the node should be placed in. It&#8217;s imperitive that when a node is provisioned, the broker must be able to specify a resource_limits.conf to apply to the node host so that the node can have a declared node profile. The broker should be able to track the scale-up event request along with the requested profile and the district it will be placed in. When the node comes online, it should have the the event id available as a fact. This fact will be readable by the broker and can them be used by the broker to add the node to a district and clean up the scaling event record it has been tracking.</p>
@@ -782,7 +776,6 @@ Epic: Epic 14: OpenStack Alignment</p>
 <div class="paragraph">
 <p>There is already a project in openshift-extras that has some of the plumbing to orchestrate the scaling functionality. The design of the node-manager capacity checking and event handler plugin could be pulled into the OpenShift broker infrastructure and installed as part of the OpenShift project. All arguments required for capacity checking and communication with OpenStack should be configuration values in broker.conf. When a scale-up is triggered, the OpenShift broker should be able to request the node host to be configured as part of a specific district. When a scale-down event is triggered, the gears on a particular host would be moved to another node host in the same district.</p>
 </div>
-
 </div>
 <div class="sect2">
 <h3 id="authnauthz"><a class="anchor" href="#authnauthz"></a>AuthN/AuthZ</h3>
@@ -837,7 +830,6 @@ Epic: Epic 14: OpenStack Alignment</p>
 </table>
 
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -852,14 +844,12 @@ Future versions of OpenStack will enable integration with the Neutron LBaaS serv
 Ideas of adding plugin cartridges to applications to implement application integration with external services such as Messaging, Storage, and Load Balancing.</p>
 </div>
 <div class="ulist">
-
 <ul>
 <li>
 <p>Swift - swift storage access is typically done via a rest API and has several <a href="https://wiki.openstack.org/wiki/SDKs">language bindings</a> that can be used natively in an application. It&#8217;s probably that we may introduce Swift integration for cartridges web framework cartridges written in a language that has associated native bindings. Additionally, we may implement Fuse based access to Swift storage. There are issue to be worked through in for Swift access including packaging of client language bindings, and an selinux policy that allows fuse based filesystem selinux labeling enforcement.</p>
 </li>
 </ul>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -868,7 +858,6 @@ Ideas of adding plugin cartridges to applications to implement application integ
 <div class="paragraph">
 <p>No backwards compatible APIs are assumed. This is all net new functionality.</p>
 </div>
-
 </div>
 </div>
 <div class="sect1">
@@ -877,11 +866,12 @@ Ideas of adding plugin cartridges to applications to implement application integ
 <div class="paragraph">
 <p>The rationale of this design allows the OpenShift broker to utilize the node-manager plugin based design around scale event handling. This allows specific even handling based upon what type of IaaS OpenShift is targetting. Additionally, the use of Heat based templates to set up the broker and node hosts is an implementation detail and an assumped prerequisite of using an openstack/heat based scaling event handler implementation. However, it does not tie OpenShift to Heat or OpenStack as the orchestration tool or the IaaS provider.</p>
 </div>
-
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
+<br>
+Last updated 2013-10-19 12:03:29 EDT
 </div>
 <!-- Google Analytics -->
 <script>
