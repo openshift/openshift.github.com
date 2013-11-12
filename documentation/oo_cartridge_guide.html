@@ -2681,6 +2681,11 @@ This mirror is on the same network as your application, and your gem download sh
 <div class="sect2">
 <h3 id="rails-3-0"><a class="anchor" href="#rails-3-0"></a>18.3. Rails 3.0</h3>
 <div class="paragraph">
+<p>There are several approaches how to speed up deployment of yours Rails application to OpenShift.</p>
+</div>
+<div class="sect3">
+<h4 id="gem-installation"><a class="anchor" href="#gem-installation"></a>18.3.1. Gem installation</h4>
+<div class="paragraph">
 <p>There are two options for deploying a Rails application to OpenShift.</p>
 </div>
 <div class="paragraph">
@@ -2690,6 +2695,40 @@ This mirror is on the same network as your application, and your gem download sh
 <div class="paragraph">
 <p><strong>Method 2</strong><br>
 <code>git add</code> your <code>.bundle</code> and <code>vendor/bundle</code> directories after running <code>bundle install --deployment</code> locally. Be sure to exclude any gems that have native code or ensure they can run on RHEL x86_64.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="asset-pipeline"><a class="anchor" href="#asset-pipeline"></a>18.3.2. Asset pipeline</h4>
+<div class="paragraph">
+<p>To prevent a long and unnecessary compilation of assets on application initial deployment and re-deployments, these two steps must be done.</p>
+</div>
+<div class="paragraph">
+<p>Step 1*<br>
+It&#8217;s necessary to install <code>sprockets</code> gem by adding the line <code>gem 'turbo-sprockets-rails3'</code> into your Gemfile and run <code>bundle install</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong><br>
+After <code>sprockets</code> gem is installed you need to precompile all your assets locally by <code>rake assets:precompile</code>, which compiles all the assets into <code>public/assets</code>. When compiling the assets the sprocket gem creates a file called <code>sources_manifest.yml</code>, located also in <code>public/assets</code>. This manifest contains names of all assets files together with their hash values. This file ensures that only changed assets will be recompiled on re-deployment.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="load-database-schema"><a class="anchor" href="#load-database-schema"></a>18.3.3. Load database schema</h4>
+<div class="paragraph">
+<p>If your Rails application contains a large amount of migrations it&#8217;s a good to use <code>db:schema:load</code> on initial deploy and <code>db:migrate</code> on re-deploymnets. You can do this by looking into the database and checking whether one of the DB tables exists.</p>
+</div>
+<div class="paragraph">
+<p>This example checks, in the deploy hook, if the <code>spree_activators</code> table is present in the database.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>if [ echo "use $OPENSHIFT_APP_NAME; show tables" | mysql | grep spree_activators ]
+then
+    bundle exec rake db:schema:load RAILS_ENV="production"
+else
+    bundle exec rake db:migrate RAILS_ENV="production"
+fi</pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2770,7 +2809,7 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <div id="footer-text">
 Version 2.0
 <br>
-Last updated 2013-10-19 12:03:30 EDT
+Last updated 2013-11-12 09:36:42 EST
 </div>
 <!-- Google Analytics -->
 <script>

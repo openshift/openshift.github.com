@@ -662,15 +662,18 @@ code { font-family: source_code_pro; }
 </ul>
 </li>
 <li><a href="#generating-bind-tsig-key">2. Generating BIND TSIG Key</a></li>
-<li><a href="#update-the-machines-hostname">3. Update the Machines Hostname</a></li>
-<li><a href="#configuring-an-all-in-one-host">4. Configuring an all-in-one host</a></li>
-<li><a href="#configuring-separate-hosts-for-broker-node">5. Configuring separate hosts for broker/node</a></li>
+<li><a href="#update-the-host-s-name">3. Update the Host&#8217;s Name</a></li>
+<li><a href="#puppet-configuration">4. Puppet Configuration</a></li>
 <li>
 <ul class="sectlevel2">
-<li><a href="#broker-host">5.1. Broker host</a></li>
-<li><a href="#node-host">5.2. Node host</a></li>
+<li><a href="#configuring-an-all-in-one-host">4.1. Configuring an all-in-one host</a></li>
+<li><a href="#configuring-separate-hosts-for-broker-node">4.2. Configuring separate hosts for broker/node</a></li>
+<li><a href="#different-plugins-mdns-and-mongo-auth">4.3. Different plugins: mDNS and Mongo auth</a></li>
+<li><a href="#different-plugins-kerberos-auth-and-dns">4.4. Different plugins: Kerberos auth and DNS</a></li>
+<li><a href="#puppet-parameters">4.5. Puppet Parameters</a></li>
 </ul>
 </li>
+<li><a href="#manual-tasks">5. Manual Tasks</a></li>
 </ul>
 </div>
 </div>
@@ -760,7 +763,7 @@ For Enterprise Linux systems you will need some extra repositories to install th
 <div class="ulist">
 <ul>
 <li>
-<p>Add <code>exclude=*mcollective*</code> to the puppet entry in the file <code>/etc/yum.repos.d/puppetlabs.repo</code></p>
+<p>Add <code>exclude=*mcollective* activemq</code> to the puppet repo entries in the file <code>/etc/yum.repos.d/puppetlabs.repo</code></p>
 </li>
 <li>
 <p>"Optional" repository - enable depending on your source:</p>
@@ -789,19 +792,36 @@ For Enterprise Linux systems you will need some extra repositories to install th
 </div>
 </div>
 <div class="paragraph">
-<p>Create puppet module directory:</p>
+<p>Create the puppet module directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>mkdir /etc/puppet/modules</pre>
+<pre>mkdir -p /etc/puppet/modules</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Install the openshift puppet module:</p>
+<p>Install the openshift puppet module into this directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>puppet module install openshift/openshift_origin</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you would like to work from the puppet module source instead, you can just clone the github repository into the same directory:
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>git clone https://github.com/openshift/puppet-openshift_origin.git /etc/puppet/modules/openshift_origin</pre>
 </div>
 </div>
 </div>
@@ -811,6 +831,10 @@ For Enterprise Linux systems you will need some extra repositories to install th
 <h2 id="generating-bind-tsig-key"><a class="anchor" href="#generating-bind-tsig-key"></a>2. Generating BIND TSIG Key</h2>
 <div class="sectionbody">
 <div class="paragraph">
+<p>This key will be used to update DNS records in the BIND server that will be installed,
+both for managing application DNS and (by default) for creating host DNS records.</p>
+</div>
+<div class="paragraph">
 <p>Install the BIND package</p>
 </div>
 <div class="listingblock">
@@ -819,7 +843,7 @@ For Enterprise Linux systems you will need some extra repositories to install th
 </div>
 </div>
 <div class="paragraph">
-<p>Generate the TSIG Key</p>
+<p>Generate a TSIG Key</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -834,8 +858,13 @@ cat /var/named/Kexample.com.*.key  | awk '{print $8}'</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="update-the-machines-hostname"><a class="anchor" href="#update-the-machines-hostname"></a>3. Update the Machines Hostname</h2>
+<h2 id="update-the-host-s-name"><a class="anchor" href="#update-the-host-s-name"></a>3. Update the Host&#8217;s Name</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Choose a hostname and substitute it where needed for "broker.example.com" below.
+This sets the host&#8217;s name locally, not in DNS. For nodes, this is used as the server identity.
+Generally it is best to use a name that matches how the host will resolve in DNS.</p>
+</div>
 <div class="listingblock">
 <div class="title">Fedora</div>
 <div class="content">
@@ -857,65 +886,146 @@ hostname broker.example.com</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuring-an-all-in-one-host"><a class="anchor" href="#configuring-an-all-in-one-host"></a>4. Configuring an all-in-one host</h2>
+<h2 id="puppet-configuration"><a class="anchor" href="#puppet-configuration"></a>4. Puppet Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this configuration, the host will run the broker, node, active mq, mongodb and bind servers.</p>
+<p>You will create a file for puppet&#8217;s installation parameters for this host.
+This file will define one class (<code>openshift_origin</code>) to install any component(s) of OpenShift Origin on the host.</p>
 </div>
 <div class="paragraph">
-<p>Create a file <code>configure_origin.pp</code>, with the following template.
-Verify that <code>dns_servers</code> is usable. <code>8.8.8.8</code> is Google&#8217;s public DNS server,
-and on EC2 instances, use <code>172.16.0.23</code>.
-Furthermore, TSIG key that we generated above should be inserted.</p>
+<p><a href="http://docs.puppetlabs.com/guides/parameterized_classes.html">Using Parameterized Classes</a></p>
+</div>
+<div class="sect2">
+<h3 id="configuring-an-all-in-one-host"><a class="anchor" href="#configuring-an-all-in-one-host"></a>4.1. Configuring an all-in-one host</h3>
+<div class="paragraph">
+<p>Create a puppet configuration file <code>configure_origin.pp</code> using the following template (more examples follow):</p>
 </div>
 <div class="listingblock">
+<div class="title">Example: Single host (broker+console+node) with local BIND DNS and the htpasswd file Auth plugin:</div>
 <div class="content">
 <pre>    class { 'openshift_origin' :
-      #The DNS resolvable hostname of this host
-      node_fqdn                  =&gt; "broker.example.com",
+      # Components to install on this host:
+      roles			 =&gt; ['broker','named','activemq','datastore','node'],
 
-      #The domain under which application should be created. Eg: &lt;app&gt;-&lt;namespace&gt;.example.com
-      cloud_domain               =&gt; 'example.com',
+      # The FQDNs of the OpenShift component hosts; for a single-host
+      # system, make all values identical.
+      broker_hostname            =&gt; 'broker.example.com',
+      node_hostname              =&gt; 'broker.example.com',
+      named_hostname             =&gt; 'broker.example.com',
+      datastore_hostname         =&gt; 'broker.example.com',
+      activemq_hostname          =&gt; 'broker.example.com',
 
-      #Upstream DNS server.
-      dns_servers                =&gt; ['8.8.8.8'],
+      # BIND / named config
+      # This is the key for updating the OpenShift BIND server
+      bind_key                   =&gt; 'CNk+wjszKi9da9nL/1gkMY7H+GuUng==',
+      # The domain under which applications should be created.
+      domain                     =&gt; 'example.com',
+      # Apps would be named &lt;app&gt;-&lt;namespace&gt;.example.com
+      # This also creates hostnames for local components under our domain
+      register_host_with_named   =&gt; true,
+      # Forward requests for other domains (to Google by default)
+      conf_named_upstream_dns    =&gt; ['8.8.8.8'],
 
-      enable_network_services    =&gt; true,
-      configure_firewall         =&gt; true,
-      configure_ntp              =&gt; true,
+      # Auth OpenShift users created with htpasswd tool in /etc/openshift/htpasswd
+      broker_auth_plugin         =&gt; 'htpasswd',
+      # Username and password for initial openshift user
+      openshift_user1            =&gt; 'openshift',
+      openshift_password1        =&gt; 'password',
 
-      #Configure the required services
-      configure_activemq         =&gt; true,
-      configure_mongodb          =&gt; true,
-      configure_named            =&gt; true,
-      configure_avahi            =&gt; false,
-      configure_broker           =&gt; true,
-      configure_node             =&gt; true,
+      # To enable installing the Jenkins cartridge:
+      install_method             =&gt; 'yum',
+      jenkins_repo_base          =&gt; 'http://pkg.jenkins-ci.org/redhat',
 
       #Enable development mode for more verbose logs
       development_mode           =&gt; true,
 
-      #Update the nameserver on this host to point at Bind server
-      update_network_dns_servers =&gt; true,
+      # Set if using an external-facing ethernet device other than eth0
+      #conf_node_external_eth_dev =&gt; 'eth0',
 
-      #Use the nsupdate broker plugin to register application
-      broker_dns_plugin          =&gt; 'nsupdate',
+      #If using with GDM, or have users with UID 500 or greater, put in this list
+      #node_unmanaged_users       =&gt; ['user1'],
+    }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this configuration, the host will run the broker, node, ActiveMQ, MongoDB and BIND servers.
+You will need to substitute the BIND DNS key that was generated above; you may wish to adjust
+other parameters as well, such as the domain, host names, and initial user.</p>
+</div>
+<div class="paragraph">
+<p>Execute the puppet script:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>puppet apply --verbose configure_origin.pp</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Assuming everything runs cleanly, installation is complete. Otherwise, you can resolve the errors shown (warnings can often be ignored) and re-run puppet until it runs cleanly.</p>
+</div>
+<div class="paragraph">
+<p>Puppet is supposed to register the host DNS entries for you, but you may find this isn&#8217;t working. If you have not already arranged for the DNS resolution of this host, you can now use the oo-register-dns tool to do so:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># oo-register-dns --domain example.com --with-node-hostname broker --with-node-ip &lt;broker IP&gt;
+# ping broker.example.com
+PING broker.example.com (172.x.x.x) 56(84) bytes of data.
+64 bytes from 172.x.x.x: icmp_seq=1 ttl=64 time=0.020 ms</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Assuming everything runs cleanly and host DNS resolves, reboot the system for all settings and services to go into effect.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuring-separate-hosts-for-broker-node"><a class="anchor" href="#configuring-separate-hosts-for-broker-node"></a>4.2. Configuring separate hosts for broker/node</h3>
+<div class="paragraph">
+<p>A single host is nice for just getting started with OpenShift; but a more representative
+deployment would at least separate out the node onto a different host as below. For this
+example, prepare at least two hosts to configure with puppet.</p>
+</div>
+<div class="sect3">
+<h4 id="broker-host"><a class="anchor" href="#broker-host"></a>4.2.1. Broker host</h4>
+<div class="paragraph">
+<p>In this configuration, the first host will run the broker, ActiveMQ, MongoDB, and BIND servers.</p>
+</div>
+<div class="paragraph">
+<p>Create a file configure_origin.pp with the following template.
+As with the all-in-one host configuration file, parameters should be modified as necessary,
+particularly the bind_key.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>    class { 'openshift_origin' :
+      # Components to install on this host:
+      roles			 =&gt; ['broker','named','activemq','datastore'],
 
-      #If installing from a local build, specify the path for Origin RPMs
-      #install_repo               =&gt; 'file:///root/origin-rpms',
+      # BIND / named config
+      # This is the key for updating the OpenShift BIND server
+      bind_key                   =&gt; 'CNk+wjszKi9da9nL/1gkMY7H+GuUng==',
+      # The domain under which applications should be created.
+      domain                     =&gt; 'example.com',
+      # Apps would be named &lt;app&gt;-&lt;namespace&gt;.example.com
+      # This also creates hostnames for local components under our domain
+      register_host_with_named   =&gt; true,
+      # Forward requests for other domains (to Google by default)
+      conf_named_upstream_dns    =&gt; ['8.8.8.8'],
 
-      #If using BIND, let the broker know what TSIG key to use
-      named_tsig_priv_key         =&gt; '&lt;tsig key&gt;',
+      # The FQDNs of the OpenShift component hosts
+      broker_hostname            =&gt; 'broker.example.com',
+      named_hostname             =&gt; 'broker.example.com',
+      datastore_hostname         =&gt; 'broker.example.com',
+      activemq_hostname          =&gt; 'broker.example.com',
 
-      #If using an external ethernet device other than eth0
-      #eth_device                 =&gt; '&lt;ethernet device name, eg: enp0s5&gt;',
+      # Auth OpenShift users created with htpasswd tool in /etc/openshift/htpasswd
+      broker_auth_plugin         =&gt; 'htpasswd',
+      # Username and password for initial openshift user
+      openshift_user1            =&gt; 'openshift',
+      openshift_password1        =&gt; 'password',
 
-      #If using with GDM, or have users with UID 500 or greater, add to this list
-      #os_unmanaged_users         =&gt; ['gdm'],
-
-      #If using the stable version instead of the nightly
-      #install_repo               =&gt; 'release',
-      #dependencies_repo          =&gt; 'release',
+      #Enable development mode for more verbose logs
+      development_mode           =&gt; true,
     }</pre>
 </div>
 </div>
@@ -928,183 +1038,933 @@ Furthermore, TSIG key that we generated above should be inserted.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Assuming everything runs cleanly, installation is complete. Otherwise, you can resolve the errors shown (warnings can often be ignored)
-and re-run puppet until it runs cleanly.</p>
+<p>As with the all-in-one host, ensure puppet runs cleanly and the host DNS resolves, then reboot.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="node-host"><a class="anchor" href="#node-host"></a>4.2.2. Node host</h4>
 <div class="paragraph">
-<p>If you have not already arranged for the DNS resolution of this host, you can now use the oo-register-dns tool to do so:</p>
+<p>The second host will be configured as a node, which is where applications actually run.
+Be sure to set the local hostname differently; in our example it should be "node1.example.com".</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>oo-register-dns --with-node-hostname broker --with-node-ip &lt;broker IP&gt; --domain example.com</pre>
+<pre>    class { 'openshift_origin' :
+      # Components to install on this host:
+      roles			 =&gt; ['node'],
+
+      # BIND / named config
+      # This is the IP address for OpenShift BIND server - here, the broker.
+      named_ip_addr              =&gt; '&lt;broker IP address&gt;',
+      # This is the key for updating the OpenShift BIND server
+      bind_key                   =&gt; 'CNk+wjszKi9da9nL/1gkMY7H+GuUng==',
+      # The domain under which applications should be created.
+      domain                     =&gt; 'example.com',
+      # Apps would be named &lt;app&gt;-&lt;namespace&gt;.example.com
+      # This also creates hostnames for local components under our domain
+      register_host_with_named   =&gt; true,
+
+      # The FQDNs of the OpenShift component hosts we will need
+      broker_hostname            =&gt; 'broker.example.com',
+      activemq_hostname          =&gt; 'broker.example.com',
+      node_hostname              =&gt; 'node1.example.com',
+
+      # To enable installing the Jenkins cartridge:
+      install_method             =&gt; 'yum',
+      jenkins_repo_base          =&gt; 'http://pkg.jenkins-ci.org/redhat',
+
+      #Enable development mode for more verbose logs
+      development_mode           =&gt; true,
+
+      # Set if using an external-facing ethernet device other than eth0
+      #conf_node_external_eth_dev =&gt; 'eth0',
+
+      #If using with GDM, or have users with UID 500 or greater, put in this list
+      #node_unmanaged_users       =&gt; ['user1'],
+    }</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Assuming everything runs cleanly, reboot the system for all settings and services to go into effect.</p>
+<p>Execute the puppet script:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>puppet apply --verbose configure_origin.pp</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you have not already arranged for the DNS resolution of this host, you can now use the oo-register-dns tool on the broker host to do so:</p>
+</div>
+<div class="paragraph">
+<p>oo-register-dns --with-node-hostname broker --with-node-ip &lt;broker IP&gt; --domain example.com</p>
+</div>
+<div class="paragraph">
+<p>As with the all-in-one host, ensure puppet runs cleanly and the host DNS resolves, then reboot.</p>
+</div>
+<div class="paragraph">
+<p>This should give you a working OpenShift deployment separated into two hosts, one for broker components and one for a node.
+You may add as many more node hosts as you like.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="different-plugins-mdns-and-mongo-auth"><a class="anchor" href="#different-plugins-mdns-and-mongo-auth"></a>4.3. Different plugins: mDNS and Mongo auth</h3>
+<div class="paragraph">
+<p>This is just an example configuration demonstrating using the mDNS plugin
+(so that hosts on the same LAN can resolve the host and applications without altering resolv.conf)
+and the Mongo auth plugin (which stores user credentials in MongoDB).</p>
+</div>
+<div class="listingblock">
+<div class="title">Example: Single host (broker+console+node) using Avahi mDNS and Mongo auth plugins:</div>
+<div class="content">
+<pre>class { 'openshift_origin' :
+  domain                     =&gt; 'openshift.local',
+  register_host_with_named   =&gt; true,
+  conf_named_upstream_dns    =&gt; ['8.8.8.8'],
+  install_method             =&gt; 'yum',
+  jenkins_repo_base          =&gt; 'http://pkg.jenkins-ci.org/redhat',
+  broker_auth_plugin         =&gt; 'mongo',
+  broker_dns_plugin          =&gt; 'avahi',
+  development_mode           =&gt; true,
+  conf_node_external_eth_dev =&gt; 'eth0',
+  node_unmanaged_users       =&gt; ['root'],
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apply the puppet config and reboot as before.</p>
+</div>
+<div class="paragraph">
+<p>You may access the broker at broker.openshift.local; the initial user/pass is admin/admin.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="different-plugins-kerberos-auth-and-dns"><a class="anchor" href="#different-plugins-kerberos-auth-and-dns"></a>4.4. Different plugins: Kerberos auth and DNS</h3>
+<div class="paragraph">
+<p>This example uses Kerberos for user authentication,
+and a Kerberos keytab for making authenticated updates to a remote nameserver.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example: Single host (broker+console+node) which uses the <strong>Kerberos</strong> Auth plugin and GSS-TSIG.</div>
+<div class="content">
+<pre>class { 'openshift_origin' :
+  domain                     =&gt; 'example.com',
+  install_method             =&gt; 'yum',
+  jenkins_repo_base          =&gt; 'http://pkg.jenkins-ci.org/redhat',
+  development_mode           =&gt; true,
+  conf_node_external_eth_dev =&gt; 'eth0',
+  node_unmanaged_users       =&gt; ['root'],
+
+  # broker authenticates updates to BIND server with keytab
+  broker_dns_plugin          =&gt; 'named',
+  named_ip_addr              =&gt; '&lt;BIND server IP address&gt;',
+  bind_krb_principal         =&gt; $hostname,
+  bind_krb_keytab            =&gt; '/etc/dns.keytab'
+  register_host_with_named   =&gt; true,
+
+  # authenticate OpenShift users with kerberos
+  broker_auth_plugin         =&gt; 'kerberos',
+  broker_krb_keytab          =&gt; '/etc/http.keytab',
+  broker_krb_auth_realms     =&gt; 'EXAMPLE.COM',
+  broker_krb_service_name    =&gt; $hostname,
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Please note:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The Broker needs to be enrolled in the KDC as a host, <code>host/node_fqdn</code> as well as a service, <code>HTTP/node_fqdn</code></p>
+</li>
+<li>
+<p>Keytab should be generated, is located on the Broker machine, and Apache should be able to access it (<code>chown apache &lt;kerberos_keytab&gt;</code>)</p>
+</li>
+<li>
+<p>Like the example config below:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>set <code>broker_auth_plugin</code> to <code>'kerberos'</code></p>
+</li>
+<li>
+<p>set <code>broker_krb_keytab</code> and <code>bind_krb_keytab</code> to the absolute file location of the keytab</p>
+</li>
+<li>
+<p>set <code>broker_krb_auth_realms</code> to the kerberos realm that the Broker host is enrolled with</p>
+</li>
+<li>
+<p>set <code>broker_krb_service_name</code> to the FQDN of the enrolled kerberos service, e.g. <code>$hostname</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>After setup, to test:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>authentication: <code>kinit &lt;user&gt;</code> then <code>curl -Ik --negotiate -u : &lt;node_fqdn&gt;</code></p>
+</li>
+<li>
+<p>GSS-TSIG (should return <code>nil</code>):</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Use the Rails console on the broker to access the DNS plugin and test that it creates application records.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># cd /var/www/openshift/broker
+# scl enable ruby193 bash  # (needed for Enterprise Linux only)
+# bundle --local
+# rails console
+# d = OpenShift::DnsService.instance
+# d.register_application "appname", "namespace", "node_fqdn"
+  =&gt; nil</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For any errors, on the Broker, check <code>/var/log/openshift/broker/httpd/error_log</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="puppet-parameters"><a class="anchor" href="#puppet-parameters"></a>4.5. Puppet Parameters</h3>
+<div class="paragraph">
+<p>An exhaustive list of the parameters you can specify with puppet configuration follows.</p>
+</div>
+<div class="sect3">
+<h4 id="roles"><a class="anchor" href="#roles"></a>4.5.1. roles</h4>
+<div class="paragraph">
+<p>Choose from the following roles to be configured on this node.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>broker    - Installs the broker and console.</p>
+</li>
+<li>
+<p>node      - Installs the node and cartridges.</p>
+</li>
+<li>
+<p>activemq  - Installs activemq message broker.</p>
+</li>
+<li>
+<p>datastore - Installs MongoDB (not sharded/replicated)</p>
+</li>
+<li>
+<p>named     - Installs a BIND dns server configured with a TSIG key for updates.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Default: [<em>broker</em>,<em>node</em>,<em>activemq</em>,<em>datastore</em>,<em>named</em>]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="install_method"><a class="anchor" href="#install_method"></a>4.5.2. install_method</h4>
+<div class="paragraph">
+<p>Choose from the following ways to provide packages:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>none - install sources are already set up when the script executes (default)</p>
+</li>
+<li>
+<p>yum - set up yum repos manually</p>
+<div class="ulist">
+<ul>
+<li>
+<p>repos_base</p>
+</li>
+<li>
+<p>os_repo</p>
+</li>
+<li>
+<p>os_updates_repo</p>
+</li>
+<li>
+<p>jboss_repo_base</p>
+</li>
+<li>
+<p>jenkins_repo_base</p>
+</li>
+<li>
+<p>optional_repo</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Default: yum</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="repos_base"><a class="anchor" href="#repos_base"></a>4.5.3. repos_base</h4>
+<div class="paragraph">
+<p>Base path to repository for OpenShift Origin</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Nightlies:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fedora: <a href="https://mirror.openshift.com/pub/origin-server/nightly/fedora-19">https://mirror.openshift.com/pub/origin-server/nightly/fedora-19</a></p>
+</li>
+<li>
+<p>RHEL:   <a href="https://mirror.openshift.com/pub/origin-server/nightly/rhel-6">https://mirror.openshift.com/pub/origin-server/nightly/rhel-6</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Release-2:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fedora: <a href="https://mirror.openshift.com/pub/origin-server/release/2/fedora-19">https://mirror.openshift.com/pub/origin-server/release/2/fedora-19</a></p>
+</li>
+<li>
+<p>RHEL:   <a href="https://mirror.openshift.com/pub/origin-server/release/2/rhel-6">https://mirror.openshift.com/pub/origin-server/release/2/rhel-6</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Default: Fedora-19 Nightlies</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="override_install_repo"><a class="anchor" href="#override_install_repo"></a>4.5.4. override_install_repo</h4>
+<div class="paragraph">
+<p>Repository path override. Uses dependencies from repos_base but uses
+override_install_repo path for OpenShift RPMs. Used when doing local builds.</p>
+</div>
+<div class="paragraph">
+<p>Default: none</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="os_repo"><a class="anchor" href="#os_repo"></a>4.5.5. os_repo</h4>
+<div class="paragraph">
+<p>The URL for a Fedora 19/RHEL 6 yum repository used with the "yum" install method.
+Should end in x86_64/os/.</p>
+</div>
+<div class="paragraph">
+<p>Default: no change</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="os_updates"><a class="anchor" href="#os_updates"></a>4.5.6. os_updates</h4>
+<div class="paragraph">
+<p>The URL for a Fedora 19/RHEL 6 yum updates repository used with the "yum" install method.
+Should end in x86_64/.</p>
+</div>
+<div class="paragraph">
+<p>Default: no change</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jboss_repo_base"><a class="anchor" href="#jboss_repo_base"></a>4.5.7. jboss_repo_base</h4>
+<div class="paragraph">
+<p>The URL for a JBoss repositories used with the "yum" install method.
+Does not install repository if not specified.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jenkins_repo_base"><a class="anchor" href="#jenkins_repo_base"></a>4.5.8. jenkins_repo_base</h4>
+<div class="paragraph">
+<p>The URL for a Jenkins repositories used with the "yum" install method.
+Does not install repository if not specified.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="optional_repo"><a class="anchor" href="#optional_repo"></a>4.5.9. optional_repo</h4>
+<div class="paragraph">
+<p>The URL for a EPEL or optional repositories used with the "yum" install method.
+Does not install repository if not specified.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="domain"><a class="anchor" href="#domain"></a>4.5.10. domain</h4>
+<div class="paragraph">
+<p>The network domain under which apps and hosts will be placed.</p>
+</div>
+<div class="paragraph">
+<p>Default: example.com</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_hostname"><a class="anchor" href="#broker_hostname"></a>4.5.11. broker_hostname</h4>
+
+</div>
+<div class="sect3">
+<h4 id="node_hostname"><a class="anchor" href="#node_hostname"></a>4.5.12. node_hostname</h4>
+
+</div>
+<div class="sect3">
+<h4 id="named_hostname"><a class="anchor" href="#named_hostname"></a>4.5.13. named_hostname</h4>
+
+</div>
+<div class="sect3">
+<h4 id="activemq_hostname"><a class="anchor" href="#activemq_hostname"></a>4.5.14. activemq_hostname</h4>
+
+</div>
+<div class="sect3">
+<h4 id="datastore_hostname"><a class="anchor" href="#datastore_hostname"></a>4.5.15. datastore_hostname</h4>
+<div class="paragraph">
+<p>Default: the root plus the domain, e.g. broker.example.com.</p>
+</div>
+<div class="paragraph">
+<p>These supply the FQDN of the hosts containing these components. Used
+for configuring the host&#8217;s name at install, and also for configuring
+the broker application to reach the services needed.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+if installing a nameserver, the script will create
+DNS entries for the hostnames of the other components being
+installed on this host as well. If you are using a nameserver set
+up separately, you are responsible for all necessary DNS entries.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="named_ip_addr"><a class="anchor" href="#named_ip_addr"></a>4.5.16. named_ip_addr</h4>
+<div class="paragraph">
+<p>Default: IP of a named instance or current IP if installing on this
+host. This is used by every host to configure its primary name server.</p>
+</div>
+<div class="paragraph">
+<p>Default: the current IP (at install)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="bind_key"><a class="anchor" href="#bind_key"></a>4.5.17. bind_key</h4>
+<div class="paragraph">
+<p>When the nameserver is remote, use this to specify the HMAC-MD5 key
+for updates. This is the "Key:" field from the .private key file
+generated by dnssec-keygen. This field is required on all nodes.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="bind_krb_keytab"><a class="anchor" href="#bind_krb_keytab"></a>4.5.18. bind_krb_keytab</h4>
+<div class="paragraph">
+<p>When the nameserver is remote, Kerberos keytab together with principal
+can be used instead of the HMAC-MD5 key for updates.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="bind_krb_principal"><a class="anchor" href="#bind_krb_principal"></a>4.5.19. bind_krb_principal</h4>
+<div class="paragraph">
+<p>When the nameserver is remote, this Kerberos principal together with
+Kerberos keytab can be used instead of the HMAC-MD5 key for updates.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="conf_named_upstream_dns"><a class="anchor" href="#conf_named_upstream_dns"></a>4.5.20. conf_named_upstream_dns</h4>
+<div class="paragraph">
+<p>List of upstream DNS servers to use when installing named on this node.</p>
+</div>
+<div class="paragraph">
+<p>Default: [<em>8.8.8.8</em>]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_ip_addr"><a class="anchor" href="#broker_ip_addr"></a>4.5.21. broker_ip_addr</h4>
+<div class="paragraph">
+<p>This is used for the node to record its broker. Also is the default
+for the nameserver IP if none is given.</p>
+</div>
+<div class="paragraph">
+<p>Default: the current IP (at install)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="node_ip_addr"><a class="anchor" href="#node_ip_addr"></a>4.5.22. node_ip_addr</h4>
+<div class="paragraph">
+<p>This is used for the node to give a public IP, if different from the
+one on its NIC.</p>
+</div>
+<div class="paragraph">
+<p>Default: the current IP (at install)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="configure_ntp"><a class="anchor" href="#configure_ntp"></a>4.5.23. configure_ntp</h4>
+<div class="paragraph">
+<p>Enabling this configures NTP.  It is important that the time be
+synchronized across hosts because MCollective messages have a TTL
+of 60 seconds and may be dropped if the clocks are too far out
+of synch.  However, NTP is not necessary if the clock will be kept
+in synch by some other means.</p>
+</div>
+<div class="paragraph">
+<p>Default: true</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+Passwords used to secure various services. You are advised to specify
+only alphanumeric values in this script as others may cause syntax
+errors depending on context. If non-alphanumeric values are required,
+update them separately after installation.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="activemq_admin_password"><a class="anchor" href="#activemq_admin_password"></a>4.5.24. activemq_admin_password</h4>
+<div class="paragraph">
+<p>This is the admin password for the ActiveMQ admin console, which is
+not needed by OpenShift but might be useful in troubleshooting.</p>
+</div>
+<div class="paragraph">
+<p>Default: scrambled</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mcollective_user"><a class="anchor" href="#mcollective_user"></a>4.5.25. mcollective_user</h4>
+
+</div>
+<div class="sect3">
+<h4 id="mcollective_password"><a class="anchor" href="#mcollective_password"></a>4.5.26. mcollective_password</h4>
+<div class="paragraph">
+<p>This is the user and password shared between broker and node for
+communicating over the mcollective topic channels in ActiveMQ. Must
+be the same on all broker and node hosts.</p>
+</div>
+<div class="paragraph">
+<p>Default: mcollective/marionette</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mongodb_admin_user"><a class="anchor" href="#mongodb_admin_user"></a>4.5.27. mongodb_admin_user</h4>
+
+</div>
+<div class="sect3">
+<h4 id="mongodb_admin_password"><a class="anchor" href="#mongodb_admin_password"></a>4.5.28. mongodb_admin_password</h4>
+<div class="paragraph">
+<p>These are the username and password of the administrative user that
+will be created in the MongoDB datastore. These credentials are not
+used by in this script or by OpenShift, but an administrative user
+must be added to MongoDB in order for it to enforce authentication.
+Default: admin/mongopass</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mongodb_broker_user"><a class="anchor" href="#mongodb_broker_user"></a>4.5.29. mongodb_broker_user</h4>
+
+</div>
+<div class="sect3">
+<h4 id="mongodb_broker_password"><a class="anchor" href="#mongodb_broker_password"></a>4.5.30. mongodb_broker_password</h4>
+<div class="paragraph">
+<p>These are the username and password of the normal user that will be
+created for the broker to connect to the MongoDB datastore. The
+broker application&#8217;s MongoDB plugin is also configured with these
+values.</p>
+</div>
+<div class="paragraph">
+<p>Default: openshift/mongopass</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mongodb_name"><a class="anchor" href="#mongodb_name"></a>4.5.31. mongodb_name</h4>
+<div class="paragraph">
+<p>This is the name of the database in MongoDB in which the broker will
+store data.</p>
+</div>
+<div class="paragraph">
+<p>Default: openshift_broker</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="openshift_user1"><a class="anchor" href="#openshift_user1"></a>4.5.32. openshift_user1</h4>
+
+</div>
+<div class="sect3">
+<h4 id="openshift_password1"><a class="anchor" href="#openshift_password1"></a>4.5.33. openshift_password1</h4>
+<div class="paragraph">
+<p>This user and password are entered in the /etc/openshift/htpasswd
+file as a demo/test user. You will likely want to remove it after
+installation (or just use a different auth method).</p>
+</div>
+<div class="paragraph">
+<p>Default: demo/changeme</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="conf_broker_auth_salt"><a class="anchor" href="#conf_broker_auth_salt"></a>4.5.34. conf_broker_auth_salt</h4>
+
+</div>
+<div class="sect3">
+<h4 id="conf_broker_auth_public_key"><a class="anchor" href="#conf_broker_auth_public_key"></a>4.5.35. conf_broker_auth_public_key</h4>
+
+</div>
+<div class="sect3">
+<h4 id="conf_broker_auth_private_key"><a class="anchor" href="#conf_broker_auth_private_key"></a>4.5.36. conf_broker_auth_private_key</h4>
+
+</div>
+<div class="sect3">
+<h4 id="conf_broker_auth_key_password"><a class="anchor" href="#conf_broker_auth_key_password"></a>4.5.37. conf_broker_auth_key_password</h4>
+<div class="paragraph">
+<p>Salt, public and private keys used when generating secure authentication
+tokens for Application to Broker communication. Requests like scale up/down
+and jenkins builds use these authentication tokens. This value must be the
+same on all broker nodes.</p>
+</div>
+<div class="paragraph">
+<p>Default:  Self signed keys are generated. Will not work with multi-broker
+          setup.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="conf_broker_session_secret"><a class="anchor" href="#conf_broker_session_secret"></a>4.5.38. conf_broker_session_secret</h4>
+
+</div>
+<div class="sect3">
+<h4 id="conf_console_session_secret"><a class="anchor" href="#conf_console_session_secret"></a>4.5.39. conf_console_session_secret</h4>
+<div class="paragraph">
+<p>Session secrets used to encode cookies used by console and broker. This
+value must be the same on all broker nodes.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="conf_valid_gear_sizes"><a class="anchor" href="#conf_valid_gear_sizes"></a>4.5.40. conf_valid_gear_sizes</h4>
+<div class="paragraph">
+<p>List of all gear sizes this will be used in this OpenShift installation.</p>
+</div>
+<div class="paragraph">
+<p>Default: [<em>small</em>]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_dns_plugin"><a class="anchor" href="#broker_dns_plugin"></a>4.5.41. broker_dns_plugin</h4>
+<div class="paragraph">
+<p>DNS plugin used by the broker to register application DNS entries.
+Options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>nsupdate - nsupdate based plugin. Supports TSIG and GSS-TSIG based
+authentication. Uses bind_key for TSIG and bind_krb_keytab,
+bind_krb_principal for GSS_TSIG auth.</p>
+</li>
+<li>
+<p>avahi    - sets up a MDNS based DNS resolution. Works only for
+all-in-one installations.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_auth_plugin"><a class="anchor" href="#broker_auth_plugin"></a>4.5.42. broker_auth_plugin</h4>
+<div class="paragraph">
+<p>Authentication setup for users of the OpenShift service.
+Options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>mongo       - Stores username and password in mongo.</p>
+</li>
+<li>
+<p>kerberos    - Kerberos based authentication. Uses
+broker_krb_service_name, broker_krb_auth_realms,
+broker_krb_keytab values.</p>
+</li>
+<li>
+<p>htpasswd    - Stores username/password in a htaccess file.</p>
+</li>
+<li>
+<p>ldap        - LDAP based authentication. Uses broker_ldap_uri.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Default: htpasswd</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_krb_service_name"><a class="anchor" href="#broker_krb_service_name"></a>4.5.43. broker_krb_service_name</h4>
+<div class="paragraph">
+<p>The KrbServiceName value for mod_auth_kerb configuration</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_krb_auth_realms"><a class="anchor" href="#broker_krb_auth_realms"></a>4.5.44. broker_krb_auth_realms</h4>
+<div class="paragraph">
+<p>The KrbAuthRealms value for mod_auth_kerb configuration</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_krb_keytab"><a class="anchor" href="#broker_krb_keytab"></a>4.5.45. broker_krb_keytab</h4>
+<div class="paragraph">
+<p>The Krb5KeyTab value of mod_auth_kerb is not configurable&#8201;&#8212;&#8201;the keytab
+is expected in /var/www/openshift/broker/httpd/conf.d/http.keytab</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="broker_ldap_uri"><a class="anchor" href="#broker_ldap_uri"></a>4.5.46. broker_ldap_uri</h4>
+<div class="paragraph">
+<p>URI to the LDAP server (e.g. ldap://ldap.example.com:389/ou=People,dc=my-domain,dc=com).
+Set &lt;code&gt;broker_auth_plugin&lt;/code&gt; to &lt;code&gt;ldap&lt;/code&gt; to enable
+this feature.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="node_container_plugin"><a class="anchor" href="#node_container_plugin"></a>4.5.47. node_container_plugin</h4>
+<div class="paragraph">
+<p>Specify the container type to use on the node.
+Options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>selinux - This is the default OpenShift Origin container type.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="node_frontend_plugins"><a class="anchor" href="#node_frontend_plugins"></a>4.5.48. node_frontend_plugins</h4>
+<div class="paragraph">
+<p>Specify one or more plugins to use register HTTP and web-socket connections
+for applications.
+Options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>apache-mod-rewrite  - Mod-Rewrite based plugin for HTTP and HTTPS
+requests. Well suited for installations with a lot of
+creates/deletes/scale actions.</p>
+</li>
+<li>
+<p>apache-vhost        - VHost based plugin for HTTP and HTTPS. Suited for
+installations with less app create/delete activity. Easier to
+customize.</p>
+</li>
+<li>
+<p>nodejs-websocket    - Web-socket proxy listening on ports 8000/8444</p>
+</li>
+<li>
+<p>haproxy-sni-proxy   - TLS proxy using SNI routing on ports 2303 through 2308
+requires /usr/sbin/haproxy15 (haproxy-1.5-dev19 or later).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Default: [<em>apache-mod-rewrite</em>,<em>nodejs-websocket</em>]</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="node_unmanaged_users"><a class="anchor" href="#node_unmanaged_users"></a>4.5.49. node_unmanaged_users</h4>
+<div class="paragraph">
+<p>List of user names who have UIDs in the range of OpenShift gears but must be
+excluded from OpenShift gear setups.</p>
+</div>
+<div class="paragraph">
+<p>Default: []</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="conf_node_external_eth_dev"><a class="anchor" href="#conf_node_external_eth_dev"></a>4.5.50. conf_node_external_eth_dev</h4>
+<div class="paragraph">
+<p>External facing network device. Used for routing and traffic control setup.</p>
+</div>
+<div class="paragraph">
+<p>Default: eth0</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="conf_node_supplementary_posix_groups"><a class="anchor" href="#conf_node_supplementary_posix_groups"></a>4.5.51. conf_node_supplementary_posix_groups</h4>
+<div class="paragraph">
+<p>Name of supplementary UNIX group to add a gear to.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="development_mode"><a class="anchor" href="#development_mode"></a>4.5.52. development_mode</h4>
+<div class="paragraph">
+<p>Set development mode and extra logging.</p>
+</div>
+<div class="paragraph">
+<p>Default: false</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="install_login_shell"><a class="anchor" href="#install_login_shell"></a>4.5.53. install_login_shell</h4>
+<div class="paragraph">
+<p>Install a Getty shell which displays DNS, IP and login information. Used for
+all-in-one VM installation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="register_host_with_named"><a class="anchor" href="#register_host_with_named"></a>4.5.54. register_host_with_named</h4>
+<div class="paragraph">
+<p>Setup DNS entries for this host in a locally installed BIND DNS instance.</p>
+</div>
+<div class="paragraph">
+<p>Default: false</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="install_cartridges"><a class="anchor" href="#install_cartridges"></a>4.5.55. install_cartridges</h4>
+<div class="paragraph">
+<p>List of cartridges to be installed on the node. Options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>10gen-mms-agent</p>
+</li>
+<li>
+<p>cron</p>
+</li>
+<li>
+<p>diy</p>
+</li>
+<li>
+<p>haproxy</p>
+</li>
+<li>
+<p>mongodb</p>
+</li>
+<li>
+<p>nodejs</p>
+</li>
+<li>
+<p>perl</p>
+</li>
+<li>
+<p>php</p>
+</li>
+<li>
+<p>phpmyadmin</p>
+</li>
+<li>
+<p>postgresql</p>
+</li>
+<li>
+<p>python</p>
+</li>
+<li>
+<p>ruby</p>
+</li>
+<li>
+<p>jenkins</p>
+</li>
+<li>
+<p>jenkins-client</p>
+</li>
+<li>
+<p>mariadb         (will install mysql on RHEL)</p>
+</li>
+<li>
+<p>jbossews</p>
+</li>
+<li>
+<p>jbossas</p>
+</li>
+<li>
+<p>jbosseap</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Default: [<em>10gen-mms-agent</em>,<em>cron</em>,<em>diy</em>,<em>haproxy</em>,<em>mongodb</em>,
+          <em>nodejs</em>,<em>perl</em>,<em>php</em>,<em>phpmyadmin</em>,<em>postgresql</em>,
+          <em>python</em>,<em>ruby</em>,<em>jenkins</em>,<em>jenkins-client</em>,<em>mariadb</em>]</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuring-separate-hosts-for-broker-node"><a class="anchor" href="#configuring-separate-hosts-for-broker-node"></a>5. Configuring separate hosts for broker/node</h2>
+<h2 id="manual-tasks"><a class="anchor" href="#manual-tasks"></a>5. Manual Tasks</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="broker-host"><a class="anchor" href="#broker-host"></a>5.1. Broker host</h3>
 <div class="paragraph">
-<p>In this configuration, the host will run the broker, active mq, mongodb and bind servers.</p>
+<p>This script attempts to automate as many tasks as it reasonably can.
+Unfortunately, it is constrained to setting up only a single host at a
+time. In an assumed multi-host setup, you will need to do the
+following after the script has completed.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set up DNS entries for hosts.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>Create a file <code>configure_origin.pp</code> with the following template.
-As with the all-in-one host configuration file, <code>dns_servers</code> and <code>named_tsig_priv_key</code> should be
-modified if necessary.</p>
+<p>If you installed BIND with the script, then any other components
+installed with the script on the same host received DNS entries.
+Other hosts must all be defined manually, including at least your
+node hosts. oo-register-dns may prove useful for this.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Copy public rsync key to enable moving gears.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The broker rsync public key needs to go on nodes, but there is no
+good way to script that generically. Nodes should not have
+password-less access to brokers to copy the .pub key, so this must
+be performed manually on each node host:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>    class { 'openshift_origin' :
-      #The DNS resolvable hostname of this host
-      node_fqdn                  =&gt; "broker.example.com",
-
-      #The domain under which application should be created. Eg: &lt;app&gt;-&lt;namespace&gt;.example.com
-      cloud_domain               =&gt; 'example.com',
-
-      #Set to `'nightlies'` to pull from latest nightly build
-      #Or pass path of your locally built source `'file:///root/origin-rpms'`
-      install_repo               =&gt; 'nightlies',
-
-      #Upstream DNS server.
-      dns_servers                =&gt; ['8.8.8.8'],
-
-      enable_network_services    =&gt; true,
-      configure_firewall         =&gt; true,
-      configure_ntp              =&gt; true,
-
-      #Configure the required services
-      configure_activemq         =&gt; true,
-      configure_mongodb          =&gt; true,
-      configure_named            =&gt; true,
-      configure_avahi            =&gt; false,
-      configure_broker           =&gt; true,
-
-      #Don't configure the node
-      configure_node             =&gt; false,
-
-      #Enable development mode for more verbose logs
-      development_mode           =&gt; true,
-
-      #Update the nameserver on this host to point at Bind server
-      update_network_dns_servers =&gt; true,
-
-      #Use the nsupdate broker plugin to register application
-      broker_dns_plugin          =&gt; 'nsupdate',
-
-      #If installing from a local build, specify the path for Origin RPMs
-      #install_repo               =&gt; 'file:///root/origin-rpms',
-
-      #If using BIND, let the broker know what TSIG key to use
-      named_tsig_priv_key         =&gt; '&lt;tsig key&gt;',
-
-      #If using an external ethernet device other than eth0
-      #eth_device                 =&gt; '&lt;ethernet device name, eg: enp0s5&gt;',
-
-      #If using with GDM, or have users with UID 500 or greater, add to this list
-      #os_unmanaged_users         =&gt; ['gdm'],
-
-      #If using the stable version instead of the nightly
-      #install_repo               =&gt; 'release',
-      #dependencies_repo          =&gt; 'release',
-    }</pre>
+<pre># scp root@broker:/etc/openshift/rsync_id_rsa.pub /root/.ssh/
+(above step will ask for the root password of the broker machine)
+# cat /root/.ssh/rsync_id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys
+# rm /root/.ssh/rsync_id_rsa.pub</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Execute the puppet script:</p>
+<p>If you skip this, each gear move will require typing root passwords
+for each of the node hosts involved.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>puppet apply --verbose configure_origin.pp</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>As with the all-in-one host, ensure DNS resolves this host and puppet runs cleanly, then reboot.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="node-host"><a class="anchor" href="#node-host"></a>5.2. Node host</h3>
-<div class="paragraph">
-<p>In this configuration, the host will run only the node.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Copy ssh host keys between the node hosts.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>Create a file <code>configure_origin.pp</code> with the following template.
-<code>dns_servers</code> should be usable. <code>named_ipaddress</code> and various <code>*_fqdn</code>
-values should be modified.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>    class { 'openshift_origin' :
-      #The DNS resolvable hostname of this host
-      node_fqdn                  =&gt; "node.example.com",
-
-      #The domain under which application should be created. Eg: &lt;app&gt;-&lt;namespace&gt;.example.com
-      cloud_domain               =&gt; 'example.com',
-
-      #Set to `'nightlies'` to pull from latest nightly build
-      #Or pass path of your locally built source `'file:///root/origin-rpms'`
-      install_repo               =&gt; 'nightlies',
-
-      #Upstream DNS server.
-      dns_servers                =&gt; ['8.8.8.8'],
-
-      enable_network_services    =&gt; true,
-      configure_firewall         =&gt; true,
-      configure_ntp              =&gt; true,
-
-      #Don't configure the broker services
-      configure_activemq         =&gt; false,
-      configure_mongodb          =&gt; false,
-      configure_named            =&gt; false,
-      configure_avahi            =&gt; false,
-      configure_broker           =&gt; false,
-
-      #Configure the node
-      configure_node             =&gt; true,
-      named_ipaddress            =&gt; &lt;IP address of broker machine&gt;,
-      mongodb_fqdn               =&gt; &lt;FQDN of broker machine&gt;,
-      mq_fqdn                    =&gt; &lt;FQDN of broker machine&gt;,
-      broker_fqdn                =&gt; &lt;FQDN of broker machine&gt;,
-
-      #Enable development mode for more verbose logs
-      development_mode           =&gt; true,
-
-      #Update the nameserver on this host to point at Bind server
-      update_network_dns_servers =&gt; true,
-
-      #Use the nsupdate broker plugin to register application
-      broker_dns_plugin          =&gt; 'nsupdate',
-
-      #If installing from a local build, specify the path for Origin RPMs
-      #install_repo               =&gt; 'file:///root/origin-rpms',
-
-      #If using an external ethernet device other than eth0
-      #eth_device                 =&gt; '&lt;ethernet device name, eg: enp0s5&gt;',
-
-      #If using with GDM, or have users with UID 500 or greater, add to this list
-      #os_unmanaged_users         =&gt; ['gdm'],
-
-      #If using the stable version instead of the nightly
-      #install_repo               =&gt; 'release',
-      #dependencies_repo          =&gt; 'release',
-    }</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Execute the puppet script:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>puppet apply --verbose configure_origin.pp</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>As with the all-in-one host, ensure DNS resolves this host and puppet runs cleanly, then reboot.</p>
-</div>
+<p>All node hosts should identify with the same host keys, so that when gears
+are moved between hosts, ssh and git don&#8217;t give developers spurious
+warnings about the host keys changing. So, copy /etc/ssh/ssh_* from
+one node host to all the rest (or, if using the same image for all
+hosts, just keep the keys from the image).</p>
 </div>
 </div>
 </div></div>
@@ -1112,7 +1972,7 @@ values should be modified.</p>
 <div id="footer-text">
 Version 2.0
 <br>
-Last updated 2013-10-19 12:03:30 EDT
+Last updated 2013-11-12 09:36:42 EST
 </div>
 <!-- Google Analytics -->
 <script>
