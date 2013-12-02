@@ -665,8 +665,9 @@ code { font-family: source_code_pro; }
 <li>
 <ul class="sectlevel2">
 <li><a href="#install-openshift-com">2.1. install.openshift.com</a></li>
-<li><a href="#running-oo-install-from-source">2.2. Running oo-install from source</a></li>
-<li><a href="#installer-command-line-options">2.3. Installer Command-Line Options</a></li>
+<li><a href="#portable-installer">2.2. Portable Installer</a></li>
+<li><a href="#running-oo-install-from-source">2.3. Running oo-install from source</a></li>
+<li><a href="#installer-command-line-options">2.4. Installer Command-Line Options</a></li>
 </ul>
 </li>
 <li><a href="#configuring-your-deployment">3. Configuring Your Deployment</a></li>
@@ -727,6 +728,20 @@ code { font-family: source_code_pro; }
 <div class="paragraph">
 <p>In short, no. One of the design goals of the <code>oo-install</code> utility is to make this document completely unnecessary. If you are feeling bold, you are heartily encouraged to attempt to use the installer right now without any additionaly guidance. Check out <a href="https://install.openshift.com/">https://install.openshift.com/</a> for the quick rundown on how to get started. If you run into problems, head back here or send your questions and feedback to the mailing lists or IRC channels mentioned on the oo-install web page.</p>
 </div>
+<h4 id="source-code" class="float">Source Code</h4>
+<div class="paragraph">
+<p>The locations for the source code of this document and the <code>oo-install</code> utility are as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This document: <a href="https://github.com/openshift/origin-server/blob/master/documentation/oo_install_users_guide.adoc">https://github.com/openshift/origin-server/blob/master/documentation/oo_install_users_guide.adoc</a></p>
+</li>
+<li>
+<p><code>oo-install</code>: <a href="https://github.com/openshift/openshift-extras/tree/master/oo-install">https://github.com/openshift/openshift-extras/tree/master/oo-install</a></p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -737,6 +752,34 @@ code { font-family: source_code_pro; }
 </div>
 <div class="sect2">
 <h3 id="utility-prerequisites"><a class="anchor" href="#utility-prerequisites"></a>1.1. Utility Prerequisites</h3>
+<div class="paragraph">
+<p>This section explains the utilities that you will need to install on the various hosts that may be involved in your OpenShift installation. Install these before you run <code>oo-install</code> to avoid having to go back and set them up later.</p>
+</div>
+<div class="paragraph">
+<p>If you find a host system that is missing one of these required utilities, you can use <code>yum</code> to search for an appropriate RPM by running:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ yum provides '*/&lt;utility&gt;'</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Where "&lt;utility&gt;" is the name of the utility that you are looking to install.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you are using a Linux distribution that does not ship with <code>yum</code> and can&#8217;t do software updates with <code>yum</code>, then chances are good this installer is not going to work for you.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="on-the-code-oo-install-code-host"><a class="anchor" href="#on-the-code-oo-install-code-host"></a>1.1.1. On the <code>oo-install</code> Host</h4>
 <div class="paragraph">
 <p>You can run the OpenShift installer from any computer that has the following utilities installed:</p>
 </div>
@@ -765,10 +808,72 @@ code { font-family: source_code_pro; }
 <p>If you want to run <code>oo-install</code> against a remote target host, you will also need the <code>ssh</code> client.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="on-the-target-hosts"><a class="anchor" href="#on-the-target-hosts"></a>1.1.2. On the Target Hosts</h4>
+<div class="paragraph">
+<p>The host systems where you will be installing OpenShift will need to have the following utilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>yum</p>
+</li>
+<li>
+<p>getenforce (part of <a href="http://en.wikipedia.org/wiki/Security-Enhanced_Linux">SELinux</a>)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+SELinux must be running in <em>Enforcing</em> mode or <em>Permissive</em> mode on every host system where OpenShift components will be installed.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="origin-specific-utilities"><a class="anchor" href="#origin-specific-utilities"></a>1.1.3. Origin-Specific Utilities</h4>
+<div class="paragraph">
+<p>If you are installing OpenShift Origin, you will also need to install the following utilities on your target host systems:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>On all target hosts:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://puppetlabs.com/">puppet</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>On your Broker host:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>dnssec-keygen</p>
+</li>
+<li>
+<p>htpasswd</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
 <div class="sect2">
 <h3 id="where-should-i-run-this"><a class="anchor" href="#where-should-i-run-this"></a>1.2. Where Should I Run This?</h3>
 <div class="paragraph">
-<p>The <code>oo-install</code> utility can run on <em>any</em> system that meets the minimum prerequisites. This is important to understand, because while you <em>can</em> run the installer from your intended Broker host, you could just as easily run it from your own computer (as long as you have SSH access to the target host). As you are answering the installer&#8217;s questions about where your Broker lives, it is actually useful to think of it the way that other hosts would see it, even if you are running the installer from the system where an OpenShift component will live.</p>
+<p>The <code>oo-install</code> utility can run on <em>any</em> system that meets the minimum prerequisites <a href="#on-the-code-oo-install-code-host">mentioned above</a>. This is important to understand, because while you <em>can</em> run the installer from your intended Broker host, you could just as easily run it from your own computer (as long as you have SSH access to the target host). As you are answering the installer&#8217;s questions about where your Broker lives, it is actually useful to think of it the way that other hosts would see it, even if you are running the installer from the system where an OpenShift component will live.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -836,7 +941,7 @@ If you are running the installer locally, but your OpenShift deployment will be 
 </td>
 <td class="content">
 <div class="paragraph">
-<p>OpenShift Enterprise installations require access to Red Hat Subscription Manager or Red Hat Network, and have only been verified to succeed on hosts running Red Hat Enterprise Linux 6.4.</p>
+<p>OpenShift Enterprise installations require access to Red Hat Subscription Manager or Red Hat Network, and are verified to succeed on hosts running under a current Red Hat Enterprise Linux subscription.</p>
 </div>
 </td>
 </tr>
@@ -844,7 +949,53 @@ If you are running the installer locally, but your OpenShift deployment will be 
 </div>
 </div>
 <div class="sect2">
-<h3 id="running-oo-install-from-source"><a class="anchor" href="#running-oo-install-from-source"></a>2.2. Running oo-install from source</h3>
+<h3 id="portable-installer"><a class="anchor" href="#portable-installer"></a>2.2. Portable Installer</h3>
+<div class="paragraph">
+<p>You can download a version of the online installer for use on a CD or USB drive. The latest versions of the portable packages are available at:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift Origin Portable: <a href="https://install.openshift.com/portable/oo-install-origin.zip">https://install.openshift.com/portable/oo-install-origin.zip</a></p>
+</li>
+<li>
+<p>OpenShift Enterprise Portable: <a href="https://install.openshift.com/portable/oo-install-ose.zip">https://install.openshift.com/portable/oo-install-ose.zip</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To use these portable installers:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download and unzip the portable installer zip file.</p>
+</li>
+<li>
+<p>Copy or burn the unzipped files to a USB drive or CD-ROM, respectively.</p>
+</li>
+<li>
+<p>Refer to the included README for instructions on starting the installation from the provided launcher.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Be aware that even if you are using the portable installer, your target hosts systems may still require internet access for necessary OpenShift RPMs.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="running-oo-install-from-source"><a class="anchor" href="#running-oo-install-from-source"></a>2.3. Running oo-install from source</h3>
 <div class="paragraph">
 <p>If you are working on <code>oo-install</code> development, you can also run the installer directly from source:</p>
 </div>
@@ -869,7 +1020,7 @@ If you are running the installer locally, but your OpenShift deployment will be 
 </div>
 </div>
 <div class="sect2">
-<h3 id="installer-command-line-options"><a class="anchor" href="#installer-command-line-options"></a>2.3. Installer Command-Line Options</h3>
+<h3 id="installer-command-line-options"><a class="anchor" href="#installer-command-line-options"></a>2.4. Installer Command-Line Options</h3>
 <div class="paragraph">
 <p>The complete list of options is as follows:</p>
 </div>
@@ -886,19 +1037,19 @@ If you are running the installer locally, but your OpenShift deployment will be 
 </div>
 </div>
 <div class="sect3">
-<h4 id="a-advanced-mode"><a class="anchor" href="#a-advanced-mode"></a>2.3.1. -a / --advanced-mode</h4>
+<h4 id="a-advanced-mode"><a class="anchor" href="#a-advanced-mode"></a>2.4.1. -a / --advanced-mode</h4>
 <div class="paragraph">
 <p>By default, the installation utility will automatically install <a href="http://www.mongodb.org/">MongoDB</a> and <a href="http://activemq.apache.org/">ActiveMQ</a> on the same system that you designate as the OpenShift Broker. If you would prefer to install these services on different hosts systems, pass the <em>-a</em> flag and you will br prompted to provide information on these other target systems. For more on "deployment roles", see the <a href="#roles-summarized">Roles Summarized</a> below.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="c-config-file-filepath"><a class="anchor" href="#c-config-file-filepath"></a>2.3.2. -c / --config-file FILEPATH</h4>
+<h4 id="c-config-file-filepath"><a class="anchor" href="#c-config-file-filepath"></a>2.4.2. -c / --config-file FILEPATH</h4>
 <div class="paragraph">
 <p>The installer will look for a configuration file at the default location <code>~/.openshift/oo-install-cfg.yml</code>. If you want to use a different file, you can pass the filepath with this option. If the file that you specify does not exist, it will automatically be created with some basic settings.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="w-workflow-workflow_id"><a class="anchor" href="#w-workflow-workflow_id"></a>2.3.3. -w / --workflow WORKFLOW_ID</h4>
+<h4 id="w-workflow-workflow_id"><a class="anchor" href="#w-workflow-workflow_id"></a>2.4.3. -w / --workflow WORKFLOW_ID</h4>
 <div class="paragraph">
 <p>If you have already configured a complete OpenShift deployment, you can run the installer without any user interaction by providing this argument and the ID of an installer workflow. For example, you can run the OpenShift full deployment workflow like this:</p>
 </div>
@@ -912,13 +1063,13 @@ If you are running the installer locally, but your OpenShift deployment will be 
 </div>
 </div>
 <div class="sect3">
-<h4 id="e-enterprise-mode"><a class="anchor" href="#e-enterprise-mode"></a>2.3.4. -e / --enterprise-mode</h4>
+<h4 id="e-enterprise-mode"><a class="anchor" href="#e-enterprise-mode"></a>2.4.4. -e / --enterprise-mode</h4>
 <div class="paragraph">
 <p>In default mode, the installer will provide you with options for installing or extending an OpenShift Origin deployment. However, the same installer can be used to deploy OpenShift Enterprise by setting this switch.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="s-subscription-type-type"><a class="anchor" href="#s-subscription-type-type"></a>2.3.5. -s / --subscription-type TYPE</h4>
+<h4 id="s-subscription-type-type"><a class="anchor" href="#s-subscription-type-type"></a>2.4.5. -s / --subscription-type TYPE</h4>
 <div class="paragraph">
 <p><em>Subscription</em> refers to where your openshift component RPMs are coming from. <code>oo-install</code> supports four options:</p>
 </div>
@@ -943,19 +1094,19 @@ If you are running the installer locally, but your OpenShift deployment will be 
 </div>
 </div>
 <div class="sect3">
-<h4 id="u-username-username"><a class="anchor" href="#u-username-username"></a>2.3.6. -u / --username USERNAME</h4>
+<h4 id="u-username-username"><a class="anchor" href="#u-username-username"></a>2.4.6. -u / --username USERNAME</h4>
 <div class="paragraph">
 <p>As indicated in the explanation of the <em>-s</em> option above, this option exists to enable you to override the installer config file from the command line. Currently, the <em>-u</em> setting is only meaningful in a scenario where you would be running an unattended installation (see <em>-w</em>) of OpenShift Enterprise (see <em>-e</em>) using the <em>rhsm</em> or <em>rhn</em> subscription methods.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="p-password-password"><a class="anchor" href="#p-password-password"></a>2.3.7. -p / --password PASSWORD</h4>
+<h4 id="p-password-password"><a class="anchor" href="#p-password-password"></a>2.4.7. -p / --password PASSWORD</h4>
 <div class="paragraph">
 <p>See the comments on the <em>-u</em> option; this option would only be used under the same conditions.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="d-debug"><a class="anchor" href="#d-debug"></a>2.3.8. -d / --debug</h4>
+<h4 id="d-debug"><a class="anchor" href="#d-debug"></a>2.4.8. -d / --debug</h4>
 <div class="paragraph">
 <p>Enabling <em>debug</em> mode will cause the installer to periodically dump out large volumes of information about the SSH sessions that it attempts to establish as it runs. This can be useful for debugging remote deployments.</p>
 </div>
@@ -1528,7 +1679,7 @@ Between you and us, we don&#8217;t know why you couldn&#8217;t just put the IP i
 <div id="footer-text">
 Version 2.0
 <br>
-Last updated 2013-11-27 12:34:14 EST
+Last updated 2013-12-02 14:27:32 EST
 </div>
 <!-- Google Analytics -->
 <script>
