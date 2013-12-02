@@ -1242,6 +1242,12 @@ If you only ever wanted to deploy an all-in-one OpenShift system, you could use 
 <div class="ulist">
 <ul>
 <li>
+<p>An IP address</p>
+</li>
+<li>
+<p>A DNS name that already resolves to the host</p>
+</li>
+<li>
 <p>Identical to the Host Name</p>
 </li>
 <li>
@@ -1274,11 +1280,54 @@ If you only ever wanted to deploy an all-in-one OpenShift system, you could use 
 </li>
 </ul>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Under RHEL, passwordless sudo configuration may not succeeed unless you set the following in your <code>/etc/sudoers</code> file for your target user:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Defaults:&lt;username&gt;    !requiretty</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Try setting this if you see error messages like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>sudo: sorry, you must have a tty to run sudo</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect4">
 <h5 id="ip-address"><a class="anchor" href="#ip-address"></a>IP Address</h5>
 <div class="paragraph">
-<p>At this point, the installer will attempt to look up the IP addresses that have been assigned to the host that you are currently describing. In a situation where the host has multiple NICs, there may be multiple IP addresses to choose from. The critical point here is that you need to provide the IP address that <em>other</em> OpenShift hosts would use to connect with this host. You also have the option of supplying a completely different IP address. This may be necessary in situations where one OpenShift host is separated from the others in a NAT environment.</p>
+<p>At this point, the installer will attempt to look up the IP addresses that have been assigned to the host that you are currently describing. In a situation where the host has multiple NICs, there may be multiple IP addresses to choose from.</p>
+</div>
+<div class="paragraph">
+<p><strong>Non-Node Hosts</strong><br>
+The IP address that is provided here should be the one that would be used by <em>other OpenShift hosts</em> would use to connect with this host.</p>
+</div>
+<div class="paragraph">
+<p><strong>Node Hosts</strong><br>
+In the case of Node hosts, you will want to use the IP address that <em>client systems</em> would use to reach the host.</p>
+</div>
+<div class="paragraph">
+<p><strong>DNS Registration</strong><br>
+If you have told the installer to <a href="#registering-openshift-hosts-with-the-openshift-dns-instance">register your OpenShift host names with the OpenShift DNS instance</a>, this IP address will be used as the resolution of this hostname.</p>
+</div>
+<div class="paragraph">
+<p><strong>Manual Entry</strong><br>
+You also have the option of supplying a completely different IP address. This may be necessary in situations where one OpenShift host is separated from the others in a NAT environment.</p>
 </div>
 </div>
 <div class="sect4">
@@ -1394,7 +1443,26 @@ Information that is stored in the <code>oo-install</code> configuration file is 
 <div class="sect3">
 <h4 id="pathway-3-runtime-options"><a class="anchor" href="#pathway-3-runtime-options"></a>3.3.3. Pathway #3 - Runtime Options</h4>
 <div class="paragraph">
-<p>After the installer gives you the opportunity to work with subscription settings in your configuration file, you will have the opportunity to set one-time values that <em>not</em> stored in the configuration file. These values will be used during the current deployment and then forgotten by <code>oo-install</code>. This is suitable in particular for passwords that you do not want to capture in the non-encrypted installer config file.</p>
+<p>After the installer gives you the opportunity to work with subscription settings in your configuration file, you will have the opportunity to set one-time values that are <em>not</em> stored in the configuration file. These values will be used during the current deployment and then forgotten by <code>oo-install</code>. This is suitable in particular for passwords that you do not want to capture in the non-encrypted installer config file.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="subscription-notes-for-openshift-origin"><a class="anchor" href="#subscription-notes-for-openshift-origin"></a>3.3.4. Subscription Notes for OpenShift Origin</h4>
+<div class="paragraph">
+<p>The most common subscription method for Origin is <code>yum</code>, and the current known good repos to use are these:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The base URL for the OpenShift repositories: <code>https://mirror.openshift.com/pub/openshift-origin/nightly/fedora-19</code></p>
+</li>
+<li>
+<p>The base URL for a Jenkins repository: <code>http://pkg.jenkins-ci.org/redhat</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The installer provides these settings as default values in new configuration files.</p>
 </div>
 </div>
 </div>
@@ -1418,7 +1486,7 @@ Information that is stored in the <code>oo-install</code> configuration file is 
 <p>Is the host&#8217;s system type supported by the installer?</p>
 </li>
 <li>
-<p>Does the host have the necessary utilities installed for the selected installation task?</p>
+<p>Does the host have the necessary utilities installed for the selected installation task? (see <a href="#utility-prerequisites">Utility Prerequisites</a>)</p>
 </li>
 </ul>
 </div>
@@ -1498,6 +1566,9 @@ Be aware that OpenShift will not work properly until the OpenShift hosts are reb
 <div class="sect2">
 <h3 id="temporary-dns-integration"><a class="anchor" href="#temporary-dns-integration"></a>5.1. Temporary DNS Integration</h3>
 <div class="paragraph">
+<p>These instructions will enable you to set up temporary DNS integration on a Linux system. You can use this information as a guideline for accomplishing similar results on client systems running other operating systems.</p>
+</div>
+<div class="paragraph">
 <p>On a client-by-client basis, you can do the following to work against the OpenShift DNS server:</p>
 </div>
 <div class="olist arabic">
@@ -1534,10 +1605,10 @@ nameserver 1.1.1.2</pre>
 <p>Modify the <code>domain</code> and <code>search</code> values to match the app domain (and optionally also the OpenShift host domain) that you specified.</p>
 </li>
 <li>
-<p>Then change the first <code>nameserver</code> entry to point to the Broker host&#8217;s IP address.</p>
+<p>After the <code>search</code> line, insert a new <code>nameserver</code> entry to point to the Broker host&#8217;s IP address.</p>
 </li>
 <li>
-<p>You can remove any additional <code>nameserver</code> entries.</p>
+<p>Leave the other <code>nameserver</code> entries alone.</p>
 </li>
 </ul>
 </div>
@@ -1679,7 +1750,7 @@ Between you and us, we don&#8217;t know why you couldn&#8217;t just put the IP i
 <div id="footer-text">
 Version 2.0
 <br>
-Last updated 2013-12-02 14:27:32 EST
+Last updated 2013-12-02 15:16:43 EST
 </div>
 <!-- Google Analytics -->
 <script>
