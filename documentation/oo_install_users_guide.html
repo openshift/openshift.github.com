@@ -766,11 +766,11 @@ code { font-family: source_code_pro; }
 <div class="paragraph">
 <p>Where "&lt;utility&gt;" is the name of the utility that you are looking to install.</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock important">
 <table>
 <tr>
 <td class="icon">
-<i class="icon-note" title="Note"></i>
+<i class="icon-important" title="Important"></i>
 </td>
 <td class="content">
 If you are using a Linux distribution that does not ship with <code>yum</code> and can&#8217;t do software updates with <code>yum</code>, then chances are good this installer is not going to work for you.
@@ -796,8 +796,22 @@ If you are using a Linux distribution that does not ship with <code>yum</code> a
 </li>
 </ul>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>On most systems, you can install these by running:</p>
+<p>The installer itself is designed to run pretty much anywhere, but if you are running the installer on the same host where you will be installing OpenShift, make sure you also look at the <a href="#on-the-target-hosts">Target Host requirements</a>. If you are doing an OpenShift Origin installation, also be sure to check out the <a href="#origin-specific-utilities">Origin-specific requirements</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>On most systems, you can install the base installer requirements by running:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -867,6 +881,57 @@ SELinux must be running in <em>Enforcing</em> mode or <em>Permissive</em> mode o
 </div>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p><strong>OpenShift Origin on RHEL and Derivatives</strong><br>
+If you are installing OpenShift Origin on RHEL6 or a derivative distribution (such as CentOS, Scientific Linux, etc.), you will need to set up two additional requirements on those host systems:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F">EPEL yum repository</a></p>
+</li>
+<li>
+<p>The ruby193 <a href="http://developerblog.redhat.com/2013/01/28/software-collections-on-red-hat-enterprise-linux/">software collection (SCL)</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To manually add the yum repos for EPEL and the ruby193 SCL, you can run the following commands as root on your target hosts.</p>
+</div>
+<div class="listingblock">
+<div class="title">EPEL</div>
+<div class="content">
+<pre>$ wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm <i class="conum" data-value="1"></i><b>(1)</b>
+$ rpm -Uvh epel-release-6*.rpm</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Replace <code>x86_64</code> with <code>i386</code> for 32-bit systems</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">ruby193 SCL</div>
+<div class="content">
+<pre>$ cat &gt; /etc/yum.repos.d/openshift-origin-deps.repo &lt;&lt;"EOF"
+[openshift-origin-deps]
+name=OpenShift Origin Dependencies - EL6
+baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/rhel-6/dependencies/$basearch/
+gpgcheck=0
+EOF</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With the OpenShift Origin Dependencies repo set up, you can now install ruby 1.9.3 as follows and the oo-install script will utilize it where necessary.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ yum install ruby193-ruby</pre>
+</div>
 </div>
 </div>
 </div>
@@ -1798,7 +1863,7 @@ Between you and us, we don&#8217;t know why you couldn&#8217;t just put the IP i
 <div id="footer-text">
 Version 2.0
 <br>
-Last updated 2013-12-03 10:20:39 EST
+Last updated 2013-12-06 14:25:55 EST
 </div>
 <!-- Google Analytics -->
 <script>
