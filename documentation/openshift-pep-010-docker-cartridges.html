@@ -654,7 +654,10 @@ code { font-family: source_code_pro; }
 <ul class="sectlevel2">
 <li><a href="#abstract">Abstract</a></li>
 <li><a href="#background">Background</a></li>
+<li><a href="#core-concepts">Core Concepts</a></li>
 <li><a href="#specification">Specification</a></li>
+<li><a href="#gear-management">Gear management</a></li>
+<li><a href="#upgrades">Upgrades</a></li>
 <li><a href="#additional-topics">Additional Topics</a></li>
 <li><a href="#risks">Risks</a></li>
 </ul>
@@ -666,7 +669,7 @@ code { font-family: source_code_pro; }
 <p>PEP: 010<br>
 Title: Cartridge V3 and Docker Containers<br>
 Status: draft<br>
-Author: Clayton Coleman <a href="mailto:ccoleman@redhat.com">ccoleman@redhat.com</a><br>
+Author: Clayton Coleman <a href="mailto:ccoleman@redhat.com">ccoleman@redhat.com</a>, Paul Morie <a href="mailto:pmorie@redhat.com">pmorie@redhat.com</a><br>
 Arch Priority: high<br>
 Complexity: 200<br>
 Affected Components: web, api, runtime, cartridges, broker, admin_tools, cli<br>
@@ -685,7 +688,7 @@ Epic:</p>
 <p>We would alter the build/deployment/cartridge model to focus more on image deployment - source code changes are combined with a cartridge (build/deployment/execution environment) to create a docker image that can be easily scaled up or rolled back to. Users would be able to install their own packages and run their gear images on their local laptops. In addition, we would enable easier distribution and execution mechanisms for cartridges that build on our existing system. We would enable more controlled upgrades, deployments, and version to version changes.</p>
 </div>
 <div class="paragraph">
-<p>This PEP depends on and modifies <a href="https://github.com/openshift/openshift-pep/blob/master/openshift-pep-002-cartridge-v2.md">PEP 002: Cartridges V2</a>.</p>
+<p>This PEP depends on and modifies <a href="https://github.com/openshift/openshift-pep/blob/master/openshift-pep-002-cartridge-v2.md">PEP 002: Cartridges V2</a>. It defines the use cases which <a href="https://github.com/openshift/openshift-pep/blob/master/openshift-pep-010-docker-cartridges.md">PEP 011: Docker containerization</a> must address from a technical standpoint.</p>
 </div>
 </div>
 <div class="sect2">
@@ -698,7 +701,7 @@ Epic:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
+<h3 id="core-concepts"><a class="anchor" href="#core-concepts"></a>Core Concepts</h3>
 <div class="paragraph">
 <p>A V2 OpenShift application is composed of 1..N gears. Each gear represents an execution environment for 1 primary cartridge and 0..N secondary cartridges (also called plugins). Each gear maps to one "container", which is a unix user, a SELinux category label, a home directory, and a set of exposed ports.</p>
 </div>
@@ -790,12 +793,74 @@ Cartridge Image                             Deployment Artifact</pre>
 <p>If gears are write-once, it would be better to force the choice of having state in those gears to be explicit. A large part of gear state today is the Git repository. Moving the Git repository into its own container (but still distributed on nodes) would allow us to add additional semantics to those repositories while reusing existing concepts like SSH and cgroup limits. OpenShift would invoke a plugin to create the repository gear on the appropriate node, and add a special API call that the post-receive hook of the repository would use to notify OpenShift of a new commit. The gear repo would have access to the user&#8217;s public keys as they do today (potentially within a separate gear group). During a prepare, OpenShift would extract the source for the application into the cartridge image.</p>
 </div>
 <div class="paragraph">
-<p>Another consequence of write-once gears is that application environment should be moved out of the head gears. Docker applies environment on startup, so it would be ideal to distribute environment via some private mechanism inside the node cluster and to pull that data on start.</p>
+<p>Another consequence of write-once gears is that application environment should exist outside any gear. Docker applies environment on startup, so it would be ideal to distribute environment via some private mechanism inside the node cluster and to pull that data on start.</p>
 </div>
 <div class="paragraph">
 <p>This also enables the concept of compatible cartridges upgrades - for example from php-5.3 to php-5.4 - where a user may start on one version of the technology and later want to move up (or down) to a different compatible version. The two cartridges have the same contract with the source code, but a developer would be able to choose that new cartridge version to apply on a given build.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="container-security"><a class="anchor" href="#container-security"></a>Container security</h4>
+<div class="paragraph">
+<p>In the Linux kernel the user namespace feature offers the ability for a container to have a root user that is actually a normal-user on the system. However, this feature is new and the potential for vulnerabilities at this layer remains high. In the short term (2013 into 2014), security conscious container operators should still run containers as non-root. In OpenShift, the focus will be on enabling the use of images that may have been created or built with root access, but which at execution time are still jailed to a normal user. Trusted users may still be allowed to build cartridges within the system, but still require a regular user for execution.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="process-management"><a class="anchor" href="#process-management"></a>Process management</h4>
+<div class="paragraph">
+<p>Docker defines a container entrypoint&#8201;&#8212;&#8201;an executable script or shell command&#8201;&#8212;&#8201;that will be executed when the container is started. This entrypoint is expected to be a standard Unix process:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It should respond to signals (like SIGTERM when docker is ready to shutdown)</p>
+</li>
+<li>
+<p>It should either log to disk, syslog, or STDERR/STDOUT</p>
+</li>
+<li>
+<p>When the process goes away, Docker considers the container stopped.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In general, cartridges should expose the lowest level process that can manage the work the cartridge accomplishes. Using SystemD or SysInit within a cartridge generally brings additional behavior that prevents the platform itself (if not initially, then later) from offering advanced process management. An example would be restarting stuck processes - it would be better if the platform (Docker, OpenShift, or OpenShift using SystemD) could track the stuck/failing state and expose that information back to a user. If the cartridge hides that from the platform, then it is much harder to aggregate that information.</p>
+</div>
+<div class="paragraph">
+<p>Another concern for cartridge authors - the signal Docker uses to terminate a process is SIGTERM, and if a wrapper script is used that does not respond to SIGTERM, then the end result will be a SIGKILL. The process entrypoint should be sure to respond to SIGTERM gracefully.</p>
+</div>
+<div class="paragraph">
+<p>SystemD integration with Docker is an area of active investigation - there are many process management capabilities that would be ideal to manage from SystemD vs Docker / OpenShift.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="log-management"><a class="anchor" href="#log-management"></a>Log management</h4>
+<div class="paragraph">
+<p>Different frameworks and languages offer different log capabilities, and many require significant configuration to work in different modes. OpenShift should offer platform tooling that simplifies the scenarios described below where possible:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allow cartridges to write log data to disk into transient or mounted volume directories.</p>
+</li>
+<li>
+<p>Cartridge STDOUT/STDERR can be redirected by the platform to arbitrary locations.</p>
+</li>
+<li>
+<p>Per-container syslog mounts could be exposed that a cartridge could write to.</p>
+</li>
+<li>
+<p>Cartridge code can support language/framework specific log output that may go to external sources (log4j remote logging, etc)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>As a cartridge author, information about how a cartridge logs should be exposed via the manifest, and OpenShift would delegate that information as necessary to integrators.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
 <div class="sect3">
 <h4 id="changes-to-manifest.yml"><a class="anchor" href="#changes-to-manifest.yml"></a>Changes to manifest.yml</h4>
 <div class="paragraph">
@@ -806,35 +871,112 @@ Cartridge Image                             Deployment Artifact</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="preparation"><a class="anchor" href="#preparation"></a>Preparation</h4>
+<h4 id="implementation-note-v2-interoperability"><a class="anchor" href="#implementation-note-v2-interoperability"></a>Implementation Note: V2 Interoperability</h4>
 <div class="paragraph">
-<p>To prepare a new gear, OpenShift will:</p>
+<p>V2 and Docker will operate side by side in a single OpenShift environment via application-based code path switching. The system will use two pools of nodes, one for V2 applications and one for Docker applications, with appropriate runtimes running in the nodes of each pool. New applications might be created with a flag indicating the stack to use with the application, and those gears would run only on nodes of the appropriate type.</p>
+</div>
+<div class="paragraph">
+<p>The workflow to upgrade an application from the V2 cartridge system to the Docker cartridge system is currently unspecified.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="cartridge-author-workflow-basic-case"><a class="anchor" href="#cartridge-author-workflow-basic-case"></a>Cartridge Author Workflow (basic case)</h4>
+<div class="paragraph">
+<p><span class="image"><img src="data:image/png:base64," alt="Cartridge author workflow"></span></p>
+</div>
+<div class="paragraph">
+<p>In the basic case, the cartridge author workflow is simple. The cartridge author prepares a manifest and uses the <code>oo-admin-cartridge</code> tool to upload the manifest to the OpenShift Broker. The manifest contains the following information:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Start a new <strong>preparation gear</strong> based on the primary cartridge image selected.</p>
+<p>A reference to a publicly available docker image for the cartridge (cartridge image)</p>
 </li>
 <li>
-<p>Bind mount a tarball of the source code for the cartridge into a known directory</p>
+<p>A path within the cartridge image that is the <code>prepare</code> script</p>
 </li>
 <li>
-<p>Either invoke a command defined in the manifest via "docker attach" or use the run command of the cartridge image itself</p>
+<p>An optional URL to git repo to use as a template for the default git repo for the cartridge. The currently supported syntax using #&lt;commit&gt; at the end of the URL to denote a specific commit revision is supported.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The broker creates a record for the new cartridge. The manifest is used as part of messages to create new applications or add cartridges to an application, and therefore the manifest content is contained in the record for the cartridge. (TODO: add information re: versioning / streams)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="app-creation-workflow"><a class="anchor" href="#app-creation-workflow"></a>App Creation Workflow</h4>
+<div class="paragraph">
+<p><span class="image"><img src="data:image/png:base64," alt="App creation workflow"></span></p>
+</div>
+<div class="paragraph">
+<p>The basic app creation workflow is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>An OpenShift user calls <code>rhc app-create &lt;type&gt;</code></p>
 </li>
 <li>
-<p>Command can invoke user defined hooks in the repo for build/deploy</p>
+<p><code>rhc</code> makes a rest call to the OpenShift broker to create a new application of the specified type</p>
 </li>
 <li>
-<p>Wait for the container to start/finish</p>
+<p>The OpenShift broker creates a record for the new application</p>
 </li>
 <li>
-<p>Extract any necessary stateful information (environment variables, cartridge hooks, dynamic network endpoints)</p>
+<p>The broker makes a call to a Docker node (an OpenShift node which is configured to support Docker-based gears) to create a git gear, passing the template git repo URL</p>
 </li>
 <li>
-<p>Perform a docker commit, push the docker image to the application owner&#8217;s repository, and then report the new DA id to the broker</p>
+<p>The node downloads the specified template repo</p>
 </li>
 <li>
-<p>The broker now knows that a new DA is available</p>
+<p>The node creates a new git repository from the template content</p>
+</li>
+<li>
+<p>The broker starts the prepare workflow</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="image-preparation-workflow"><a class="anchor" href="#image-preparation-workflow"></a>Image Preparation Workflow</h4>
+<div class="paragraph">
+<p>The gear image preparation workflow is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The broker makes a call to create a builder gear, passing the manifest and git repo:</p>
+</li>
+<li>
+<p>The node downloads the application git repo into a known directory for bind-mount into the builder gear container</p>
+</li>
+<li>
+<p>If the manifest defines a prepare command, starts the container with <code>docker run -e &lt;prepare cmd&gt;</code></p>
+</li>
+<li>
+<p>If not, the node starts the container with <code>docker run</code></p>
+</li>
+<li>
+<p>The node waits for the container to finish running, imposing a timeout</p>
+</li>
+<li>
+<p>The node extracts (method TBD) any necessary stateful information such as: environment variables, cartridge hooks, dynamic network endpoints</p>
+</li>
+<li>
+<p>The node performs a docker commit</p>
+</li>
+<li>
+<p>The node pushes the docker image to the application&#8217;s private docker registry</p>
+</li>
+<li>
+<p>The node reports the new deployment artifact (DA) id to the broker</p>
+</li>
+<li>
+<p>The broker creates a new (DA) record for the application</p>
+</li>
+<li>
+<p>The broker starts the deploy workflow</p>
 </li>
 </ol>
 </div>
@@ -859,7 +1001,7 @@ Cartridge Image                             Deployment Artifact</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="deployment"><a class="anchor" href="#deployment"></a>Deployment</h4>
+<h4 id="deployment-workflow"><a class="anchor" href="#deployment-workflow"></a>Deployment Workflow</h4>
 <div class="paragraph">
 <p>The deployment process is as follows:</p>
 </div>
@@ -870,28 +1012,113 @@ Cartridge Image                             Deployment Artifact</pre>
 </li>
 <li>
 <p>Take the id of the new DA and begin updating the gears in the gear group with that new artifact</p>
-<div class="ulist">
-<ul>
+</li>
 <li>
 <p>For web cartridges, a scale up, scale down operation is ideal.</p>
 </li>
 <li>
 <p>For DB / stateful cartridges, a replace in place is ideal - stop the old container, keep the old stateful directories and ports as is, and then start the new container.</p>
 </li>
-</ul>
-</div>
-</li>
 <li>
 <p>Once all gears are using the new DA, check whether the old DA should be deleted</p>
 </li>
 </ol>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gear-management"><a class="anchor" href="#gear-management"></a>Gear management</h3>
 <div class="paragraph">
-<p>Scale up and scale down are essentially "start a DA with this id and this environment on this node". Replace is more involved, and needs investigation.</p>
+<p>Due to the write-once nature of Docker gears, there are significantly less operations that can be performed on Docker gears than on V2 gears. Operations that would mutate a V2 gear instead result in a new image being prepared for an application&#8217;s web gears. This makes it possible for there to be three fundamental operations that can be performed on Docker gears: scale up, scale down, and replace.</p>
+</div>
+<div class="sect3">
+<h4 id="scale-up-workflow"><a class="anchor" href="#scale-up-workflow"></a>Scale Up Workflow</h4>
+<div class="paragraph">
+<p>The scale up workflow is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The broker makes a call to scale up a new gear from a deployment ID:</p>
+</li>
+<li>
+<p>The broker must provide sufficient information to the node for the node to securely retrieve the gear image. While the exact process will be defined elsewhere, the node is not assumed to have read access to all gear images in the system for security reasons.</p>
+</li>
+<li>
+<p>The node establishes process isolation for the gear container on the node. This might be creating a unix user for a gear and/or creating selinux categories, etc.</p>
+</li>
+<li>
+<p>The node starts the container with the application&#8217;s environment variables and a bind-mount into the application&#8217;s external storage.</p>
+</li>
+<li>
+<p>The node makes the gear routable on a node-level.</p>
+</li>
+<li>
+<p>The broker makes a call to the routing layer to route application requests to the new gear.</p>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect3">
-<h4 id="upgrades"><a class="anchor" href="#upgrades"></a>Upgrades</h4>
+<h4 id="scale-down-workflow"><a class="anchor" href="#scale-down-workflow"></a>Scale Down Workflow</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The broker makes a call to the routing later to disable routing application requests to the gear being scaled down.</p>
+</li>
+<li>
+<p>The broker makes a call to scale down the gear on the node:</p>
+</li>
+<li>
+<p>The node gracefully stops the container</p>
+</li>
+<li>
+<p>The node removes the node-level routing for the gear</p>
+</li>
+<li>
+<p>The node removes any artifacts of process isolation for the gear</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="replace-workflow"><a class="anchor" href="#replace-workflow"></a>Replace Workflow</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The broker makes a call to the node where the gear is running to replace the gear, passing the gear uuid and the DA id to replace to.</p>
+</li>
+<li>
+<p>The node stops the container</p>
+</li>
+<li>
+<p>The node restarts the container using the new DA</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>There are several use-cases that replace has to support with need to be further explored:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Avoid changing IP address or port bindings, as these would potentially necessitate environment changes.</p>
+</li>
+<li>
+<p>Endpoint changes across versions of DAs</p>
+</li>
+<li>
+<p>Mountpoint changes across versions of DAs</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Docker currently doesn&#8217;t directly support switching out an image for a process and starting another image with the same mounts / user / network bindings, but it has been requested.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="upgrades"><a class="anchor" href="#upgrades"></a>Upgrades</h3>
 <div class="paragraph">
 <p>To upgrade a Docker gear (when a security update is released to a package):</p>
 </div>
@@ -923,22 +1150,6 @@ Cartridge Image                             Deployment Artifact</pre>
 <div class="paragraph">
 <p>Plugin cartridges may complicate this story, and user installed packages complicate it further. We may need a mechanism for categorizing gears into a searchable repo for packages.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="v2-interoperability"><a class="anchor" href="#v2-interoperability"></a>V2 Interoperability</h4>
-<div class="paragraph">
-<p>V2 and Docker will operate side by side in a single OpenShift environment via application-based code path switching. The system will use two pools of nodes, one for V2 applications and one for Docker applications, with appropriate runtimes running in the nodes of each pool. New applications might be created with a flag indicating the stack to use with the application, and those gears would run only on nodes of the appropriate type.</p>
-</div>
-<div class="paragraph">
-<p>The workflow to upgrade an application from the V2 cartridge system to the Docker cartridge system is at this time unspecified.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="managing-a-gear"><a class="anchor" href="#managing-a-gear"></a>Managing a gear</h4>
-<div class="paragraph">
-<p>The operations that act on a gear would change slightly - the primary ones in use would be stop, start, restart, and the informational calls. Operations that mutate the gear would no longer be called - instead a whole new build would be instantiated.</p>
-</div>
-</div>
 <div class="sect3">
 <h4 id="downloadable-cartridges"><a class="anchor" href="#downloadable-cartridges"></a>Downloadable Cartridges</h4>
 <div class="paragraph">
@@ -951,7 +1162,7 @@ Cartridge Image                             Deployment Artifact</pre>
 <p>HAProxy within web gears complicates a number of processes. For Docker, we should investigate the creation and adoption of a routing layer to take edge traffic and route to gear groups based on endpoint data the broker has been made aware of. We will also investigate the ability to deploy HAProxy gears within the application as a separate gear group.</p>
 </div>
 <div class="paragraph">
-<p>At a routing level, a further topic of investigation is the separation of traffic into low-volume/high-rate-of-change frontends, and high-volume/low-rate-of-change frontends. Different technologies might be chosen for each which would allow new applications to go into the low-volume pool, and then moved into the high-volume pool via a DNS migration as an automated or administrative process.</p>
+<p>At a routing level, a further topic of investigation is the separation of traffic into low-volume /high-rate-of-change frontends, and high-volume/low-rate-of-change frontends. Different technologies might be chosen for each which would allow new applications to go into the low-volume pool, and then moved into the high-volume pool via a DNS migration as an automated or administrative process.</p>
 </div>
 </div>
 </div>
@@ -982,6 +1193,9 @@ Cartridge Image                             Deployment Artifact</pre>
 </li>
 <li>
 <p>How can container hooks be supported - which are necessary and which are not</p>
+</li>
+<li>
+<p>Should hooks be run at build time by passing in the info about the current app, and then the env vars are changed as the app is rolled out?</p>
 </li>
 <li>
 <p>Examples of individual scenarios for each type of cartridge</p>
@@ -1064,6 +1278,12 @@ Cartridge Image                             Deployment Artifact</pre>
 <li>
 <p>Similar model but different behavior, LXC attach, krishna looking at it.</p>
 </li>
+<li>
+<p>How do we rebuild without grabbing new dependencies? How do we do a security update that doesn&#8217;t need a build efficiently? If we take a security update and break because of a build dependency change, that&#8217;s worse than the security update breaking the app.</p>
+</li>
+<li>
+<p>Point to point image distribution between nodes is preferred, although it requires us to manage our own availability. Can&#8217;t have redundancy for image backups without it.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -1083,7 +1303,7 @@ Cartridge Image                             Deployment Artifact</pre>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2013-12-19 17:49:37 EST
+Last updated 2014-01-07 10:07:21 EST
 </div>
 <!-- Google Analytics -->
 <script>
