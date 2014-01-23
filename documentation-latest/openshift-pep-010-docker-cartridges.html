@@ -712,70 +712,120 @@ Epic:</p>
 <p>An OpenShift cartridge is metadata that describes the capabilities of a set of software - likewise, a Dockerfile is metadata describing how to prepare a set of software for use in an image. In OpenShift, we would treat the base Dockerfile elements - BASE, RUN, and EXECUTE - as new additions to the cartridge manifest, and we would map the remaining metadata to existing OpenShift elements.</p>
 </div>
 <div class="paragraph">
-<p>A Docker cartridge is a Docker image, with a set of metadata (a manifest) that can be translated to a Dockerfile for execution during a build. The Docker manifest adds additional elements to handle the execution of steps and a RUN command. V2 cartridges will have default values for these (bin/setup and bin/control start). The act of transforming a cartridge image with cartridge hooks and/or source and build will be known as the <strong>prepare</strong> step ("preparing a cartridge"), and result in a <strong>deployment artifact</strong> which is a Docker image.</p>
+<p>A Docker cartridge is a Docker image, with a set of metadata (a manifest) that can be translated to a Dockerfile for execution during a build. The Docker manifest adds additional elements to handle the execution of steps and a RUN command. V2 cartridges will have default values for these (bin/setup and bin/control start). The act of transforming a cartridge image with cartridge hooks and/or source and build will be known as the <strong>prepare</strong> step ("preparing a cartridge"), and result in a <strong>deployment artifact</strong> which is a Docker image. Since <strong>prepare</strong> may contain dependencies, downloads, or unreliable options that may fail, subsequent <strong>prepare</strong> operations may wish to reuse the contents of the prior image.</p>
 </div>
 <div class="sect3">
 <h4 id="whats-in-a-deployment-artifact-docker-layers"><a class="anchor" href="#whats-in-a-deployment-artifact-docker-layers"></a>What&#8217;s in a deployment artifact (Docker layers)?</h4>
 <div class="listingblock">
 <div class="content">
-<pre>                                        +--------------+
-                                        | Symlinks     |
-                                        | Built WAR    |  Deployment Layer
-                                        | User Source  |
-                    +--------------+    +--------------+
-                    | Scripts      |    | Scripts      |
-                    | JBoss        |    | JBoss        |
-                    | Maven        |    | Maven        |  Cartridge Layer
-                    | OpenJDK      |    | OpenJDK      |
-+--------------+    +--------------+    +--------------+
-| Libc / Bash  |    | Libc / Bash  |    | Libc / Bash  |  Base Layer
-+--------------+    +--------------+    +--------------+
+<pre>                                                         +--------------+
+                                      +--------------+   | Symlinks     |  Deployment Layer
+                          Build Layer | Maven        |   | Built WAR    |
+                   +--------------+   +--------------+   +--------------+
+                   | Scripts      |   | Scripts      |   | Scripts      |  Cartridge Layer
+                   | JBoss        |   | JBoss        |   | JBoss        |
++--------------+   +--------------+   +--------------+   +--------------+
+| Libc / Bash  |   | Libc / Bash  |   | Libc / Bash  |   | Libc / Bash  |  Base Layer
++--------------+   +--------------+   +--------------+   +--------------+
 
-+--------------+    +--------------+    +--------------+
-| Kernel       |    | Kernel       |    | Kernel       |
-+--------------+    +--------------+    +--------------+
++--------------+   +--------------+   +--------------+   +--------------+
+| Kernel       |   | Kernel       |   | Kernel       |   | Kernel       |
++--------------+   +--------------+   +--------------+   +--------------+
 
-1. Base from CDN    2. Cartridge        3. Deployment
-                                           Artifact</pre>
+1. Base from CDN   2. Cartridge       3. Build Image     4. Deployment
+                                                            Artifact</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="creating-a-deployment-artifact-a-gear-image-flow"><a class="anchor" href="#creating-a-deployment-artifact-a-gear-image-flow"></a>Creating a deployment artifact (a gear image) flow</h4>
+<h4 id="creating-a-build-image-flow"><a class="anchor" href="#creating-a-build-image-flow"></a>Creating a build image flow</h4>
 <div class="listingblock">
 <div class="content">
-<pre>     +--------------+    +------------+     +-------------+
-     | User Git     | OR | Binary     | AND | App         |
-     | repo tarball |    | (WAR, zip) |     | Environment |
-     +------+-------+    +------+-----+  +- +-------------+
-            |                   |        |
-            +---------------+   |    +---+  +--------------+
-                            |   |    |      | Symlinks     |
-                            |   |    |      | Built WAR    |
-                            |   |    |      | User Source  |
-+--------------+            |   |    |      +--------------+
-| Scripts      |            |   |    |      | Scripts      |
-| JBoss        |            v   v    v      | JBoss        |
-| Maven        +------&gt; invoke prepare +---&gt;| Maven        +---&gt; save as new
-| OpenJDK      |        script              | OpenJDK      |     image in Docker
+<pre>                     +----------------------+
+                     |  Cartridge Manifest  |
+                     +----------------------+
+                                |
+                                |
+                                |
+                                |
+                                |
+                                |           +--------------+
+                                |           | Maven        |
++--------------+                v           +--------------+
+| Scripts      |------&gt; Add build deps +---&gt;| Scripts      +---&gt; save as new
+| JBoss        |                            | JBoss        |     image in Docker
 +--------------+                            +--------------+
 | Libc / Bash  |                            | Libc / Bash  |
 +--------------+                            +--------------+
 
-Cartridge Image                             Deployment Artifact</pre>
+Cartridge Image                             Build Image</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="creating-a-deployment-artifact-from-user-source-flow"><a class="anchor" href="#creating-a-deployment-artifact-from-user-source-flow"></a>Creating a deployment artifact from user source flow</h4>
+<div class="listingblock">
+<div class="content">
+<pre>                     +--------------+
+                     | User Git     |
+                     | repo tarball |
+                     +------+-------+
+                            |
++--------------+            |
+| Maven        |            |
++--------------+            v               +--------------+
+| Scripts      |------&gt;   build   ---------&gt;| Built WAR    |
+| JBoss        |                            +-------+------+
++--------------+                                    |
+| Libc / Bash  |                                    |
++--------------+                                    |
+                                +-------------------+
+Build Image                     |
+                                |               +--------------+
+                                |               | Symlinks     |
++--------------+                v               | Built WAR    |
+| Scripts      |------&gt; create deployment +----&gt;+--------------+
+| JBoss        |        artifact                | Scripts      |
++--------------+                                | JBoss        |
+| Libc / Bash  |                                +--------------+
++--------------+                                | Libc / Bash  |
+                                                +--------------+
+Cartridge Image</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="creating-a-deployment-artifact-from-binary-flow"><a class="anchor" href="#creating-a-deployment-artifact-from-binary-flow"></a>Creating a deployment artifact from binary flow</h4>
+<div class="listingblock">
+<div class="content">
+<pre>                     +-------------------+
+                     | Binary            |
+                     | (WAR / Zip)       |
+                     +-------------------+
+                                |               +-----------------+
+                                |               | Symlinks        |
++--------------+                v               | Binary (WAR/Zip)|
+| Scripts      |------&gt; create deployment +----&gt;+-----------------+----&gt; save as new
+| JBoss        |        artifact                | Scripts         |      image in docker
++--------------+                                | JBoss           |
+| Libc / Bash  |                                +-----------------+
++--------------+                                | Libc / Bash     |
+                                                +-----------------+
+Cartridge Image
+                                               Deployment Artifact</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The broker will manage which deployed artifact (DA) a gear is using, and instruct the nodes to scale up, scale down, or "replace" the running version of a gear. We would no longer make changes inside a gear as a result of user operations.</p>
+<p>In V2 scalable applications, haproxy gears were responsible for distributing repository content to the gears in the application. In contrast, for Docker-based applications, the broker will manage which deployed artifact (DA) a gear is using. An auto scaling subsystem would make requests to the broker to scale up or down.</p>
 </div>
 <div class="paragraph">
 <p>Plugin cartridges are TBD, but they may be injected during the prepare step or bind mounted into the gear after launch.</p>
 </div>
 <div class="paragraph">
-<p>In order to deliver security updates to cartridges, the operator must be able to regenerate docker images and then trigger builds in affected gears. This is a long running operation and may also involve skipping failed builds and notifying affected users.</p>
+<p>In order to deliver security updates to cartridges, the operator must be able to regenerate docker images and then trigger builds in affected gears. This is a long running operation and may also involve skipping failed builds and notifying affected users. Cartridge authors may need to provide additional functionality to allow incremental layer creation - reusing downloaded dependencies and generated files from a previous image - in order to ensure security updates do not break user applications unintentionally.</p>
 </div>
 <div class="paragraph">
-<p>Docker images live in a registry backed by some persistent storage. OpenShift would run at least 2 registries - one for public images, and one for private images. Public images would be where shared cartridges come from, but private images would be isolated per account (domain?) and not visible to others. The metadata describing cartridges would move to the broker, and be mediated via a set of APIs for administrators and users. Over time, OpenShift might expose access to the registries to external users so they can download and run gears locally.</p>
+<p>Docker images live in a registry backed by some persistent storage. OpenShift requires a registry solution that allows both public and private images. Public images would be where shared cartridges come from, but private images would be isolated per account (domain?) and not visible to others. The metadata describing cartridges would move to the broker, and be mediated via a set of APIs for administrators and users. Over time, OpenShift might expose access to the registries to external users so they can download and run gears locally.</p>
 </div>
 <div class="paragraph">
 <p>OpenShift should support V2 cartridges and Docker cartridges side by side.</p>
@@ -790,13 +840,16 @@ Cartridge Image                             Deployment Artifact</pre>
 <p>There are a number of advantages to making our gears and cartridges write-once - i.e., doing cartridge installs, gear setup, and source builds together, and then reusing the result of that change over and over. Since the runtime for the cartridge is bundled with user code, users can easily revert to a previous version in the event of an update. Security updates and builds cannot break running gears - they can only cause a new build to fail and there is always a rollback if the new code doesn&#8217;t work. This has the potential to make security updates and gear migrations much easier to control - pushing new cartridge versions can be done without causing users to immediately break.</p>
 </div>
 <div class="paragraph">
-<p>If gears are write-once, it would be better to force the choice of having state in those gears to be explicit. A large part of gear state today is the Git repository. Moving the Git repository into its own container (but still distributed on nodes) would allow us to add additional semantics to those repositories while reusing existing concepts like SSH and cgroup limits. OpenShift would invoke a plugin to create the repository gear on the appropriate node, and add a special API call that the post-receive hook of the repository would use to notify OpenShift of a new commit. The gear repo would have access to the user&#8217;s public keys as they do today (potentially within a separate gear group). During a prepare, OpenShift would extract the source for the application into the cartridge image.</p>
+<p>If gears are write-once, it would be better to force the choice of having state in those gears to be explicit. A large part of gear state today is the Git repository. Moving the Git repository into its own container (but still distributed on nodes) would allow us to add additional semantics to those repositories while reusing existing concepts like SSH and cgroup limits. OpenShift would invoke a plugin to create the repository container on the appropriate node, and add a special API call that the post-receive hook of the repository would use to notify OpenShift of a new commit. The gear repo would have access to the user&#8217;s public keys as they do today (potentially within a separate gear group). During a prepare, OpenShift would extract the source for the application into the cartridge image.</p>
 </div>
 <div class="paragraph">
 <p>Another consequence of write-once gears is that application environment should exist outside any gear. Docker applies environment on startup, so it would be ideal to distribute environment via some private mechanism inside the node cluster and to pull that data on start.</p>
 </div>
 <div class="paragraph">
 <p>This also enables the concept of compatible cartridges upgrades - for example from php-5.3 to php-5.4 - where a user may start on one version of the technology and later want to move up (or down) to a different compatible version. The two cartridges have the same contract with the source code, but a developer would be able to choose that new cartridge version to apply on a given build.</p>
+</div>
+<div class="paragraph">
+<p>It is important to note that gears will still have ephemeral local storage for use in caching scenarios.</p>
 </div>
 </div>
 <div class="sect3">
@@ -858,6 +911,21 @@ Cartridge Image                             Deployment Artifact</pre>
 <p>As a cartridge author, information about how a cartridge logs should be exposed via the manifest, and OpenShift would delegate that information as necessary to integrators.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="downloadable-cartridges"><a class="anchor" href="#downloadable-cartridges"></a>Downloadable Cartridges</h4>
+<div class="paragraph">
+<p>A downloadable V2 cart is a manifest that links to a source URL. The Docker manifest should be a superset of a dockerfile, which means that a user can specify a dockerfile as input to creating an app, and that dockerfile will become a downloadable cart for the app. When prepare happens for that gear, we can easily build their custom cartridge as a base layer, then run prepare on top of it. On subsequent builds, the base cartridge could be refreshed (via a different mechanism probably) which triggers a build.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="moving-haproxy-out-of-gears"><a class="anchor" href="#moving-haproxy-out-of-gears"></a>Moving HAProxy out of Gears</h4>
+<div class="paragraph">
+<p>HAProxy within web gears complicates a number of processes. For Docker, we should investigate the creation and adoption of a routing layer to take edge traffic and route to gear groups based on endpoint data the broker has been made aware of. We will also investigate the ability to deploy HAProxy gears within the application as a separate gear group.</p>
+</div>
+<div class="paragraph">
+<p>At a routing level, a further topic of investigation is the separation of traffic into low-volume /high-rate-of-change frontends, and high-volume/low-rate-of-change frontends. Different technologies might be chosen for each which would allow new applications to go into the low-volume pool, and then moved into the high-volume pool via a DNS migration as an automated or administrative process.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
@@ -885,7 +953,7 @@ Cartridge Image                             Deployment Artifact</pre>
 <p><span class="image"><img src="data:image/png:base64," alt="Cartridge author workflow"></span></p>
 </div>
 <div class="paragraph">
-<p>In the basic case, the cartridge author workflow is simple. The cartridge author prepares a manifest and uses the <code>oo-admin-cartridge</code> tool to upload the manifest to the OpenShift Broker. The manifest contains the following information:</p>
+<p>In the basic case, the cartridge author workflow is simple. The cartridge author prepares a manifest and uses the <code>oo-admin-ctl-cartridge</code> tool to upload the manifest to the OpenShift Broker. The manifest contains the following information:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -924,7 +992,7 @@ Cartridge Image                             Deployment Artifact</pre>
 <p>The OpenShift broker creates a record for the new application</p>
 </li>
 <li>
-<p>The broker makes a call to a Docker node (an OpenShift node which is configured to support Docker-based gears) to create a git gear, passing the template git repo URL</p>
+<p>The broker makes a call to a Docker node (an OpenShift node which is configured to support Docker-based gears) to create a source control container, passing the template git repo URL</p>
 </li>
 <li>
 <p>The node downloads the specified template repo</p>
@@ -939,7 +1007,7 @@ Cartridge Image                             Deployment Artifact</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="image-preparation-workflow"><a class="anchor" href="#image-preparation-workflow"></a>Image Preparation Workflow</h4>
+<h4 id="gear-image-preparation-workflow"><a class="anchor" href="#gear-image-preparation-workflow"></a>Gear Image Preparation Workflow</h4>
 <div class="paragraph">
 <p>The gear image preparation workflow is as follows:</p>
 </div>
@@ -961,10 +1029,10 @@ Cartridge Image                             Deployment Artifact</pre>
 <p>The node waits for the container to finish running, imposing a timeout</p>
 </li>
 <li>
-<p>The node extracts (method TBD) any necessary stateful information such as: environment variables, cartridge hooks, dynamic network endpoints</p>
+<p>The node extracts from the container (method TBD) any necessary stateful information such as: environment variables, cartridge hooks, dynamic network endpoints</p>
 </li>
 <li>
-<p>The node performs a docker commit</p>
+<p>The node performs a docker commit which creates the <strong>deployment layer</strong></p>
 </li>
 <li>
 <p>The node pushes the docker image to the application&#8217;s private docker registry</p>
@@ -980,6 +1048,85 @@ Cartridge Image                             Deployment Artifact</pre>
 </li>
 </ol>
 </div>
+<div class="sect4">
+<h5 id="incremental-image-preparation"><a class="anchor" href="#incremental-image-preparation"></a>Incremental Image Preparation</h5>
+<div class="paragraph">
+<p>The preparation described above is a <strong>clean prepare</strong> - completely regenerating the layer containing the user source code. A consequence of a clean prepare is that the prepare script must redownload any dependencies of the application source (Ruby gems, Python eggs, Maven JARs). This may result in the versions of those dependencies changing and the introduction of failures or bugs. Therefore, there must be the possibility of an <strong>incremental prepare</strong> for security updates that allows a cartridge to reuse some or all of the previously generated content.</p>
+</div>
+<div class="paragraph">
+<p>Potential problems caused by reusing a previous deployment layer:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A cartridge might override system libraries with newer versions - those libraries might have the same security vulnerability that the system administrator is trying to patch</p>
+</li>
+<li>
+<p>Libraries updated in the deployment layer may be intermixed with libraries from the cartridge layer, and a new library added to the cartridge layer that also exists in the deployment layer might prevent the runtime from starting because of incompatible versions.<br></p>
+</li>
+<li>
+<p>Update may require the rebuild of compiled dependecies or code in order to patch a vulnerability / bug</p>
+</li>
+<li>
+<p>The location of dependencies the cartridge expects may change</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In all of these scenarios, the cartridge author and platform must coordinate around which content can be reused and when a full rebuild is required.</p>
+</div>
+<div class="paragraph">
+<p>The incremental prepare workflow might look like:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The broker makes a call to create a builder gear, passing the manifest, git repo, and previous gear image id:</p>
+</li>
+<li>
+<p>The node downloads the application git repo into a known directory for bind-mount into the builder gear container</p>
+</li>
+<li>
+<p>The node fetches the deployment layer of the previous gear image by its id.</p>
+</li>
+<li>
+<p>The node calculates which contents from the previous image should be used in the new container, and if necessary copies them into the container.</p>
+</li>
+<li>
+<p>If the manifest defines a prepare command, starts the container with <code>docker run -e &lt;prepare cmd&gt;</code></p>
+</li>
+<li>
+<p>If not, the node starts the container with <code>docker run</code></p>
+</li>
+<li>
+<p>The container code must decide whether to reuse the previously generated contents, or whether to continue without them (if a file listing dependencies has changed, new dependencies must be downloaded).</p>
+</li>
+<li>
+<p>The node waits for the container to finish running, imposing a timeout</p>
+</li>
+<li>
+<p>The node extracts from the container (method TBD) any necessary stateful information such as: environment variables, cartridge hooks, dynamic network endpoints</p>
+</li>
+<li>
+<p>The node performs a docker commit which creates the <strong>deployment layer</strong></p>
+</li>
+<li>
+<p>The node pushes the docker image to the application&#8217;s private docker registry</p>
+</li>
+<li>
+<p>The node reports the new deployment artifact (DA) id to the broker</p>
+</li>
+<li>
+<p>The broker creates a new (DA) record for the application</p>
+</li>
+<li>
+<p>The broker starts the deploy workflow</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="version-upgrade"><a class="anchor" href="#version-upgrade"></a>Version upgrade</h5>
 <div class="paragraph">
 <p>A prepare may result in the version of a cartridge in use changing in the broker - it may have been input by the developer at build time. An application may have multiple cartridge versions in different gears as a result of a deploy. The broker should gracefully handle rollforward and rollback of this scenario:</p>
 </div>
@@ -998,6 +1145,7 @@ Cartridge Image                             Deployment Artifact</pre>
 <p>Next build and deployment should use PHP-5.3</p>
 </li>
 </ol>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -1150,21 +1298,6 @@ Cartridge Image                             Deployment Artifact</pre>
 <div class="paragraph">
 <p>Plugin cartridges may complicate this story, and user installed packages complicate it further. We may need a mechanism for categorizing gears into a searchable repo for packages.</p>
 </div>
-<div class="sect3">
-<h4 id="downloadable-cartridges"><a class="anchor" href="#downloadable-cartridges"></a>Downloadable Cartridges</h4>
-<div class="paragraph">
-<p>A downloadable V2 cart is a manifest that links to a source URL. The Docker manifest should be a superset of a dockerfile, which means that a user can specify a dockerfile as input to creating an app, and that dockerfile will become a downloadable cart for the app. When prepare happens for that gear, we can easily build their custom cartridge as a base layer, then run prepare on top of it. On subsequent builds, the base cartridge could be refreshed (via a different mechanism probably) which triggers a build.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="moving-haproxy-out-of-gears"><a class="anchor" href="#moving-haproxy-out-of-gears"></a>Moving HAProxy out of Gears</h4>
-<div class="paragraph">
-<p>HAProxy within web gears complicates a number of processes. For Docker, we should investigate the creation and adoption of a routing layer to take edge traffic and route to gear groups based on endpoint data the broker has been made aware of. We will also investigate the ability to deploy HAProxy gears within the application as a separate gear group.</p>
-</div>
-<div class="paragraph">
-<p>At a routing level, a further topic of investigation is the separation of traffic into low-volume /high-rate-of-change frontends, and high-volume/low-rate-of-change frontends. Different technologies might be chosen for each which would allow new applications to go into the low-volume pool, and then moved into the high-volume pool via a DNS migration as an automated or administrative process.</p>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="additional-topics"><a class="anchor" href="#additional-topics"></a>Additional Topics</h3>
@@ -1303,7 +1436,7 @@ Cartridge Image                             Deployment Artifact</pre>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-01-09 16:16:19 EST
+Last updated 2014-01-23 15:23:17 EST
 </div>
 <!-- Google Analytics -->
 <script>
