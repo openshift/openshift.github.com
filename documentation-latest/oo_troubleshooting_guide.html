@@ -653,10 +653,11 @@ code { font-family: source_code_pro; }
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#diagnostics-script">1. Diagnostics Script</a></li>
-<li><a href="#recovering-failed-nodes">2. Recovering Failed Nodes</a></li>
-<li><a href="#removing-applications-from-a-node">3. Removing Applications from a Node</a></li>
-<li><a href="#unknown-locale-error-when-running-em-lokkit-em">4. Unknown Locale Error When Running <em>lokkit</em></a></li>
+<li><a href="#the-general-approach">1. The General Approach</a></li>
+<li><a href="#diagnostics-script">2. Diagnostics Script</a></li>
+<li><a href="#recovering-failed-nodes">3. Recovering Failed Nodes</a></li>
+<li><a href="#removing-applications-from-a-node">4. Removing Applications from a Node</a></li>
+<li><a href="#unknown-locale-error-when-running-em-lokkit-em">5. Unknown Locale Error When Running <em>lokkit</em></a></li>
 </ul>
 </div>
 </div>
@@ -684,7 +685,75 @@ code { font-family: source_code_pro; }
 </div>
 </div>
 <div class="sect1">
-<h2 id="diagnostics-script"><a class="anchor" href="#diagnostics-script"></a>1. Diagnostics Script</h2>
+<h2 id="the-general-approach"><a class="anchor" href="#the-general-approach"></a>1. The General Approach</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are a large number of issues that could negatively affect the running of OpenShift. It is very difficult to pinpoint which ones could cause issues because of the number of services running together that are required. Here is an approach to help with reliability.</p>
+</div>
+<div class="paragraph">
+<p>First, the normal system administration checks should be used and monitored. This would include things like:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Checking to make sure there is plenty of memory available.</p>
+</li>
+<li>
+<p>Not swapping to disk too much.</p>
+</li>
+<li>
+<p>Ensuring there is plenty of disk space.</p>
+</li>
+<li>
+<p>Ensure file systems are healthy.</p>
+</li>
+<li>
+<p>&#8230;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Second, monitor the individual services that make up Openshift:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Ensure mcollective is running</p>
+</li>
+<li>
+<p>Ensure mongo is running</p>
+</li>
+<li>
+<p>Ensure apache is running. Also monitor /apache-status</p>
+</li>
+<li>
+<p>Ensure activemq is running</p>
+</li>
+<li>
+<p>Ensure selinux and cgroups are configured as desired.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Third, write and run custom checks that utilize the above services to verify that the system as a whole is working. This is an example of some of the checks to run.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Check to see if gears can be created and deleted</p>
+</li>
+<li>
+<p>Check available stats and capacities</p>
+</li>
+<li>
+<p>Check to make sure hosts respond to mcollective (mco ping)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="diagnostics-script"><a class="anchor" href="#diagnostics-script"></a>2. Diagnostics Script</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Installing and configuring an OpenShift Origin PaaS can often fail due to simple mistakes in configuration files. Fortunately, the OpenShift team provides an unsupported troubleshooting script that can diagnose most problems with an installation. The most updated version of this script is available at:</p>
@@ -735,7 +804,7 @@ code { font-family: source_code_pro; }
 </div>
 </div>
 <div class="sect1">
-<h2 id="recovering-failed-nodes"><a class="anchor" href="#recovering-failed-nodes"></a>2. Recovering Failed Nodes</h2>
+<h2 id="recovering-failed-nodes"><a class="anchor" href="#recovering-failed-nodes"></a>3. Recovering Failed Nodes</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A node host that fails catastrophically can be recovered if the gear directory /var/lib/openshift has been stored in a fault-tolerant way and can be recovered. In practice this scenario occurs rarely, especially when node hosts are virtual machines in a fault tolerant infrastructure rather than physical machines.</p>
@@ -783,7 +852,7 @@ Do not start the MCollective service on the replacement node host until you have
 </div>
 </div>
 <div class="sect1">
-<h2 id="removing-applications-from-a-node"><a class="anchor" href="#removing-applications-from-a-node"></a>3. Removing Applications from a Node</h2>
+<h2 id="removing-applications-from-a-node"><a class="anchor" href="#removing-applications-from-a-node"></a>4. Removing Applications from a Node</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>While trying to add a node to a district, a common error is that the node already has user applications on it. In order to be able to add this node to a district, you will either need to move these applications to another node or delete the applications. Whether you choose to move or delete the applications will depend largely on your agreements with your end users regarding application persistence.</p>
@@ -803,7 +872,7 @@ Do not start the MCollective service on the replacement node host until you have
 </div>
 </div>
 <div class="sect1">
-<h2 id="unknown-locale-error-when-running-em-lokkit-em"><a class="anchor" href="#unknown-locale-error-when-running-em-lokkit-em"></a>4. Unknown Locale Error When Running <em>lokkit</em></h2>
+<h2 id="unknown-locale-error-when-running-em-lokkit-em"><a class="anchor" href="#unknown-locale-error-when-running-em-lokkit-em"></a>5. Unknown Locale Error When Running <em>lokkit</em></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you get unknown locale error when running <em>lokkit</em>, run the following command to set the locale and then try your lokkit command again:</p>
@@ -818,7 +887,7 @@ Do not start the MCollective service on the replacement node host until you have
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-01-27 16:43:59 EST
+Last updated 2014-01-28 14:39:41 EST
 </div>
 <!-- Google Analytics -->
 <script>
