@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
-<title>OpenShift Origin Troubleshooting Guide</title>
+<title>OpenShift Deployment Notes: Running a Local Dynamic DNS Service</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
 @import url(http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.0/css/font-awesome.css);
 /*
@@ -646,70 +646,459 @@ code { font-family: source_code_pro; }
 </ul>
 </nav>
 <div id="header">
-<h1>OpenShift Origin Troubleshooting Guide</h1>
+<h1>OpenShift Deployment Notes: Running a Local Dynamic DNS Service</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
-<span id="revdate">ORIGIN VERSION 3.0</span>
+<span id="revdate">LATEST DOC UPDATES</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#diagnostics-script">1. Diagnostics Script</a></li>
-<li><a href="#recovering-failed-nodes">2. Recovering Failed Nodes</a></li>
-<li><a href="#removing-applications-from-a-node">3. Removing Applications from a Node</a></li>
-<li><a href="#unknown-locale-error-when-running-em-lokkit-em">4. Unknown Locale Error When Running <em>lokkit</em></a></li>
+<li><a href="#integrated-local-dns-service">1. Integrated Local DNS Service</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#install-bind">1.1. Install BIND</a></li>
+<li><a href="#generate-dns-update-keys">1.2. Generate DNS Update Keys</a></li>
+<li><a href="#create-initial-test-zone-files">1.3. Create Initial Test Zone Files</a></li>
+<li><a href="#configure-named">1.4. Configure Named</a></li>
+<li><a href="#start-code-named-code-service">1.5. Start <code>named</code> Service</a></li>
+<li><a href="#test-local-queries">1.6. Test Local Queries</a></li>
+<li><a href="#test-remote-queries">1.7. Test Remote Queries</a></li>
+<li><a href="#test-updates">1.8. Test Updates</a></li>
+<li><a href="#enable-code-named-code-service">1.9. Enable <code>named</code> Service</a></li>
+<li><a href="#set-resolver-order">1.10. Set Resolver Order</a></li>
+</ul>
+</li>
+<li><a href="#dhcp-updates">2. DHCP Updates</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#selinux">2.1. SELinux</a></li>
+<li><a href="#disable-networkmanager-service">2.2. Disable NetworkManager Service</a></li>
+<li><a href="#code-dhclient-code-config-resolver-prefix">2.3. <code>dhclient</code> Config (Resolver Prefix)</a></li>
+<li><a href="#code-dhclient-code-hooks-update-forwarders">2.4. <code>dhclient</code> Hooks (Update Forwarders)</a></li>
+<li><a href="#code-named-conf-code-include-forwarders">2.5. <code>named.conf</code>: Include Forwarders</a></li>
+<li><a href="#renewing-the-interface">2.6. Renewing the Interface</a></li>
+</ul>
+</li>
+<li><a href="#isolated-local-dns-service">3. Isolated Local DNS Service</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#install-required-software">3.1. Install required software</a></li>
+<li><a href="#create-a-workspace">3.2. Create a Workspace</a></li>
+<li><a href="#populate-the-workspace">3.3. Populate the Workspace</a></li>
+<li><a href="#enable-secure-updates">3.4. Enable Secure Updates</a></li>
+<li><a href="#create-the-test-configuration-file">3.5. Create the Test Configuration File</a></li>
+<li><a href="#zone-files">3.6. Zone Files</a></li>
+<li><a href="#testing">3.7. Testing</a></li>
+</ul>
+</li>
+<li><a href="#references">4. References</a></li>
 </ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document is aimed at <a href="https://www.openshift.com/products/origin">OpenShift Origin</a> administrators; it contains a number of helpful tips for debugging an OpenShift Origin deployment. Contributions to this document based on your experience as an OpenShift Origin administrator are welcome! This document is maintained in <a href="http://asciidoc.org/">AsciiDoc</a> as part of the <em>origin-server</em> code repository on <a href="https://github.com/openshift/origin-server/">GitHub</a>.</p>
+<p>Running a service which adds new hostnames to the internet requires a
+Dynamic DNS service.  The uplift-bind package provides the client side
+of service interface for a Dynamic DNS based on ISC BIND DNS (or any
+other DNS service which honors RFC 2136 and 3007 dynamic update
+queries).</p>
 </div>
 <div class="paragraph">
-<p>If you are running into trouble with an application <em>hosted</em> on an OpenShift Origin system, then please take advantage of the OpenShift Origin community resources:</p>
+<p>If you&#8217;re running a self-contained service for development
+or testing, you&#8217;ll need to have a local DNS service capable of
+accepting updates and responding to queries for your test zones while
+passing all other requests through to your external DNS servers.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>OpenShift Origin Home: <a href="http://openshift.github.io/">http://openshift.github.io/</a></p>
-</li>
-<li>
-<p>OpenShift FAQ: <a href="https://www.openshift.com/faq">https://www.openshift.com/faq</a></p>
-</li>
-<li>
-<p>OpenShift Forums: <a href="https://www.openshift.com/forums/">https://www.openshift.com/forums/</a></p>
-</li>
-</ul>
+<div class="paragraph">
+<p>For some simple unit testing you may instead want to have a completely
+isolated DNS service which can be initialized, updated, destroyed and
+reset without interfering with system operation.</p>
+</div>
+<div class="paragraph">
+<p>This document describes how to configure DNS in both ways for different
+modes of testing.  The first section describes and integrated service
+and the second describes an isolated one.</p>
+</div>
+<div class="paragraph">
+<p>The initial steps assume that the host has a static IP address.
+Additional steps to configure a system with an IP address provided by
+DHCP follow.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="diagnostics-script"><a class="anchor" href="#diagnostics-script"></a>1. Diagnostics Script</h2>
+<h2 id="integrated-local-dns-service"><a class="anchor" href="#integrated-local-dns-service"></a>1. Integrated Local DNS Service</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Installing and configuring an OpenShift Origin PaaS can often fail due to simple mistakes in configuration files. Fortunately, the OpenShift team provides an unsupported troubleshooting script that can diagnose most problems with an installation. The most updated version of this script is available at:</p>
+<p>This procedure will add a local named service which will accept
+updates using RFC compliant queries.  A tool in bind-utils named
+nsupdate can be used to send updates for testing.  The uplift-bind
+Ruby module uses rubygem-dnsruby to do the same thing.</p>
+</div>
+<div class="paragraph">
+<p>For this procedure, we&#8217;re going to use a target domain of
+<em>example.com</em>.  This domain is set aside by RFC 2606 for just this
+purpose. When it is done you will be able to query the example.com
+domain and get local answers.  You will also be able to update the
+contents of the local example.com domain. Modify any instance of
+<em>example.com</em> in the procedure below if you wish to use another domain
+for your configuration.</p>
+</div>
+<div class="paragraph">
+<p>Nearly all of the commands below must be run as root or using sudo(8).</p>
+</div>
+<div class="paragraph">
+<p>All other queries will be forwarded to the normal external DNS service.</p>
+</div>
+<div class="sect2">
+<h3 id="install-bind"><a class="anchor" href="#install-bind"></a>1.1. Install BIND</h3>
+<div class="paragraph">
+<p>You should just be able to request the <em>bind</em> package. The bind-utils
+package is needed for verification and testing.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>https://raw.github.com/openshift/origin-server/master/util/oo-diagnostics</pre>
+<pre>$ yum install bind bind-utils</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="generate-dns-update-keys"><a class="anchor" href="#generate-dns-update-keys"></a>1.2. Generate DNS Update Keys</h3>
+<div class="paragraph">
+<p>There are several good sites that go into details about how to create
+DNSSEC keys. See the references section. For now I&#8217;m just going to
+give one example.</p>
+</div>
+<div class="paragraph">
+<p>Note that dnssec-keygen needs a source of "entropy".  If it appears to
+hang, log onto the host with another session and type or execute a few
+commands until enough entropy has been generated to complete the key
+generation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ dnssec-keygen -a HMAC-MD5 -b 512 -n USER example.com.</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If this step hangs, you probably don&#8217;t have enough entropy on your system.</p>
+</div>
+<div class="paragraph">
+<p>You can solve this in one of two ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>use <code>-r /dev/urandom</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ dnssec-keygen -a HMAC-MD5 -b 512 -n USER -r /dev/urandom example.com.</pre>
+</div>
+</div>
+</li>
+<li>
+<p>generate more entropy (randomness) on your system</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The first method will give you potentially weaker keys. The second
+requires you to type a lot or generate a lot of network traffic until
+the entropy pool (in <code>/dev/random</code>) is large enough to provide input for your key.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The key generation process (<code>dnssec-keygen</code>) will produce two files who&#8217;s names look something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> Kexample.com.+157+30572.key
+ Kexample.com.+157+30572.private</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This script can be run on any OpenShift Origin broker or node host. Once you have the script downloaded, change the permission to enable execution of the script:</p>
+<p>The key string is in both files but you can extract it most easily
+like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre># chmod +x oo-diagnostics</pre>
+<pre>$ grep Key: Kexample.com.*.private | cut -d' ' -f 2</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To run the command and check for errors, issue the following command:</p>
+<p>(assuming you only have one private key file in your current working directory)</p>
+</div>
+<div class="paragraph">
+<p>Copy the files to /var/named for safe keeping.  We&#8217;ll need the key
+string later for configuring <code>/etc/named.conf</code></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-initial-test-zone-files"><a class="anchor" href="#create-initial-test-zone-files"></a>1.3. Create Initial Test Zone Files</h3>
+<div class="paragraph">
+<p>DNS updates have to be sent to a specific zone.  You need to have the
+example.com zone configured into your local named as a dynamic zone.
+There is a sample initial <code>example.com.db</code> file included in the
+examples directory.</p>
+</div>
+<div class="paragraph">
+<p>One thing to note is that the example has the default TTL value set to
+1 second.  This is to avoid testing errors caused by caching.  If the
+TTL is larger then changes will not be reflected until the record
+times out.  As it is, delete test queries should wait 2 seconds after
+the delete operation completes to be sure to get a correct answer. You
+would never use this value in production.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-named"><a class="anchor" href="#configure-named"></a>1.4. Configure Named</h3>
+<div class="paragraph">
+<p>The master configuration file for ISC BIND named is <code>/etc/named.conf</code>.
+There are several significant settings in that file which bear pointing out.</p>
+</div>
+<div class="sect3">
+<h4 id="forwarding"><a class="anchor" href="#forwarding"></a>1.4.1. Forwarding</h4>
+<div class="paragraph">
+<p>The local server must be set to forward only.  While recursion is
+enabled, it will not be used.  Requests for zones which are not
+locally authoritative (basically everything but example.com) will be
+forwarded to the upstream DNS server.</p>
+</div>
+<div class="paragraph">
+<p>The forwarders clause in the configuration will be included from a
+file named <code>/var/named/forwarders.conf</code>.  This will allow you to update
+the forwarders without editing the named.conf itself.  This will
+become important if you&#8217;re getting your primary IP address from DHCP.</p>
+</div>
+<div class="paragraph">
+<p>The forwarders section consists of the forwarders keyword and a block
+of semi-colon terminated IP addresses.  These addresses should be the
+addresses you would normally have in your <code>/etc/resolv.conf</code> nameserver
+list.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre># ./oo-diagnostics -v</pre>
+<pre>forwarders { &lt;ip address 1&gt; [ ; &lt;ip address N ]... ; } ;</pre>
 </div>
 </div>
+<div class="paragraph">
+<p>For now you can create <code>/var/named/forwarders.conf</code> by hand.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="update-keys"><a class="anchor" href="#update-keys"></a>1.4.2. Update Keys</h4>
+<div class="paragraph">
+<p>Each dynamic zone requires an associated update key.  The nameserver
+and client each have a copy of the same key.  The keys have an id and
+a value.  The id is the string provided at the end of the
+dnssec-keygen(8) command above and the value is the string we
+extracted from the K*.private file.</p>
+</div>
+<div class="paragraph">
+<p>The sample named.conf file includes the key configuration from a file
+called <code>example.com.key</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>include "example.com.key";</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The key file contains the key definition section which looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>key example.com {
+  algorithm HMAC-MD5 ;
+  secret "&lt;key string&gt;" ;
+} ;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Substitute the key string from the private key file generated eariler
+and place the key file in <code>/var/named/example.com.key</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="test-zones"><a class="anchor" href="#test-zones"></a>1.4.3. Test Zones</h4>
+<div class="paragraph">
+<p>The test zones are set in the <code>/etc/named.conf</code> file with a zone
+section. The zone file itself was described above.  Here we specify the
+type of zone, the zone file location and the fact that it can be
+updated using the key included in the previous section.</p>
+</div>
+<div class="paragraph">
+<p>The sample <code>named.conf</code> has a zone section for the example.com zone:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> zone "example.com" IN {
+ 	type master;
+ 	file "dynamic/example.com.db";
+ 	allow-update { key example.com ; } ;
+ };</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="start-code-named-code-service"><a class="anchor" href="#start-code-named-code-service"></a>1.5. Start <code>named</code> Service</h3>
+<div class="paragraph">
+<p>First, you want to test that the configuration files are valid and
+free of typos.  You can start a named manually and observe the startup
+using the -g option:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ /usr/sbin/named -g</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there are any errors, check the log output and the contents of <code>/var/log/messages</code> for syntax and configuration errors.</p>
+</div>
+<div class="paragraph">
+<p>When you&#8217;re satisfied that the configuration is correct, interrupt the
+named with <code>CTRL-C</code> and start it as a proper service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ service named start</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test-local-queries"><a class="anchor" href="#test-local-queries"></a>1.6. Test Local Queries</h3>
+<div class="paragraph">
+<p>Once the named is running you can check that it is responding to
+queries. The tools for that are in the bind-utils RPM.  Install that
+if you haven&#8217;t yet.  The two tools for testing ordinary queries are
+<code>dig(1)</code> and <code>host(1)</code>.  Dig gives more detailed output and does not use
+the domain or search lines from <code>/etc/resolv.conf</code>.  You have to provide
+fully qualified domain names for queries.  Host gives more compact
+simple output and does use <code>resolv.conf</code> to complete partial names.</p>
+</div>
+<div class="paragraph">
+<p>Because the resolv.conf does not yet have 127.0.0.1 as the first
+nameserver you have to specify the nameserver on the query command
+line.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ dig @127.0.0.1 example.com soa</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ host -t soa example.com 127.0.0.1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Those will show the Start Of Authority records for the example.com
+zone.  They should reflect the values in your local zone.  Compare
+them to the values you get from the same query on a host using normal
+DNS.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test-remote-queries"><a class="anchor" href="#test-remote-queries"></a>1.7. Test Remote Queries</h3>
+<div class="paragraph">
+<p>With forwarders configured, you should also be able to get responses
+for zones outside your test zone.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ dig @127.0.0.1 icann.org a</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ host -t a icann.org 127.0.0.1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These should complete promptly and show the normal IP address values.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test-updates"><a class="anchor" href="#test-updates"></a>1.8. Test Updates</h3>
+<div class="paragraph">
+<p>Update testing uses another tool from bind-utils named nsupdate(1).
+nsupdate takes its input from standard input.  It also requires the
+key for authentication.  You can test adding a record like this: (note
+the extra spaces in the indentation of the example)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> nsupdate -k /var/named/example.com.key &lt;&lt;EOF
+ server 127.0.0.1
+ update add testaddr.example.com 1 A 192.168.254.254
+ send
+ quit
+ EOF</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Following successful completion of that command you should be able to
+query with dig(1) or host(1) and verify that the new record is there.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ dig @127.0.0.1 testhost.example.com a</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="enable-code-named-code-service"><a class="anchor" href="#enable-code-named-code-service"></a>1.9. Enable <code>named</code> Service</h3>
+<div class="paragraph">
+<p>When you&#8217;re satsfied that the service is running and responding
+correctly you can enable the system service so that it restarts on
+reboot:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ chkconfig named on</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="set-resolver-order"><a class="anchor" href="#set-resolver-order"></a>1.10. Set Resolver Order</h3>
+<div class="paragraph">
+<p>The final step to integrating the local named is to make it the
+first nameserver in your resolver list.  Once this is done all
+queries will go to the local named first by default.</p>
+</div>
+<div class="paragraph">
+<p>Add the following line to your <code>/etc/resolv.conf</code> file before any
+other nameserver lines:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>nameserver 127.0.0.1</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dhcp-updates"><a class="anchor" href="#dhcp-updates"></a>2. DHCP Updates</h2>
+<div class="sectionbody">
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -717,108 +1106,538 @@ code { font-family: source_code_pro; }
 <i class="icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>Sometimes the script will fail at the first error and not continue processing. In order to run a full check on your node, add the <em>--abortok</em> switch</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre># ./oo-diagnostics -v --abortok</pre>
-</div>
-</div>
+If your network interface is set statically, you can stop here. Otherwise, read on.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Under the covers, this script performs a lot of checks on your host as well as executing the existing <em>oo-accept-broker</em> and <em>oo-accept-node</em> commands on the respective host.</p>
+<p>For a self-contained service which would be typical for testing, or
+for a virtual host environment like EC2 it is possible that the DNS
+host will get it&#8217;s IP address and DNS information from DHCP.  In that
+case each time the host renews it&#8217;s DHCP lease it will overwrite the
+<code>/etc/resolv.conf</code> file.  It may also change its upstream nameserver
+list.  If that happens, the forwarders list for the named must also
+change.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="recovering-failed-nodes"><a class="anchor" href="#recovering-failed-nodes"></a>2. Recovering Failed Nodes</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>A node host that fails catastrophically can be recovered if the gear directory /var/lib/openshift has been stored in a fault-tolerant way and can be recovered. In practice this scenario occurs rarely, especially when node hosts are virtual machines in a fault tolerant infrastructure rather than physical machines.</p>
+<p>dhclient is the daemon that maintains DHCP controlled interfaces.  It
+has hooks which can be used to run scripts triggered on lease
+renewals.  However in RHEL and Fedora distributions the current
+default manager for interfaces is NetworkManager.  NetworkManager is
+designed mostly for mobile device users and does not seem to provide
+access to the kinds of control hooks that dhclient does.</p>
 </div>
-<div class="admonitionblock warning">
+<div class="paragraph">
+<p>To provide the control needed we&#8217;re doing to disable NetworkManager
+and let interface control fall back to the more primative network
+service and the dhclient daemon.</p>
+</div>
+<div class="paragraph">
+<p>Note that the forwarders update below will fail if you have SELinux
+enabled.  If you&#8217;re running with SELinux disabled skip down past the SELinux
+instructions.</p>
+</div>
+<div class="paragraph">
+<p>If you consider it safe you can temporarily suspend SELinux and
+re-enable it later.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ setenforce 0</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="selinux"><a class="anchor" href="#selinux"></a>2.1. SELinux</h3>
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="icon-warning" title="Warning"></i>
+<i class="icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Do not start the MCollective service on the replacement node host until you have completed the following steps.
+If you don&#8217;t have SELinux enabled, you can skip to the next section. But you should really, really be using SELinux!
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Install a node host with the same hostname and IP address as the one that failed. The hostname DNS A record can be adjusted if the IP address must be different, but note that the application CNAME and database records all point to the hostname, and cannot be easily changed.</p>
+<p>If you are running your host with SELinux enabled then the dhclient
+service will not have permission to write any file which the named
+service has permission to read.  You will need to extend the SELinux
+policy to allow the dhclient-up-hooks script to write the
+<code>/var/named/forwarders.conf</code> file and make it readable.</p>
 </div>
 <div class="paragraph">
-<p>Duplicate the old node host&#8217;s configuration on the new node host, ensuring in particular that the gear profile is the same.</p>
+<p>To compile and load the new policy you will need the selinux-policy
+and policycoreutils RPMs installed.  If you have SELinux enabled you
+will certainly already have the selinux-policy package.  You may still
+need to install policycoreutils.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ yum install selinux-policy policycoreutils</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Mount <em>/var/lib/openshift</em> from the original, failed node host. SELinux contexts must have been stored on the <em>/var/lib/openshift</em> volume and should be maintained.</p>
+<p>The examples directory contains two files which define a policy update that
+does just that:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>dhcpnamedforward.te
+dhcpnamedforward.fc</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Recreate /etc/passwd entries for all the gears using the following steps:</p>
+<p>The first is a set of new policy rules.  The second defines the
+default label for the <code>/var/named/forwarders.conf</code> file so that the
+rules will apply.</p>
 </div>
+<div class="sect3">
+<h4 id="compiling-the-policy-module"><a class="anchor" href="#compiling-the-policy-module"></a>2.1.1. Compiling the Policy Module</h4>
+<div class="paragraph">
+<p>Copy the policy files to <code>/usr/share/selinux/packages</code>.</p>
+</div>
+<div class="paragraph">
+<p>Compile the policy module:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd /usr/share/selinux/packages
+$ make -f /usr/share/selinux/devel/Makefile</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will generate two additional files.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>dhcpnamedforward.if <i class="conum" data-value="1"></i><b>(1)</b>
+dhcpnamedforward.pp <i class="conum" data-value="2"></i><b>(2)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>.if</code> file is an empty "interface" template and can be ignored.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>.pp</code> file is the compiled policy.  This is what gets loaded.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="installing-the-policy-module"><a class="anchor" href="#installing-the-policy-module"></a>2.1.2. Installing the Policy Module</h4>
+<div class="paragraph">
+<p>To load the policy module use semodule(8)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ semodule -i /usr/share/selinux/packages/dhcpnamedforward.pp</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This could take a couple of minutes.  When it completes, check that
+the module is installed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ semodule -l | grep dhcpnamedforward</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>At this point SELinux should allow the dhclient-up-hooks script to
+write <code>/var/named/forwarders.conf</code> and the named service to read it.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="disable-networkmanager-service"><a class="anchor" href="#disable-networkmanager-service"></a>2.2. Disable NetworkManager Service</h3>
+<div class="paragraph">
+<p>Attempt to disable NetworkManager service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ chkconfig NetworkManager off</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you get any errors it&#8217;s likely that you don&#8217;t have NetworkManager
+installed and life is good.</p>
+</div>
+<div class="paragraph">
+<p>Then enable the generic "network" service</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ chkconfig network on</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And change any interfaces that think they&#8217;re controlled by
+NetworkManager and change them over:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ grep -l NM_CONTROLLED /etc/sysconfig/network-scripts/ifcfg-* | xargs perl -p -i -e '/NM_CONTROLLED/ &amp;&amp; s/yes/no/i'</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-dhclient-code-config-resolver-prefix"><a class="anchor" href="#code-dhclient-code-config-resolver-prefix"></a>2.3. <code>dhclient</code> Config (Resolver Prefix)</h3>
+<div class="paragraph">
+<p>As noted earlier, <code>dhclient</code> will rewrite the <code>/etc/resolv.conf</code> file each
+time it renews the DHCP lease.  You can configure it to put a value
+before the other nameserver lines.  Create a file named
+<code>/etc/dhcp/dhclient.conf</code> and put this in it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># prepend localhost for DNS lookup in dev and test
+prepend domain-name-servers 127.0.0.1 ;</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-dhclient-code-hooks-update-forwarders"><a class="anchor" href="#code-dhclient-code-hooks-update-forwarders"></a>2.4. <code>dhclient</code> Hooks (Update Forwarders)</h3>
+<div class="paragraph">
+<p><code>dhclient</code> also has the capability to run a script when an interface
+comes up.  If you place a bourne shell script at
+<code>/etc/dhcp/dhclient-up-hooks</code> and make sure it&#8217;s readable and
+<strong>executable</strong> then it will be sourced when any interface renews its
+lease.</p>
+</div>
+<div class="paragraph">
+<p>The dhclient-up-hooks script in the directory which contains this
+README will create a file named <code>/var/named/forwarders.conf</code> on lease
+renew.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-named-conf-code-include-forwarders"><a class="anchor" href="#code-named-conf-code-include-forwarders"></a>2.5. <code>named.conf</code>: Include Forwarders</h3>
+<div class="paragraph">
+<p>If you followed the instructions initially your /etc/named.conf file
+already includes the /var/named/forwarders.conf to set the forwarders
+list.  If not, do it now.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="renewing-the-interface"><a class="anchor" href="#renewing-the-interface"></a>2.6. Renewing the Interface</h3>
+<div class="paragraph">
+<p>Now if you force the external interface to renew (do this while logged
+in via serial console!) you should be able to watch the forwarders be
+updated and the named reloaded to get the update</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ service network restart</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you get an error or you don&#8217;t see the timestamp change on
+<code>/var/named/forwarders.conf</code> then check the execute bit on
+<code>/etc/dhcp/dhclient-up-hooks</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="isolated-local-dns-service"><a class="anchor" href="#isolated-local-dns-service"></a>3. Isolated Local DNS Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes how to create a small self-contained DNS service
+suitable for testing dynamic DNS operations.</p>
+</div>
+<div class="paragraph">
+<p>The idea is to run a local DNS server as a non-root user on a
+non-standard port for testing purposes.  This configuration will not
+forward requests and will not interact with regular system DNS
+lookups.</p>
+</div>
+<div class="sect2">
+<h3 id="install-required-software"><a class="anchor" href="#install-required-software"></a>3.1. Install required software</h3>
+<div class="paragraph">
+<p>The DNS service requires the <code>bind</code> RPM</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ yum install bind</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-a-workspace"><a class="anchor" href="#create-a-workspace"></a>3.2. Create a Workspace</h3>
+<div class="paragraph">
+<p>Create a space to run the local service</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ mkdir ~/ddns</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a space for temporary files and logs</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># mkdir ~/ddns/tmp</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="populate-the-workspace"><a class="anchor" href="#populate-the-workspace"></a>3.3. Populate the Workspace</h3>
+<div class="paragraph">
+<p>Copy the stock/default named configuration files</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd ~/ddns
+$ sudo cp /etc/named.* .
+$ sudo cp /var/named/named.{ca,empty,localhost,loopback} .
+$ sudo chown `id -u`:`id -g` *</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Comment out IPv6 root servers (unless you have IPv6 configured):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ sed  -i -e '/AAAA/ &amp;&amp; s/^/;;/' named.*</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="enable-secure-updates"><a class="anchor" href="#enable-secure-updates"></a>3.4. Enable Secure Updates</h3>
+<div class="paragraph">
+<p>Generate update keys: may need enough randomness.  Log in and type stuff:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ dnssec-keygen -a HMAC-MD5 -b 512 -n USER example.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Extract the key value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ perl -n -e '/Key: / &amp;&amp; s/Key: // &amp;&amp; print' Kexample.com.*.private</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>example.com.key:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> key example.com {
+   algorithm HMAC-MD5;
+   secret "H6NDDnTbNpcBrUM5c4BJtohyK2uuZ5Oi6jxg3ME+RJsNl5Wl2B87oL12 YxWUR3Gp7FdZQojTKBSfs5ZjghYxGw==";
+ };</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-the-test-configuration-file"><a class="anchor" href="#create-the-test-configuration-file"></a>3.5. Create the Test Configuration File</h3>
+<div class="paragraph">
+<p>This file is a limited configuration.  It runs on a non-standard  high-numbered port.  It runs from a single directory and stores run-time files in a temporary directory so they can be cleaned up and repopulated easily</p>
+</div>
+<div class="listingblock">
+<div class="title">named.conf</div>
+<div class="content">
+<pre> // named.conf
+
+ options {
+ 	listen-on port 10053 { 127.0.0.1; };
+ 	directory 	".";
+ 	allow-query     { localhost; };
+        recursion no;
+
+ 	pid-file "tmp/named.pid";
+ 	session-keyfile "tmp/named.session.key";
+        managed-keys-directory "tmp";
+ };
+
+ // disable remote controls
+ controls {};
+
+ logging {
+         channel default_debug {
+                 //file "data/named.run";
+                 file "tmp/named.log";
+                 severity dynamic;
+         };
+ };
+
+ include "named.rfc1912.zones";
+
+ //
+ // Local customization
+ //
+
+ include "example.com.key";
+
+ zone "example.com" IN {
+      type master;
+      file "tmp/example.com.db";
+      allow-update { key example.com ; };
+ };</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="zone-files"><a class="anchor" href="#zone-files"></a>3.6. Zone Files</h3>
+<div class="paragraph">
+<p>Create the template zone files in the main directory.  You will copy them to
+the tmp directory for test runs.  Changes to the running service will
+cause changes to the zone files.</p>
+</div>
+<div class="listingblock">
+<div class="title">example.com.db</div>
+<div class="content">
+<pre> ; initial data for testing DDNS using BIND
+ $ORIGIN .
+ $TTL 1	; 1 seconds (for testing only)
+ example.com		IN SOA	ns1.example.com. hostmaster.example.com. (
+ 				2011112904 ; serial
+ 				60         ; refresh (1 minute)
+ 				15         ; retry (15 seconds)
+ 				1800       ; expire (30 minutes)
+ 				10         ; minimum (10 seconds)
+ 				)
+ 			NS	ns1.example.com.
+ 			MX	10 mail.example.com.
+ $ORIGIN example.com.
+ mail			A	127.0.0.1
+ master			A	192.168.1.1
+ ns1			A	127.0.0.1
+ node                    A       192.168.1.10
+
+ ; test records
+ testns1			TXT	"reserved namespace testns1"
+ ;testns2		TXT	"to be added by tests"
+ testns3                 TXT     "reserved to add apps"
+ testns4                 TXT     "reserved to delete apps"
+ testapp4-testns4        CNAME   node.example.com.</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="testing"><a class="anchor" href="#testing"></a>3.7. Testing</h3>
+<div class="paragraph">
+<p>Go to the ddns working directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd ~/ddns</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Clear the tmp directory</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ rm -f tmp/*</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Copy the initial zone files</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ for FILE in  *.init ; do cp $FILE tmp/`basename $FILE .init` ; done</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Start the <code>named</code>; log to stdout, no fork:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ /usr/sbin/named -c named.conf -g</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add an A record and try to retrieve it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> nsupdate -y HMAC-MD5:example.com:`perl -n -e '/secret "([^"]+)"/ &amp;&amp; print $1;' example.com.key` &lt;&lt;EOF
+ server localhost 10053
+ update add foo.example.com 1 A 192.168.1.2
+ send
+ EOF</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the logs for the entry record:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ grep foo tmp/named.log</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check that the named returns the new record</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ dig -p 10053 @localhost foo.example.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Stop the <code>named</code> instance:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ kill `cat tmp/named.pid`</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="references"><a class="anchor" href="#references"></a>4. References</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p>Get the list of UUIDs from the directories in /var/lib/openshift.</p>
+<p>RFC 2136: Dynamic Updates in the Domain Name System (DNS UPDATE)</p>
 </li>
 <li>
-<p>Get the Unix UID and GID values from the group value of /var/lib/openshift/UUID.</p>
+<p>RFC 2606: Reserved Top Level DNS Names</p>
 </li>
 <li>
-<p>Create the corresponding entries in /etc/passwd, using another node&#8217;s /etc/passwd file for reference.</p>
+<p>RFC 3007: Secure Domain Name System (DNS) Dynamic Update</p>
+</li>
+<li>
+<p>Article: <a href="http://linux.yyz.us/nsupdate/">Painless Dynamic DNS</a> Copyright © 2008 Jeff Garzik</p>
+</li>
+<li>
+<p>Article: <a href="http://linux.yyz.us/dns/ddns-server.html">Painless DDNS part 2: the server</a> Copyright © 2008 Jeff Garzik</p>
+</li>
+<li>
+<p><a href="http://linux.die.net/man/8/dhclient-script">dhclient-script(8) man page</a></p>
+</li>
+<li>
+<p><a href="http://www.isc.org/software/bind/documentation">ISC BIND documentation</a></p>
+</li>
+<li>
+<p><a href="http://magazine.redhat.com/2007/08/21/a-step-by-step-guide-to-building-a-new-selinux-policy-module/">A step-by-step guide to building a new SELinux policy module</a>  Dan Walsh, Copyright © 2012 Red Hat, Inc.</p>
+</li>
+<li>
+<p><a href="http://oss.tresys.com/projects/refpolicy">SELinux reference policy</a></p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>Reboot the new node host to activate all changes, start the gears, and allow MCollective and other services to run.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="removing-applications-from-a-node"><a class="anchor" href="#removing-applications-from-a-node"></a>3. Removing Applications from a Node</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>While trying to add a node to a district, a common error is that the node already has user applications on it. In order to be able to add this node to a district, you will either need to move these applications to another node or delete the applications. Whether you choose to move or delete the applications will depend largely on your agreements with your end users regarding application persistence.</p>
-</div>
-<div class="paragraph">
-<p>In order to remove a users application, issue the following commands:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre># oo-admin-ctl-app -l username -a appname -c stop
-# oo-admin-ctl-app -l username -a appname -c destroy</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The above commands will stop the user&#8217;s application and them remove the application from the node. If you want to preserve the application data, you should backup the application first using the snapshot tool that is part of the RHC command line tools.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="unknown-locale-error-when-running-em-lokkit-em"><a class="anchor" href="#unknown-locale-error-when-running-em-lokkit-em"></a>4. Unknown Locale Error When Running <em>lokkit</em></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If you get unknown locale error when running <em>lokkit</em>, run the following command to set the locale and then try your lokkit command again:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre># export LC_CTYPE="en_US.UTF-8"</pre>
-</div>
 </div>
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-01-29 18:23:38 EST
+Last updated 2014-01-29 18:23:34 EST
 </div>
 <!-- Google Analytics -->
 <script>
