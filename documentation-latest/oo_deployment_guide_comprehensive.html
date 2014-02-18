@@ -2252,7 +2252,7 @@ topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = /usr/libexec/mcollective
-#logfile = /var/log/mcollective-client.log
+logfile = /var/log/openshift/broker/mcollective-client.log
 loglevel = debug
 
 # Plugins
@@ -2276,7 +2276,7 @@ topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = /opt/rh/ruby193/root/usr/libexec/mcollective
-#logfile = /var/log/mcollective-client.log
+logfile = /var/log/openshift/broker/ruby193-mcollective-client.log
 loglevel = debug
 
 # Plugins
@@ -3350,6 +3350,55 @@ in the <em>/var/www/openshift/console/httpd/conf.d</em> directory. For this refe
 cp openshift-origin-auth-remote-user-basic.conf.sample openshift-origin-auth-remote-user-basic.conf</pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="ssl-configuration"><a class="anchor" href="#ssl-configuration"></a>8.3.1. SSL Configuration</h4>
+<div class="paragraph">
+<p>The broker proxy configuration for apache adds a VirtualHost configuration to listen on port 443.</p>
+</div>
+<div class="paragraph">
+<p>This may conflict with the default SSL VirtualHost configuration.
+Check <em>/etc/httpd/conf.d/ssl.conf</em> and completely remove the configuration if you find one there.</p>
+</div>
+<div class="paragraph">
+<p>The broker proxy configuration itself can be found in <em>/etc/httpd/conf.d/*openshiftorigin_broker_proxy.conf</em> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;VirtualHost *:443&gt;
+  # ServerName we will inherit from other config;
+  # ServerAlias is to make sure "localhost" traffic goes here regardless.
+  ServerAlias localhost
+  ServerAdmin root@localhost
+  DocumentRoot /var/www/html
+  RewriteEngine              On
+  RewriteRule     ^/$    https://%{HTTP_HOST}/console [R,L]
+  SSLEngine on
+  SSLProxyEngine on
+  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  RequestHeader set X_FORWARDED_PROTO 'https'
+  RequestHeader set Front-End-Https "On"
+  ProxyTimeout 300
+  ProxyPass /console http://127.0.0.1:8118/console
+  ProxyPassReverse /console http://127.0.0.1:8118/console
+
+  ProxyPass /broker http://127.0.0.1:8080/broker
+  ProxyPassReverse /broker http://127.0.0.1:8080/broker
+
+  ProxyPass /assets http://127.0.0.1:8118/console/assets <i class="conum" data-value="1"></i><b>(1)</b>
+  ProxyPassReverse /assets http://127.0.0.1:8118/console/assets <i class="conum" data-value="1"></i><b>(1)</b>
+&lt;/VirtualHost&gt;</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In order for icons to show up correctly on the web console, you should ensure that the VirtualHost definition in that file contains the <em>ProxyPass</em> and <em>ProxyPassReverse</em> lines.</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="verify-the-ruby-bundler"><a class="anchor" href="#verify-the-ruby-bundler"></a>8.4. Verify the Ruby Bundler</h3>
@@ -3872,7 +3921,7 @@ topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = /usr/libexec/mcollective
-logfile = /var/log/mcollective.log
+logfile = /var/log/openshift/node/mcollective.log
 loglevel = debug
 daemonize = 0
 direct_addressing = 1
@@ -3903,7 +3952,7 @@ topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = /opt/rh/ruby193/root/usr/libexec/mcollective
-logfile = /var/log/mcollective.log
+logfile = /var/log/openshift/node/ruby193-mcollective.log
 loglevel = debug
 daemonize = 1
 direct_addressing = 1
@@ -4225,15 +4274,23 @@ This plugin conflicts with the apache-mod-rewrite plugin.
 <h4 id="nodejs-websocket-plugin"><a class="anchor" href="#nodejs-websocket-plugin"></a>9.7.4. nodejs-websocket Plugin</h4>
 <div class="listingblock">
 <div class="content">
-<pre>yum install -y openshift-origin-node-proxy rubygem-openshift-origin-frontend-nodejs-websocket</pre>
+<pre>yum install -y openshift-origin-node-proxy rubygem-openshift-origin-frontend-nodejs-websocket facter</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Start the node-proxy service</p>
 </div>
 <div class="listingblock">
+<div class="title">Fedora</div>
 <div class="content">
-<pre>service openshift-node-web-proxy enable
+<pre>systemctl enable openshift-node-web-proxy.service
+systemctl start openshift-node-web-proxy.service</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">RHEL6</div>
+<div class="content">
+<pre>chkconfig openshift-node-web-proxy on
 service openshift-node-web-proxy start</pre>
 </div>
 </div>
@@ -4364,7 +4421,8 @@ If you are installing a multi-node configuration, it is important to remember th
 <div class="content">
 <pre>curl -o /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-yum install -y jenkins-1.510</pre>
+yum install -y jenkins-1.510
+chkconfig jenkins off</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -4627,19 +4685,6 @@ systemctl start cgred.service</pre>
 <div class="paragraph">
 <p>In order for cgroups to work correctly, you need to ensure that services are started in the correct order.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>service cgconfig start</p>
-</li>
-<li>
-<p>service cgcred start</p>
-</li>
-<li>
-<p>service openshift-cgroups start</p>
-</li>
-</ul>
-</div>
 </div>
 <div class="sect2">
 <h3 id="configure-disk-quotas"><a class="anchor" href="#configure-disk-quotas"></a>10.4. Configure Disk Quotas</h3>
@@ -4789,7 +4834,6 @@ systemctl start cgred.service</pre>
              httpd_read_user_content=on httpd_enable_homedirs=on httpd_run_stickshift=on \
              allow_polyinstantiation=on httpd_run_stickshift=on httpd_execmem=on
 restorecon -rv /var/run
-restorecon -rv /usr/sbin/mcollectived /var/log/mcollective.log /var/run/mcollectived.pid
 restorecon -rv /var/lib/openshift /etc/openshift/node.conf /etc/httpd/conf.d/openshift</pre>
 </div>
 </div>
@@ -5192,7 +5236,7 @@ $ ping node.example.com</pre>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-01-29 18:23:33 EST
+Last updated 2014-02-18 10:21:10 EST
 </div>
 <!-- Google Analytics -->
 <script>
