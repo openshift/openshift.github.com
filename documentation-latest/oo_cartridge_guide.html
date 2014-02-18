@@ -1745,7 +1745,7 @@ automatically deployed into the server runtime.</p>
 <h3 id="tomcat-cartridge-integrations"><a class="anchor" href="#tomcat-cartridge-integrations"></a>6.4. Cartridge Integrations</h3>
 <div class="paragraph">
 <p>The <code>jbossews</code> cart has out-of-the-box integration support with the RedHat <code>postgresql</code> and <code>mysql</code> cartridges. The default
-<code>context.xml</code> contains two basic JDBC <code>Resource</code> definitions, <code>jdbc/MysqlDS</code> and <code>jdbc/PostgreSQLDS</code>, which will be automatically
+<code>context.xml</code> contains two basic JDBC <code>Resource</code> definitions, <code>jdbc/MySQLDS</code> and <code>jdbc/PostgreSQLDS</code>, which will be automatically
 configured to work with their respective cartridges if installed into your application.</p>
 </div>
 </div>
@@ -2197,7 +2197,7 @@ every time you <code>git push</code> to your OpenShift application.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disable app restarting during git pushes (see <em>Development Mode</em>)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">force_npm_deploy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">use_npm</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">This will force to run your application using NPM instead of using <em>supervisor</em></p></td>
 </tr>
 </tbody>
@@ -2217,10 +2217,7 @@ of your javascript files in "development" mode, you can either use the
 </div>
 </div>
 <div class="paragraph">
-<p>This will run Node.JS with <a href="https://npmjs.org/package/supervisor">Supervisor</a>.
-Note that when the force_npm_deploy marker is present, the hot_deploy marker
-is not supported. In this case when you do add hot_deploy marker, the start
-operation will fail.</p>
+<p>This will run Node.JS with <a href="https://npmjs.org/package/supervisor">Supervisor</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2231,7 +2228,7 @@ operation will fail.</p>
 <td class="content">
 <div class="paragraph">
 <p>The <code>hot_deploy</code> marker is restricted to the supervisor only. Using the
-<code>force_npm_deploy</code> marker, will result in your application not being started.</p>
+<code>use_npm</code> marker, your application will always do a full restart.</p>
 </div>
 </td>
 </tr>
@@ -2686,7 +2683,7 @@ This mirror is on the same network as your application, and your gem download sh
 <p>Edit your Gemfile and replace</p>
 <div class="literalblock">
 <div class="content">
-<pre>source 'http://rubygems.org'</pre>
+<pre>source 'https://rubygems.org'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2702,7 +2699,7 @@ This mirror is on the same network as your application, and your gem download sh
 <p>Edit your Gemfile.lock and replace</p>
 <div class="literalblock">
 <div class="content">
-<pre>remote: http://rubygems.org/</pre>
+<pre>remote: https://rubygems.org/</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2878,16 +2875,11 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <td class="tableblock halign-left valign-top"><p class="tableblock">hot_deploy</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent shutdown and startup of the application during builds. The Passenger <code>restart.txt</code> file will be used to reload the application.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">disable_asset_compilation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent assets to be compiled upon application deployment. This marker should be used when deploying application with assets which are already compiled.</p></td>
+</tr>
 </tbody>
-</table>
-
-<div class="paragraph">
-<p>|disable_asset_compilation
-|Will prevent assets to be compiled upon application deployment. This marker should be used when deploying application with assets which are already compiled.</p>
-</div>
-<table class="tableblock frame-all grid-all" style="width:100%; ">
-<colgroup> 
-</colgroup>
 </table>
 
 </div>
@@ -2896,7 +2888,7 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-01-29 18:23:33 EST
+Last updated 2014-02-18 10:21:10 EST
 </div>
 <!-- Google Analytics -->
 <script>

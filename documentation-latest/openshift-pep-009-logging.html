@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
-<title>OpenShift PEP 009: Log rotation and aggregation</title>
+<title>OpenShift PEP 009: Standardized conventions for logging and aggregation Status: draft</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
 @import url(http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.0/css/font-awesome.css);
 /*
@@ -646,7 +646,7 @@ code { font-family: source_code_pro; }
 </ul>
 </nav>
 <div id="header">
-<h1>OpenShift PEP 009: Log rotation and aggregation</h1>
+<h1>OpenShift PEP 009: Standardized conventions for logging and aggregation Status: draft</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
 <div class="toc2" id="toc">
@@ -664,12 +664,11 @@ code { font-family: source_code_pro; }
 <div class="sectionbody">
 <div class="paragraph">
 <p>PEP: 009<br>
-Title: Log rotation and aggregation<br>
-Status: draft<br>
-Author: Brenton Leanhardt <a href="mailto:bleanhar@redhat.com">bleanhar@redhat.com</a><br>
+Title: Standardized conventions for logging and aggregation Status: draft<br>
+Author: Brenton Leanhardt <a href="mailto:bleanhar@redhat.com">bleanhar@redhat.com</a>, Andy Goldstein <a href="mailto:agoldste@redhat.com">agoldste@redhat.com</a>, Dan Mace <a href="mailto:dmace@redhat.com">dmace@redhat.com</a>, Julian Prokay <a href="mailto:jprokay@redhat.com">jprokay@redhat.com</a><br>
 Arch Priority: medium<br>
 Complexity: 20<br>
-Affected Components: runtime, cartridges<br>
+Affected Components: broker, runtime, cartridges<br>
 Affected Teams: Runtime (0-5), UI (0-5), Broker (0-5), Enterprise (0-5)<br>
 User Impact: medium<br>
 Epic: <em>url to a story, wiki page, or doc</em></p>
@@ -679,172 +678,224 @@ Epic: <em>url to a story, wiki page, or doc</em></p>
 <div class="sect2">
 <h3 id="abstract"><a class="anchor" href="#abstract"></a>Abstract</h3>
 <div class="paragraph">
-<p>Standardize application log access and create an OpenShift service to handle cartridge log rotation. Develop service and plugin cartridges for log aggregation.</p>
+<p>Standardize conventions for logging in OpenShift to make it easier for users and system administrators to access logs in a consistent manner. Begin to provide support for external aggregation of log messages.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
 <div class="paragraph">
-<p>There is a tactical need for log rotation. Currently developers must tidy applications to prevent gear disk quotas from being reached&#8212;leading to localized outages. In some cases OpenShift administrator assistance may be required to unwedge such a gear.</p>
+<p>Today, log messages related to OpenShift are placed in a variety of different log files. These include broker logs (Apache, Rails application, user actions, usage, MCollective client), node logs (Apache, MCollective, platform), site/console logs (Apache, Rails application), and gear/cartridge logs (varies by cartridge). Administrators wishing to aggregate all the logs in a centralized location such as Splunk or ElasticSearch must configure those tools to process each log file, reading from disk and shipping the log messages off to the remote aggregation server. This can be wasteful of resources, as writing log files to disk that are then immediately read and shipped over the network to a remote aggregation server adds the overhead of additional disk IO and possibly CPU usage that could be avoided by eliminating the disk writes entirely.</p>
 </div>
 <div class="paragraph">
-<p>Secondary to log rotation is aggregation. Today accessing a gear disk is the only way to reach cartridge logs. This was never intended to be the long term approach for log access. It does not scale for the developer to have to manually gather logs from dozens of gears.</p>
+<p>Having a large number of log files spread across multiple locations makes logging aggregation difficult. Aggregation would be much simpler if all the log messages had the ability to go through a single logging transport. Syslog is a good choice for this role because it is or can be supported by all of the OpenShift components with minimal effort. Additionally, most Syslog implementations are configurable, meaning that the administrator can choose to write logs to disk, forward logs to an aggregation server, etc.</p>
 </div>
 <div class="paragraph">
-<p>In addition, accessing gear logs via ssh requires elevated privileges. While the first iteration of the log aggregation service may still require shell access to the logs, it could be easily extended to expose multiple endpoints such as HTTP or a websocket drain. The latter is beneficial in cases where logs need to be exposed via custom authentication mechanisms.</p>
-</div>
-<div class="paragraph">
-<p>Lastly, we not only want to alleviate developers from the details of logging infrastructure we also want to make steps towards standardizing cartridge logging in the process. This will pave the way for future partners to provide additional logging solutions.</p>
+<p>Today, log files in a gear are generally located in a subdirectory in each cartridge&#8217;s directory. For example, if a gear has both the Ruby and Postgres cartridges installed, logs for Ruby would be in <code>$OPENSHIFT_HOMEDIR/ruby/logs</code> and logs for Postgres would be in <code>$OPENSHIFT_HOMEDIR/postgresql/logs</code>. It would be nice if all of these log files could be consolidated to a single location within the gear, such as <code>$OPENSHIFT_DATA_DIR/logs</code>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
-<div class="sect4">
-<h5 id="log-rotation-service"><a class="anchor" href="#log-rotation-service"></a>Log rotation service:</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Must not be the responsibility of cartridge authors or developers</p>
-</li>
-</ol>
+<div class="sect3">
+<h4 id="syslog-enablement"><a class="anchor" href="#syslog-enablement"></a>Syslog Enablement</h4>
+<div class="paragraph">
+<p>Via configuration, a system administrator can instruct OpenShift to log to Syslog instead of to files.</p>
 </div>
 <div class="paragraph">
-<p>In order for the platform log rotation service to locate cartridge logs a standardized location will be added to the cartridge SDK. This API will update the log rotation server configuration.</p>
+<p><strong>Platform Components</strong><br>
+The following platform components may be configured to write log messages to Syslog instead of to the given files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Broker</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/openshift/broker/production.log</code></p>
+</li>
+<li>
+<p><code>/var/log/openshift/broker/usage.log</code></p>
+</li>
+<li>
+<p><code>/var/log/openshift/broker/user_action.log</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Node</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/openshift/node/platform.log</code></p>
+</li>
+<li>
+<p><code>/var/log/openshift/node/platform-trace.log</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Site</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/openshift/site/production.log</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Console</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/openshift/console/production.log</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Frontend Apache (Gear access logging)</p>
+</li>
+<li>
+<p><code>/var/log/httpd/openshift_log</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>For efficiency it is possible that idler integration will be required. As applications change state the coresponding log rotation configuration can be enabled or disabled as needed.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Must not lose new logs or cause outages</p>
-</li>
-</ol>
+<p><strong>Gears and Cartridges</strong><br>
+Gear and cartridge log messages may be directed to Syslog by setting the <code>GEAR_SYSLOG_ENABLED</code> configuration key to <code>true</code> in <code>node.conf</code>.</p>
 </div>
 <div class="paragraph">
-<p>It can be the case that older logs are purged to make room for new logs.</p>
+<p><strong>Other Components</strong><br>
+Some log files will not be controlled by the configuration options listed above and instead must be configured independently/elsewhere:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
+<div class="ulist">
+<ul>
 <li>
-<p>Can be disabled by the developer</p>
+<p>Broker</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/openshift/broker/ruby193-mcollective-client.log</code></p>
 </li>
-</ol>
+<li>
+<p><code>/var/log/openshift/broker/httpd/access_log</code></p>
+</li>
+<li>
+<p><code>/var/log/openshift/broker/httpd/error_log</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Node</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/ruby193-mcollective.log</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Site</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/openshift/site/httpd/access_log</code></p>
+</li>
+<li>
+<p><code>/var/log/openshift/site/httpd/error_log</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Console</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/var/log/openshift/console/httpd/access_log</code></p>
+</li>
+<li>
+<p><code>/var/log/openshift/console/httpd/error_log</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="using-stdout-and-stderr-for-logging"><a class="anchor" href="#using-stdout-and-stderr-for-logging"></a>Using stdout and stderr for logging</h4>
+<div class="paragraph">
+<p>Cartridge and authors should configure their cartridges so all log messages are delivered to stdout instead of to one or more files. Application authors should do the same. OpenShift will capture anything sent to stdout as well as to stderr and ensure it is logged appropriately (assuming cartridge authors implement the cartridge modifications listed below).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="cartridge-modifications"><a class="anchor" href="#cartridge-modifications"></a>Cartridge modifications</h4>
+<div class="paragraph">
+<p>Cartridges will need to be modified so they can take advantage of the unified logging approach described here.</p>
 </div>
 <div class="paragraph">
-<p>There may be cases where the application server running in a gear wants to handle log rotation itself.</p>
+<p>When a cartridge is started, the command being executed now needs to have both stdout and stderr redirected to the <code>openshift-logger</code> command (see below). The invocation of <code>openshift-logger</code> should also specify the program name (e.g. "php" or "web" for the PHP cartridge).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="openshift-logger"><a class="anchor" href="#openshift-logger"></a>openshift-logger</h4>
+<div class="paragraph">
+<p>The <code>openshift-logger</code> executable is responsible for forwarding log messages it receives via stdin to Syslog or to a file, depending on OpenShift&#8217;s logging configuration. If <code>GEAR_SYSLOG_ENABLED</code> is true, gear and cartridge log messages will be delivered to Syslog; otherwise, they will be written to log files.</p>
 </div>
 <div class="paragraph">
-<p>For some cartridges this may require rolling restarts.</p>
+<p>Callers of <code>openshift-logger</code> must specify a program name which will be used to identify the program that generated the log message. The program name will be used both when sending to Syslog and writing to a file. When writing to a file, the program name will be used as the file name. For example, if the program name is "php", the corresponding log file will be created at <code>$OPENSHIFT_DATA_DIR/logs/php.log</code>.</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Rotate based on file size and provide a mechanism to automatically delete the oldest logs</p>
-</li>
-<li>
-<p>Compress rotated logs</p>
-</li>
-<li>
-<p>Defer to proven Linux tools such as logrotate</p>
-</li>
-</ol>
+</div>
+<div class="sect3">
+<h4 id="gear-log-message-attribution"><a class="anchor" href="#gear-log-message-attribution"></a>Gear log message attribution</h4>
+<div class="paragraph">
+<p>When an administrator has configured OpenShift to send gear log messages to syslog, there needs to be some way to include OpenShift metadata with each message to aid in the aggregation of related messages. Because the primary processes running for each cartridge are owned by the gear user, we need to be able to include the OpenShift metadata in a trusted manner. This means we can&#8217;t rely on the gear processes to send the information in the log messages because the information could become tainted.</p>
 </div>
 <div class="paragraph">
-<p>It is advised that a proven open source tool such as logrotate be used and wrapped with a service script similar to how cgroups is integrated into OpenShift.</p>
+<p>Fortunately, when communicating with Syslog via the Unix datagram socket, Syslog can look up the UID of the process sending the log message in a trusted manner using SO_PASSCRED. A custom plugin for Rsyslog can be written that uses the trusted UID property to look up the gear UUID, which can then be used to look up the app UUID and possibly other OpenShift metadata. These values will be associated with the message and can be used for filtering and aggregation.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="log-aggregation-service-cartridge"><a class="anchor" href="#log-aggregation-service-cartridge"></a>Log aggregation service cartridge:</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Must support aggregating logs to disk as well at provide a drain. This drain should be suitable for future cartridges that provide advanced log indexing.</p>
-</li>
-</ol>
-</div>
+<div class="sect3">
+<h4 id="node-apache-access-log-changes"><a class="anchor" href="#node-apache-access-log-changes"></a>Node Apache access log changes</h4>
 <div class="paragraph">
-<p>A desireable feature of this log aggregation service cartridge is that it&#8217;s configuration be editable by the gear owner to allow for maximum flexibility.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Must not require more than 1 extra gear per domain for normal usage</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>This may require expose_port to be called for domain scoped applications. However, the recent effort to allow ssl connections to gears may be all that is necessary.</p>
-</div>
-<div class="paragraph">
-<p>A high performance gear profile may be needed due to high IO requirements.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>May use the platform log rotation service to rotate the aggregated logs</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect4">
-<h5 id="log-aggregation-plugin-cartridge"><a class="anchor" href="#log-aggregation-plugin-cartridge"></a>Log aggregation plugin cartridge:</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Must tolerate log aggregation service disruptions</p>
-</li>
-<li>
-<p>Must be embeddable in all gears for an application</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>This plugin may require extending the current Group-Overrides functionality to allow it to be embedded on every gear for a particular application.</p>
-</div>
-<div class="paragraph">
-<p>It could be the case that a default plugin could be embedded in all gears. This default could be overridden by the developer as needed.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Must monitor log files and avoid sending duplicate log messages</p>
-</li>
-<li>
-<p>Must be decoupled from the log rotation configuration</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>If a developer has disabled platform log rotation for a cartridge the log aggregation plugin must continue to work provided the cartridge SDK log specification is followed.</p>
+<p>Incoming HTTP requests first arrive at Apache running on a node and are then proxied to the appropriate gear to handle the request. The node Apache access should be augmented to include additional OpenShift metadata (app uuid, gear uuid) to aid in correlation/aggregation of access log messages.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="backwards-compatibility"><a class="anchor" href="#backwards-compatibility"></a>Backwards Compatibility</h3>
 <div class="paragraph">
-<p>The ability for application developers to access log files on disk will not be taken away. The goal is to provide a superior solution to lure them away from tradition logging.</p>
+<p>If Syslog is enabled for the platform, OpenShift system log messages will go to Syslog instead of to files. It will then be up to the OpenShift system administrator to configure log destinations.</p>
 </div>
 <div class="paragraph">
-<p>This means an unmodified application may not benefit from log rotation or aggregation out of the box. The modifications required to benefit from platform log rotation and aggregation will be trivial&#8212;writing to a file in a particular directory or using a provided named pipe.</p>
+<p>If Syslog is enabled for gears, cartridge and application log messages will <strong>only</strong> be delivered to Syslog, meaning they will no longer be written to log files inside each gear. Additionally, <code>rhc tail</code> will no longer work because it requires access to the log files on disk.</p>
+</div>
+<div class="paragraph">
+<p>Otherwise, if Syslog is not enabled for gears, cartridge and application log messages will continue to be written to disk, with the following differences from today&#8217;s system: * Logs will all be placed in <code>$OPENSHIFT_DATA_DIR/logs</code> instead of spread across multiple cartridge directories. * Log messages are consolidated <em>per cartridge</em> and written to a single file for that cartridge within the gear. In some cases, this will result in one file where previously there were many. The logs from separate sources within the cartridge will be interlaced within a single file. Each log entry will contain the context necessary to separate the lines in a downstream tool.</p>
+</div>
+<div class="paragraph">
+<p>If the node Apache access log (openshift_log) is not written to a file in its current format, tools such as <code>oo-last-access</code> will not be able to function, meaning that gear idling will not work any more, as determining if a gear is idle currently depends on openshift_log.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="rationale"><a class="anchor" href="#rationale"></a>Rationale</h3>
 <div class="paragraph">
-<p>Several PaaS providers offer integrated logging services. Applications are required to log following strict guidelines and by doing so benefit from the service.</p>
+<p>Writing to <code>stdout</code> and <code>stderr</code> is easy and supported by every language/runtime/framework. By using these mechanisms, cartridge and application authors can easily generate log messages with minimal effort. Other options such as sending log messages to a web server or message bus may require additional services to be written, and there&#8217;s no guarantee that every language will be able to support the destination service. Because of this, <code>stdout/stderr</code> seems the most appropriate option.</p>
 </div>
 <div class="paragraph">
-<p>A common concept for these providers is the log drain. If logs are not drained they are simply discarded. The drains for the first iteration of the OpenShift log aggregation service will be the filesytem as well as something like websocket that make for easy integration with a log indexing service. By having the logs also persisted to disk and rotation the the only logs that stand the chance of being discarded are old logs. New logs will always be stored.</p>
-</div>
-<div class="paragraph">
-<p>Later iterations may provide other drains. Implementing this service and plugin as cartridges allows not only for rapid prototyping but removes many concerns from the implementation that would greatly increase the effort of implementation. OpenShift&#8217;s secure multitenancy allows the logging service to build on a platform with proven scaling. Those features should not be reimplemented by this solution since they would greatly increase the test scope. Perhaps the greatest benefit of the cartridge-based approach is the ability to collaborate with current prototypes in the OpenShift community.</p>
+<p>For transporting log messages, Syslog is quite ubiquitous, being the logging system of choice for a large number of *nix distributions. Implementations such as Rsyslog are highly configurable, offering a great amount of flexibility for system administrators. The combination of <code>stdout/stderr</code> and Syslog is the clear winner in terms of ease of use, language availability, and flexibility.</p>
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-01-29 18:23:32 EST
+Last updated 2014-02-18 10:21:09 EST
 </div>
 <!-- Google Analytics -->
 <script>
