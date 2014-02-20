@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
-<title>OpenShift Origin Build Environment Guide</title>
+<title>OpenShift Contributors Guide</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
 @import url(http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.0/css/font-awesome.css);
 /*
@@ -646,90 +646,548 @@ code { font-family: source_code_pro; }
 </ul>
 </nav>
 <div id="header">
-<h1>OpenShift Origin Build Environment Guide</h1>
+<h1>OpenShift Contributors Guide</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
 <span id="revdate">LATEST DOC UPDATES</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#origin-fedora-19-base-image-origin-rhel-base-image">1. Origin Fedora 19 Base Image / Origin RHEL Base Image</a></li>
-<li><a href="#origin-server-change-build-trigger">2. origin-server change build trigger</a></li>
-<li><a href="#origin_ami-origin_ami_rhel">3. origin_ami / origin_ami_rhel</a></li>
-<li><a href="#broker_extended-broker_extended_rhel">4. broker_extended / broker_extended_rhel</a></li>
-<li><a href="#rhc_extended-rhc_extended_rhel">5. rhc_extended / rhc_extended_rhel</a></li>
-<li><a href="#runtime_extended-runtime_extended_rhel">6. runtime_extended / runtime_extended_rhel</a></li>
-<li><a href="#process_pull_requests">7. process_pull_requests</a></li>
-<li><a href="#test_pull_requests">8. test_pull_requests</a></li>
-<li><a href="#origin_docs">9. origin_docs</a></li>
+<li><a href="#creating-a-development-environment">1. Creating a Development Environment</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#shell-terminal-installation">1.1. Shell/Terminal Installation</a></li>
+<li><a href="#code-git-code-installation">1.2. <code>git</code> Installation</a></li>
+<li><a href="#creating-a-local-repository">1.3. Creating a Local Repository</a></li>
+</ul>
+</li>
+<li><a href="#hacking-on-openshift">2. Hacking on OpenShift</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#general-notes">2.1. General Notes</a></li>
+<li><a href="#broker">2.2. Broker</a></li>
+<li><a href="#runtime">2.3. Runtime</a></li>
+<li><a href="#user-interface">2.4. User Interface</a></li>
+<li><a href="#release-engineering">2.5. Release Engineering</a></li>
+</ul>
+</li>
+<li><a href="#submitting-code">3. Submitting Code</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#combining-multiple-commits">3.1. Combining multiple commits</a></li>
+<li><a href="#creating-a-pull-request">3.2. Creating a pull request</a></li>
+<li><a href="#getting-your-pull-request-reviewed">3.3. Getting Your Pull Request Reviewed</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Origin builds are driven by an <a href="http://originci-openshift.rhcloud.com/">OpenShift-hosted Jenkins system</a> that uses a series of jobs to create a reference Origin system atop Fedora and RHEL base images. Additional jobs test the generated images and generate the Origin documentation. The full list of Jenkins jobs and their specific functions are described below, listed in their order of operation.</p>
+<p>This document describes the recommended workflow to maintain a fork of a GitHub repository and how to submit pull requests for new features or bug fixes. Additionally you will find information on specific code areas within OpenShift and how to contribute to them.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="origin-fedora-19-base-image-origin-rhel-base-image"><a class="anchor" href="#origin-fedora-19-base-image-origin-rhel-base-image"></a>1. Origin Fedora 19 Base Image / Origin RHEL Base Image</h2>
+<h2 id="creating-a-development-environment"><a class="anchor" href="#creating-a-development-environment"></a>1. Creating a Development Environment</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="shell-terminal-installation"><a class="anchor" href="#shell-terminal-installation"></a>1.1. Shell/Terminal Installation</h3>
+<div class="paragraph">
+<p>Linux- and OS X-based systems come packaged with a shell or terminal environment that is suitable for Origin development. Windows users will need to install a shell environment, and currently the most active project for delivering this kind of environment is <a href="http://www.cygwin.com/">Cygwin</a>. The rest of this document assumes that if you are working on a Windows system that you are working within the Cygwin environment.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="code-git-code-installation"><a class="anchor" href="#code-git-code-installation"></a>1.2. <code>git</code> Installation</h3>
+<div class="paragraph">
+<p>Once you have a working shell, you will need to install <a href="http://git-scm.com/">git</a>. There are a number of projects that provide a graphical interface to git, and these are fine to use. However, it is also necessary to run <code>git</code> directly from the command line.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Fedora / RHEL / CentOS: <code>yum install git</code></p>
+</li>
+<li>
+<p>OS X: git may be installed by default, but can also be installed by installing <a href="https://developer.apple.com/xcode/">XCode</a> or via a package manager like <a href="http://brew.sh/">Homebrew</a> or <a href="http://www.macports.org/">MacPorts</a>.</p>
+</li>
+<li>
+<p>Windows: Cygwin&#8217;s package manager should include the latest version of git for Windows systems.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="creating-a-local-repository"><a class="anchor" href="#creating-a-local-repository"></a>1.3. Creating a Local Repository</h3>
+<div class="paragraph">
+<p>With a working shell environment and access to the <code>git</code> source control utility, you have the basic tools you&#8217;ll need to copy the Origin code from <a href="https://github.com/">GitHub</a> and push your changes back when they&#8217;re ready. Next you need to head to GitHub to set up a working repository for yourself.</p>
+</div>
+<div class="sect3">
+<h4 id="create-a-github-account"><a class="anchor" href="#create-a-github-account"></a>1.3.1. Create a GitHub Account</h4>
+<div class="paragraph">
+<p>If you don&#8217;t have one already, head to GitHub and create an account for yourself. Registration is free and you won&#8217;t be able to submit code changes without an account!</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="fork-a-repository"><a class="anchor" href="#fork-a-repository"></a>1.3.2. Fork a Repository</h4>
+<div class="paragraph">
+<p>To start working with the code, you must first create a <em>fork</em> of the GitHub repository that you wish to contribute to.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Navigate to the GitHub page of the repository you wish to fork.</p>
+</li>
+<li>
+<p>Click on the fork button on the top right corner of the page.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="data:image/jpg:base64," alt="image"></span></p>
+</div>
+<div class="paragraph">
+<p>This creates a copy of the repository in your own GitHub space.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="cloning-your-fork"><a class="anchor" href="#cloning-your-fork"></a>1.3.3. Cloning Your Fork</h4>
+<div class="paragraph">
+<p><em>Cloning</em> is the process of copying your forked code to your local system. The <code>git</code> utility does this in a way that establishes a relationship between your local copy of the code and the GitHub copy.</p>
+</div>
+<div class="sect4">
+<h5 id="clone-the-repository-from-your-fork"><a class="anchor" href="#clone-the-repository-from-your-fork"></a>Clone the repository from your fork</h5>
+<div class="listingblock">
+<div class="content">
+<pre>git clone git@github.com:&lt;username&gt;/&lt;repo-name&gt;.git
+git clone git@github.com:kraman/origin-server.git</pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="add-the-upstream-repo-so-that-you-can-pull-changes"><a class="anchor" href="#add-the-upstream-repo-so-that-you-can-pull-changes"></a>Add the upstream repo so that you can pull changes</h5>
+<div class="listingblock">
+<div class="content">
+<pre>git remote add upstream &lt;original repo git url&gt;
+git remote add upstream git@github.com:openshift/origin-server.git</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="working-on-a-topic-branch"><a class="anchor" href="#working-on-a-topic-branch"></a>1.3.4. Working on a Topic Branch</h4>
+<div class="paragraph">
+<p>Always try to avoid working on the master branch.
+It usually results in merge conflicts and/or update issues.
+Instead, work on a bug/feature/topic branch whenever possible.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#start from the master branch
+git checkout master
 
+#create a new branch
+git branch dev/kraman/bug/12345
+
+#switch to the new branch
+git checkout dev/kraman/bug/12345
+
+#...make changes...</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="staying-updated"><a class="anchor" href="#staying-updated"></a>1.3.5. Staying Updated</h4>
+<div class="paragraph">
+<p>Once a fork has been created, it does not automatically track the upstream repository.
+Follow the steps outlined below to keep the master branch up-to-date.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#pull the latest changes from upstream
+git fetch upstream
+git fetch upstream --tags
+
+#make sure there are no un-committed changes
+git stash
+
+#make sure we are working on the master branch
+git checkout master
+
+#merge the latest changes
+git merge upstream/master
+
+#push the updates changes to our GitHub fork
+git push origin master
+git push origin --tags
+
+#return to your bug/feature branch
+git checkout dev/kraman/bug/12345
+
+#rebase this branch onto latest code from master (expect conflicts)
+git rebase master
+
+#... resolve conflicts
+
+#push the rebased branch back to your fork
+git push origin dev/kraman/bug/12345 -f
+
+#Restore any un-committed changes
+git stash pop</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>git stash</code> steps are optional. It is easier if you commit all changes before attempting a rebase.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="origin-server-change-build-trigger"><a class="anchor" href="#origin-server-change-build-trigger"></a>2. origin-server change build trigger</h2>
+<h2 id="hacking-on-openshift"><a class="anchor" href="#hacking-on-openshift"></a>2. Hacking on OpenShift</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>OpenShift development is divided roughly into the following areas:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#broker"><em>Broker</em></a>, which describes the Rails application that drives the REST API, plus management of Nodes via the message queuing service.</p>
+</li>
+<li>
+<p><a href="#runtime"><em>Runtime</em></a>, which describes the operating environment of the Nodes and the cartridge framework</p>
+</li>
+<li>
+<p><a href="#user-interface"><em>User Interface</em></a>, which covers the web console, the admin console, and the <code>rhc</code> client utility</p>
+</li>
+<li>
+<p><a href="#release-engineering"><em>Release Engineering</em></a>, which covers the packaging and distribution of OpenShift via RPM, vagrant, puppet, and <code>oo-install</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each section below explains how and where to look for the feature backlog, bug records, and source code relevant to these areas.</p>
+</div>
+<div class="sect2">
+<h3 id="general-notes"><a class="anchor" href="#general-notes"></a>2.1. General Notes</h3>
+<div class="paragraph">
+<p><strong>Feature Backlogs</strong>: Our backlogs of user stories are currently maintained on <a href="https://trello.com/">Trello</a>. If you are not familiar with Trello, take a few minutes to look at <a href="https://trello.com/b/I7TjiplA/trello-tutorial">the tutorial</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Bug Tracking</strong>: We use <a href="https://bugzilla.redhat.com/">Bugzilla</a> to track the reports and resolutions of OpenShift bugs. If you hit weird behavior with an OpenShift component:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Run a <a href="https://bugzilla.redhat.com/query.cgi">Bugzilla search</a> - product "OpenShift Origin"</p>
+</li>
+<li>
+<p>Email the <a href="http://lists.openshift.redhat.com/openshiftmm/listinfo/dev">Origin Developers' mail list</a></p>
+</li>
+<li>
+<p>Ask someone on the <a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift-dev&amp;uio=d4">#openshift-dev IRC channel</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Once you know you&#8217;re dealing with an unreported bug, please don&#8217;t hesitate to submit it. The Bugzilla submission form will ask you which component of OpenShift the bug belongs under. See the development area information below which includes the relevant bugzilla groups.</p>
+</div>
+<div class="paragraph">
+<p><strong>Source Control</strong>: The source code for OpenShift origin lives in public repositories on <a href="https://github.com/">GitHub</a>. If you aren&#8217;t familiar with <a href="http://git-scm.com/">git</a>, there are numerous primers available on the web.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="broker"><a class="anchor" href="#broker"></a>2.2. Broker</h3>
+<div class="paragraph">
+<p>The Broker itself is a Rails application that serves as the nerve center for OpenShift Origin. Everything from user creation to app deployment is handled through the Broker. The Broker exposes a <a href="http://openshift.github.io/documentation/rest_api/rest-api-1-6.html">REST API</a> and communicates with Node hosts via <a href="http://www.amqp.org/">AMQP</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://trello.com/b/nbkIrqKa">Feature Backlog</a></p>
+</li>
+<li>
+<p><a href="https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=MODIFIED&amp;component=Broker&amp;component=REST%20API&amp;product=OpenShift%20Origin&amp;query_format=advanced">Bugzilla Records</a> (components: Broker, REST API)</p>
+</li>
+<li>
+<p>GitHub repo: <a href="https://github.com/openshift/origin-server">origin-server</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="runtime"><a class="anchor" href="#runtime"></a>2.3. Runtime</h3>
+<div class="paragraph">
+<p>"Runtime" refers to the components of OpenShift that are related to the hosted applications. This includes both the Node and the application <a href="http://openshift.github.io/documentation/oo_cartridge_developers_guide.html">Cartridges</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://trello.com/b/qjfQ62lZ/openshift-origin-node">Feature Backlog</a></p>
+</li>
+<li>
+<p><a href="https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=MODIFIED&amp;component=Cartridge&amp;component=Node&amp;list_id=2209237&amp;product=OpenShift%20Origin&amp;query_format=advanced">Bugzilla Records</a> (components: Cartridge, Node)</p>
+</li>
+<li>
+<p>GitHub repo: <a href="https://github.com/openshift/origin-server">origin-server</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-interface"><a class="anchor" href="#user-interface"></a>2.4. User Interface</h3>
+<div class="paragraph">
+<p>The user interface components include all of the things that users directly interact with when using OpenShift. Like the Broker, the web console and administrative consoles are Rails applications. Together with the <code>rhc</code> command-line utility, the consoles act as clients to the Broker&#8217;s REST API.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://trello.com/b/M0rP0aLj/openshift-origin-user-interface">Feature Backlog</a></p>
+</li>
+<li>
+<p><a href="https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=MODIFIED&amp;component=Command%20Line%20Interface&amp;component=Management%20Console&amp;component=Website&amp;list_id=2209262&amp;product=OpenShift%20Origin&amp;query_format=advanced">Bugzilla Records</a> (components: Command Line Interface, Management Console, Website)</p>
+</li>
+<li>
+<p>GitHub repos:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/openshift/origin-server">origin-server</a></p>
+</li>
+<li>
+<p><a href="https://github.com/openshift/rhc">rhc</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="release-engineering"><a class="anchor" href="#release-engineering"></a>2.5. Release Engineering</h3>
+<div class="paragraph">
+<p>Release engineering covers Origin testing, documentation and packaging.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://trello.com/b/9jLHsM7K/openshift-origin-release-engineering">Feature Backlog</a></p>
+</li>
+<li>
+<p><a href="https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=MODIFIED&amp;component=Documentation&amp;component=Installer&amp;list_id=2209287&amp;product=OpenShift%20Origin&amp;query_format=advanced">Bugzilla Records</a> (components: Documentation, Installer)</p>
+</li>
+<li>
+<p>GitHub repos:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Origin: <a href="https://github.com/openshift/origin-server">origin-server</a></p>
+</li>
+<li>
+<p><code>oo-install</code>: <a href="https://github.com/openshift/openshift-extras/tree/master/oo-install">openshift-extras</a></p>
+</li>
+<li>
+<p>openshift/openshift-origin Puppet module: <a href="https://github.com/openshift/puppet-openshift_origin">puppet-openshift_origin</a></p>
+</li>
+<li>
+<p>Vagrant plugin: <a href="https://github.com/openshift/vagrant-openshift">vagrant-openshift</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="origin_ami-origin_ami_rhel"><a class="anchor" href="#origin_ami-origin_ami_rhel"></a>3. origin_ami / origin_ami_rhel</h2>
+<h2 id="submitting-code"><a class="anchor" href="#submitting-code"></a>3. Submitting Code</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>If you are looking for information on specific code areas within OpenShift, jump to the next section. This section covers the basics of preparing modified code for being merged back into the Origin source.</p>
+</div>
+<div class="paragraph">
+<p>Once your code is ready to be submitted, you will need to submit a pull request with your changes:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Update your branch and make sure you are rebased off the latest upstream/master:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>git fetch upstream</code></p>
+</li>
+<li>
+<p><code>git rebase upstream/&lt;source_branch&gt;</code></p>
+</li>
+<li>
+<p><code>git push origin &lt;working_branch&gt;</code></p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Squash your commits onto a single revision (described below)</p>
+</li>
+<li>
+<p>Submit a pull request on GitHub (described below)</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="combining-multiple-commits"><a class="anchor" href="#combining-multiple-commits"></a>3.1. Combining multiple commits</h3>
+<div class="paragraph">
+<p>Before you can submit a request, you should rebase and then <em>squash</em> all your changes on to a single commit. This makes it easier to review
+and also makes reverting the code easier in case of any build breakages.</p>
+</div>
+<div class="paragraph">
+<p>To do this, first have a look at the recent commits to your local repository with <code>git log</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git log
+commit 0681b5f7be31457f3c56928e63a8bee1696e2cdc
+Author: Jane Doe &lt;jane.doe@corp.com&gt;
+Date:   Fri Jan 24 17:19:46 2014 -0500
 
-</div>
-</div>
-<div class="sect1">
-<h2 id="broker_extended-broker_extended_rhel"><a class="anchor" href="#broker_extended-broker_extended_rhel"></a>4. broker_extended / broker_extended_rhel</h2>
-<div class="sectionbody">
+    Completed changes for the fix for Bug 1234
 
-</div>
-</div>
-<div class="sect1">
-<h2 id="rhc_extended-rhc_extended_rhel"><a class="anchor" href="#rhc_extended-rhc_extended_rhel"></a>5. rhc_extended / rhc_extended_rhel</h2>
-<div class="sectionbody">
+commit 8e63a8bee1696e2cdc0681b5f7be31457f3c5692
+Author: Jane Doe &lt;jane.doe@corp.com&gt;
+Date:   Fri Jan 24 17:16:46 2014 -0500
 
-</div>
-</div>
-<div class="sect1">
-<h2 id="runtime_extended-runtime_extended_rhel"><a class="anchor" href="#runtime_extended-runtime_extended_rhel"></a>6. runtime_extended / runtime_extended_rhel</h2>
-<div class="sectionbody">
+    Working on a fix for Bug 1234
 
-</div>
-</div>
-<div class="sect1">
-<h2 id="process_pull_requests"><a class="anchor" href="#process_pull_requests"></a>7. process_pull_requests</h2>
-<div class="sectionbody">
+commit fb35b5f8063485560494af0f7fcb600cb3adfe4c
+Merge: d8929c2 a703b5f
+Author: John Doe &lt;john.doe@acme.com&gt;
+Date:   Fri Feb 14 09:54:59 2014 +0800
 
-</div>
-</div>
-<div class="sect1">
-<h2 id="test_pull_requests"><a class="anchor" href="#test_pull_requests"></a>8. test_pull_requests</h2>
-<div class="sectionbody">
+    Merge pull request #2121 from other_coder/working_branch
 
+    Fixed a bug in foo.bar</pre>
 </div>
 </div>
-<div class="sect1">
-<h2 id="origin_docs"><a class="anchor" href="#origin_docs"></a>9. origin_docs</h2>
-<div class="sectionbody">
+<div class="paragraph">
+<p>In this instance, the top two items in the log represent local commits to Jane Doe&#8217;s working branch. The third commit is a merge against upstream that was pulled in when Jane rebased her local repo directory. So in order to squash her intermediate commits into a single one, Jane will do an interactive rebase ("-i") starting from the most recent merge commit:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git rebase -i fb35b5f8063485560494af0f7fcb600cb3adfe4c</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You don&#8217;t need to enter the whole commit ID, but use copy and paste so that you don&#8217;t have to type any of it.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The rebase editor will appear, and from here Jane can squash the commits:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>pick 8e63a8b Working on a fix for Bug 1234 <i class="conum" data-value="1"></i><b>(1)</b>
+pick 0681b5f Completed changes for the fix for Bug 1234 <i class="conum" data-value="2"></i><b>(2)</b>
 
+# Rebase fb35b5f..0681b5f onto fb35b5f
+#
+# Commands:
+#  p, pick = use commit
+#  r, reword = use commit, but edit the commit message
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#  f, fixup = like "squash", but discard this commit's log message
+#  x, exec = run command (the rest of the line) using shell
+#
+# These lines can be re-ordered; they are executed from top to bottom.
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+#
+# However, if you remove everything, the rebase will be aborted.
+#
+# Note that empty commits are commented out</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Replace "pick" with "r" or "reword" to make the initial commit&#8217;s message more explanatory: "Fix for Bug 1234 - broker.conf missing FOO_BAR setting."</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>On this line, replace "pick" with "f" or "fixup" to merge this commit into the initial commit.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now she can do a push to her forked repo on GitHub. If she previously pushed the intermediate commits, she will need to add the <code>--force</code> flag to overwrite those with the new squashed commit:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git push origin my_working_branch --force</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more information about squashing commits, read <a href="http://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits">http://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="creating-a-pull-request"><a class="anchor" href="#creating-a-pull-request"></a>3.2. Creating a pull request</h3>
+<div class="paragraph">
+<p><a href="https://help.github.com/articles/using-pull-requests">GitHub instructions on creating a pull request</a></p>
+</div>
+<div class="paragraph">
+<p>If you need to make changes to your commit after a pull request has been issues,
+you can go back to the pull request page and update the commit range rather than
+submit a new pull requests.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getting-your-pull-request-reviewed"><a class="anchor" href="#getting-your-pull-request-reviewed"></a>3.3. Getting Your Pull Request Reviewed</h3>
+<div class="paragraph">
+<p>The main OpenShift repos get dozens of pull requests per day. In order to make sure that your pull request is reviewed, please do one of these three things:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If you know the GitHub ID of the person who should review your code, you can alert them in a comment on your pull request by including the GitHub username preceded by the <em>@</em> symbol.</p>
+</li>
+<li>
+<p>You can log into the OpenShift developers' IRC channel, <a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift-dev&amp;uio=d4">#openshift-dev</a> on FreeNode, and ask for a code review.</p>
+</li>
+<li>
+<p>You can send an e-mail to the <a href="http://lists.openshift.redhat.com/openshiftmm/listinfo/dev">OpenShift developers' mail list</a> asking for a code review (don&#8217;t forget to include a link to the pull request).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Especially if you go with the mail list route, be sure to follow up if you don&#8217;t hear from anyone within a business day. In general the response time should be much shorter.</p>
+</div>
+</div>
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-20 10:42:44 EST
+Last updated 2014-02-20 10:42:51 EST
 </div>
 <!-- Google Analytics -->
 <script>
