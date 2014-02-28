@@ -753,7 +753,9 @@ code { font-family: source_code_pro; }
 <li>
 <ul class="sectlevel2">
 <li><a href="#template-repository-layout-7">14.1. Template Repository Layout</a></li>
-<li><a href="#markers-7">14.2. Markers</a></li>
+<li><a href="#document-root">14.2. Document root</a></li>
+<li><a href="#php-include_path">14.3. PHP include_path</a></li>
+<li><a href="#markers-7">14.4. Markers</a></li>
 </ul>
 </li>
 <li><a href="#phpmyadmin">15. phpMyAdmin</a></li>
@@ -2309,12 +2311,11 @@ supervisor server.js</pre>
 <h3 id="template-repository-layout-6"><a class="anchor" href="#template-repository-layout-6"></a>13.1. Template Repository Layout</h3>
 <div class="listingblock">
 <div class="content">
-<pre>perl/                 For not-externally exposed perl code
-libs/                 Additional libraries
-misc/                 For not-externally exposed perl code
+<pre>index.pl
 .openshift/           Location for OpenShift specific files
     action_hooks/     See the Action Hooks documentation <i class="conum" data-value="1"></i><b>(1)</b>
-    markers/          See the Markers section below</pre>
+    markers/          See the Markers section below
+    cpan.txt          List of modules to install</pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2326,7 +2327,10 @@ misc/                 For not-externally exposed perl code
 </table>
 </div>
 <div class="paragraph">
-<p>Please leave the <code>perl</code>, <code>libs</code> and <code>data</code> directories but feel free to create additional directories if needed.</p>
+<p>Due to latest changes in Perl cartridge template layout, the application is now stored in <code>$OPENSHIFT_REPO_DIR</code>, but is also backward compatible with deprecated <code>perl</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>Modules are installed with <code>cpan.txt</code>, located in <code>.openshift</code> directory. Older deplist.txt is depricated, but still working.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2334,6 +2338,7 @@ misc/                 For not-externally exposed perl code
 <div class="listingblock">
 <div class="content">
 <pre>run/                  Various run configs (like httpd pid)
+usr/                  Perl example application template
 env/                  Environment variables
 logs/                 Log data (like httpd access/error logs)
 lib/                  Various libraries
@@ -2394,35 +2399,65 @@ versions/             Version data to support multiple perl versions (copied int
 <h3 id="template-repository-layout-7"><a class="anchor" href="#template-repository-layout-7"></a>14.1. Template Repository Layout</h3>
 <div class="listingblock">
 <div class="content">
-<pre>php/                   Externally exposed PHP code goes here
-libs/                  Additional libraries
-misc/                  For PHP code that should not be accessible by end users
-deplist.txt            List of pears to install <i class="conum" data-value="1"></i><b>(1)</b>
+<pre>index.php              Template PHP index page
 .openshift/            Location for OpenShift specific files
-    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="2"></i><b>(2)</b>
-    markers/           See the Markers section below</pre>
+    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="1"></i><b>(1)</b>
+    markers/           See the Markers section below
+    pear.txt           List of pears to install <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>A list of pears to install, line by line on the server. This will happen when the user git pushes.</td>
+<td><a href="oo_user_guide.html#action-hooks">Action Hooks</a> documentation</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="oo_user_guide.html#action-hooks">Action Hooks</a> documentation</td>
+<td>A list of pears to install, line by line on the server. This will happen when the user git pushes.</td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="document-root"><a class="anchor" href="#document-root"></a>14.2. Document root</h3>
 <div class="paragraph">
-<p>OpenShift will look for the <code>php</code> and <code>libs</code> directories when serving your
-application. index.php will handle requests to the root URL of your
-application. You can create new directories as needed.</p>
+<p><a href="http://httpd.apache.org/docs/current/mod/core.html#documentroot">Apache DocumentRoot</a>,
+the directory that forms the main document tree visible from the web, is selected based
+on the existence of a common directory in the repository code in the following order:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>1. php/          # for backward compatibility with OpenShift Origin v1/v2
+2. public/       # Zend Framework v1/v2, Laravel, FuelPHP, Surebert etc.
+3. public_html/  # Apache per-user web directories, Slim Framework etc.
+4. web/          # Symfony etc.
+5. www/          # Nette etc.
+6. ./            # Drupal, Wordpress, CakePHP, CodeIgniter, Joomla, Kohana, PIP etc.</pre>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="markers-7"><a class="anchor" href="#markers-7"></a>14.2. Markers</h3>
+<h3 id="php-include_path"><a class="anchor" href="#php-include_path"></a>14.3. PHP include_path</h3>
+<div class="paragraph">
+<p>The following application directories, that might exist in the repository code, are added
+to the <a href="http://php.net/manual/en/ini.core.php#ini.include-path">PHP include_path</a> and thus
+automatically searched when calling require(), include() and other file I/O functions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- lib/
+- libs/
+- libraries/
+- src/
+- misc/
+- vendor/
+- vendors/</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="markers-7"><a class="anchor" href="#markers-7"></a>14.4. Markers</h3>
 <div class="paragraph">
 <p>Adding marker files to <code>.openshift/markers</code> will have the following effects:</p>
 </div>
@@ -2671,7 +2706,7 @@ config.ru          This file is used by Rack-based servers to start the applicat
 <div class="sect2">
 <h3 id="ruby-mirror"><a class="anchor" href="#ruby-mirror"></a>18.2. Ruby Mirror</h3>
 <div class="paragraph">
-<p>OpenShift is mirroring rubygems.org at <a href="http://mirror1.ops.rhcloud.com/mirror/ruby/">http://mirror1.ops.rhcloud.com/mirror/ruby/</a>
+<p>OpenShift is mirroring rubygems.org at <a href="http://mirror.ops.rhcloud.com/mirror/ruby/">http://mirror.ops.rhcloud.com/mirror/ruby/</a>
 This mirror is on the same network as your application, and your gem download should be faster.</p>
 </div>
 <div class="paragraph">
@@ -2691,7 +2726,7 @@ This mirror is on the same network as your application, and your gem download sh
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>source 'http://mirror1.ops.rhcloud.com/mirror/ruby/'</pre>
+<pre>source 'http://mirror.ops.rhcloud.com/mirror/ruby/'</pre>
 </div>
 </div>
 </li>
@@ -2707,7 +2742,7 @@ This mirror is on the same network as your application, and your gem download sh
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>remote: http://mirror1.ops.rhcloud.com/mirror/ruby/</pre>
+<pre>remote: http://mirror.ops.rhcloud.com/mirror/ruby/</pre>
 </div>
 </div>
 </li>
@@ -2888,7 +2923,7 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-21 15:11:38 EST
+Last updated 2014-02-28 08:45:03 EST
 </div>
 <!-- Google Analytics -->
 <script>

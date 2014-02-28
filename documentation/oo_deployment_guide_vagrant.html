@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
-<title>OpenShift PEP 001: Admin Console</title>
+<title>OpenShift Origin Vagrant Deployment Guide</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
 @import url(http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.0/css/font-awesome.css);
 /*
@@ -646,299 +646,706 @@ code { font-family: source_code_pro; }
 </ul>
 </nav>
 <div id="header">
-<h1>OpenShift PEP 001: Admin Console</h1>
+<h1>OpenShift Origin Vagrant Deployment Guide</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
+<span id="revdate">LATEST DOC UPDATES</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#prerequisites">1. Prerequisites</a></li>
+<li><a href="#installing-the-openshift-vagrant-module">2. Installing the OpenShift Vagrant Module</a></li>
+<li><a href="#setting-up-your-sandbox">3. Setting up Your Sandbox</a></li>
+<li><a href="#creating-a-base-vagrant-box">4. Creating a Base Vagrant Box</a></li>
+<li>
 <ul class="sectlevel2">
-<li><a href="#abstract">Abstract</a></li>
-<li><a href="#motivation">Motivation</a></li>
-<li><a href="#specification">Specification</a></li>
-<li><a href="#rationale">Rationale</a></li>
+<li><a href="#virtualbox-pre-built-base-boxes">4.1. VirtualBox Pre-Built Base Boxes</a></li>
+<li><a href="#roll-your-own-base-box">4.2. Roll Your Own Base Box</a></li>
+<li><a href="#generate-a-code-vagrantfile-code">4.3. Generate a <code>Vagrantfile</code></a></li>
+</ul>
+</li>
+<li><a href="#creating-a-development-vm">5. Creating a Development VM</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#optional-create-a-required-packages-box">5.1. Optional: Create a "Required Packages" Box</a></li>
+</ul>
+</li>
+<li><a href="#synchronizing-local-code-to-a-development-vm">6. Synchronizing Local Code to a Development VM</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#rebuild-the-vagrantfile">6.1. Rebuild the Vagrantfile</a></li>
+<li><a href="#full-synchronization">6.2. Full Synchronization</a></li>
+<li><a href="#partial-synchronization">6.3. Partial Synchronization</a></li>
+</ul>
+</li>
+<li><a href="#running-tests">7. Running Tests</a></li>
+<li><a href="#making-and-committing-code-changes">8. Making and Committing Code Changes</a></li>
+<li><a href="#other-resources-for-openshift-developers">9. Other Resources for OpenShift Developers</a></li>
 </ul>
 </div>
 </div>
 <div id="content"><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>PEP: 1<br>
-Title: Admin Console<br>
-Status: accepted<br>
-Author: Clayton Coleman <a href="mailto:ccoleman@redhat.com">ccoleman@redhat.com</a><br>
-Arch Priority: medium<br>
-Complexity: 40<br>
-Affected Components: broker, admin_tools<br>
-Affected Teams: UI (3), Broker (1), Enterprise (1)<br>
-User Impact: high<br>
-Epic:</p>
+<p>If you are interested in deploying OpenShift into your network environment, you&#8217;ve got a few options - you can start with <a href="https://install.openshift.com/">oo-install</a>, grab our <a href="http://openshift.github.io/documentation/oo_deployment_guide_puppet.html">Puppet module</a>, or you can <a href="http://openshift.github.io/documentation/oo_deployment_guide_comprehensive.html">do it yourself</a>. This document describes a fourth deployment option that is specifically focused on <strong>OpenShift Origin development</strong>. If you want to spin up a bleeding-edge copy of OpenShift Origin and work on making this awesome Platform-as-a-Service even better, then you&#8217;ve come to the right place.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="abstract"><a class="anchor" href="#abstract"></a>Abstract</h3>
+<div class="sect1">
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>1. Prerequisites</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Create a server component that can provide visualization and information retrieval to an admin running an OpenShift deployment. The component must:</p>
+<p>This developer-focused deployment offers users maximum flexibility in their choice of work environments. For starters, you can work on any OS that supports the prerequisites listed below; currently that includes Fedora, RHEL, CentOS, other Linux distros, Mac OS X, and Windows.</p>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s what you will need:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Be independent from the broker so that it can be network routed or secured appropriately</p>
+<p><strong>A basic development environment.</strong> A bash shell, git, and GitHub account. If you need help with those, check out the <a href="http://openshift.github.io/documentation/oo_contributors_guide.html#creating-a-development-environment">Origin Contributor&#8217;s Guide</a>.</p>
 </li>
 <li>
-<p>Provide simple logical visualization of the nodes, districts, and gears within an OpenShift deployment so that an admin can get a quick-glance capacity overview</p>
+<p><a href="http://www.vagrantup.com/"><strong>Vagrant.</strong></a> The Vagrant framework is available as a ruby gem, but you should install the officially distributed Vagrant package for your OS directly from the Vagrant web site.</p>
 </li>
 <li>
-<p>Allow administrators to perform specific task focused information retrieval jobs easily</p>
-</li>
-<li>
-<p>Be based on the core broker model objects to insulate from maintenance costs associated with data model changes, and provide reusable pieces of query / format code for CLI or shell based interaction in the future</p>
-</li>
-<li>
-<p>Use technologies that are already in use within the OpenShift stack</p>
+<p><strong>A platform for virtual machines.</strong> Vagrant provides out-of-the-box support for <a href="https://www.virtualbox.org/">VirtualBox</a>, so this guide will focus on development with VirtualBox. However, other VM platforms are supported via Vagrant <em>Provider</em> plugins; see the Vagrant site for details.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The admin console will NOT:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Provide a general monitoring solution for the servers in OpenShift (broker/message queue/mongo)</p>
-</li>
-</ul>
+<p>Once you&#8217;re set up, create a working directory for yourself. Call it something like <code>amazing_code</code> or <code>mad_science</code>, because this is where you will work with Origin&#8217;s source code. This working directory will also serve as the launch point for your Vagrant-based development system. Once everything is up and running, Vagrant automatically shares this directory with the VM itself.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
+</div>
+<div class="sect1">
+<h2 id="installing-the-openshift-vagrant-module"><a class="anchor" href="#installing-the-openshift-vagrant-module"></a>2. Installing the OpenShift Vagrant Module</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>OpenShift currently lacks a "logical" view of the resources in the system that is easily available to an administrator - we introduce a new layer between IaaS/hardware and user&#8217;s applications. When we demo OpenShift to customers, it is important that we can show IT purchasers something that is a summary of the system. We need to expose information about that logical mapping - user &#8594; app, app &#8594; gear, gear &#8594; node to administrative users in a manner that is suitable for integration into their systems.</p>
+<p>In order to make Vagrant "OpenShift-aware", you will need to install the Vagrant OpenShift plugin. Be aware that installing Vagrant plugins from a local source directory presents a <a href="http://en.wikipedia.org/wiki/Chicken_or_the_egg">Chicken and Egg</a> problem with Vagrant, but luckily there is a fairly easy workaround: make sure that your system <code>bin</code> directories (<code>/usr/bin</code>, <code>/usr/local/bin</code>, etc.) come <em>before</em> your gem <code>bin</code> directories in your <code>$PATH</code> environment variable.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-tip" title="Tip"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Create a new, standalone rails application that reuses the new broker mongoid model to display a logical view of the OpenShift nodes, districts, and gears, and provide the framework to allow admins to get answers to the following questions:</p>
+<p>In other words, if you run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ which vagrant</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>When writing the rails application, add simple, consistent mongoid model queries to the core models so that multiple sources can reuse those queries. Those queries will enable admins to retrieve this data from the following locations:</p>
+<p>The output should reflect a system-installed path like <code>/usr/bin/vagrant</code>, <em>even after</em> you run the <code>bundle install</code> command in step #3 below.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The admin console</p>
+<p>On GitHub, fork a copy of the <a href="https://github.com/openshift/vagrant-openshift">vagrant-openshift</a> repository into your own account.</p>
 </li>
 <li>
-<p>A simple read-only REST API for admins exposed through this rails application</p>
+<p>On your local system:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Clone your vagrant-openshift repo down from GitHub:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git clone https://github.com/&lt;username&gt;/vagrant-openshift.git</pre>
+</div>
+</div>
 </li>
 <li>
-<p>Command line tools that will expose output that is formatted like #2</p>
-</li>
-<li>
-<p>The rails console via direct code execution.</p>
+<p>Add OpenShift&#8217;s vagrant-openshift repo as an upstream source:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd vagrant-openshift
+$ git remote add upstream https://github.com/openshift/vagrant-openshift.git</pre>
+</div>
+</div>
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p>The console does not need a user or authentication model. It will be run from servers that have access to mongo and should use standard broker configuration files to access that info. Administrators will protect it via apache, firewalls, and binding to local loopbacks. The console should be very similar in concept to the beanstalkd_view and the resque admin server <a href="https://github.com/defunkt/resque#the-front-end">https://github.com/defunkt/resque#the-front-end</a>.</p>
-</div>
-<div class="paragraph">
-<p>When users want to extend and enhance the console, it is expected that they will make changes directly to the codebase to add new features (and contribute them back to the community). The console should avoid non-Rails abstractions wherever possible - we want administrators and developers with only a minimum of Rails experience to be able to make changes to the application. Rails engines are too complex and difficult to implement. We should use common Rails patterns whenever possible to reduce duplicate code, but it is acceptable to have a slightly lower standard of completeness vs. a higher level of code clarity and readability.</p>
-</div>
-<div class="paragraph">
-<p>The console will initially focus on visualizing the layout of a deployment and assisting administrators in synthesizing information. If a task requires the user make a change to the data in Mongo, we should inform the user in the console how to accomplish the task using the administrative command line tools and make it as easy as possible for them to run those tasks. The first objective of the admin console is to enable administrators to easily find or aggregate information that is critical to their understanding of the system. Over time, additional capabilities will be added to enable greater interaction (within reasonable security limits).</p>
-</div>
-<div class="sect3">
-<h4 id="example-admin-needs-to-view-and-manage-quotas-for-users-who-are-near-their-quota-limit"><a class="anchor" href="#example-admin-needs-to-view-and-manage-quotas-for-users-who-are-near-their-quota-limit"></a>Example: Admin needs to view and manage quotas for users who are near their quota limit</h4>
-<div class="ulist">
-<ul>
-<li>
-<p>The console exposes a view that shows those users by querying mongo</p>
 </li>
 <li>
-<p>In order to change the quota, the admin will have to run a CLI command oo-set-quota</p>
-</li>
+<p>Now that you have a local copy of <code>vagrant-openshift</code>:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
 <li>
-<p>The UI should tell the admin what command to run, and where possible substitute variables</p>
-</li>
-</ul>
+<p>Pull in any supporting gems with the <code>bundle</code> command:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd vagrant-openshift
+$ bundle install</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>This will reduce maintenance and development costs and keep the focus a comprehensive CLI experience. The admin console should connect to mongo in read only mode.</p>
+<p>Check to make sure that the <code>vagrant</code> command still resolves to a system-based Vagrant installation and not the vagrant gem that was just installed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ which vagrant</pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="primary-use-cases"><a class="anchor" href="#primary-use-cases"></a>Primary Use Cases</h4>
 <div class="paragraph">
-<p>The top tasks that admins must accomplish from within the console are:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>See a view of all nodes that includes the number of gears, idle count, and capacity planning info.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Group nodes by districts, which are clustered by gear size, sort nodes by gears per node, users per node, MCS labels remaining.<br></p>
-</li>
-<li>
-<p>Show the sorted stat per node (eventually show multiple stats per node?)</p>
-</li>
-<li>
-<p>Gears per node</p>
-</li>
-<li>
-<p>Idled gears per node</p>
-</li>
-<li>
-<p>Users per node</p>
-</li>
-<li>
-<p>MCS labels allocated</p>
-</li>
-<li>
-<p>MCS labels remaining (this is an OpenShift wide constant</p>
-</li>
-<li>
-<p>When grouped, show summaries of the stats of the group next to each section.</p>
-</li>
-</ul>
+<p>The executable should be in <code>/usr/bin</code>, <code>/usr/local/bin</code> or somewhere similar.</p>
 </div>
 </li>
 <li>
-<p>Given an application id, display nodes the application gears are deployed to, including the cartridges and IDs in an easy to read format.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Include capsule information about that node if necessary</p>
-</li>
-<li>
-<p>Display relevant commands for admin tasks on that app/gear/node</p>
-</li>
-</ul>
+<p>Install the vagrant-openshift repo as a Vagrant plugin:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ bundle exec rake install</pre>
 </div>
-</li>
-<li>
-<p>Given a user id or a user login, display a list of all owned/accessible applications so the user can quickly jump to the items in #2</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Summarize their total gears used</p>
-</li>
-<li>
-<p>Display the list of cartridges on each gear by id</p>
-</li>
-<li>
-<p>Also show the list of identities for a user (when identities are added)</p>
-</li>
-</ul>
 </div>
-</li>
-<li>
-<p>Given a gear id, display the node, cartridges, and owning user</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Include the list of SSH keys that user has access to.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Allow an administrator to ping a set of nodes (corresponding to a view) and show the status on a page</p>
-<div class="ulist">
-<ul>
-<li>
-<p>This can begin as a simple listing view, and over time become more integrated into other views</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Given a node id, display the list of gears deployed to that node</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Include the list of cartridges installed on those gears, the owning application id, and the owners id</p>
-</li>
-<li>
-<p>Prominently display the district uuid, the cartridges installed, and a summary of the node capacity</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Display a list of applications created in the last hour/4 hours/day</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Include owner</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Display a list of gears provisioned within the last hour/4 hours/day</p>
-</li>
-<li>
-<p>An admin should be able to estimate capacity at a glance by configuring/tweaking the default settings we provide</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Each gear type, machine type, and cartridge type will interact in customer environments to define capacity</p>
-</li>
-<li>
-<p>The values that result should be tunable in the UI or in a simple config file so that customers can display view #1 in a capacity format relevant to them</p>
-</li>
-<li>
-<p>This may require that certain facts for each node are surfaced in the view (swap, quota, memory, cpu count)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Display gears which are near their quota</p>
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p>Many of these operations are not optimized for in our current schema, or require both mcollective and mongo data. The admin console should seek to minimize the number and frequency of calls, and correctly identity new indices for use within the console. Some information can be cached within the app (using the simple rails cache) - some information should require the user to click a button to see or to refresh.</p>
+</li>
+<li>
+<p>Finally, check your work by running:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant --help</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>The admin console should avoid introducing significant new technologies or concepts into the OpenShift stack. Graphing or visualization libraries may be useful to enhance display of certain info, but should be limited to their core purpose. We should reuse the bootstrap CSS and markup patterns and spend visualization effort only the most important scenarios (#1).</p>
+<p>You should see some new subcommands with "origin" in the name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>...
+Available subcommands:
+     box                     manages boxes: installation, removal, etc.
+     create-ami
+     destroy                 stops and deletes all traces of the vagrant machine
+     halt                    stops the vagrant machine
+     help                    shows the help for a subcommand
+     init                    initializes a new Vagrant environment by creating a Vagrantfile
+     modify-instance
+     origin-build-base
+     origin-init
+     origin-local-checkout
+     ....</pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="future-considerations"><a class="anchor" href="#future-considerations"></a>Future considerations</h4>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="setting-up-your-sandbox"><a class="anchor" href="#setting-up-your-sandbox"></a>3. Setting up Your Sandbox</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Each of the new queries displayed above, especially #1 and #2, will also be exposed as administrative output scripts. Those scripts should be fast to start and execute and reuse code from the console, so that they can be frequently executed by an admin team to summarize their application.</p>
+<p>Now that Vagrant is installed and the OpenShift plugin has been added, change directory into the working directory that you created in the <a href="#prerequisites">Prerequisites</a> (the one called <code>mad_science</code> or <code>seriously_awesome_paas</code>).</p>
 </div>
 <div class="paragraph">
-<p>At some point, we will expose some of these scenarios as REST API endpoints - these should map as cleanly as possible to existing Rails concepts so as to reduce cost, and reuse code as described above. The CLI will not use these endpoints.</p>
+<p>The first Vagrant command that you are going to use is a convenience function that clones your forked repos into this local workspace.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Wait, which Forked Repos?</div>
+<div class="paragraph">
+<p>If you haven&#8217;t done it already, you should create forks of the following OpenShift repos on GitHub into your own GitHub account:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/openshift/origin-server">origin-server</a> - The OpenShift Origin code base.</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift/puppet-openshift_origin">puppet-openshift_origin</a> - The <a href="http://puppetlabs.com/">Puppet</a> module that installs and configure OpenShift Origin on arbitrary hosts.</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift/rhc">rhc</a> - The utility that enables users to work with their OpenShift-hosted applications from the command line.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="paragraph">
-<p>When background jobs are added administrators will need a way to estimate job backlog and identify failed jobs. It may be sufficient to do this through beanstalkd_view for the near term.</p>
+<p>Now, from your working directory, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant origin-local-checkout &lt;github_username&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once completed, an <code>ls -l</code> of your working directory should yield results similar to this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ ls -l
+total 0
+drwxr-xr-x  30 user  group  1020 Feb 25 10:08 origin-server
+drwxr-xr-x   9 user  group   306 Feb 25 10:09 puppet-openshift_origin
+drwxr-xr-x  25 user  group   850 Feb 25 10:09 rhc</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-a-base-vagrant-box"><a class="anchor" href="#creating-a-base-vagrant-box"></a>4. Creating a Base Vagrant Box</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Depending on which VM platform use are using, you may be able to use one of our prebuilt "base boxes". Otherwise, you will need to roll your own.</p>
+</div>
+<div class="sect2">
+<h3 id="virtualbox-pre-built-base-boxes"><a class="anchor" href="#virtualbox-pre-built-base-boxes"></a>4.1. VirtualBox Pre-Built Base Boxes</h3>
+<div class="paragraph">
+<p>If you are using VirtualBox, you can use a pre-built ".box" file from the <a href="http://mirror.openshift.com/pub/vagrant/boxes/">OpenShift downloads site</a>. These Vagrant-generated files contain a VM with the indicated OS and a "Minimal" package install.</p>
+</div>
+<div class="paragraph">
+<p>To load one, run the following command from your working directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant box add &lt;name&gt; &lt;url&gt;</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>name</strong>: Supply a name for the box, like "os_base". You can import multiple instances of the same box by giving them different names.</p>
+</li>
+<li>
+<p><strong>url</strong>: Supply the URL of one of the boxes from the <a href="http://mirror.openshift.com/pub/vagrant/boxes/">OpenShift downloads site</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Once the download is completed and the box is installed, you can confirm the new .box file by running:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant box list
+os_base (virtualbox)</pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="rationale"><a class="anchor" href="#rationale"></a>Rationale</h3>
+<h3 id="roll-your-own-base-box"><a class="anchor" href="#roll-your-own-base-box"></a>4.2. Roll Your Own Base Box</h3>
 <div class="paragraph">
-<p>The admin console should be as simple as possible to maintain and build to provide the maximum return on development investment. Only a small fraction of the user base will access it (admins) and it should be focused on functional simplicity and retrieval of info. Admins with a minimal amount of Rails and Mongo experience should be able to extend it to retrieve or alter the display. By limiting the technologies we employ in the design of the console, we can ensure that the widest possible audience can modify it. There should be minimal interdependency between the broker and the admin console - limited to only core models - so that it can be easily deployed and launched and to reduce the maintenance impact. The admin console is designed as read-only for the foreseeable future to avoid the significant investment and security considerations involved in duplicating admin level operations in a CLI and a UI.</p>
+<p>If you aren&#8217;t using VirtualBox, or you would prefer to work with OpenShift on a different base OS, you will need to create your own Vagrant .box file. The Vagrant site has <a href="http://docs.vagrantup.com/v2/boxes/base.html">information on creating new base boxes</a>.</p>
+</div>
+<div class="paragraph">
+<p>In addition to the Vagrant documentation, be aware of the following OpenShift-specific requirements:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>scp</strong> - Not all "Minimal" installs come with the <code>scp</code> utility, so make sure it is available.</p>
+</li>
+<li>
+<p><strong>sudo</strong> - The Vagrant document instructs you to modify the <code>/etc/sudoers</code> file so that the <code>vagrant</code> user does not need to enter a password to perform <code>sudo</code> actions. While you are making that change, also search for:</p>
+<div class="listingblock">
+<div class="content">
+<pre>Defaults       requiretty</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And put a "!" in front of "require":</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Defaults       !requiretty</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t do this, you will see an error the first time you try to spin up the Vagrant box (with the vagrant-openshift plugin installed):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>The following SSH command responded with a non-zero exit status.
+Vagrant assumes that this means the command failed!
+
+sed -i 's/\(HOSTNAME=\).*/\1broker.example.com/' /etc/sysconfig/network
+
+Stdout from the command:
+
+
+
+Stderr from the command:
+
+sudo: sorry, you must have a tty to run sudo</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="generate-a-code-vagrantfile-code"><a class="anchor" href="#generate-a-code-vagrantfile-code"></a>4.3. Generate a <code>Vagrantfile</code></h3>
+<div class="paragraph">
+<p>Once you have registered a Vagrant box, you will create a file that establishes Vagrant&#8217;s operating environment. To do this, go to your working directory and run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant origin-init --stage os &lt;box_name&gt;</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+This command may throw some warnings about ruby gem issues; these can be safely ignored.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>After running this, you should see a new file called <code>Vagrantfile</code> in that directory.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-a-development-vm"><a class="anchor" href="#creating-a-development-vm"></a>5. Creating a Development VM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With a registered base Vagrant box and a Vagrantfile, you are ready to build a development system.</p>
+</div>
+<div class="paragraph">
+<p>To start the build, run this from your working directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>vagrant up --provider virtualbox</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the process fails, fix any errors that are thrown (for instance, missing utilities in a hand-built base box), and then restart the provisioning process by running:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>vagrant provision</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can safely go in to the VM, correct errors and then restart the setup process this way until provisioning is completed.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Even without errors, this process takes a long time!
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Once completed, your VM will have all of the supporting packages that you will need to install OpenShift, but OpenShift itself will not be installed yet.</p>
+</div>
+<div class="sect2">
+<h3 id="optional-create-a-required-packages-box"><a class="anchor" href="#optional-create-a-required-packages-box"></a>5.1. Optional: Create a "Required Packages" Box</h3>
+<div class="paragraph">
+<p>At this point, you may want to create a new Vagrant box from the current state of the VM. This will enable you to reuse the current state of your VM as a starting point, without having to go back and reinstall all of the OpenShift prerequisites on the base box again.</p>
+</div>
+<div class="paragraph">
+<p>To do this, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant package</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will shut down the VM (if it is running) and create a new box file called <code>package.box</code> in your working directory. Look at the <code>--output</code> setting if you want the resulting file to have a different name and / or location.</p>
+</div>
+<div class="paragraph">
+<p>Now you can re-import this new box file into Vagrant:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant box add &lt;new_box_name&gt; &lt;file:// url to box location&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="synchronizing-local-code-to-a-development-vm"><a class="anchor" href="#synchronizing-local-code-to-a-development-vm"></a>6. Synchronizing Local Code to a Development VM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>At this point you have a Vagrant box that has all of the OpenShift prerequisites installed, but none of the actual OpenShift code. In order to add that, we will synchronize the code from our working directory into the VM.</p>
+</div>
+<div class="paragraph">
+<p>When you run either of the sync commands described below, Vagrant copies the repos in your working directory over to the VM. Therefore, you can make changes to the code in your local directory and then build and run them via Vagrant. This is the primary way that Vagrant is used as our Origin development environment.</p>
+</div>
+<div class="sect2">
+<h3 id="rebuild-the-vagrantfile"><a class="anchor" href="#rebuild-the-vagrantfile"></a>6.1. Rebuild the Vagrantfile</h3>
+<div class="paragraph">
+<p>Before you do any synchronization, you need to rebuild your Vagrant configuration.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Remove existing Vagrant state info from your working directory:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ rm -rf .vagrant Vagrantfile</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run <code>origin-init</code> for the <code>deps</code> (dependencies) stage:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant origin-init --stage deps &lt;box_name&gt;</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You should see that the Vagrantfile has been recreated.</p>
+</div>
+<div class="paragraph">
+<p>Finally, restart the VM:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant up --provider virtualbox</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="full-synchronization"><a class="anchor" href="#full-synchronization"></a>6.2. Full Synchronization</h3>
+<div class="paragraph">
+<p>Full synchronization is a time-consuming process, so you will only want to do this under specific circumstances:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The CLI is decoupled and independent of the admin console. They will rely on code reuse to reduce development costs.</p>
+<p>You are starting with a Vagrant box that has all of the prerequisites, but no actual OpenShift code installed</p>
+</li>
+<li>
+<p>You are making changes to the Puppet module or the Vagrant plugin</p>
+</li>
+<li>
+<p>You have been working with code in one branch and want to switch to a different branch and work with that code instead</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>To perform a full sync on a running Vagrant box, run the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant sync --clean</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is going to take a while. Suggestions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Read the <a href="oo_contributors_guide.html">OpenShift Contributors Guide</a>, which is going to help you make sense of the code.</p>
+</li>
+<li>
+<p>Read <a href="http://en.wikipedia.org/wiki/War_and_Peace">War and Peace</a>, Leo Tolstoy&#8217;s masterwork epic about competing code standards in the Napoleonic era.</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="optional-create-a-development-environment-box"><a class="anchor" href="#optional-create-a-development-environment-box"></a>6.2.1. Optional: Create a "Development Environment" Box</h4>
+<div class="paragraph">
+<p>After you perform the first full synchronization on a Vagrant box, you have a full-blown development environment. If you are going to spend most of your development time working on code in the origin-server repo (where a <a href="#partial-synchronization">partial sync</a> is all you will need to keep your code current), you may want to pause and make a Vagrant box to capture things as they are. Refer to the section entitled <a href="#optional-create-a-required-packages-box">Optional: Create a "Required Packages" Box</a> for information on how to create a Vagrant box file from the current state.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="partial-synchronization"><a class="anchor" href="#partial-synchronization"></a>6.3. Partial Synchronization</h3>
+<div class="paragraph">
+<p>Partial synchronization is less time consuming than the full sync. If your setup satisfies these requirements, you can use the partial sync:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Your Vagrant box already has OpenShift installed on it</p>
+</li>
+<li>
+<p>You are not making changes to the Puppet module or the Vagrant plugin</p>
+</li>
+<li>
+<p>You did not previously sync with one branch, and then switch to a different branch, while working with the same Vagrant box</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To do a partial sync, run <code>sync</code> without any arguments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant sync</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="running-tests"><a class="anchor" href="#running-tests"></a>7. Running Tests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you contribute code to the OpenShift Origin repo on GitHub, it is automatically put through the full OpenShift test suite on our CI system. The code will not merge unless it passes this guantlet of tests. If you want to ensure that your code changes are right the first time, put them through the gauntlet in your Vagrant environment.</p>
+</div>
+<div class="paragraph">
+<p>To run the full suite of tests on a running Vagrant box, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ vagrant test</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The full suite can take a long time to run, so if your changes are limited to one functional area of the Origin code base, you can specify a limited set of tests with on ofe the following arguments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>-n</strong>, <strong>--node</strong> - Run <a href="oo_contributors_guide.html#runtime">Node</a> tests</p>
+</li>
+<li>
+<p><strong>-t</strong>, <strong>--cart</strong> - Run <a href="oo_contributors_guide.html#runtime">Cartridge</a> tests</p>
+</li>
+<li>
+<p><strong>-b</strong>, <strong>--broker</strong> - Run <a href="oo_contributors_guide.html#broker">Broker</a> tests</p>
+</li>
+<li>
+<p><strong>-r</strong>, <strong>--rhc</strong> - Run <a href="oo_contributors_guide.html#user-interface">CLI</a> tests</p>
+</li>
+<li>
+<p><strong>-c</strong>, <strong>--console</strong> - Run <a href="oo_contributors_guide.html#user-interface">Console/Web</a> tests</p>
+</li>
+<li>
+<p><strong>-e</strong>, <strong>--extended</strong> - Run Extended tests</p>
+</li>
+<li>
+<p><strong>-a</strong>, <strong>--all</strong> - Run all tests (this is what happens if you run <code>vagrant test</code> with no arguments</p>
+</li>
+<li>
+<p><strong>-d</strong>, <strong>--artifacts</strong> - This optional flag causes Vagrant to download the test logs and built RPMs to your working directory when the tests are completed.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that basic unit tests can often be run directly from your local code repos and do not need to be synced to the Vagrant box first.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="making-and-committing-code-changes"><a class="anchor" href="#making-and-committing-code-changes"></a>8. Making and Committing Code Changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This topic is covered in a general way in the <a href="oo_contributors_guide.html#submitting-code">Contributors Guide</a>. In the context of a Vagrant-based development environment, here is a basic bescription of the workflow that you will follow as you develop code changes and prepare pull requests:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>After <a href="#setting-up-your-sandbox">setting up your local working directory</a>, you will have code repos that start on their respective master branches.</p>
+</li>
+<li>
+<p>Before you perform your first <a href="#full-synchronization">full</a> or <a href="#partial-synchronization">partial</a> sync, create a new branch in the repo(s) where you will be working:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git checkout -b &lt;working_branch_name&gt;</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+By convention, we name new feature branches after the feature itself ("add_300_baud_modem_support") and bug fix branches after the bugzilla ID ("bug_123456")
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Now, when you perform the <code>sync</code> operation, Vagrant will pull in the code from your current (working) branch</p>
+</li>
+<li>
+<p>When you are ready to make a pull request from your working branch:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><a href="oo_contributors_guide.html#combining-multiple-commits">Squash your commits</a></p>
+</li>
+<li>
+<p>Push the branch to your repo on GitHub:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git push origin &lt;working_branch_name&gt;</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you pushed interim commits prior to squashing, you will need to add a <code>--force</code> flag to the end of the push command.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p><a href="https://help.github.com/articles/using-pull-requests">Create a pull request</a></p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-resources-for-openshift-developers"><a class="anchor" href="#other-resources-for-openshift-developers"></a>9. Other Resources for OpenShift Developers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide provides developers with the tools to work with "bleeding edge" OpenShift Origin code. However, if you&#8217;re hacking on OpenShift, you&#8217;re not alone!</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Get on our <a href="http://lists.openshift.redhat.com/openshiftmm/listinfo/dev">Developers' mailing list</a>.</p>
+</li>
+<li>
+<p>Talk with other OpenShift hackers over IRC on the <a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift-dev&amp;uio=d4">#openshift-dev channel on FreeNode</a>.</p>
+</li>
+<li>
+<p>Join the <a href="https://plus.google.com/communities/114361859072744017486">OpenShift Origin Developers</a> community on Google Plus.</p>
+</li>
+</ul>
+</div>
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-28 08:45:02 EST
+Last updated 2014-02-28 08:45:07 EST
 </div>
 <!-- Google Analytics -->
 <script>

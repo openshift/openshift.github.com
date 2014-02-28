@@ -657,8 +657,9 @@ code { font-family: source_code_pro; }
 <li>
 <ul class="sectlevel2">
 <li><a href="#shell-terminal-installation">1.1. Shell/Terminal Installation</a></li>
-<li><a href="#code-git-code-installation">1.2. <code>git</code> Installation</a></li>
+<li><a href="#software-installation">1.2. Software Installation</a></li>
 <li><a href="#creating-a-local-repository">1.3. Creating a Local Repository</a></li>
+<li><a href="#the-vagrant-development-environment">1.4. The Vagrant Development Environment</a></li>
 </ul>
 </li>
 <li><a href="#hacking-on-openshift">2. Hacking on OpenShift</a></li>
@@ -692,6 +693,9 @@ code { font-family: source_code_pro; }
 <div class="sect1">
 <h2 id="creating-a-development-environment"><a class="anchor" href="#creating-a-development-environment"></a>1. Creating a Development Environment</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>This section describes general requirements for doing development on the OpenShift Origin code base. This is all basic info on asetting up an environment. <strong>Once you&#8217;ve done all of this, have a look at the <a href="oo_deployment_guide_vagrant.html">Vagrant Deployment Guide</a>.</strong> Unlike the other OpenShift deployment guides, Vagrant is strongly optimized in favor of developers.</p>
+</div>
 <div class="sect2">
 <h3 id="shell-terminal-installation"><a class="anchor" href="#shell-terminal-installation"></a>1.1. Shell/Terminal Installation</h3>
 <div class="paragraph">
@@ -699,14 +703,24 @@ code { font-family: source_code_pro; }
 </div>
 </div>
 <div class="sect2">
-<h3 id="code-git-code-installation"><a class="anchor" href="#code-git-code-installation"></a>1.2. <code>git</code> Installation</h3>
+<h3 id="software-installation"><a class="anchor" href="#software-installation"></a>1.2. Software Installation</h3>
 <div class="paragraph">
-<p>Once you have a working shell, you will need to install <a href="http://git-scm.com/">git</a>. There are a number of projects that provide a graphical interface to git, and these are fine to use. However, it is also necessary to run <code>git</code> directly from the command line.</p>
+<p>Once you have a working shell, you will need to install <a href="http://git-scm.com/">git</a>, <a href="https://www.ruby-lang.org/">Ruby</a>, and a Ruby gem called <a href="http://bundler.io/">Bundler</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="git"><a class="anchor" href="#git"></a>1.2.1. git</h4>
+<div class="paragraph">
+<p>Install the most recent version of git available for your operating system:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Fedora / RHEL / CentOS: <code>yum install git</code></p>
+<p>Fedora / RHEL / CentOS:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ yum install git</pre>
+</div>
+</div>
 </li>
 <li>
 <p>OS X: git may be installed by default, but can also be installed by installing <a href="https://developer.apple.com/xcode/">XCode</a> or via a package manager like <a href="http://brew.sh/">Homebrew</a> or <a href="http://www.macports.org/">MacPorts</a>.</p>
@@ -715,6 +729,53 @@ code { font-family: source_code_pro; }
 <p>Windows: Cygwin&#8217;s package manager should include the latest version of git for Windows systems.</p>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ruby"><a class="anchor" href="#ruby"></a>1.2.2. Ruby</h4>
+<div class="paragraph">
+<p>For compatibility with RHEL and CentOS, OpenShift runs on Ruby 1.9.3. You can develop using newer versions of Ruby as long as you <em>do not use functionality that is not compatible with Ruby 1.9.3</em>. If you&#8217;d prefer to play it safe, you have a few options for using Ruby 1.9.3 on systems where more recent versions of Ruby are shipped:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="https://rvm.io/"><strong>Ruby Version Manager.</strong></a> RVM enables you to locally compile side-by-side environments for different versions of Ruby. Refer to the RVM website for information on how to set up RVM and build ruby 1.9.3 locally.</p>
+</li>
+<li>
+<p><a href="http://developerblog.redhat.com/2013/01/31/ruby-on-rails-3-2-on-red-hat-enterprise-linux-6-with-software-collections/"><strong>The ruby193 SCL.</strong></a> If you are doing your development on a RHEL or CentOS system, you can also work with the <code>ruby193</code> Software Collection.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+If you intend to set up an Origin development environment according to the <a href="oo_deployment_guide.html">Vagrant Deployment Guide</a>, <strong>do not</strong> use RVM. Vagrant and RVM have blocking interoperability issues.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="bundler"><a class="anchor" href="#bundler"></a>1.2.3. Bundler</h4>
+<div class="paragraph">
+<p>Once you have a Ruby 1.9.3 environment, you can install Bundler into it using the <code>gem</code> command:</p>
+</div>
+<div class="listingblock">
+<div class="title">System or RVM</div>
+<div class="content">
+<pre>$ gem install bundler</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">ruby193 SCL</div>
+<div class="content">
+<pre>$ scl enable ruby193 "gem install bundler"</pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -802,39 +863,86 @@ git checkout dev/kraman/bug/12345
 <p>Once a fork has been created, it does not automatically track the upstream repository.
 Follow the steps outlined below to keep the master branch up-to-date.</p>
 </div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Pull the latest changes from upstream</p>
 <div class="listingblock">
 <div class="content">
-<pre>#pull the latest changes from upstream
-git fetch upstream
-git fetch upstream --tags
-
-#make sure there are no un-committed changes
-git stash
-
-#make sure we are working on the master branch
-git checkout master
-
-#merge the latest changes
-git merge upstream/master
-
-#push the updates changes to our GitHub fork
-git push origin master
-git push origin --tags
-
-#return to your bug/feature branch
-git checkout dev/kraman/bug/12345
-
-#rebase this branch onto latest code from master (expect conflicts)
-git rebase master
-
-#... resolve conflicts
-
-#push the rebased branch back to your fork
-git push origin dev/kraman/bug/12345 -f
-
-#Restore any un-committed changes
-git stash pop</pre>
+<pre>$ git fetch upstream
+$ git fetch upstream --tags</pre>
 </div>
+</div>
+</li>
+<li>
+<p>Make sure there are no un-committed changes</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git stash</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make sure we are working on the master branch</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git checkout master</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Merge the latest changes</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git merge upstream/master</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Push the updates changes to our GitHub fork</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git push origin master
+$ git push origin --tags</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Return to your bug/feature branch</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git checkout dev/kraman/bug/12345</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Rebase this branch onto latest code from master (expect conflicts)</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git rebase master</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Resolve conflicts</p>
+</li>
+<li>
+<p>Push the rebased branch back to your fork</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git push origin dev/kraman/bug/12345 -f</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Restore any un-committed changes</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ git stash pop</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -848,6 +956,12 @@ The <code>git stash</code> steps are optional. It is easier if you commit all ch
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="the-vagrant-development-environment"><a class="anchor" href="#the-vagrant-development-environment"></a>1.4. The Vagrant Development Environment</h3>
+<div class="paragraph">
+<p>As mentioned at the top of this section, OpenShift Origin has a very powerful development environment based on <a href="http://www.vagrantup.com/">Vagrant</a>. Check out the <a href="oo_deployment_guide_vagrant.html">Vagrant Deployment Guide</a> for all of the details on this system.</p>
 </div>
 </div>
 </div>
@@ -880,7 +994,10 @@ The <code>git stash</code> steps are optional. It is easier if you commit all ch
 <div class="sect2">
 <h3 id="general-notes"><a class="anchor" href="#general-notes"></a>2.1. General Notes</h3>
 <div class="paragraph">
-<p><strong>Feature Backlogs</strong>: Our backlogs of user stories are currently maintained on <a href="https://trello.com/">Trello</a>. If you are not familiar with Trello, take a few minutes to look at <a href="https://trello.com/b/I7TjiplA/trello-tutorial">the tutorial</a>.</p>
+<p><strong>The OpenShift Roadmap</strong>: If you are looking for a high-level idea of which features are in the pipeline for OpenShift Origin, check out our <a href="https://trello.com/b/nlLwlKoz">Roadmap Board</a> on <a href="https://trello.com/">Trello</a>. Each card in the "Epic Backlog" describes an overarching set of changes that is then broken down into cards across the backlogs of the different development areas.</p>
+</div>
+<div class="paragraph">
+<p><strong>Feature Backlogs</strong>: Each development area has their own backlog of tasks that is also maintained on Trello. Most of these tasks are associated with Epics from our Roadmap board.</p>
 </div>
 <div class="paragraph">
 <p><strong>Bug Tracking</strong>: We use <a href="https://bugzilla.redhat.com/">Bugzilla</a> to track the reports and resolutions of OpenShift bugs. If you hit weird behavior with an OpenShift component:</p>
@@ -1146,7 +1263,7 @@ pick 0681b5f Completed changes for the fix for Bug 1234 <i class="conum" data-va
 </div>
 </div>
 <div class="paragraph">
-<p>For more information about squashing commits, read <a href="http://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits">http://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits</a></p>
+<p>For more information about squashing commits, read <a href="http://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits">the git Guide&#8217;s article</a> on the topic.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1187,7 +1304,7 @@ submit a new pull requests.</p>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-21 15:11:42 EST
+Last updated 2014-02-28 08:45:07 EST
 </div>
 <!-- Google Analytics -->
 <script>
