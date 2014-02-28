@@ -898,9 +898,6 @@ app-root/
 <p>The <strong>app-deployments</strong> directory contains 1 or more deployments in their entirety. A deployment directory name has the following format: [date]_[time], such as <code>2013-08-16_14-36-36.881</code>. The repo directory contains the contents of what will be in app-root/runtime/repo. The dependencies directory contains the contents of app-root/runtime/dependencies. The metadata directory contains information about the deployment: the git ref of the deployment (if applicable), the deployment id, and the deployment&#8217;s state (N/A or DEPLOYED).</p>
 </div>
 <div class="paragraph">
-<p><strong>app-root/runtime/repo</strong> moves from being a standalone directory to a symlink that points at the active deployment in the deployments directory.</p>
-</div>
-<div class="paragraph">
 <p>The <strong>app-archives</strong> directory contains binary deployment artifacts that are the inputs to the <code>prepare</code> platform action.</p>
 </div>
 </div>
@@ -1284,7 +1281,7 @@ dependencies
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Combined output of all actions as a String (TODO: refactor)</p>
+<p>Combined output of all actions as a String</p>
 </li>
 </ol>
 </div>
@@ -1339,7 +1336,7 @@ dependencies
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Combined output of all actions as a String (TODO: refactor)</p>
+<p>Combined output of all actions as a String</p>
 </li>
 </ol>
 </div>
@@ -1632,7 +1629,7 @@ dependencies
 <li>
 <p><strong>In-place</strong></p>
 <div class="paragraph">
-<p>Change gears in place, with or without altering the scale factor. Predeploys the new deployment artifact to a temporary location, stops the gear, symlinks the new artifact to become the active deployment, and the starts the gear.</p>
+<p>Change gears in place, with or without altering the scale factor. Predeploys the new deployment artifact to a temporary location, stops the gear, copies the new artifact to become the active deployment, and the starts the gear.</p>
 </div>
 </li>
 </ol>
@@ -1652,7 +1649,7 @@ dependencies
 <p>where N(gears) is the number of gears in the application, N(extra_cap) is the extra capacity in number of gears, T(gear_create) is the time to create a new gear with an instance of the cartridges, T(gear_deploy) is the time to copy the deployment artifact onto disk from the source, and T(gear_activate) is the time to swap the artifact to the newly deployed version and start the gear.</p>
 </div>
 <div class="paragraph">
-<p>The minimum deployment time for in-place is:</p>
+<p>The minimum deployment time for in-place is (because gear_deploy can be executed before the deployment begins):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1660,7 +1657,10 @@ dependencies
 </div>
 </div>
 <div class="paragraph">
-<p>because gear_deploy can be executed before the deployment begins. There is no combination of factors where scale-replace is faster than in-place.</p>
+<p>Where N(fraction) = N(gears) * number of gears that are allowed to be down at any given point in time. For example, there are 10 gears and only 1 gear is allowed to be down at a time. As such, there will be (10 / (0 + (10_.1)) – 1 _ activate time == 9 * activate time.</p>
+</div>
+<div class="paragraph">
+<p>There is no combination of factors where scale-replace is faster than in-place.</p>
 </div>
 <div class="paragraph">
 <p>Some large installations may not have access to sufficient floating capacity to accomplish their update within specific time constraints - they will wish to trade increased disk usage for increased speed / decreased overall deployment time. Some users will wish to try simple deploys with limited disk space - that can be accomplished with scale-replace.</p>
@@ -1843,7 +1843,7 @@ d3948b93 activated on 12/13 gears. 1 gear removed from rotation.</pre>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-21 15:11:41 EST
+Last updated 2014-02-28 08:45:06 EST
 </div>
 <!-- Google Analytics -->
 <script>
