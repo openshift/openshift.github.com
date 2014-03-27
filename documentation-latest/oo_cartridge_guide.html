@@ -819,6 +819,39 @@ The OpenShift data directory can be found via the environment variable <code>$OP
 <div class="paragraph">
 <p>This cartridge provides the <a href="https://www.10gen.com/products/mongodb-monitoring-service">10gen MMS agent</a> on OpenShift.</p>
 </div>
+<div class="paragraph">
+<p>A few necessary steps have to be done, in order to embed the 10gen-mms-agent into your application:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Register at <a href="https://mms.mongodb.com">https://mms.mongodb.com</a></p>
+</li>
+<li>
+<p>Go to the Settings &#8594; Monitoring Agent &#8594; Other Linux</p>
+</li>
+<li>
+<p>Curl tarball link that is there</p>
+</li>
+<li>
+<p>Copy the tarball into the .openshift/mms/ folder and git push it</p>
+</li>
+<li>
+<p>Set environment variable called OPENSHIFT_MMS_API_KEY with the API Key which is in the Settings &#8594; API Settings</p>
+<div class="literalblock">
+<div class="content">
+<pre>rhc set-env OPENSHIFT_MMS_API_KEY=your_mms_api_key -a app</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Embed the 10gen cartridge.</p>
+</li>
+<li>
+<p>Go to <a href="https://mms.mongodb.com">https://mms.mongodb.com</a> and add your host, by adding MongoDB host, port and credentials into the formular.</p>
+</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2327,10 +2360,10 @@ supervisor server.js</pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Due to latest changes in Perl cartridge template layout, the application is now stored in <code>$OPENSHIFT_REPO_DIR</code>, but is also backward compatible with deprecated <code>perl</code> directory.</p>
+<p>Due to changes in Perl cartridge template layout, the application root is now stored in <code>$OPENSHIFT_REPO_DIR</code>, but is also backward compatible with deprecated <code>perl/</code> directory.</p>
 </div>
 <div class="paragraph">
-<p>Modules are installed with <code>cpan.txt</code>, located in <code>.openshift</code> directory. Older deplist.txt is depricated, but still working.</p>
+<p>Modules are installed with <code>cpan.txt</code>, located in the <code>.openshift/</code> directory. In addition, application dependencies can be installed using cpanfile or Makefile.PL placed in the .openshift/ folder. deplist.txt is deprecated in favor of .openshift/cpan.txt.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2594,13 +2627,11 @@ Please leave <code>sql</code> and <code>data</code> directories but feel free to
 <h3 id="template-repository-layout-9"><a class="anchor" href="#template-repository-layout-9"></a>17.1. Template Repository Layout</h3>
 <div class="listingblock">
 <div class="content">
-<pre>wsgi/                  Externally exposed wsgi code goes
-wsgi/static/           Public static content gets served here
-libs/                  Additional libraries
-data/                  For not-externally exposed wsgi code
-setup.py               Standard setup.py, specify deps here <i class="conum" data-value="1"></i><b>(1)</b>
+<pre>wsgi.py                Default WSGI entry-point <i class="conum" data-value="1"></i><b>(1)</b>
+setup.py               Standard Setup Script <i class="conum" data-value="2"></i><b>(2)</b>
+requirements.txt       Standard pip requirements file <i class="conum" data-value="3"></i><b>(3)</b>
 .openshift/            Location for OpenShift specific files
-    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="2"></i><b>(2)</b>
+    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="4"></i><b>(4)</b>
     markers/           See the Markers section below</pre>
 </div>
 </div>
@@ -2608,16 +2639,28 @@ setup.py               Standard setup.py, specify deps here <i class="conum" dat
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Adding deps to the <code>install_requires</code> will cause the cartirdge to install those deps at git push time.</td>
+<td>For backward compatibility, the <code>wsgi/application</code> path is selected as default
+WSGI entry-point with higher priority. You can customize the path using the
+<code>OPENSHIFT_PYTHON_WSGI_APPLICATION</code> envirotnment variable. See the Environment
+variables section below.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Adding dependencies to the <code>install_requires</code> section of <code>setup.py</code> file will
+cause the cartridge to install those dependencies at git push time.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Adding dependencies to this file will cause the cartridge to run
+<code>pip install -r requirements.txt</code> command at git push time. You can customize
+the path using the <code>OPENSHIFT_PYTHON_REQUIREMENTS_PATH</code> variable. See the
+Environment variables section below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="oo_user_guide.html#action-hooks">Action Hooks</a> documentation</td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>Please leave the <code>wsgi</code>, <code>libs</code> and <code>data</code> directories but feel free to create additional directories if needed.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2667,6 +2710,25 @@ versions/      Version data to support multiple python versions (copied into pla
 </div>
 <div class="sect2">
 <h3 id="environment-variables-10"><a class="anchor" href="#environment-variables-10"></a>17.4. Environment variables</h3>
+<div class="paragraph">
+<p>The <code>python</code> cartridge supports the following environment variables:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">OPENSHIFT_PYTHON_WSGI_APPLICATION</dt>
+<dd>
+<p>Set custom path to the WSGI entry-point, eg.
+using the <code>rhc env set OPENSHIFT_PYTHON_WSGI_APPLICATION=app/altenative-wsgi.py</code>
+command.</p>
+</dd>
+<dt class="hdlist1">OPENSHIFT_PYTHON_REQUIREMENTS_PATH</dt>
+<dd>
+<p>Set custom path to the pip requirements file,
+eg. using the <code>rhc env set OPENSHIFT_PYTHON_REQUIREMENTS_PATH=requirements/production.txt</code>
+command.</p>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
 <p>For some frameworks (such as Django) it is possible to set the <code>DEBUG</code> user
 environment variable using the <code>rhc env set DEBUG=True</code> command.
@@ -2785,7 +2847,7 @@ After <code>sprockets</code> gem is installed you need to precompile all your as
 <div class="sect3">
 <h4 id="load-database-schema"><a class="anchor" href="#load-database-schema"></a>18.3.3. Load database schema</h4>
 <div class="paragraph">
-<p>If your Rails application contains a large amount of migrations it&#8217;s a good to use <code>db:schema:load</code> on initial deploy and <code>db:migrate</code> on re-deploymnets. You can do this by looking into the database and checking whether one of the DB tables exists.</p>
+<p>If your Rails application contains a large amount of migrations it&#8217;s good to use <code>db:schema:load</code> on initial deploy and <code>db:migrate</code> on re-deploymnets. You can do this by looking into the database and checking whether one of the DB tables exists.</p>
 </div>
 <div class="paragraph">
 <p>This example checks, in the deploy hook, if the <code>spree_activators</code> table is present in the database.</p>
@@ -2923,7 +2985,7 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-28 08:45:03 EST
+Last updated 2014-03-27 11:57:09 EDT
 </div>
 <!-- Google Analytics -->
 <script>

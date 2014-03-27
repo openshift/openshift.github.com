@@ -752,15 +752,15 @@ Epic:</p>
 <p>Metrics will be collected using a hybrid push/pull model, with both methods being supported options. In some cases, there may be too much overhead (time and/or resources) to spawn an external process to gather metrics, while in others it may be entirely acceptable.</p>
 </div>
 <div class="paragraph">
-<p>In both cases, the act of reporting metrics to OpenShift is as simple as writing them to <code>STDOUT</code> using the metrics message format defined below. If cartridge and application developers write their metrics to <code>STDOUT</code>, those metrics will be captured by OpenShift and either written to Syslog or to log files in $OPENSHIFT_DATA_DIR/logs, depending on the OpenShift environment&#8217;s configuration (see the <a href="https://github.com/openshift/openshift-pep/blob/master/openshift-pep-009-logging.md">Logging PEP</a> for more details).</p>
+<p>In both cases, the act of reporting metrics to OpenShift is as simple as writing them to either <code>STDOUT</code> or <code>Syslog</code> using the metrics message format defined below. If cartridge and application developers write their metrics to <code>STDOUT</code>, those metrics will be captured by OpenShift and either written to Syslog or to log files within the gear, depending on the OpenShift environment&#8217;s configuration (see the <a href="https://github.com/openshift/openshift-pep/blob/master/openshift-pep-009-logging.md">Logging PEP</a> for more details).</p>
 </div>
 <div class="sect4">
 <h5 id="pulling-metrics"><a class="anchor" href="#pulling-metrics"></a>Pulling metrics</h5>
 <div class="paragraph">
-<p>A node-level service, <code>oo-gather-metrics</code>, is responsible for scheduling the pull-based metrics available per gear. The daemon will also be responsible for reporting statistics about the metrics gathering process, such as the time taken to gather metrics.</p>
+<p>A new Watchman plugin is responsible for scheduling the pull-based metrics available per gear. It will also be responsible for reporting statistics about the metrics gathering process, such as the time taken to gather metrics.</p>
 </div>
 <div class="paragraph">
-<p><code>oo-gather-metrics</code> will query each gear for metrics at a configurable interval. During each iteration, it will perform the following tasks:</p>
+<p>The Watchman plugin will query each gear for metrics at a configurable interval. During each iteration, it will perform the following tasks:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -768,15 +768,15 @@ Epic:</p>
 <p>collect metrics common to all gears such as cgroups information</p>
 </li>
 <li>
-<p>execute <code>bin/control metrics</code> for each cartridge whose manifest indicates the cartridge supports metrics</p>
+<p>execute <code>bin/metrics</code> for each cartridge whose manifest indicates the cartridge supports metrics</p>
 </li>
 <li>
-<p>execute the application&#8217;s <code>metrics</code> action hook (if preset) to allow the application to report its metrics</p>
+<p>execute the application&#8217;s <code>metrics</code> action hook (if present) to allow the application to report its metrics</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Metrics reported via <code>bin/control metrics</code> and the <code>metrics</code> action hook must be printed to <code>STDOUT</code>, as OpenShift will handle delivering the metrics to the appropriate destination (Syslog or log files).</p>
+<p>Metrics reported via <code>bin/metrics</code> and the <code>metrics</code> action hook must be printed to either <code>STDOUT</code> or <code>Syslog</code>.</p>
 </div>
 <div class="paragraph">
 <p>Because an OpenShift node may have dozens or hundreds of gears, it is imperative that metrics collection complete as quickly as possible, using as few resources as possible so as to minimize the potential impact to the normal execution of each gear&#8217;s processes. Cartridge and application metrics may be time limited, and metrics gathering processes that exceed their allocated time may be terminated.</p>
@@ -785,10 +785,10 @@ Epic:</p>
 <div class="sect4">
 <h5 id="pushing-metrics"><a class="anchor" href="#pushing-metrics"></a>Pushing metrics</h5>
 <div class="paragraph">
-<p>A cartridge or application author can opt to schedule metrics reporting on their own, instead of relying on <code>oo-gather-metrics</code> to do so.</p>
+<p>A cartridge or application author can opt to schedule metrics reporting on their own, instead of relying on the Watchman plugin to do so.</p>
 </div>
 <div class="paragraph">
-<p>Metrics must be printed to <code>STDOUT</code> and OpenShift will handle delivering them to the appropriate destination (Syslog or log files).</p>
+<p>Push metrics must be printed to either <code>STDOUT</code> or <code>Syslog</code>.</p>
 </div>
 </div>
 </div>
@@ -826,7 +826,7 @@ Epic:</p>
 <div class="sect3">
 <h4 id="message-format"><a class="anchor" href="#message-format"></a>Message format</h4>
 <div class="paragraph">
-<p>A metrics message must include the following fields (order does not matter):</p>
+<p>A metrics message must include the following fields:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -877,7 +877,7 @@ Epic:</p>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-28 08:45:07 EST
+Last updated 2014-03-27 11:57:12 EDT
 </div>
 <!-- Google Analytics -->
 <script>

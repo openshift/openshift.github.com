@@ -2609,6 +2609,9 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <div class="paragraph">
 <p>Both entries are optional and may be omitted. Empty files will be ignored. Patterns are from the <code>OPENSHIFT_HOMEDIR</code> directory rather than your cartridge&#8217;s directory. See the man page for <code>tar</code> (the <code>--transform</code> and <code>--exclude-from</code> options) for more details.</p>
 </div>
+<div class="paragraph">
+<p>Cartridge developers should preserve the state of the cartridge in all (pre|post)-(restore|snapshot) scripts. Cartridge state should be set back to the original state before this script was invoked.</p>
+</div>
 <div class="sect2">
 <h3 id="understanding-openshift-behavior-snapshot"><a class="anchor" href="#understanding-openshift-behavior-snapshot"></a>12.1. Understanding OpenShift Behavior: Snapshot</h3>
 <div class="paragraph">
@@ -2645,7 +2648,8 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>OpenShift invokes <code>control post-snapshot</code> for each installed cartridge in the gear.</p>
 </li>
 <li>
-<p>OpenShift starts the application by invoking <code>gear start</code>.</p>
+<p>Based on the state of application before snapshot, OpenShift will either stop
+or start the gear.</p>
 </li>
 </ol>
 </div>
@@ -2685,7 +2689,8 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>If the archive contains a git repo, OpenShift invokes <code>gear postreceive</code>.</p>
 </li>
 <li>
-<p>Otherwise, OpenShift invokes <code>gear start</code> .</p>
+<p>Based on the state of application before restore, OpenShift will either stop
+or start the gear.</p>
 </li>
 </ol>
 </div>
@@ -2784,7 +2789,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>The primary cartridge <code>pre-build</code> control action is executed.</p>
 </li>
 <li>
-<p>The <code>pre-build</code> user action hook is executed, if present.</p>
+<p>The <code>pre_build</code> user action hook is executed, if present.</p>
 </li>
 <li>
 <p>The primary cartridge <code>build</code> control action is executed.</p>
@@ -2850,7 +2855,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>The primary cartridge <code>post-deploy</code> control action is executed.</p>
 </li>
 <li>
-<p>The <code>post-deploy</code> user action hook is executed, if present.</p>
+<p>The <code>post_deploy</code> user action hook is executed, if present.</p>
 </li>
 <li>
 <p>If the app is scalable, SSH to each child gear and execute <code>gear activate $deployment_id</code> which performs all the activation steps (except this one)</p>
@@ -3080,7 +3085,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-02-28 08:45:03 EST
+Last updated 2014-03-27 11:57:09 EDT
 </div>
 <!-- Google Analytics -->
 <script>
