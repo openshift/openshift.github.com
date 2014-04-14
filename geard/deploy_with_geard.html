@@ -8,45 +8,65 @@
 <head>
   <title>OpenShift Origin - deploy with geard</title>
   <link rel="icon" type="image/png" href="../images/favicon.png" />
-    <link media="all" rel="stylesheet" href="../css/font-awesome.min.css" type="text/css" />
-    <link media="all" rel="stylesheet" href="../css/origin.css" type="text/css" />
-    <script src="../scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
-    <script src="../scripts/jquery.fittext.js" type="text/javascript"></script>
-    <style>
-    #try { background-color: #f2f2f2; }
-    section { padding-top: 20px; padding-bottom: 20px; margin-bottom: 0px; }
-    #about p { margin-bottom: 40px; }
-    a.btn.btn-outline-inverse{ color: white; border-color: white; }
-    a.btn.btn-outline-inverse:hover, a.btn.btn-outline-inverse:focus { opacity: 0.8; }
-    </style>
+  <link media="all" rel="stylesheet" href="../css/font-awesome.min.css" type="text/css" />
+  <link media="all" rel="stylesheet" href="../css/origin.min.css" type="text/css" />
+  <link media="all" rel="stylesheet" href="../css/origin-custom.css" type="text/css" />
+  <script src="../scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+  <script src="../scripts/jquery.fittext.js" type="text/javascript"></script>
 </head>
 <body>
-    <div class="jumbotron" style="color: white;">
-      <div class="container" style="position: relative">
-        <h1><a href="index.html" style="color:white;"><span>GEAR</span><span style="color: red">D</span></a></h1>
-        <h2>Deploy your containers with ease</h2>
-        <p class="buttons">
-          <a class="btn btn-outline-inverse btn-lg" href="#download">Download Now <i class="icon-download-alt icon-large"></i></a>
-          <a class="btn btn-outline-inverse btn-lg" href="https://github.com/openshift/geard">On GitHub <i class="icon-github icon-large"></i></a>
-        </p>        
+  <div class="jumbotron">
+    <div class="container">
+      <!--
+      <div class="pull-right text-center hidden">
+        <div>Works with</div>
+          <a href="https://projectatomic.io">
+            <img src="http://www.projectatomic.io/images/logo.svg">
+          </a>
+        </div>
       </div>
+      -->
+      <h1>
+        GEAR
+        <span>D</span>
+      </h1>
+      <h2>Deploy your containers with ease</h2>
+      <p class="buttons">
+        <a class="btn btn-outline-inverse" href="#download">
+          Download Now <i class="icon-download-alt icon-large"></i>
+        </a>
+        <a class="btn btn-outline-inverse" href="https://github.com/openshift/geard">
+          On GitHub <i class="icon-github icon-large"></i>
+        </a>
+      </p>
     </div>
-  <section id="about"><div class="container">
+  </div>
+  <section id="about">
+    <div class="container">
         <header>
-            <h2>Integrate and link containers across hosts</h2>
+            <h2>How can I try it out?</h2>
         </header>
-        Using a single <strong>geard</strong> command:
-        <ul>
-          <li>Deploy 1 or more containers across hosts</li>
-          <li>Automatically allocate public ports for your containers</li>
-          <li>Simplify linking containers across hosts that does not require custom business logic in your application</li>
-        </ul>
-
-        It's as easy as <code>gear deploy my_deploy.json</code>
-        <h3>An example in action &#8594; MongoDB and RockMongo</h3>
+        <p class="lead"> <strong>geard</strong>
+          is a command-line client and agent for integrating and linking
+          <a href="https://www.docker.io">Docker</a>
+          containers into
+          <a href="http://www.freedesktop.org/wiki/Software/systemd/">systemd</a>
+          across multiple hosts.  It's easy to get started in just a few minutes!
+        </p>    
+        <h3>Using a single geard command:</h3>
+        <div class="row">
+          <div class="col-md-9">            
+              <ul>
+                <li>Deploy 1 or more containers across hosts</li>
+                <li>Automatically allocate public ports for your containers</li>
+                <li>Simplify linking your containers across hosts, without writing complex, custom business logic in your application</li>
+              </ul>
+            It's as easy as <code>gear deploy my_deploy.json</code>
+          </div>          
+        </div>
+        <h3>Let's deploy a web app using MongoDB and RockMongo</h3>                    
         <div class="row">
           <div class="col-md-7">         
-            <!-- <h4>What you'll see running a gear deploy</h4> -->
             <p>
               Deploy a container running MongoDB, and another container running RockMongo using a single <strong>geard</strong> command.  Neither container was modified to require the use of custom environment variables or configuration files,
               but the RockMongo container will communicate with the MongoDB container as soon as it starts over localhost using default MongoDB ports.</p>                 
@@ -69,8 +89,7 @@ local Container rockmongo-1 starting
 local Container mongodb-1 starting</pre>
           </div>
           <div class="col-md-5">
-          <!--<h4>What a deployment JSON looks like</h4>-->
-          <p>The <strong>gear deploy</strong> command takes a JSON file as input.  It must have one or more named containers that are optionally linked.  If an image is not local, <strong>geard</strong> will pull it down.  Once the image is local, the container starts and is integrated with the <strong>systemd</strong> process manager.</p>
+          <p>The <strong>gear deploy</strong> command takes a JSON file as input.  It must have one or more named containers that are optionally linked.  If an image is not local, <strong>geard</strong> will pull it down.  Once the image is local, <strong>geard</strong> starts the container fully integrated into the <strong>systemd</strong> process manager.</p>
             <pre>
 {
   "containers":[
@@ -94,17 +113,21 @@ local Container mongodb-1 starting</pre>
         <div class="row">
           <div class="col-md-7">
             <h3>Deploying multiple instances</h3>
+          </div>
+          <div class="col-md-7">
             <p>
               While our example deployed a single instance of RockMongo and MongoDB in separate containers on a single host, its easy to deploy and link multiple instances of each container.  Each container is indexed, i.e. rockmongo-1, rockmongo-2, etc, and can link to every other container.  For example, you could deploy multiple web tier containers all linked to a single data tier container.
             </p>
           </div>
-          <div class="col-md-5">
-            IMAGE GOES HERE
+          <div class="col-md-3">
+            <img src="./images/mongo-01.svg" class="img-responsive"/>
           </div>
         </div>
         <div class="row">
           <div class="col-md-7">
-            <h3>Port allocation</h3>
+            <h3>Port allocation</h3>          
+          </div>
+          <div class="col-md-7">
             <h4>Requesting specific ports</h4>
             <p>If you need to know ahead of time which external ports the apps in your containers are running on, then you can choose to include that in the deployment JSON. In this case we specified that RockMongo needed to be exposed to external traffic on port 6060.</p>
             <h4>Automatic allocation</h4>
@@ -113,35 +136,35 @@ local Container mongodb-1 starting</pre>
             <p>You can spend less time coding logic to support service discovery, and instead let your applications assume standard defaults. <strong>geard</strong> uses iptables to simplify linking network services among containers and across hosts. In our example, RockMongo communicated to MongoDB as if it were running locally at 127.0.0.1:27017. The deployment JSON specified this with the link directive. Under the hood, <code>gear deploy</code> enabled localnet routing and IP forwarding in the network namespace of the container. Then iptables NAT rules were added to forward the traffic to the remote endpoint. In the end, your web app thinks the data tier is co-located even if they are in separate containers on separate hosts.</p>           
           </div>
           <div class="col-md-5">
-            IMAGE GOES HERE
+            <div style="vertical-align:middle"><img src="./images/mongo-02.svg" class="img-responsive"/></div>
           </div>
         </div>
 
     </div></section>
 
-    <section id="try"><div class="container">
+    <section id="try">
+      <div class="container">
         <a name="download"></a>
         <header>
             <h2>Try it out</h2>
         </header>
-        <p>It's easy!</p>
         <ul>
-          <li>You will need <a href="index.html">geard</a> installed to get started</li>
-          <li>Download the <a href="https://github.com/openshift/geard/blob/master/deployment/fixtures/rockmongo_mongo.json">rockmongo_mongo.json</a> example</li>
-          <li>Run the <strong>gear deploy</strong> command</li>
+          <li>Install <a href="index.html">geard</a></li>
+          <li>Download the <a href="https://github.com/openshift/geard/blob/master/deployment/fixtures/rockmongo_mongo.json">rockmongo_mongo.json</a> example deployment file</li>
+          <li>Deploy the example by running <code>gear deploy rockmongo_mongo.json</code></li>
           <li>If this is your first deployment, wait for the images to download.  Run <code>docker images</code> to observe status</li>
           <li>Once the images appear in the list, run <code>docker ps</code> to see your RockMongo and MongoDB containers</li>
-          <li>Visit RockMongo using your browser of choice at http://localhost:6060/index.php</li>
-          <li>Interact with your MongoDB instance by creating databases and documents</li>          
+          <li>Open a browser and authenticate with RockMongo at <a href="http://localhost:6060/index.php">http://localhost:6060/index.php</a> with default credentials (user: admin, password: admin)</li>
+          <li>Interact with your MongoDB instance by creating databases and documents!</li>          
         </ul>
-        </div>
-        </section>
+      </div>
+    </section>
     <section><div class="container">
-        <header>
-            <h2>Introspect your containers using simple gear commands</h2>
-        </header>     
-        <h4>Show the status of a container</h4>
-        <pre>
+      <header>
+          <h2>Introspect your containers using simple gear commands</h2>
+      </header>     
+      <h3>Show the status of a container</h3>
+      <pre>
 $ gear status rockmongo-1
 You can also display the status of this container via 'systemctl status ctr-rockmongo-1.service'
 ctr-rockmongo-1.service - Container rockmongo-1
@@ -149,18 +172,18 @@ ctr-rockmongo-1.service - Container rockmongo-1
    Active: active (running) since Fri 2014-04-11 17:33:27 UTC; 32min ago
   Process: 7001 ExecStartPost=/usr/bin/gear init --post rockmongo-1 ccoleman/rockmongo (code=exited, status=0/SUCCESS)
 ...
-</pre>
-        <h4>List status of all containers</h4>
-        <pre>
+      </pre>
+      <h3>List status of all containers</h3>
+      <pre>
 $ gear list-units
 You can also display the set of containers via 'systemctl list-units'
                     local execute *jobs.ListContainersResponse
 ID          SERVER  ACTIVE   SUB     LOAD      TYPE
 mongodb-1           active   running loaded    
 rockmongo-1         active   running loaded    
-</pre>
-        <h4>Start or Stop a container</h4>
-        <pre>
+      </pre>
+      <h3>Start or Stop a container</h3>
+      <pre>
 $ gear stop rockmongo-1
 You can also control this container via 'systemctl stop ctr-rockmongo-1.service'
 local Apr 11 18:18:09 localhost.localdomain systemd[1]: Stopping Container rockmongo-1...
@@ -172,14 +195,16 @@ local Container rockmongo-1 is stopped
 
 $ gear start rockmongo-1
 You can also control this container via 'systemctl start ctr-rockmongo-1.service'
-local Container rockmongo-1 starting</pre>
-        <h4>View logs via journalctl</h4>
-        <pre>
+local Container rockmongo-1 starting
+      </pre>
+      <h3>View logs via journalctl</h3>
+      <pre>
 $ journalctl -u ctr-rockmongo-1
 ...
 Apr 11 17:33:27 localhost.localdomain systemd[1]: Started Container rockmongo-1.
-</pre>
-    </div></section>
+      </pre>
+    </div>
+  </section>
 
   <!-- Google Analytics -->
     <script type="text/javascript">
