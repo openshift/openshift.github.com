@@ -55,22 +55,22 @@
           containers into
           <a href="http://www.freedesktop.org/wiki/Software/systemd/">systemd</a>
           across multiple hosts.  It's easy to get started in just a few minutes!
-        </p>    
+        </p>
         <h3>Using a single geard command:</h3>
         <div class="row">
-          <div class="col-md-9">            
+          <div class="col-md-9">
               <ul>
                 <li>Deploy 1 or more containers across hosts</li>
                 <li>Automatically allocate public ports for your containers</li>
                 <li>Simplify linking your containers across hosts, without writing complex, custom business logic in your application</li>
               </ul>
             It's as easy as <code>gear deploy my_deploy.json</code>
-          </div>          
+          </div>
         </div>
-        <h3>Let's deploy a web app using MongoDB and RockMongo</h3>                    
+        <h3>Let's deploy a web app using MongoDB and RockMongo</h3>
         <div class="row">
-          <div class="col-md-9">  
-            <div>The <strong>gear deploy</strong> command takes a JSON file as input.  This file describes one or more named containers that are optionally linked.  In this example, we will deploy the RockMongo web app and link it to the MongoDB database.</div>
+          <div class="col-md-9">
+            <div>The <strong>gear deploy</strong> command takes JSON-formatted data as input.  This may be a file or an URL. The JSON describes one or more named containers that are optionally linked.  In this example, we will deploy the RockMongo web app and link it to the MongoDB database.</div>
             <pre style="display: inline-block; padding: 9px; word-break: break-all; word-wrap: break-word; white-space: pre-wrap;">
 $ curl -O https://raw.githubusercontent.com/openshift/geard/master/deployment/fixtures/rockmongo_mongo.json
 $ cat rockmongo_mongo.json
@@ -105,7 +105,7 @@ local Container mongodb-1 is installed
 local Container rockmongo-1 starting
 local Container mongodb-1 starting
 ==> Deployed as rockmongo_mongo.json.20140505-173653</pre>
-          <div>If the referenced docker images are not local, <strong>geard</strong> will do a <strong>docker pull</strong> to fetch the docker images referenced in your deployment file.  You can run <strong>docker images</strong> to monitor the status and see the two images below pulled.</div>       
+          <div>If the referenced docker images are not local, <strong>geard</strong> will do a <strong>docker pull</strong> to fetch the docker images referenced in your deployment file.  You can run <strong>docker images</strong> to monitor the status and see the two images below pulled.</div>
           <pre>
 $ sudo docker images
 REPOSITORY                   TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
@@ -115,7 +115,7 @@ openshift/centos-mongodb     latest              a10ce391e563        47 hours ag
           <pre>
 $ sudo docker ps
 CONTAINER ID        IMAGE                               COMMAND                PORTS                     NAMES
-7db55d00b731        openshift/centos-mongodb:latest     /usr/bin/mongod --co   0.0.0.0:4000->27017/tcp   mongodb-1           
+7db55d00b731        openshift/centos-mongodb:latest     /usr/bin/mongod --co   0.0.0.0:4000->27017/tcp   mongodb-1
 248866d64dd5        openshift/centos-rockmongo:latest   /usr/sbin/httpd -D F   0.0.0.0:6060->80/tcp      rockmongo-1</pre>
           <div>You can now see the <strong>systemd</strong> status of each container using the <strong>gear status</strong> command.</div>
           <pre>
@@ -128,8 +128,8 @@ ctr-rockmongo-1.service - Container rockmongo-1
   Process: 7531 ExecStartPre=/bin/sh -c /usr/bin/docker inspect --format="Reusing {{.ID}}" "rockmongo-1-data" || exec docker run --name "rockmongo-1-data" --volumes-from "rockmongo-1-data" --entrypoint true "openshift/centos-rockmongo" (code=exited, status=0/SUCCESS)
  Main PID: 7809 (docker)
 ...</pre>
-          <div>Open a browser and authenticate with RockMongo at <a href="http://localhost:6060/index.php">http://localhost:6060/index.php</a> with default credentials (user: admin, password: admin).  Interact with your MongoDB instance by creating databases and documents!</div>          
-        </div>       
+          <div>Open a browser and authenticate with RockMongo at <a href="http://localhost:6060/index.php">http://localhost:6060/index.php</a> with default credentials (user: admin, password: admin).  Interact with your MongoDB instance by creating databases and documents!</div>
+        </div>
         <div class="row">
           <div class="col-md-7">
             <h3>Deploying multiple instances</h3>
@@ -145,7 +145,7 @@ ctr-rockmongo-1.service - Container rockmongo-1
         </div>
         <div class="row">
           <div class="col-md-7">
-            <h3>Port allocation</h3>          
+            <h3>Port allocation</h3>
           </div>
           <div class="col-md-7">
             <h4>Requesting specific ports</h4>
@@ -153,7 +153,7 @@ ctr-rockmongo-1.service - Container rockmongo-1
             <h4>Automatic allocation</h4>
             <p>If you don't need to choose a specific port, but do need traffic to flow into the container, then a port is automatically allocated for it during the deploy. For MongoDB it did not matter what port was exposed because all traffic was going to be flowing from RockMongo directly to MongoDB. We only cared that some port was mapped to the default listening port of 27017.</p>
             <h4>Simplified service discovery</h4>
-            <p>You can spend less time coding logic to support service discovery, and instead let your applications assume standard defaults. <strong>geard</strong> uses iptables to simplify linking network services among containers and across hosts. In our example, RockMongo communicated to MongoDB as if it were running locally at 127.0.0.1:27017. The deployment JSON specified this with the link directive. Under the hood, <code>gear deploy</code> enabled localnet routing and IP forwarding in the network namespace of the container. Then iptables NAT rules were added to forward the traffic to the remote endpoint. In the end, your web app thinks the data tier is co-located even if they are in separate containers on separate hosts.</p>           
+            <p>You can spend less time coding logic to support service discovery, and instead let your applications assume standard defaults. <strong>geard</strong> uses iptables to simplify linking network services among containers and across hosts. In our example, RockMongo communicated to MongoDB as if it were running locally at 127.0.0.1:27017. The deployment JSON specified this with the link directive. Under the hood, <code>gear deploy</code> enabled localnet routing and IP forwarding in the network namespace of the container. Then iptables NAT rules were added to forward the traffic to the remote endpoint. In the end, your web app thinks the data tier is co-located even if they are in separate containers on separate hosts.</p>
           </div>
           <div class="col-md-5">
             <div style="vertical-align:middle"><img src="./images/mongo-02.svg" class="img-responsive"/></div>
@@ -169,27 +169,39 @@ ctr-rockmongo-1.service - Container rockmongo-1
         </header>
         <ul>
           <li>Install <a href="index.html">geard</a></li>
-          <li>Download example deployment file, <code>curl -O https://raw.githubusercontent.com/openshift/geard/master/deployment/fixtures/rockmongo_mongo.json</code></li>
-          <li>Deploy the example by running <code>gear deploy rockmongo_mongo.json</code></li>
+          <li>Deploy the example by running <code>gear deploy
+              https://raw.githubusercontent.com/openshift/geard/master/deployment/fixtures/rockmongo_mongo.json</code></li>
           <li>If this is your first deployment, wait for the images to download.  Run <code>docker images</code> to observe status</li>
           <li>Once the images appear in the list, run <code>docker ps</code> to see your RockMongo (rockmongo-1) and MongoDB (mongodb-1) containers</li>
           <li>Open a browser and authenticate with RockMongo at <a href="http://localhost:6060/index.php">http://localhost:6060/index.php</a> with default credentials (user: admin, password: admin)</li>
-          <li>Interact with your MongoDB instance by creating databases and documents!</li>          
-        </ul> 
-        <h4>Need help?</h4>       
-        <p>
-          RockMongo attempts to connect to MongoDB on start-up of the container.  If you are not able to connect to MongoDB because the RockMongo container initialized first, then you will need to restart the web container using the following steps:
-        </p>
-        <ul>
-          <li><code>sudo gear stop rockmongo-1</code></li>
-          <li><code>sudo gear start rockmongo-1</code></li>
+          <li>Interact with your MongoDB instance by creating databases and documents!</li>
         </ul>
+        <h4>Need help?</h4>
+          <ul>
+              <li>
+                  The flag <strong>--insecure</strong> may be appended to the <strong>gear deploy</strong> command to
+                  prevent checking the CA Certificate of the HTTPS server.<br>
+              </li>
+              <li>
+                  The flag <strong>--timeout</strong> may be appended to increase the number of seconds (<em>default: 300</em>)
+                  while reading from the HTTP/S server when retrieving the deployment json.
+              </li>
+              <li>
+                  RockMongo attempts to connect to MongoDB on start-up of the container. If you are not able to connect
+                  to MongoDB because the RockMongo container initialized first, then you will need to restart the web
+                  container using the following steps:
+                  <ul>
+                      <li><code>sudo gear stop rockmongo-1</code></li>
+                      <li><code>sudo gear start rockmongo-1</code></li>
+                  </ul>
+              </li>
+          </ul>
       </div>
     </section>
     <section><div class="container">
       <header>
           <h2>Introspect your containers using simple gear commands</h2>
-      </header>     
+      </header>
       <h3>Show the status of a container</h3>
       <pre>
 $ sudo gear status rockmongo-1
@@ -206,8 +218,8 @@ $ sudo gear list-units
 You can also display the set of containers via 'systemctl list-units'
                     local execute *jobs.ListContainersResponse
 ID          SERVER  ACTIVE   SUB     LOAD      TYPE
-mongodb-1           active   running loaded    
-rockmongo-1         active   running loaded    
+mongodb-1           active   running loaded
+rockmongo-1         active   running loaded
       </pre>
       <h3>Start or Stop a container</h3>
       <pre>
