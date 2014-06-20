@@ -666,7 +666,7 @@ code { font-family: source_code_pro; }
 <div class="paragraph">
 <p>PEP: 004<br>
 Title: OpenShift Multi-Geo Support<br>
-Status: reviewed<br>
+Status: draft<br>
 Author: Mike McGrath <a href="mailto:mmcgrath@redhat.com">mmcgrath@redhat.com</a><br>
 Arch Priority: High<br>
 Complexity: 30<br>
@@ -692,25 +692,10 @@ Epic: TBD</p>
 <div class="sect2">
 <h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
 <div class="paragraph">
-<p>The Multi-Geo specification takes our existing single geo and multiplies it starting at the mcollective layer. To better understand lets review the current single-geo installation.</p>
+<p>Included for version 1: * Let admins control the default geo for an application (for when no geo is specified) * Let admins plugin their own geo placement algorithm (Ex: based on user&#8217;s geo). * Add non affinity zones (Ex: rack) for higher availability. * Add geo(region)/zone assignment to the broker (as metadata to nodes in districts)</p>
 </div>
 <div class="paragraph">
-<p>Client &#8594; via API &#8594; Broker &#8594; mcollective client &#8594; via active mq &#8594; mcollective server &#8594; Node farm</p>
-</div>
-<div class="paragraph">
-<p>The broker and mcollective client are all part of what is considered the broker. ActiveMQ is a messaging bus typically on a dedicated host and both the broker and mcollective server connect to the ActiveMQ ports to communicate with each other.</p>
-</div>
-<div class="paragraph">
-<p>To add additional geo&#8217;s the goal is to create a dedicated ActiveMQ server for each geo. All of the nodes in that geo will contact their local ActiveMQ server and only that ActiveMQ server. The broker will need to know about every Geo by way of it&#8217;s ActiveMQ server. This is basically just creating a new /etc/mcollective/client.cfg for every geo and making sure the Broker knows how to find the activemq server for that geo..</p>
-</div>
-<div class="paragraph">
-<p>Remaining R&amp;D work is still required to determine if the best approach is with subcollectives or with dedicated mcollective installs. The work-flow will be the same but how the broker interacts with the nodes will be different. This is just a note that one of those methods needs to be chosen but some research needs to be done first. Our general opinion is that subcollectives will require less code to get done, but we&#8217;re not actually 100% sure that it&#8217;ll actually work for this use case.</p>
-</div>
-<div class="paragraph">
-<p>Considerations included for version 1: * Let the user specify what geo to create an application in * Let admins control the default geo for an application (for when no geo is specified) * Add geo naming abilities to the broker (listed below in implementation) * Individual namespace for different geo&#8217;s is likely but more research needs to be done here particularly around large scaling. This would be like name-domain.us1.rhcloud.com and name2-domain.uk4.rhcloud.com. The question is whether DNS can handle 100 million entries in a single domain just as well as it can handle 1 million entries in 100 subdomains.</p>
-</div>
-<div class="paragraph">
-<p>Considerations explicitly excluded for a future version: * Applications located across multiple geo&#8217;s for HA, DR or scale. * Migration of applications or gears from one geo to another * Private connectivity between different geo&#8217;s. If you want to communicate cross geo with this PEP you&#8217;ll have to do it on a public network (SSL encouraged) or via some other in-house solution.</p>
+<p>Considerations explicitly excluded for a future version: * Let the user specify what geo to create an application in * Applications located across multiple geo&#8217;s for HA, DR or scale. * Private connectivity between different geos. If you want to communicate cross geo with this PEP you&#8217;ll have to do it on a public network (SSL encouraged) or via some other in-house solution.</p>
 </div>
 </div>
 <div class="sect2">
@@ -718,31 +703,7 @@ Epic: TBD</p>
 <div class="ulist">
 <ul>
 <li>
-<p>If we do not choose subcollectives: Every geo will have a /etc/mcollective/client.cfg file called $GEO.cfg. So, for example if we have a us1 and a au1 geo, we would have a us1.cfg and an au1.cfg file</p>
-</li>
-<li>
-<p>If we do choose subcollectives: Every geo will have its own filter id and mcollective will communicate directly with that geo via its id.</p>
-</li>
-<li>
-<p>Geo&#8217;s should be added to the broker.conf file as a GEO_LIST variable similar to how the mongo brokers are listed. The geo&#8217;s listed in that variable match to a $GEO.cfg as listed above.</p>
-</li>
-<li>
-<p>Admins can specify the default geo via the DEFAULT_GEO variable in broker.conf</p>
-</li>
-<li>
-<p>Users, via the command line tooling and UI could specify what GEO to use via the broker API. If no GEO was specified the admins could decide what GEO to use.</p>
-</li>
-<li>
-<p>Once a GEO is specified, that geo&#8217;s mcollective configs will be used just as normal.</p>
-</li>
-<li>
-<p>The Mongo database will need to store what districts are in what geo&#8217;s.</p>
-</li>
-<li>
-<p>It should be assumed that no node hostnames will be the same, even across geo&#8217;s. Best practice would be to name them ex-std-node1.prod.us1.rhcloud.com and ex-std-node1.prod.us2.rhcloud.com</p>
-</li>
-<li>
-<p>Access to a geo will be restricted at the broker by capabilities</p>
+<p>The Mongo database will need to store what nodes are in what geos.</p>
 </li>
 </ul>
 </div>
@@ -760,16 +721,13 @@ Epic: TBD</p>
 <div class="sect2">
 <h3 id="rationale"><a class="anchor" href="#rationale"></a>Rationale</h3>
 <div class="paragraph">
-<p>We believe a completely disconnected messaging bus is the best way to ensure availability during outage scenarios as well as high scaling. This model seems to make Mongo the bottleneck as the broker and node layers should be able to scale perfectly as more capacity is needed.</p>
-</div>
-<div class="paragraph">
 <p>We&#8217;ve decided to focus on a solid infrastructure and foundation for which we&#8217;ll build future DR and failover scenarios on top of. This PEP stops at that foundation to just get support across multiple geographies. Additionally we know this will solve some requests we&#8217;ve had in enterprise to separate environments better.</p>
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-06-19 00:11:37 EDT
+Last updated 2014-06-20 00:11:34 EDT
 </div>
 <!-- Google Analytics -->
 <script>
