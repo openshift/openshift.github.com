@@ -649,7 +649,7 @@ code { font-family: source_code_pro; }
 <h1>OpenShift Origin Comprehensive Deployment Guide</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
-<span id="revdate">ORIGIN VERSION 3.0</span>
+<span id="revdate">LATEST DOC UPDATES</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -885,7 +885,7 @@ This document covers one possible OpenShift topology, specifically:</p>
 <pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin-deps.repo
 [openshift-origin-deps]
 name=openshift-origin-deps
-baseurl=http://mirror.openshift.com/pub/origin-server/release/3/rhel-6/dependencies/x86_64/
+baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/rhel-6/dependencies/x86_64/
 gpgcheck=0
 enabled=1
 EOF</pre>
@@ -897,7 +897,7 @@ EOF</pre>
 <pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin-deps.repo
 [openshift-origin-deps]
 name=openshift-origin-deps
-baseurl=http://mirror.openshift.com/pub/origin-server/release/3/fedora-19/dependencies/x86_64/
+baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/fedora-19/dependencies/x86_64/
 gpgcheck=0
 enabled=1
 EOF</pre>
@@ -912,7 +912,7 @@ EOF</pre>
 <pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin.repo
 [openshift-origin]
 name=openshift-origin
-baseurl=http://mirror.openshift.com/pub/origin-server/release/3/rhel-6/packages/x86_64/
+baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/rhel-6/latest/x86_64/
 gpgcheck=0
 enabled=1
 EOF</pre>
@@ -924,17 +924,21 @@ EOF</pre>
 <pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin.repo
 [openshift-origin]
 name=openshift-origin
-baseurl=http://mirror.openshift.com/pub/origin-server/release/3/fedora-19/packages/x86_64/
+baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/fedora-19/latest/x86_64/
 gpgcheck=0
 enabled=1
 EOF</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For RHEL systems you will need to include the <a href="http://fedoraproject.org/wiki/EPEL">EPEL repository</a> to install puppet. To do so install the latest <a href="http://download.fedoraproject.org/pub/epel/6/i386/repoview/epel-release.html">epel-release package</a>.</p>
+<p>For RHEL systems you will need to include the <a href="http://fedoraproject.org/wiki/EPEL">EPEL</a> and "Optional" repositories install puppet.</p>
+</div>
+<div class="sect3">
+<h4 id="epel-repository"><a class="anchor" href="#epel-repository"></a>1.1.1. EPEL Repository</h4>
+<div class="paragraph">
+<p>Install the latest <a href="http://download.fedoraproject.org/pub/epel/6/i386/repoview/epel-release.html">epel-release package</a>.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>yum install -y --nogpgcheck ${url_of_the_latest_epel-release_rpm}</pre>
 </div>
@@ -949,11 +953,36 @@ EOF</pre>
 name=Extra Packages for Enterprise Linux 6 - $basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
 mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&amp;arch=$basearch
-exclude=*passenger* nodejs*
+exclude=*passenger* nodejs* <i class="conum" data-value="1"></i><b>(1)</b>
 failovermethod=priority
 enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Manually add this line</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="optional-repository"><a class="anchor" href="#optional-repository"></a>1.1.2. "Optional" Repository</h4>
+<div class="paragraph">
+<p>The way you enable the "Optional" repo will depend on your source.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>RHN Classic: enable the <code>rhel-x86_64-server-optional-6</code> channel.</p>
+</li>
+<li>
+<p>Via yum config manager: <code>yum-config-manager --enable rhel-6-server-optional-rpms</code></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1896,9 +1925,9 @@ Authenticate against the database with the user you created above.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>admin	0.0625GB
-local	0.03125GB
-openshift_broker_dev	0.0625GB</pre>
+<pre>admin   0.0625GB
+local   0.03125GB
+openshift_broker_dev    0.0625GB</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2219,7 +2248,6 @@ everything worked correctly, load the following URL in a web browser:</p>
 <div class="title">Fedora</div>
 <div class="content">
 <pre>cat &lt;&lt;EOF &gt; /etc/mcollective/client.cfg
-topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = /usr/libexec/mcollective
@@ -2236,6 +2264,11 @@ plugin.activemq.pool.1.host = broker.example.com
 plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = marionette
+
+plugin.activemq.stomp_1_0_fallback = 0
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbread_fails = 2
+plugin.activemq.max_hbrlck_fails = 2
 EOF</pre>
 </div>
 </div>
@@ -2243,7 +2276,6 @@ EOF</pre>
 <div class="title">RHEL</div>
 <div class="content">
 <pre>cat &lt;&lt;EOF &gt; /opt/rh/ruby193/root/etc/mcollective/client.cfg
-topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = /opt/rh/ruby193/root/usr/libexec/mcollective
@@ -2260,6 +2292,11 @@ plugin.activemq.pool.1.host = broker.example.com
 plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = marionette
+
+plugin.activemq.stomp_1_0_fallback = 0
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbread_fails = 2
+plugin.activemq.max_hbrlck_fails = 2
 EOF</pre>
 </div>
 </div>
@@ -3321,6 +3358,55 @@ in the <em>/var/www/openshift/console/httpd/conf.d</em> directory. For this refe
 cp openshift-origin-auth-remote-user-basic.conf.sample openshift-origin-auth-remote-user-basic.conf</pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="ssl-configuration"><a class="anchor" href="#ssl-configuration"></a>8.3.1. SSL Configuration</h4>
+<div class="paragraph">
+<p>The broker proxy configuration for apache adds a VirtualHost configuration to listen on port 443.</p>
+</div>
+<div class="paragraph">
+<p>This may conflict with the default SSL VirtualHost configuration.
+Check <em>/etc/httpd/conf.d/ssl.conf</em> and completely remove the configuration if you find one there.</p>
+</div>
+<div class="paragraph">
+<p>The broker proxy configuration itself can be found in <em>/etc/httpd/conf.d/*openshiftorigin_broker_proxy.conf</em> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>&lt;VirtualHost *:443&gt;
+  # ServerName we will inherit from other config;
+  # ServerAlias is to make sure "localhost" traffic goes here regardless.
+  ServerAlias localhost
+  ServerAdmin root@localhost
+  DocumentRoot /var/www/html
+  RewriteEngine              On
+  RewriteRule     ^/$    https://%{HTTP_HOST}/console [R,L]
+  SSLEngine on
+  SSLProxyEngine on
+  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  RequestHeader set X_FORWARDED_PROTO 'https'
+  RequestHeader set Front-End-Https "On"
+  ProxyTimeout 300
+  ProxyPass /console http://127.0.0.1:8118/console
+  ProxyPassReverse /console http://127.0.0.1:8118/console
+
+  ProxyPass /broker http://127.0.0.1:8080/broker
+  ProxyPassReverse /broker http://127.0.0.1:8080/broker
+
+  ProxyPass /assets http://127.0.0.1:8118/console/assets <i class="conum" data-value="1"></i><b>(1)</b>
+  ProxyPassReverse /assets http://127.0.0.1:8118/console/assets <i class="conum" data-value="1"></i><b>(1)</b>
+&lt;/VirtualHost&gt;</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In order for icons to show up correctly on the web console, you should ensure that the VirtualHost definition in that file contains the <em>ProxyPass</em> and <em>ProxyPassReverse</em> lines.</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="verify-the-ruby-bundler"><a class="anchor" href="#verify-the-ruby-bundler"></a>8.4. Verify the Ruby Bundler</h3>
@@ -3839,14 +3925,13 @@ Depending on your connection and speed of your broker host, this installation ma
 <div class="title">Fedora</div>
 <div class="content">
 <pre>cat &lt;&lt;EOF &gt;/etc/mcollective/server.cfg
-topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = /usr/libexec/mcollective
 logfile = /var/log/openshift/node/mcollective.log
 loglevel = debug
 daemonize = 0
-direct_addressing = 1
+direct_addressing = 0
 registerinterval = 30
 
 # Plugins
@@ -3859,6 +3944,11 @@ plugin.activemq.pool.1.host = broker.example.com
 plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = marionette
+
+plugin.activemq.stomp_1_0_fallback = 0
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbread_fails = 2
+plugin.activemq.max_hbrlck_fails = 2
 
 # Facts
 factsource = yaml
@@ -3869,15 +3959,14 @@ EOF</pre>
 <div class="listingblock">
 <div class="title">RHEL6</div>
 <div class="content">
-<pre>cat &lt;&lt;EOF &gt; /opt/rh/ruby193/root/etc/mcollective/server.cfg
-topicprefix = /topic/
+<pre>cat &lt;&lt;EOF &gt; /opt/rh/ruby193/root/etc/mcollective/client.cfg
 main_collective = mcollective
 collectives = mcollective
 libdir = /opt/rh/ruby193/root/usr/libexec/mcollective
 logfile = /var/log/openshift/node/ruby193-mcollective.log
 loglevel = debug
 daemonize = 1
-direct_addressing = 1
+direct_addressing = 0
 registerinterval = 30
 
 # Plugins
@@ -3890,6 +3979,11 @@ plugin.activemq.pool.1.host = broker.example.com
 plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = marionette
+
+plugin.activemq.stomp_1_0_fallback = 0
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbread_fails = 2
+plugin.activemq.max_hbrlck_fails = 2
 
 # Facts
 factsource = yaml
@@ -4196,15 +4290,23 @@ This plugin conflicts with the apache-mod-rewrite plugin.
 <h4 id="nodejs-websocket-plugin"><a class="anchor" href="#nodejs-websocket-plugin"></a>9.7.4. nodejs-websocket Plugin</h4>
 <div class="listingblock">
 <div class="content">
-<pre>yum install -y openshift-origin-node-proxy rubygem-openshift-origin-frontend-nodejs-websocket</pre>
+<pre>yum install -y openshift-origin-node-proxy rubygem-openshift-origin-frontend-nodejs-websocket facter</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Start the node-proxy service</p>
 </div>
 <div class="listingblock">
+<div class="title">Fedora</div>
 <div class="content">
-<pre>service openshift-node-web-proxy enable
+<pre>systemctl enable openshift-node-web-proxy.service
+systemctl start openshift-node-web-proxy.service</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">RHEL6</div>
+<div class="content">
+<pre>chkconfig openshift-node-web-proxy on
 service openshift-node-web-proxy start</pre>
 </div>
 </div>
@@ -4335,7 +4437,8 @@ If you are installing a multi-node configuration, it is important to remember th
 <div class="content">
 <pre>curl -o /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-yum install -y jenkins-1.510</pre>
+yum install -y jenkins-1.510
+chkconfig jenkins off</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -4597,19 +4700,6 @@ systemctl start cgred.service</pre>
 </div>
 <div class="paragraph">
 <p>In order for cgroups to work correctly, you need to ensure that services are started in the correct order.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>service cgconfig start</p>
-</li>
-<li>
-<p>service cgcred start</p>
-</li>
-<li>
-<p>service openshift-cgroups start</p>
-</li>
-</ul>
 </div>
 </div>
 <div class="sect2">
@@ -4919,7 +5009,7 @@ systemctl restart  openshift-port-proxy.service</pre>
 <pre>PUBLIC_HOSTNAME="node.example.com"            # The node host's public hostname
 PUBLIC_IP="10.4.59.y"                         # The node host's public IP address
 BROKER_HOST="broker.example.com"              # IP or DNS name of broker host for REST API
-EXTERNAL_ETH_DEV='enp0s5'					  # Update to match name of external network device</pre>
+EXTERNAL_ETH_DEV='enp0s5'                     # Update to match name of external network device</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4928,7 +5018,7 @@ EXTERNAL_ETH_DEV='enp0s5'					  # Update to match name of external network devic
 <pre>PUBLIC_HOSTNAME="broker.example.com"          # The node host's public hostname
 PUBLIC_IP="10.4.59.x"                         # The node host's public IP address
 BROKER_HOST="broker.example.com"              # IP or DNS name of broker host for REST API
-EXTERNAL_ETH_DEV='enp0s5'					  # Update to match name of external network device</pre>
+EXTERNAL_ETH_DEV='enp0s5'                     # Update to match name of external network device</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -5162,7 +5252,7 @@ $ ping node.example.com</pre>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-15 00:11:41 EDT
+Last updated 2014-07-15 13:40:48 EDT
 </div>
 <!-- Google Analytics -->
 <script>

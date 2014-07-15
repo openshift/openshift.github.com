@@ -649,7 +649,7 @@ code { font-family: source_code_pro; }
 <h1>Administration Guide</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
-<span id="revdate">ORIGIN VERSION 3.0</span>
+<span id="revdate">LATEST DOC UPDATES</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -664,11 +664,14 @@ code { font-family: source_code_pro; }
 <li><a href="#capacity-planning-and-districts">2. Capacity Planning and Districts</a></li>
 <li>
 <ul class="sectlevel2">
-<li><a href="#heirarchy-of-openshift-entities">2.1. Heirarchy of OpenShift Entities</a></li>
+<li><a href="#hierarchy-of-openshift-entities">2.1. Hierarchy of OpenShift Entities</a></li>
 <li><a href="#the-purpose-of-districts">2.2. The Purpose of Districts</a></li>
 <li><a href="#enabling-districts-on-the-broker">2.3. Enabling Districts on the Broker</a></li>
 <li><a href="#creating-and-populating-districts">2.4. Creating and Populating Districts</a></li>
-<li><a href="#managing-gear-capacity">2.5. Managing Gear Capacity</a></li>
+<li><a href="#removing-a-node-from-a-district">2.5. Removing a Node From a District</a></li>
+<li><a href="#removing-a-district">2.6. Removing a District</a></li>
+<li><a href="#managing-gear-capacity">2.7. Managing Gear Capacity</a></li>
+<li><a href="#moving-a-gear-from-one-node-to-another">2.8. Moving a Gear From One Node to Another</a></li>
 </ul>
 </li>
 <li><a href="#adding-cartridges">3. Adding Cartridges</a></li>
@@ -686,6 +689,13 @@ code { font-family: source_code_pro; }
 <ul class="sectlevel2">
 <li><a href="#configuration">4.1. Configuration</a></li>
 <li><a href="#exposed-data">4.2. Exposed data</a></li>
+</ul>
+</li>
+<li><a href="#administrative-cli-tools">5. Administrative CLI Tools</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#broker-host-tools">5.1. Broker Host Tools</a></li>
+<li><a href="#node-host-tools">5.2. Node Host Tools</a></li>
 </ul>
 </li>
 </ul>
@@ -922,7 +932,7 @@ User &lt;username&gt;:
 <p>Districts facilitate moving gears between node hosts in order to manage resource usage. They also make it possible to deactivate nodes so they receive no further gears. As it is difficult to introduce districts to an installation after it is in use, they should be created from the start when it is quite simple.</p>
 </div>
 <div class="sect2">
-<h3 id="heirarchy-of-openshift-entities"><a class="anchor" href="#heirarchy-of-openshift-entities"></a>2.1. Heirarchy of OpenShift Entities</h3>
+<h3 id="hierarchy-of-openshift-entities"><a class="anchor" href="#hierarchy-of-openshift-entities"></a>2.1. Hierarchy of OpenShift Entities</h3>
 <div class="paragraph">
 <p>In order to explain how districts figure into OpenShift, we first need to examine their place in OpenShift&#8217;s containership hierarchy.</p>
 </div>
@@ -1008,13 +1018,13 @@ Execute the following commands to create a district named small_district which c
 <pre>Successfully created district: 513b50508f9f44aeb90090f19d2fd940
 
 {"name"=&gt;"small_district",
- "active_server_identities_size"=&gt;0,
+ "active_servers_size"=&gt;0,
  "gear_size"=&gt;"small",
  "max_uid"=&gt;6999,
  "created_at"=&gt;"2013-01-15T17:18:28-05:00",
  "updated_at"=&gt;"2013-01-15T17:18:28-05:00",
  "max_capacity"=&gt;6000,
- "server_identities"=&gt;{},
+ "servers"=&gt;{},
  "uuid"=&gt;"513b50508f9f44aeb90090f19d2fd940",
  "available_uids"=&gt;"&lt;6000 uids hidden&gt;",
  "available_capacity"=&gt;6000}</pre>
@@ -1062,13 +1072,13 @@ Execute the following commands to create a district named small_district which c
 <pre>{
 	"_id": "513b50508f9f44aeb90090f19d2fd940",
 	"name": "small_district",
-	"active_server_identities_size": 0,
+	"active_servers_size": 0,
 	"gear_size": "small",
 	"max_uid": 6999,
 	"created_at": "2013-01-15T17:18:28-05:00",
 	"updated_at": "2013-01-15T17:18:28-05:00",
 	"max_capacity": 6000,
-	"server_identities": [],
+	"servers": [],
 	"uuid": "513b50508f9f44aeb90090f19d2fd940",
 	"available_uids": [1000, .........],
 	"available_capacity": 6000
@@ -1082,7 +1092,7 @@ Execute the following commands to create a district named small_district which c
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <em>server_identities</em> array does not contain any data yet.
+The <em>servers</em> array does not contain any data yet.
 </td>
 </tr>
 </table>
@@ -1125,11 +1135,11 @@ The <em>server_identities</em> array does not contain any data yet.
  "available_uids"=&gt;"&lt;6000 uids hidden&gt;",
  "gear_size"=&gt;"small",
  "uuid"=&gt;"513b50508f9f44aeb90090f19d2fd940",
- "server_identities"=&gt;{"node.example.com"=&gt;{"active"=&gt;true}},
+ "servers"=&gt;{"node.example.com"=&gt;{"active"=&gt;true}},
  "name"=&gt;"small_district",
  "max_capacity"=&gt;6000,
  "max_uid"=&gt;6999,
- "active_server_identities_size"=&gt;1}
+ "active_servers_size"=&gt;1}
 </pre>
 </div>
 </div>
@@ -1146,15 +1156,15 @@ If you see an error message indicating that you can&#8217;t add this node to the
 </table>
 </div>
 <div class="paragraph">
-<p>Repeat the steps above to query the database for information about districts. Notice that the <em>server_identities</em> array now contains the following information:</p>
+<p>Repeat the steps above to query the database for information about districts. Notice that the <em>servers</em> array now contains the following information:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>"server_identities" : [ { "name" : "node.example.com", "active" : true } ]</pre>
+<pre>"servers" : [ { "name" : "node.example.com", "active" : true } ]</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you continued to add additional nodes to this district, the <em>server_identities</em> array would show all the node hosts that are assigned to the district.</p>
+<p>If you continued to add additional nodes to this district, the <em>servers</em> array would show all the node hosts that are assigned to the district.</p>
 </div>
 <div class="paragraph">
 <p>This command line tool can be used just to display district information. Simply run the command with no arguments to view the JSON records in the MongoDB database for all districts:</p>
@@ -1167,12 +1177,69 @@ If you see an error message indicating that you can&#8217;t add this node to the
 </div>
 </div>
 <div class="sect2">
-<h3 id="managing-gear-capacity"><a class="anchor" href="#managing-gear-capacity"></a>2.5. Managing Gear Capacity</h3>
+<h3 id="removing-a-node-from-a-district"><a class="anchor" href="#removing-a-node-from-a-district"></a>2.5. Removing a Node From a District</h3>
+<div class="paragraph">
+<p>For various reasons, you may want to remove gears from a node host and the host from a district. You may find that a lot of gears on a node host become idle over time, and you may want to "compact" the district by decommissioning or re-purposing a node host. For this purpose, you need a combination of oo-admin-ctl-district and oo-admin-move and the following procedure.</p>
+</div>
+<div class="paragraph">
+<p>As an example, suppose you had node1.example.com and node2.example.com in a district named "small_district", and wanted to remove node2.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run <code>oo-admin-chk</code> on a broker host and <code>oo-accept-node</code> on node2.example.com, and fix any problems found with the gears on node2. It&#8217;s a better idea to take care of these up front than to try to move potentially broken gears.</p>
+</li>
+<li>
+<p>deactivate the node within the district. This keeps the node from accepting any further gear placements, although the existing gears continue running.</p>
+<div class="listingblock">
+<div class="content">
+<pre># oo-admin-ctl-district -c deactivate-node -n small_district -i node2.example.com</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Move all of the gears off of node2. At this time, there is no automated way to do this. <code>oo-admin-move</code> just accepts a single gear. So you can write your own script to look for gears, or just manually list them and run the commands.</p>
+</li>
+<li>
+<p>Remove node2 from the district:</p>
+<div class="listingblock">
+<div class="content">
+<pre># oo-admin-ctl-district -c remove-node -n small_district -i node2.example.com</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removing-a-district"><a class="anchor" href="#removing-a-district"></a>2.6. Removing a District</h3>
+<div class="paragraph">
+<p>In order to remove a district, first set its capacity to 0:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ oo-admin-ctl-district -c remove-capacity -n district_name -s 6000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, remove all gears and nodes as explained in the previous section.</p>
+</div>
+<div class="paragraph">
+<p>Finally, remove the district itself:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ oo-admin-ctl-district -c delete -n district_name</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="managing-gear-capacity"><a class="anchor" href="#managing-gear-capacity"></a>2.7. Managing Gear Capacity</h3>
 <div class="paragraph">
 <p>Districts and node hosts have two different capacity limits for the number of gears allowed. Districts have a fixed pool of UIDs to allocate, and can only contain 6000 gears, regardless of their state. Node host capacity, however, only constrains the number of <strong>active</strong> gears on that host.</p>
 </div>
 <div class="sect3">
-<h4 id="node-host"><a class="anchor" href="#node-host"></a>2.5.1. Node Host</h4>
+<h4 id="node-host"><a class="anchor" href="#node-host"></a>2.7.1. Node Host</h4>
 <div class="paragraph">
 <p>For a node host, the maximum number of active gears allowed per node is specified with the <em>max_active_gears</em> value in <em>/etc/openshift/resource_limits.conf</em>; by default it is 100, but most administrators will need to modify this. Note that stopped or idle gears are not counted toward this limit; it is possible for a node to have any number of inactive gears, bounded only by storage. It is also possible to exceed the limit by starting inactive gears after the limit has been reached - nothing prevents or corrects this; reaching the limit simply exempts the node from future gear placement by the broker.</p>
 </div>
@@ -1195,7 +1262,7 @@ If you see an error message indicating that you can&#8217;t add this node to the
 </div>
 </div>
 <div class="sect3">
-<h4 id="district"><a class="anchor" href="#district"></a>2.5.2. District</h4>
+<h4 id="district"><a class="anchor" href="#district"></a>2.7.2. District</h4>
 <div class="paragraph">
 <p>Due to current constraints, each district can only contain 6000 gears. It is important not to put too many node hosts in a district, because once a district&#8217;s UID pool is exhausted, nodes in that district will not receive any more gears, even if they have plenty of capacity; therefore, resources will be wasted. It is possible to remove excess nodes from a district by deactivating them and moving all of their gears away (known as "compacting" the district); but this should be avoided if possible to minimize disruption to the gears, and because mass moves of gears are slow and failure-prone at this time.</p>
 </div>
@@ -1243,7 +1310,7 @@ G = total number of gears per node</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="viewing-capacity-statistics"><a class="anchor" href="#viewing-capacity-statistics"></a>2.5.3. Viewing Capacity Statistics</h4>
+<h4 id="viewing-capacity-statistics"><a class="anchor" href="#viewing-capacity-statistics"></a>2.7.3. Viewing Capacity Statistics</h4>
 <div class="paragraph">
 <p>There is a tool for viewing gear usage across nodes and districts; it can be invoked on
 the broker:</p>
@@ -1255,6 +1322,36 @@ the broker:</p>
 </div>
 <div class="paragraph">
 <p>Consult the man page or the -h option for script arguments. By default this tool summarizes gear usage by districts and profiles in a human-readable format. It can also produce several computer-readable formats for use by automation or monitoring.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="moving-a-gear-from-one-node-to-another"><a class="anchor" href="#moving-a-gear-from-one-node-to-another"></a>2.8. Moving a Gear From One Node to Another</h3>
+<div class="paragraph">
+<p>To move a gear between nodes, use the <code>oo-admin-move</code> tool on the broker.</p>
+</div>
+<div class="paragraph">
+<p>Moving gears requires the rsync_id_rsa private key in the broker host&#8217;s /etc/openshift/ and public key in each node host&#8217;s /root/.ssh/authorized_keys as explained in the deployment guide.</p>
+</div>
+<div class="paragraph">
+<p>Moving without districts:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> [root@broker ~]# oo-admin-move --gear_uuid 3baf79139b0b449d90303464dfa8dd6f -i node2.example.com
+ URL: http://app3-demo.example.com
+ Login: demo
+ App UUID: 3baf79139b0b449d90303464dfa8dd6f
+ Gear UUID: 3baf79139b0b449d90303464dfa8dd6f
+ DEBUG: Source district uuid: NONE
+ DEBUG: Destination district uuid: NONE
+ [...]
+ DEBUG: Starting cartridge 'ruby-1.8' in 'app3' after move on node2.example.com
+ DEBUG: Fixing DNS and mongo for gear 'app3' after move
+ DEBUG: Changing server identity of 'app3' from 'node1.example.com' to 'node2.example.com'
+ DEBUG: The gear's node profile changed from medium to small
+ DEBUG: Deconfiguring old app 'app3' on node1.example.com after move
+ Successfully moved 'app3' with gear uuid '3baf79139b0b449d90303464dfa8dd6f' from 'node1.example.com' to 'node2.example.com'</pre>
 </div>
 </div>
 </div>
@@ -1527,13 +1624,449 @@ Consult the Deployment Guide for instructions on enabling the admin console.</p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p><em>'</em>'Under Construction'<em>'</em> - by no means to be considered complete or even necessarily correct.</p>
+</div>
+<div class="paragraph">
+<p>This is a guide to the tools and information you need in order to manage your OpenShift deployment once installed. For installation instructions, refer to the <a id="Deployment Guide to OpenShift on RHEL 6"></a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="administrative-cli-tools"><a class="anchor" href="#administrative-cli-tools"></a>5. Administrative CLI Tools</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section is a quick reference to some important administrative command-line tools provided as part of OpenShift. Familiarity with these tools will assist in most administrative tasks.</p>
+</div>
+<div class="sect2">
+<h3 id="broker-host-tools"><a class="anchor" href="#broker-host-tools"></a>5.1. Broker Host Tools</h3>
+<div class="paragraph">
+<p>These tools are installed with the openshift-origin-broker and openshift-origin-broker-util RPMs.</p>
+</div>
+<div class="sect3">
+<h4 id="code-oo-accept-broker-code"><a class="anchor" href="#code-oo-accept-broker-code"></a>5.1.1. <code>oo-accept-broker</code></h4>
+<div class="paragraph">
+<p>This script checks that broker setup is valid and functional. It is run without options on a broker.</p>
+</div>
+<div class="paragraph">
+<p>If there are no errors, it simply prints "PASS" and exits with return code 0 (unless the -v option is added, in which case it also prints the checks that it is performing).</p>
+</div>
+<div class="paragraph">
+<p>If there are errors, they are printed, and the return code is the number of errors.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-accept-broker -v
+ INFO: SERVICES: DATA: mongo, Auth: mongo, Name bind
+ INFO: AUTH_MODULE: rubygem-openshift-origin-auth-mongo
+ INFO: NAME_MODULE: rubygem-openshift-origin-dns-bind
+ INFO: Broker package is: openshift-origin-broker
+ INFO: checking packages
+ INFO: checking package ruby
+ INFO: checking package rubygems
+ INFO: checking package rubygem-rails
+ INFO: checking package rubygem-passenger
+ INFO: checking package rubygem-openshift-origin-common
+ INFO: checking package rubygem-openshift-origin-controller
+ INFO: checking package openshift-origin-broker
+ INFO: checking ruby requirements
+ INFO: checking ruby requirements for openshift-origin-controller
+ INFO: checking ruby requirements for config/application
+ INFO: checking firewall settings
+ INFO: checking services
+ INFO: checking datastore
+ INFO: checking cloud user authentication
+ INFO: auth plugin = /var/www/openshift/broker/config/initializers/broker.rb:2: uninitialized constant ApplicationObserver (NameError) from -:6
+ INFO: checking dynamic dns plugin
+ INFO: checking messaging configuration
+ PASS</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is a good monitoring script to make sure nothing has gone wrong with a broker host.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-admin-chk-code"><a class="anchor" href="#code-oo-admin-chk-code"></a>5.1.2. <code>oo-admin-chk</code></h4>
+<div class="paragraph">
+<p>This script checks that app records in the Mongo datastore are consistent with gear presence on the node hosts. It is a good sanity check for proper system operation.</p>
+</div>
+<div class="paragraph">
+<p>Typical output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>oo-admin-chk -v
+Checking application gears in respective nodes :
+Checking node gears in application database:
+Success</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(Without -v you just get the "Success" line.)</p>
+</div>
+<div class="paragraph">
+<p>If this does not run cleanly, consult the <a href="oo_troubleshooting_guide.html">Troubleshooting Guide</a> for hints.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-register-dns-code"><a class="anchor" href="#code-oo-register-dns-code"></a>5.1.3. <code>oo-register-dns</code></h4>
+<div class="paragraph">
+<p>A utility for updating DNS A records in BIND (generally for a broker or node host, though could be other infrastructure hosts. Do not use this to change DNS records for apps/gears, as those are CNAME records). It just wraps an nsupdate command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-register-dns -?
+ == Synopsis
+
+ oo-register-dns: Register node's DNS name with Bind
+   This command must be run as root.
+
+ == Usage
+
+ oo-register-dns --with-node-hostname node1 \
+                --with-node-ip 192.168.0.1 \
+                --domain example.com
+
+ == List of arguments
+  -h|--with-node-hostname   host        Hostname for the node (required)
+  -n|--with-node-ip         ip          IP of the node (required)
+  -d|--domain               domain      Domain name for this node (optional, default: example.com)
+  -k|--key-file             file        Bind key (optional, default: /var/named/&lt;domain name&gt;.key)
+  -?|--help                             Print this message</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-admin-ctl-district-code"><a class="anchor" href="#code-oo-admin-ctl-district-code"></a>5.1.4. <code>oo-admin-ctl-district</code></h4>
+<div class="paragraph">
+<p>This is a utility for all district operations. See the full explanation in a later section. The options are as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-admin-ctl-district -h
+ == Synopsis
+
+ oo-admin-ctl-district: Control districts
+
+ == Usage
+
+ oo-admin-ctl-district OPTIONS
+
+ Options:
+ -u|--uuid     &lt;district uuid&gt;
+    District uuid  (alphanumeric, canonical way to identify the district)
+ -c|--command &lt;command&gt;
+    (add-node|remove-node|deactivate-node|activate-node|add-capacity|remove-capacity|create|destroy)
+ -n|--name &lt;district name&gt;
+    District name (Arbitrary identifier, used on create or in place of uuid on other commands)
+ -p|--node_profile &lt;gear_size&gt;
+    (e.g. small|medium) Specify gear profile when creating a district
+ -i|--server_identity
+    Node server_identity (FQDN, required when operating on a node)
+ -s|--size
+    Capacity to add or remove (positive number) (required for capacity operations)
+ -b|--bypass
+    Ignore warnings
+ -h|--help
+    Show usage info</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-admin-move-code"><a class="anchor" href="#code-oo-admin-move-code"></a>5.1.5. <code>oo-admin-move</code></h4>
+<div class="paragraph">
+<p>Used to move a gear from one node in a district to another, or even outside its district.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-admin-move -h
+ == Synopsis
+
+ oo-admin-move: Move an app from one node to another
+
+ == Usage
+
+ oo-admin-move OPTIONS
+
+ Options:
+ --gear_uuid &lt;gear_uuid&gt;
+     Gear uuid to move
+ --destination_district_uuid &lt;district_uuid&gt;
+    Destination district uuid
+ -i|--target_server_identity &lt;server_identity&gt;
+    Target server identity
+ -p|--node_profile &lt;node_profile&gt;
+    Node profile
+ -t|--timeout
+    timeout
+ --allow_change_district
+    Allow the move to be between districts
+ -h|--help
+    Show Usage info</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-admin-ctl-user-code"><a class="anchor" href="#code-oo-admin-ctl-user-code"></a>5.1.6. <code>oo-admin-ctl-user</code></h4>
+<div class="paragraph">
+<p>This is used to administer what a user is allowed to use on the system, mainly number and type of gears. Note that this is not the full usage listing as we won&#8217;t discuss subaccounts until a later installment of the documentation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-admin-ctl-user -h
+
+ Options:
+  -l|--rhlogin &lt;rhlogin&gt;
+    OpenShift login  (required)
+  --setmaxgears &lt;number&gt;
+    Set the maximum number of gears a user is allowed to use
+  --setconsumedgears &lt;number&gt;
+    Set the number of gears a user has consumed (use carefully to correct occasional off-by-one caused by race condition)
+  --addgearsize &lt;gearsize&gt;
+    Add gearsize to the capability for this rhlogin user
+  --removegearsize &lt;gearsize&gt;
+    Remove gearsize from the capability for this rhlogin user
+  -h|--help
+    Show Usage info
+
+ Examples:
+  List the current user settings with:
+    oo-admin-ctl-user -l bob@redhat.com
+
+  Set the maximum number of gears a user is allowed to use with:
+    oo-admin-ctl-user -l bob@redhat.com --setmaxgears 10</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-admin-ctl-domain-code"><a class="anchor" href="#code-oo-admin-ctl-domain-code"></a>5.1.7. <code>oo-admin-ctl-domain</code></h4>
+<div class="paragraph">
+<p>Used to query and control a user&#8217;s domain (AKA namespace). This reports basically all of the information there is to know about the user&#8217;s properties in OpenShift, as well as allowing domain and sshkey updates.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-admin-ctl-domain -h
+
+ == Synopsis
+
+ oo-admin-ctl-domain: Manage user domains
+
+ == Usage
+
+ oo-admin-ctl-domain OPTIONS
+
+ Options:
+ -l|--rhlogin &lt;rhlogin&gt;
+    Red Hat login (RHN or OpenShift login with OpenShift access) (required)
+ -n|--namespace &lt;Namespace&gt;
+    Namespace for application(s) (alphanumeric - max 16 chars) (required)
+ -c|--command (create|update|delete|info)
+ -s|--ssh_key &lt;ssh key&gt;
+    Users SSH key
+ -t|--key_type &lt;ssh key type&gt;
+    User's SSH key type (e.g. ssh-rsa|ssh-dss)
+ -k|--key_name &lt;ssh key name&gt;
+    Users SSH key name
+ -h|--help:
+    Show Usage info
+
+The "info" command is default if no other is provided. The output is very detailed YAML.</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-admin-ctl-app-code"><a class="anchor" href="#code-oo-admin-ctl-app-code"></a>5.1.8. <code>oo-admin-ctl-app</code></h4>
+<div class="paragraph">
+<p>Used to administratively run commands against an app.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-admin-ctl-app -h
+ == Synopsis
+
+ oo-admin-ctl-app: Control user applications
+
+ == Usage
+
+ oo-admin-ctl-app OPTIONS
+
+ Options:
+ -l|--rhlogin &lt;rhlogin&gt;
+    Red Hat login (RHN or OpenShift login with OpenShift access) (required)
+ -a|--app     &lt;application&gt;
+    Application name  (alphanumeric) (required)
+ -c|--command &lt;command&gt;
+    (start|stop|force-stop|restart|status|destroy|force-destroy) (required)
+ -b|--bypass
+    Ignore warnings
+ -h|--help
+    Show Usage info</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="node-host-tools"><a class="anchor" href="#node-host-tools"></a>5.2. Node Host Tools</h3>
+<div class="paragraph">
+<p>These are installed on node hosts with the openshift-origin-node-util RPM.</p>
+</div>
+<div class="paragraph">
+<p>This package contains management commands that run on a node. Nodes do not have any access to other nodes or to brokers, so all tools here only affect local operations.</p>
+</div>
+<div class="sect3">
+<h4 id="code-oo-accept-node-code"><a class="anchor" href="#code-oo-accept-node-code"></a>5.2.1. <code>oo-accept-node</code></h4>
+<div class="paragraph">
+<p>This script checks that node setup is valid and functional and its gears are in good condition. It is run without options on a node.</p>
+</div>
+<div class="paragraph">
+<p>If there are no errors, it simply prints "PASS" and exits with return code 0.</p>
+</div>
+<div class="paragraph">
+<p>If there are errors, they are printed, and the return code is the number of errors. Here are the items that it checks (can be used with -v to show these details; otherwise you see just errors and end result):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-accept-node -v
+ INFO: loading node configuration file /etc/openshift/node.conf
+ INFO: loading resource limit file /etc/openshift/resource_limits.conf
+ INFO: checking selinux status
+ INFO: checking selinux origin policy
+ INFO: checking selinux booleans
+ INFO: checking package list
+ INFO: checking services
+ INFO: checking kernel semaphores &gt;= 512
+ INFO: checking cgroups configuration
+ INFO: checking presence of /cgroup
+ INFO: checking presence of /cgroup/all
+ INFO: checking presence of /cgroup/all/openshift
+ INFO: checking filesystem quotas
+ INFO: checking quota db file selinux label
+ INFO: checking 54 user accounts
+ INFO: checking application dirs
+ INFO: checking system httpd configs
+ PASS</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is a good monitoring script to make sure nothing has gone wrong with a node host.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-idler-stats-code"><a class="anchor" href="#code-oo-idler-stats-code"></a>5.2.2. <code>oo-idler-stats</code></h4>
+<div class="paragraph">
+<p>Good overview of gear statistics in general (not necessarily related to idling). No options, just returns a single line of stats about the gears on the node.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # oo-idler-stats -h
+ Usage: oo-idler-stats [options]
+
+ Options:
+  -h, --help     show this help message and exit
+  -v, --verbose  Print additional details.
+  --validate     Perform additional sanity checks.</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-oo-admin-ctl-gears-code"><a class="anchor" href="#code-oo-admin-ctl-gears-code"></a>5.2.3. <code>oo-admin-ctl-gears</code></h4>
+<div class="paragraph">
+<p>Node system script for stopping/starting gears on a node. This is used by the openshift-gears service at boot time to activate existing gears. It can also be used directly by an administrator.</p>
+</div>
+<div class="paragraph">
+<p>Usage is like a service script:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> oo-admin-ctl-gears {startall|stopall|status|restartall|condrestartall|startgear|stopgear|restartgear|list}
+   list: simply all gears on the node.
+   status: shows status of all gears on the node.
+   startall: starts all gears, one by one.
+   stopall: stops all gears, one by one.
+   restartall: restarts all gears, one by one (NOT the same as stopall/startall)
+   condrestartall: like restartall, but uses a lockfile to keep from being run concurrently with another instance of itself.
+   startgear X: starts individual gear X
+   stopgear X: stops individual gear X</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="idler-related-scripts"><a class="anchor" href="#idler-related-scripts"></a>5.2.4. Idler-Related Scripts</h4>
+<div class="paragraph">
+<p>The idler is a tool for shutting down gears that haven&#8217;t been used recently, in order to reclaim their resources and overcommit the node host&#8217;s resource usage.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://github.com/openshift/origin-server/blob/master/node-util/README-Idler.md">https://github.com/openshift/origin-server/blob/master/node-util/README-Idler.md</a> for more details about the idler.</p>
+</div>
+<div class="sect4">
+<h5 id="code-oo-idler-code-and-code-oo-restorer-code"><a class="anchor" href="#code-oo-idler-code-and-code-oo-restorer-code"></a><code>oo-idler</code> and <code>oo-restorer</code></h5>
+<div class="paragraph">
+<p>These are the basic tools for idling and restoring a gear.</p>
+</div>
+<div class="paragraph">
+<p>oo-idler stops the application, forwards the application&#8217;s URL to a /var/www/html/restorer.php, and records the application&#8217;s status as <em>idled</em>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> Usage: /usr/bin/oo-idler
+ -u uuid idles the gear
+ -l lists all idled gears on a node
+ -n idles a gear without restarting the node's httpd process. This is useful when idling a number of gears (if you build your own auto-idler); make all calls except the last with -n, and then remove -n on the last call to restart httpd.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>oo-restorer is what restorer.php calls to start the gear when access is made. It can also be run manually.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> Usage: /usr/bin/oo-restorer
+  -u UUID  (app to restore UUID)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>restorer.php currently relies on oddjob to restart a gear; normally a web request would be in the wrong context to restart a gear and httpd, so oddjob is used to send a request to oo-restorer so that the restore can be performed from the right context. Restoring will not work if the oddjobd and messagebus services are not running.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="code-oo-last-access-code-code-oo-list-stale-code-and-code-oo-autoidler-code"><a class="anchor" href="#code-oo-last-access-code-code-oo-list-stale-code-and-code-oo-autoidler-code"></a><code>oo-last-access</code>, <code>oo-list-stale</code>, and <code>oo-autoidler</code></h5>
+<div class="paragraph">
+<p>These tools enable automatic idling of stale gears.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>oo-last-access</code> is used to record in the gear operations directory how long it has been since the last access either via the web or git. This should be run regularly in a cron job.</p>
+</li>
+<li>
+<p><code>oo-list-stale</code> retrieves a list of gears that are older than a given age (by default, 15 days).</p>
+</li>
+<li>
+<p><code>oo-autoidler</code> uses <code>oo-list-stale</code> to retrieve a list of stale gears and run oo-idler on all of them to make them idle. It should be run regularly from a cron job.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>An example auto-idler cron script might look like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre> # run the last-access compiler hourly
+ 0 * * * * /usr/bin/oo-last-access &gt; /var/lib/openshift/last_access.log 2&gt;&amp;1
+ # run the auto-idler twice daily and idle anything stale for 5 days
+ 30 7,19 * * * /usr/bin/oo-autoidler 5</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-15 00:11:42 EDT
+Last updated 2014-07-15 13:40:47 EDT
 </div>
 <!-- Google Analytics -->
 <script>

@@ -649,7 +649,7 @@ code { font-family: source_code_pro; }
 <h1>OpenShift Origin Cartridge Developer&#8217;s Guide</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
-<span id="revdate">ORIGIN VERSION 3.0</span>
+<span id="revdate">LATEST DOC UPDATES</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -702,16 +702,17 @@ code { font-family: source_code_pro; }
 <li>
 <ul class="sectlevel2">
 <li><a href="#notes-on-script-execution">8.1. Notes on Script Execution</a></li>
-<li><a href="#mandatory-scripts">8.2. Mandatory Scripts</a></li>
+<li><a href="#mandatory-script">8.2. Mandatory Script</a></li>
 <li><a href="#optional-scripts">8.3. Optional Scripts</a></li>
 <li><a href="#exit-status-codes">8.4. Exit Status Codes</a></li>
-<li><a href="#erb-processing">8.5. ERB Processing</a></li>
-<li><a href="#bin-setup">8.6. bin/setup</a></li>
-<li><a href="#bin-install">8.7. bin/install</a></li>
-<li><a href="#bin-post-install">8.8. bin/post-install</a></li>
-<li><a href="#bin-teardown">8.9. bin/teardown</a></li>
-<li><a href="#bin-control">8.10. bin/control</a></li>
-<li><a href="#messaging-to-openshift-from-cartridge">8.11. Messaging to OpenShift from Cartridge</a></li>
+<li><a href="#openshift-cartridge-installation-process">8.5. OpenShift Cartridge Installation Process</a></li>
+<li><a href="#erb-processing">8.6. ERB Processing</a></li>
+<li><a href="#bin-setup">8.7. bin/setup</a></li>
+<li><a href="#bin-install">8.8. bin/install</a></li>
+<li><a href="#bin-post_install">8.9. bin/post_install</a></li>
+<li><a href="#bin-teardown">8.10. bin/teardown</a></li>
+<li><a href="#bin-control">8.11. bin/control</a></li>
+<li><a href="#messaging-to-openshift-from-cartridge">8.12. Messaging to OpenShift from Cartridge</a></li>
 </ul>
 </li>
 <li><a href="#custom-http-services">9. Custom HTTP Services</a></li>
@@ -790,7 +791,7 @@ code { font-family: source_code_pro; }
  +- bin                        (required) <i class="conum" data-value="1"></i><b>(1)</b>
  |  +- setup                   (optional) <i class="conum" data-value="2"></i><b>(2)</b>
  |  +- install                 (optional)
- |  +- post-install            (optional)
+ |  +- post_install            (optional)
  |  +- teardown                (optional)
  |  +- control                 (required)
  |- hooks                      (optional)
@@ -883,7 +884,7 @@ use the <code>bin/control</code> file as a shim to call the correct versioned <c
   - <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">web_framework</span></span>
 <span style="color:#606">Website</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">http://www.php.net</span></span>
 <span style="color:#606">Help-Topics</span>:
-  <span style="color:#606"><span style="color:#404">&quot;</span><span>Developer Center</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">https://openshift.redhat.com/community/developers</span></span>
+  <span style="color:#606"><span style="color:#404">&quot;</span><span>Developer Center</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">https://www.openshift.com/developers</span></span>
 <span style="color:#606">Cart-Data</span>:
   - <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">Key: OPENSHIFT_...</span></span>
     <span style="color:#606">Type</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#D20">environment</span></span>
@@ -1755,9 +1756,9 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </div>
 </div>
 <div class="sect2">
-<h3 id="mandatory-scripts"><a class="anchor" href="#mandatory-scripts"></a>8.2. Mandatory Scripts</h3>
+<h3 id="mandatory-script"><a class="anchor" href="#mandatory-script"></a>8.2. Mandatory Script</h3>
 <div class="paragraph">
-<p>A cartridge must implement the following scripts:</p>
+<p>A cartridge must implement the following script:</p>
 </div>
 <table class="tableblock frame-all grid-all" style="">
 <colgroup>
@@ -1771,10 +1772,6 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </tr>
 </thead>
 <tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">setup</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Prepare this instance of cartridge to be operational for the initial install and each incompatible upgrade</p></td>
-</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">control</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Command cartridge to report or change state</p></td>
@@ -1801,16 +1798,20 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">teardown</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Prepare this instance of cartridge to be removed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setup</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prepare this instance of cartridge to be operational for the initial install and each incompatible upgrade</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">install</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Prepare this instance of cartridge to be operational for the initial install</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">post-install</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">post_install</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">An opportunity for configuration after the cartridge has been started for the initial install</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">teardown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prepare this instance of cartridge to be removed</p></td>
 </tr>
 </tbody>
 </table>
@@ -1849,7 +1850,59 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </div>
 </div>
 <div class="sect2">
-<h3 id="erb-processing"><a class="anchor" href="#erb-processing"></a>8.5. ERB Processing</h3>
+<h3 id="openshift-cartridge-installation-process"><a class="anchor" href="#openshift-cartridge-installation-process"></a>8.5. OpenShift Cartridge Installation Process</h3>
+<div class="paragraph">
+<p>The initial install process for a cartridge is as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The new cartridge is overlaid in the gear.</p>
+</li>
+<li>
+<p>The cartridge Environment Variables are populated.</p>
+</li>
+<li>
+<p>The cartridge directory is secured.</p>
+</li>
+<li>
+<p>The private Endpoints are created.</p>
+</li>
+<li>
+<p>The cartridge directory is unlocked.</p>
+</li>
+<li>
+<p>If the cartridge provides a <code>setup</code> script, that script is executed.</p>
+</li>
+<li>
+<p>The erb templates for the cartridge are processed.</p>
+</li>
+<li>
+<p>If the cartridge provides an <code>install</code> script, that script is executed.</p>
+</li>
+<li>
+<p>The gear git repository is populated.</p>
+</li>
+<li>
+<p>The cartridge directory is locked.</p>
+</li>
+<li>
+<p>The public Endpoints are creted.</p>
+</li>
+<li>
+<p>The <code>start</code> script is run.</p>
+</li>
+<li>
+<p>The frontend is connected.</p>
+</li>
+<li>
+<p>If the cartridge provides a <code>post_install</code> script, that script is executed.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="erb-processing"><a class="anchor" href="#erb-processing"></a>8.6. ERB Processing</h3>
 <div class="paragraph">
 <p>In order to provide flexible configuration and environment variables, you may provide some values as <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB templates</a>.</p>
 </div>
@@ -1878,7 +1931,7 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>erb   &lt;% ENV['OPENSHIFT_HOMEDIR'] + "/mongodb/log/" %&gt;</pre>
+<pre>&lt;%= ENV['OPENSHIFT_HOMEDIR'] + "/mongodb/log/" %&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1898,7 +1951,7 @@ On Windows, you can achieve this by running <code>git update-index --chmod=+x bi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>erb   upload_tmp_dir = "&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/tmp/"   session.save_path = "&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/sessions/"</pre>
+<pre>upload_tmp_dir = "&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/tmp/"   session.save_path = "&lt;%= ENV['OPENSHIFT_HOMEDIR'] %&gt;php/sessions/"</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1919,7 +1972,7 @@ file.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="bin-setup"><a class="anchor" href="#bin-setup"></a>8.6. bin/setup</h3>
+<h3 id="bin-setup"><a class="anchor" href="#bin-setup"></a>8.7. bin/setup</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Synopsis</dt>
@@ -1948,7 +2001,7 @@ file.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="bin-install"><a class="anchor" href="#bin-install"></a>8.7. bin/install</h3>
+<h3 id="bin-install"><a class="anchor" href="#bin-install"></a>8.8. bin/install</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Synopsis</dt>
@@ -1984,12 +2037,12 @@ file.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="bin-post-install"><a class="anchor" href="#bin-post-install"></a>8.8. bin/post-install</h3>
+<h3 id="bin-post_install"><a class="anchor" href="#bin-post_install"></a>8.9. bin/post_install</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Synopsis</dt>
 <dd>
-<p><code>post-install [--version &lt;version&gt;]</code></p>
+<p><code>post_install [--version &lt;version&gt;]</code></p>
 </dd>
 <dt class="hdlist1">Options</dt>
 <dd>
@@ -1997,7 +2050,7 @@ file.</p>
 </dd>
 <dt class="hdlist1">Description</dt>
 <dd>
-<p>The <code>post-install</code> script is an opportunity to configure your cartridge after the cartridge has been started and is only called for the initial install of the cartridge.</p>
+<p>The <code>post_install</code> script is an opportunity to configure your cartridge after the cartridge has been started and is only called for the initial install of the cartridge.</p>
 </dd>
 <dt class="hdlist1">Lock Context</dt>
 <dd>
@@ -2007,7 +2060,7 @@ file.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="bin-teardown"><a class="anchor" href="#bin-teardown"></a>8.9. bin/teardown</h3>
+<h3 id="bin-teardown"><a class="anchor" href="#bin-teardown"></a>8.10. bin/teardown</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Synopsis</dt>
@@ -2030,7 +2083,7 @@ file.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="bin-control"><a class="anchor" href="#bin-control"></a>8.10. bin/control</h3>
+<h3 id="bin-control"><a class="anchor" href="#bin-control"></a>8.11. bin/control</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Synopsis</dt>
@@ -2118,7 +2171,7 @@ file.</p>
 </table>
 
 <div class="sect3">
-<h4 id="the-code-tidy-code-action"><a class="anchor" href="#the-code-tidy-code-action"></a>8.10.1. The <code>tidy</code> Action</h4>
+<h4 id="the-code-tidy-code-action"><a class="anchor" href="#the-code-tidy-code-action"></a>8.11.1. The <code>tidy</code> Action</h4>
 <div class="paragraph">
 <p>Some possible <code>tidy</code> behaviors:</p>
 </div>
@@ -2147,7 +2200,7 @@ file.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="the-code-status-code-action"><a class="anchor" href="#the-code-status-code-action"></a>8.10.2. The <code>status</code> Action</h4>
+<h4 id="the-code-status-code-action"><a class="anchor" href="#the-code-status-code-action"></a>8.11.2. The <code>status</code> Action</h4>
 <div class="paragraph">
 <p>For a number of reasons, the application developer will want to be able to query whether the software your cartridge packages is running and behaving as expected. A <code>0</code> exit status implies that the software is running correctly.</p>
 </div>
@@ -2199,7 +2252,7 @@ file.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="messaging-to-openshift-from-cartridge"><a class="anchor" href="#messaging-to-openshift-from-cartridge"></a>8.11. Messaging to OpenShift from Cartridge</h3>
+<h3 id="messaging-to-openshift-from-cartridge"><a class="anchor" href="#messaging-to-openshift-from-cartridge"></a>8.12. Messaging to OpenShift from Cartridge</h3>
 <div class="paragraph">
 <p>Your cartridge may provide one or more services that are consumed by multiple gears in one application. OpenShift provides the orchestration necessary for you to publish this service or services. Each message is written to stdout, one message per line.</p>
 </div>
@@ -2609,6 +2662,9 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <div class="paragraph">
 <p>Both entries are optional and may be omitted. Empty files will be ignored. Patterns are from the <code>OPENSHIFT_HOMEDIR</code> directory rather than your cartridge&#8217;s directory. See the man page for <code>tar</code> (the <code>--transform</code> and <code>--exclude-from</code> options) for more details.</p>
 </div>
+<div class="paragraph">
+<p>Cartridge developers should preserve the state of the cartridge in all (pre|post)-(restore|snapshot) scripts. Cartridge state should be set back to the original state before this script was invoked.</p>
+</div>
 <div class="sect2">
 <h3 id="understanding-openshift-behavior-snapshot"><a class="anchor" href="#understanding-openshift-behavior-snapshot"></a>12.1. Understanding OpenShift Behavior: Snapshot</h3>
 <div class="paragraph">
@@ -2645,7 +2701,8 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>OpenShift invokes <code>control post-snapshot</code> for each installed cartridge in the gear.</p>
 </li>
 <li>
-<p>OpenShift starts the application by invoking <code>gear start</code>.</p>
+<p>Based on the state of application before snapshot, OpenShift will either stop
+or start the gear.</p>
 </li>
 </ol>
 </div>
@@ -2685,7 +2742,8 @@ OPENSHIFT_MYSQL_DB_URL=url;</pre>
 <p>If the archive contains a git repo, OpenShift invokes <code>gear postreceive</code>.</p>
 </li>
 <li>
-<p>Otherwise, OpenShift invokes <code>gear start</code> .</p>
+<p>Based on the state of application before restore, OpenShift will either stop
+or start the gear.</p>
 </li>
 </ol>
 </div>
@@ -2784,7 +2842,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>The primary cartridge <code>pre-build</code> control action is executed.</p>
 </li>
 <li>
-<p>The <code>pre-build</code> user action hook is executed, if present.</p>
+<p>The <code>pre_build</code> user action hook is executed, if present.</p>
 </li>
 <li>
 <p>The primary cartridge <code>build</code> control action is executed.</p>
@@ -2850,7 +2908,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>The primary cartridge <code>post-deploy</code> control action is executed.</p>
 </li>
 <li>
-<p>The <code>post-deploy</code> user action hook is executed, if present.</p>
+<p>The <code>post_deploy</code> user action hook is executed, if present.</p>
 </li>
 <li>
 <p>If the app is scalable, SSH to each child gear and execute <code>gear activate $deployment_id</code> which performs all the activation steps (except this one)</p>
@@ -3021,7 +3079,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The files and directories declared in the <code>Setup-Rewritten</code> section of the cartridge&#8217;s <code>managed_files.yml</code> are removed.</p>
+<p>The files and directories declared in the <code>setup_rewritten</code> section of the cartridge&#8217;s <code>managed_files.yml</code> are removed.</p>
 </li>
 <li>
 <p>The new version of the cartridge is overlaid in the gear.</p>
@@ -3036,7 +3094,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <p>If the cartridge provides an <code>upgrade</code> script, that script is executed.</p>
 </li>
 <li>
-<p>The cartridge <code>setup</code> script is run.</p>
+<p>If the cartridge provides a <code>setup</code> script, that script is executed.</p>
 </li>
 <li>
 <p>The erb templates for the cartridge are processed.</p>
@@ -3080,7 +3138,7 @@ User action hooks are assumed to reside in <code>$OPENSHIFT_REPO_DIR/.openshift/
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-15 00:11:44 EDT
+Last updated 2014-07-15 13:40:47 EDT
 </div>
 <!-- Google Analytics -->
 <script>

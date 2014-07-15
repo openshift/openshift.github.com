@@ -649,7 +649,7 @@ code { font-family: source_code_pro; }
 <h1>OpenShift Origin Cartridge Guide</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
-<span id="revdate">ORIGIN VERSION 3.0</span>
+<span id="revdate">LATEST DOC UPDATES</span>
 <div class="toc2" id="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -753,7 +753,9 @@ code { font-family: source_code_pro; }
 <li>
 <ul class="sectlevel2">
 <li><a href="#template-repository-layout-7">14.1. Template Repository Layout</a></li>
-<li><a href="#markers-7">14.2. Markers</a></li>
+<li><a href="#document-root">14.2. Document root</a></li>
+<li><a href="#php-include_path">14.3. PHP include_path</a></li>
+<li><a href="#php-markers">14.4. Markers</a></li>
 </ul>
 </li>
 <li><a href="#phpmyadmin">15. phpMyAdmin</a></li>
@@ -769,7 +771,7 @@ code { font-family: source_code_pro; }
 <ul class="sectlevel2">
 <li><a href="#template-repository-layout-9">17.1. Template Repository Layout</a></li>
 <li><a href="#cartridge-layout-2">17.2. Cartridge Layout</a></li>
-<li><a href="#markers-8">17.3. Markers</a></li>
+<li><a href="#markers-7">17.3. Markers</a></li>
 <li><a href="#environment-variables-10">17.4. Environment variables</a></li>
 </ul>
 </li>
@@ -782,7 +784,7 @@ code { font-family: source_code_pro; }
 <li><a href="#environment-variables-11">18.4. Environment Variables</a></li>
 <li><a href="#using-rails_env-development">18.5. Using RAILS_ENV=development</a></li>
 <li><a href="#code-threaddump-code-command">18.6. <code>threaddump</code> command</a></li>
-<li><a href="#markers-9">18.7. Markers</a></li>
+<li><a href="#markers-8">18.7. Markers</a></li>
 </ul>
 </li>
 </ul>
@@ -816,6 +818,39 @@ The OpenShift data directory can be found via the environment variable <code>$OP
 <div class="sectionbody">
 <div class="paragraph">
 <p>This cartridge provides the <a href="https://www.10gen.com/products/mongodb-monitoring-service">10gen MMS agent</a> on OpenShift.</p>
+</div>
+<div class="paragraph">
+<p>A few necessary steps have to be done, in order to embed the 10gen-mms-agent into your application:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Register at <a href="https://mms.mongodb.com">https://mms.mongodb.com</a></p>
+</li>
+<li>
+<p>Go to the Settings &#8594; Monitoring Agent &#8594; Other Linux</p>
+</li>
+<li>
+<p>Curl tarball link that is there</p>
+</li>
+<li>
+<p>Copy the tarball into the .openshift/mms/ folder and git push it</p>
+</li>
+<li>
+<p>Set environment variable called OPENSHIFT_MMS_API_KEY with the API Key which is in the Settings &#8594; API Settings</p>
+<div class="literalblock">
+<div class="content">
+<pre>rhc set-env OPENSHIFT_MMS_API_KEY=your_mms_api_key -a app</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Embed the 10gen cartridge.</p>
+</li>
+<li>
+<p>Go to <a href="https://mms.mongodb.com">https://mms.mongodb.com</a> and add your host, by adding MongoDB host, port and credentials into the formular.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -1745,7 +1780,7 @@ automatically deployed into the server runtime.</p>
 <h3 id="tomcat-cartridge-integrations"><a class="anchor" href="#tomcat-cartridge-integrations"></a>6.4. Cartridge Integrations</h3>
 <div class="paragraph">
 <p>The <code>jbossews</code> cart has out-of-the-box integration support with the RedHat <code>postgresql</code> and <code>mysql</code> cartridges. The default
-<code>context.xml</code> contains two basic JDBC <code>Resource</code> definitions, <code>jdbc/MysqlDS</code> and <code>jdbc/PostgreSQLDS</code>, which will be automatically
+<code>context.xml</code> contains two basic JDBC <code>Resource</code> definitions, <code>jdbc/MySQLDS</code> and <code>jdbc/PostgreSQLDS</code>, which will be automatically
 configured to work with their respective cartridges if installed into your application.</p>
 </div>
 </div>
@@ -2060,7 +2095,18 @@ will automatically enable SSH port forwarding:</p>
 </dd>
 <dt class="hdlist1">OPENSHIFT_MYSQLDB_DB_LOG_DIR</dt>
 <dd>
-<p>The path to the MySQL log directory</p>
+<p>The path to the MySQL log directory
+OPENSHIFT_MYSQL_VERSION: The version of the MySQL server
+OPENSHIFT_MYSQL_TIMEZONE: The MySQL server timezone
+OPENSHIFT_MYSQL_LOWER_CASE_TABLE_NAMES: Sets how the table names are stored and compared
+OPENSHIFT_MYSQL_DEFAULT_STORAGE_ENGINE: The default storage engine (table type)
+OPENSHIFT_MYSQL_MAX_CONNECTIONS: The maximum permitted number of simultaneous client connections
+OPENSHIFT_MYSQL_FT_MIN_WORD_LEN: The minimum length of the word to be included in a FULLTEXT index.
+OPENSHIFT_MYSQL_FT_MAX_WORD_LEN: The maximum length of the word to be included in a FULLTEXT index.</p>
+</dd>
+<dt class="hdlist1">OPENSHIFT_MYSQL_AIO</dt>
+<dd>
+<p>Controls the <em>innodb_use_native_aio</em> setting value in case the native AIO is broken. See <a href="http://help.directadmin.com/item.php?id=529">http://help.directadmin.com/item.php?id=529</a></p>
 </dd>
 </dl>
 </div>
@@ -2189,6 +2235,10 @@ every time you <code>git push</code> to your OpenShift application.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">hot_deploy</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disable app restarting during git pushes (see <em>Development Mode</em>)</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">use_npm</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This will force to run your application using NPM instead of using <em>supervisor</em></p></td>
+</tr>
 </tbody>
 </table>
 
@@ -2207,6 +2257,21 @@ of your javascript files in "development" mode, you can either use the
 </div>
 <div class="paragraph">
 <p>This will run Node.JS with <a href="https://npmjs.org/package/supervisor">Supervisor</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>hot_deploy</code> marker is restricted to the supervisor only. Using the
+<code>use_npm</code> marker, your application will always do a full restart.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2283,12 +2348,11 @@ supervisor server.js</pre>
 <h3 id="template-repository-layout-6"><a class="anchor" href="#template-repository-layout-6"></a>13.1. Template Repository Layout</h3>
 <div class="listingblock">
 <div class="content">
-<pre>perl/                 For not-externally exposed perl code
-libs/                 Additional libraries
-misc/                 For not-externally exposed perl code
+<pre>index.pl
 .openshift/           Location for OpenShift specific files
     action_hooks/     See the Action Hooks documentation <i class="conum" data-value="1"></i><b>(1)</b>
-    markers/          See the Markers section below</pre>
+    markers/          See the Markers section below
+    cpan.txt          List of modules to install</pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2300,7 +2364,10 @@ misc/                 For not-externally exposed perl code
 </table>
 </div>
 <div class="paragraph">
-<p>Please leave the <code>perl</code>, <code>libs</code> and <code>data</code> directories but feel free to create additional directories if needed.</p>
+<p>Due to changes in Perl cartridge template layout, the application root is now stored in <code>$OPENSHIFT_REPO_DIR</code>, but is also backward compatible with deprecated <code>perl/</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>Modules are installed with <code>cpan.txt</code>, located in the <code>.openshift/</code> directory. In addition, application dependencies can be installed using cpanfile or Makefile.PL placed in the .openshift/ folder. deplist.txt is deprecated in favor of .openshift/cpan.txt.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2308,6 +2375,7 @@ misc/                 For not-externally exposed perl code
 <div class="listingblock">
 <div class="content">
 <pre>run/                  Various run configs (like httpd pid)
+usr/                  Perl example application template
 env/                  Environment variables
 logs/                 Log data (like httpd access/error logs)
 lib/                  Various libraries
@@ -2352,6 +2420,10 @@ versions/             Version data to support multiple perl versions (copied int
 <td class="tableblock halign-left valign-top"><p class="tableblock">disable_auto_scaling</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent scalable applications from scaling up or down according to application load.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enable_public_server_status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will enable server-status application path to be publicly available.</p></td>
+</tr>
 </tbody>
 </table>
 
@@ -2368,35 +2440,65 @@ versions/             Version data to support multiple perl versions (copied int
 <h3 id="template-repository-layout-7"><a class="anchor" href="#template-repository-layout-7"></a>14.1. Template Repository Layout</h3>
 <div class="listingblock">
 <div class="content">
-<pre>php/                   Externally exposed PHP code goes here
-libs/                  Additional libraries
-misc/                  For PHP code that should not be accessible by end users
-deplist.txt            List of pears to install <i class="conum" data-value="1"></i><b>(1)</b>
+<pre>index.php              Template PHP index page
 .openshift/            Location for OpenShift specific files
-    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="2"></i><b>(2)</b>
-    markers/           See the Markers section below</pre>
+    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="1"></i><b>(1)</b>
+    markers/           See the Markers section below
+    pear.txt           List of pears to install <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>A list of pears to install, line by line on the server. This will happen when the user git pushes.</td>
+<td><a href="oo_user_guide.html#action-hooks">Action Hooks</a> documentation</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="oo_user_guide.html#action-hooks">Action Hooks</a> documentation</td>
+<td>A list of pears to install, line by line on the server. This will happen when the user git pushes.</td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="document-root"><a class="anchor" href="#document-root"></a>14.2. Document root</h3>
 <div class="paragraph">
-<p>OpenShift will look for the <code>php</code> and <code>libs</code> directories when serving your
-application. index.php will handle requests to the root URL of your
-application. You can create new directories as needed.</p>
+<p><a href="http://httpd.apache.org/docs/current/mod/core.html#documentroot">Apache DocumentRoot</a>,
+the directory that forms the main document tree visible from the web, is selected based
+on the existence of a common directory in the repository code in the following order:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>1. php/          # for backward compatibility with OpenShift Origin v1/v2
+2. public/       # Zend Framework v1/v2, Laravel, FuelPHP, Surebert etc.
+3. public_html/  # Apache per-user web directories, Slim Framework etc.
+4. web/          # Symfony etc.
+5. www/          # Nette etc.
+6. ./            # Drupal, Wordpress, CakePHP, CodeIgniter, Joomla, Kohana, PIP etc.</pre>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="markers-7"><a class="anchor" href="#markers-7"></a>14.2. Markers</h3>
+<h3 id="php-include_path"><a class="anchor" href="#php-include_path"></a>14.3. PHP include_path</h3>
+<div class="paragraph">
+<p>The following application directories, that might exist in the repository code, are added
+to the <a href="http://php.net/manual/en/ini.core.php#ini.include-path">PHP include_path</a> and thus
+automatically searched when calling require(), include() and other file I/O functions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- lib/
+- libs/
+- libraries/
+- src/
+- misc/
+- vendor/
+- vendors/</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="php-markers"><a class="anchor" href="#php-markers"></a>14.4. Markers</h3>
 <div class="paragraph">
 <p>Adding marker files to <code>.openshift/markers</code> will have the following effects:</p>
 </div>
@@ -2414,15 +2516,23 @@ application. You can create new directories as needed.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">force_clean_build</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Will remove all previous deps and start installing required deps from scratch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will remove all previous deps and start installing required deps from scratch.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">hot_deploy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent the apache process from being restarted during build/deployment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent the Apache process from being restarted and will skip checking for Pear and Composer dependencies during build/deployment.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">disable_auto_scaling</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent scalable applications from scaling up or down according to application load.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">use_composer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will enable running <code>composer install</code> on each build automatically. See the <a href="https://getcomposer.org/doc/">Composer docs</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enable_public_server_status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will enable server-status application path to be publicly available.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2520,6 +2630,37 @@ Please leave <code>sql</code> and <code>data</code> directories but feel free to
 </tbody>
 </table>
 
+<div class="paragraph">
+<p>You can fine-tune the PostgreSQL server performance by using the rhc tool and
+changing the default values for these variables:</p>
+</div>
+<table class="tableblock frame-all grid-all" style="width:100%; ">
+<colgroup>
+<col style="width:50%;">
+<col style="width:50%;"> 
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPENSHIFT_POSTGRESQL_SHARED_BUFFERS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The shared_buffers configuration parameter determines how much memory is dedicated to PostgreSQL to use for caching data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPENSHIFT_POSTGRESQL_MAX_CONNECTIONS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">max_connections sets exactly that: the maximum number of client connections allowed.</p></td>
+</tr>
+</tbody>
+</table>
+
+<div class="paragraph">
+<p>For more details, please refer to PostgreSQL
+<a href="https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server">wiki page</a>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2533,13 +2674,11 @@ Please leave <code>sql</code> and <code>data</code> directories but feel free to
 <h3 id="template-repository-layout-9"><a class="anchor" href="#template-repository-layout-9"></a>17.1. Template Repository Layout</h3>
 <div class="listingblock">
 <div class="content">
-<pre>wsgi/                  Externally exposed wsgi code goes
-wsgi/static/           Public static content gets served here
-libs/                  Additional libraries
-data/                  For not-externally exposed wsgi code
-setup.py               Standard setup.py, specify deps here <i class="conum" data-value="1"></i><b>(1)</b>
+<pre>wsgi.py                Default WSGI entry-point <i class="conum" data-value="1"></i><b>(1)</b>
+setup.py               Standard Setup Script <i class="conum" data-value="2"></i><b>(2)</b>
+requirements.txt       Standard pip requirements file <i class="conum" data-value="3"></i><b>(3)</b>
 .openshift/            Location for OpenShift specific files
-    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="2"></i><b>(2)</b>
+    action_hooks/      See the Action Hooks documentation <i class="conum" data-value="4"></i><b>(4)</b>
     markers/           See the Markers section below</pre>
 </div>
 </div>
@@ -2547,16 +2686,28 @@ setup.py               Standard setup.py, specify deps here <i class="conum" dat
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Adding deps to the <code>install_requires</code> will cause the cartirdge to install those deps at git push time.</td>
+<td>For backward compatibility, the <code>wsgi/application</code> path is selected as default
+WSGI entry-point with higher priority. You can customize the path using the
+<code>OPENSHIFT_PYTHON_WSGI_APPLICATION</code> envirotnment variable. See the Environment
+variables section below.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Adding dependencies to the <code>install_requires</code> section of <code>setup.py</code> file will
+cause the cartridge to install those dependencies at git push time.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Adding dependencies to this file will cause the cartridge to run
+<code>pip install -r requirements.txt</code> command at git push time. You can customize
+the path using the <code>OPENSHIFT_PYTHON_REQUIREMENTS_PATH</code> variable. See the
+Environment variables section below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="oo_user_guide.html#action-hooks">Action Hooks</a> documentation</td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>Please leave the <code>wsgi</code>, <code>libs</code> and <code>data</code> directories but feel free to create additional directories if needed.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2576,7 +2727,7 @@ versions/      Version data to support multiple python versions (copied into pla
 </div>
 </div>
 <div class="sect2">
-<h3 id="markers-8"><a class="anchor" href="#markers-8"></a>17.3. Markers</h3>
+<h3 id="markers-7"><a class="anchor" href="#markers-7"></a>17.3. Markers</h3>
 <div class="paragraph">
 <p>Adding marker files to <code>.openshift/markers</code> will have the following effects:</p>
 </div>
@@ -2600,12 +2751,35 @@ versions/      Version data to support multiple python versions (copied into pla
 <td class="tableblock halign-left valign-top"><p class="tableblock">hot_deploy</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent shutdown and startup of the application during builds.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enable_public_server_status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will enable server-status application path to be publicly available.</p></td>
+</tr>
 </tbody>
 </table>
 
 </div>
 <div class="sect2">
 <h3 id="environment-variables-10"><a class="anchor" href="#environment-variables-10"></a>17.4. Environment variables</h3>
+<div class="paragraph">
+<p>The <code>python</code> cartridge supports the following environment variables:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">OPENSHIFT_PYTHON_WSGI_APPLICATION</dt>
+<dd>
+<p>Set custom path to the WSGI entry-point, eg.
+using the <code>rhc env set OPENSHIFT_PYTHON_WSGI_APPLICATION=app/altenative-wsgi.py</code>
+command.</p>
+</dd>
+<dt class="hdlist1">OPENSHIFT_PYTHON_REQUIREMENTS_PATH</dt>
+<dd>
+<p>Set custom path to the pip requirements file,
+eg. using the <code>rhc env set OPENSHIFT_PYTHON_REQUIREMENTS_PATH=requirements/production.txt</code>
+command.</p>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
 <p>For some frameworks (such as Django) it is possible to set the <code>DEBUG</code> user
 environment variable using the <code>rhc env set DEBUG=True</code> command.
@@ -2645,7 +2819,7 @@ config.ru          This file is used by Rack-based servers to start the applicat
 <div class="sect2">
 <h3 id="ruby-mirror"><a class="anchor" href="#ruby-mirror"></a>18.2. Ruby Mirror</h3>
 <div class="paragraph">
-<p>OpenShift is mirroring rubygems.org at <a href="http://mirror1.ops.rhcloud.com/mirror/ruby/">http://mirror1.ops.rhcloud.com/mirror/ruby/</a>
+<p>OpenShift is mirroring rubygems.org at <a href="http://mirror.ops.rhcloud.com/mirror/ruby/">http://mirror.ops.rhcloud.com/mirror/ruby/</a>
 This mirror is on the same network as your application, and your gem download should be faster.</p>
 </div>
 <div class="paragraph">
@@ -2657,7 +2831,7 @@ This mirror is on the same network as your application, and your gem download sh
 <p>Edit your Gemfile and replace</p>
 <div class="literalblock">
 <div class="content">
-<pre>source 'http://rubygems.org'</pre>
+<pre>source 'https://rubygems.org'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2665,7 +2839,7 @@ This mirror is on the same network as your application, and your gem download sh
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>source 'http://mirror1.ops.rhcloud.com/mirror/ruby/'</pre>
+<pre>source 'https://mirror.openshift.com/'</pre>
 </div>
 </div>
 </li>
@@ -2673,7 +2847,7 @@ This mirror is on the same network as your application, and your gem download sh
 <p>Edit your Gemfile.lock and replace</p>
 <div class="literalblock">
 <div class="content">
-<pre>remote: http://rubygems.org/</pre>
+<pre>remote: https://rubygems.org/</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2681,7 +2855,7 @@ This mirror is on the same network as your application, and your gem download sh
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>remote: http://mirror1.ops.rhcloud.com/mirror/ruby/</pre>
+<pre>remote: https://mirror.openshift.com/</pre>
 </div>
 </div>
 </li>
@@ -2724,7 +2898,7 @@ After <code>sprockets</code> gem is installed you need to precompile all your as
 <div class="sect3">
 <h4 id="load-database-schema"><a class="anchor" href="#load-database-schema"></a>18.3.3. Load database schema</h4>
 <div class="paragraph">
-<p>If your Rails application contains a large amount of migrations it&#8217;s a good to use <code>db:schema:load</code> on initial deploy and <code>db:migrate</code> on re-deploymnets. You can do this by looking into the database and checking whether one of the DB tables exists.</p>
+<p>If your Rails application contains a large amount of migrations it&#8217;s good to use <code>db:schema:load</code> on initial deploy and <code>db:migrate</code> on re-deploymnets. You can do this by looking into the database and checking whether one of the DB tables exists.</p>
 </div>
 <div class="paragraph">
 <p>This example checks, in the deploy hook, if the <code>spree_activators</code> table is present in the database.</p>
@@ -2754,7 +2928,8 @@ fi</pre>
 </dd>
 <dt class="hdlist1">OPENSHIFT_RUBY_VERSION</dt>
 <dd>
-<p>The Ruby language version. The valid values are <code>1.8</code> and <code>1.9</code>.</p>
+<p>The Ruby language version. The valid values are <code>1.8</code> and <code>1.9</code>.
+BUNDLE_WITHOUT: Prevents Bundler from installing certain groups specified in the Gemfile.</p>
 </dd>
 </dl>
 </div>
@@ -2824,7 +2999,7 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 </div>
 </div>
 <div class="sect2">
-<h3 id="markers-9"><a class="anchor" href="#markers-9"></a>18.7. Markers</h3>
+<h3 id="markers-8"><a class="anchor" href="#markers-8"></a>18.7. Markers</h3>
 <div class="paragraph">
 <p>Adding marker files to <code>.openshift/markers</code> will have the following effects:</p>
 </div>
@@ -2848,6 +3023,14 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <td class="tableblock halign-left valign-top"><p class="tableblock">hot_deploy</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent shutdown and startup of the application during builds. The Passenger <code>restart.txt</code> file will be used to reload the application.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">disable_asset_compilation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will prevent assets to be compiled upon application deployment. This marker should be used when deploying application with assets which are already compiled.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">enable_public_server_status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Will enable server-status application path to be publicly available.</p></td>
+</tr>
 </tbody>
 </table>
 
@@ -2857,7 +3040,7 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-15 00:11:41 EDT
+Last updated 2014-07-15 13:40:47 EDT
 </div>
 <!-- Google Analytics -->
 <script>
