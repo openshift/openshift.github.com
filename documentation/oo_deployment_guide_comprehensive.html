@@ -656,7 +656,7 @@ code { font-family: source_code_pro; }
 <li><a href="#prerequisite-preparing-the-host-systems">1. Prerequisite: Preparing the Host Systems</a></li>
 <li>
 <ul class="sectlevel2">
-<li><a href="#setup-yum-repositories">1.1. Setup Yum repositories</a></li>
+<li><a href="#openshift-origin-repositories">1.1. OpenShift Origin repositories</a></li>
 <li><a href="#updates-and-ntp">1.2. Updates and NTP</a></li>
 </ul>
 </li>
@@ -683,8 +683,7 @@ code { font-family: source_code_pro; }
 <li><a href="#installation">4.1. Installation</a></li>
 <li><a href="#configuration">4.2. Configuration</a></li>
 <li><a href="#firewall-rules-start-on-boot">4.3. Firewall Rules / Start on Boot</a></li>
-<li><a href="#tmpfs-setup">4.4. Tmpfs setup</a></li>
-<li><a href="#verify-that-activemq-is-working">4.5. Verify that ActiveMQ is Working</a></li>
+<li><a href="#verify-that-activemq-is-working">4.4. Verify that ActiveMQ is Working</a></li>
 </ul>
 </li>
 <li><a href="#prerequisite-mcollective-client">5. Prerequisite: MCollective client</a></li>
@@ -711,10 +710,9 @@ code { font-family: source_code_pro; }
 <li><a href="#configure-the-dns-plugin">7.2. Configure the DNS plugin</a></li>
 <li><a href="#configure-an-authentication-plugin">7.3. Configure an Authentication Plugin</a></li>
 <li><a href="#configure-the-administrative-console">7.4. Configure the Administrative Console</a></li>
-<li><a href="#run-the-ruby-bundler">7.5. Run the Ruby Bundler</a></li>
-<li><a href="#set-services-to-start-on-boot">7.6. Set Services to Start on Boot</a></li>
-<li><a href="#verify-the-broker-rest-api">7.7. Verify the Broker REST API</a></li>
-<li><a href="#start-apache">7.8. Start apache</a></li>
+<li><a href="#set-services-to-start-on-boot">7.5. Set Services to Start on Boot</a></li>
+<li><a href="#verify-the-broker-rest-api">7.6. Verify the Broker REST API</a></li>
+<li><a href="#start-apache">7.7. Start apache</a></li>
 </ul>
 </li>
 <li><a href="#the-web-console">8. The Web Console</a></li>
@@ -757,13 +755,21 @@ code { font-family: source_code_pro; }
 </ul>
 </li>
 <li><a href="#testing-the-configuration">11. Testing the Configuration</a></li>
-<li><a href="#configuring-local-machine-for-dns-resolution">12. Configuring local machine for DNS resolution</a></li>
+<li><a href="#post-install-tasks">12. Post-Install Tasks</a></li>
 <li>
 <ul class="sectlevel2">
-<li><a href="#configure-example-com-resolution-for-linux">12.1. Configure example.com resolution for Linux</a></li>
-<li><a href="#configure-example-com-resolution-for-os-x">12.2. Configure example.com resolution for OS X</a></li>
+<li><a href="#add-nodes-to-districts">12.1. Add Nodes to Districts</a></li>
+<li><a href="#register-cartridges-with-the-broker">12.2. Register Cartridges with the Broker</a></li>
 </ul>
 </li>
+<li><a href="#configuring-local-machine-for-dns-resolution">13. Configuring local machine for DNS resolution</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#configure-example-com-resolution-for-linux">13.1. Configure example.com resolution for Linux</a></li>
+<li><a href="#configure-example-com-resolution-for-os-x">13.2. Configure example.com resolution for OS X</a></li>
+</ul>
+</li>
+<li><a href="#appendix-high-availability-deployments">14. Appendix: High Availability Deployments</a></li>
 </ul>
 </div>
 </div>
@@ -785,7 +791,7 @@ code { font-family: source_code_pro; }
 </div>
 <h3 id="getting-up-and-running-with-openshift-origin" class="float">Getting up and Running with OpenShift Origin</h3>
 <div class="paragraph">
-<p>OpenShift Origin is "infrastructure agnostic". That means that you can run OpenShift on bare metal, virtualized instances, or on public/private cloud instances. The only thing that is required is Fedora Linux or Red Hat Enterprise Linux as the underlying operating system. We require this in order to take advantage of SELinux so that you can ensure your installation is rock solid and secure.</p>
+<p>OpenShift Origin is "infrastructure agnostic". That means that you can run OpenShift on bare metal, virtualized instances, or on public/private cloud instances. The only thing that is required is Red Hat Enterprise Linux or CentOS as the underlying operating system. We require this in order to take advantage of SELinux so that you can ensure your installation is rock solid and secure.</p>
 </div>
 <div class="paragraph">
 <p>What does this mean? This means that in order to take advantage of OpenShift Origin, you can use any existing resources that you have in your hardware pool today. It doesn&#8217;t matter if your infrastructure is based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack, or even bare metal as long as your CPUs are 64 bit processors.</p>
@@ -805,26 +811,23 @@ This document covers one possible OpenShift topology, specifically:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>This is a good reference configuration for proof-of-concept. However, <em>many other topologies and combinations of platforms are supported</em>. At a minimum, a production installation of OpenShift Origin would probably include four hosts:</p>
+<p>This is a good reference configuration for proof-of-concept. However, <em>many other topologies and combinations of platforms are supported</em>. At a minimum, a High Availability production installation of OpenShift Origin would include four hosts:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Broker</p>
+<p>Broker, MongoDB, ActiveMQ replicated across three hosts</p>
 </li>
 <li>
-<p>Applications Node</p>
-</li>
-<li>
-<p>MongoDB</p>
-</li>
-<li>
-<p>ActiveMQ</p>
+<p>Node system for hosted applications</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>For help with your specific setup, you can ask the OpenShift team at IRC channel #openshift-dev on FreeNode, or check out the OpenShift forums.</p>
+<p>If you are interested in an HA deployment, refer to the <a href="#appendix-high-availability-deployments">High Availabilty Deployments</a> section for some guidance.</p>
+</div>
+<div class="paragraph">
+<p>For any other help with your specific setup, you can ask the OpenShift team at IRC channel <a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift-dev&amp;uio=d4">#openshift-dev</a> on FreeNode, or check out the OpenShift <a href="http://lists.openshift.redhat.com/openshiftmm/listinfo/dev">developers mailing list</a>.</p>
 </div>
 <div class="paragraph">
 <p>This document assumes that you have a working knowledge of SSH, git, and yum, and are familiar with a Linux-based text editor like vi or emacs. Additionally, you will need to be able to install / and or administer the systems described in the next section.</p>
@@ -860,7 +863,7 @@ This document covers one possible OpenShift topology, specifically:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>This document includes chapters on how to install and configure these services and clients on a single host, along with the OpenShift Origin <em>broker</em> component. However, in a production environment these services may already be in place, and it may not be necessary to modify them.</p>
+<p>This document includes chapters on how to install and configure these services and clients on a single host, along with the OpenShift Origin <em>Broker</em> component. However, in a production environment these services may already be in place, and it may not be necessary to modify them.</p>
 </div>
 <h3 id="electronic-version-of-this-document" class="float">Electronic version of this document</h3>
 <div class="paragraph">
@@ -875,29 +878,16 @@ This document covers one possible OpenShift topology, specifically:</p>
 <p>The following steps are required for both Broker and Node hosts.</p>
 </div>
 <div class="sect2">
-<h3 id="setup-yum-repositories"><a class="anchor" href="#setup-yum-repositories"></a>1.1. Setup Yum repositories</h3>
+<h3 id="openshift-origin-repositories"><a class="anchor" href="#openshift-origin-repositories"></a>1.1. OpenShift Origin repositories</h3>
 <div class="paragraph">
 <p>Configure the openshift-dependencies RPM repository:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin-deps.repo
 [openshift-origin-deps]
 name=openshift-origin-deps
-baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/rhel-6/dependencies/x86_64/
-gpgcheck=0
-enabled=1
-EOF</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin-deps.repo
-[openshift-origin-deps]
-name=openshift-origin-deps
-baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/fedora-19/dependencies/x86_64/
+baseurl=https://mirror.openshift.com/pub/origin-server/release/4/rhel-6/dependencies/x86_64/
 gpgcheck=0
 enabled=1
 EOF</pre>
@@ -907,31 +897,15 @@ EOF</pre>
 <p>Configure the openshift-origin RPM repository:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin.repo
 [openshift-origin]
 name=openshift-origin
-baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/rhel-6/latest/x86_64/
+baseurl=https://mirror.openshift.com/pub/origin-server/release/4/rhel-6/packages/x86_64/
 gpgcheck=0
 enabled=1
 EOF</pre>
 </div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>cat &lt;&lt;EOF&gt; /etc/yum.repos.d/openshift-origin.repo
-[openshift-origin]
-name=openshift-origin
-baseurl=https://mirror.openshift.com/pub/openshift-origin/nightly/fedora-19/latest/x86_64/
-gpgcheck=0
-enabled=1
-EOF</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For RHEL systems you will need to include the <a href="http://fedoraproject.org/wiki/EPEL">EPEL</a> and "Optional" repositories install puppet.</p>
 </div>
 <div class="sect3">
 <h4 id="epel-repository"><a class="anchor" href="#epel-repository"></a>1.1.1. EPEL Repository</h4>
@@ -970,7 +944,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="optional-repository"><a class="anchor" href="#optional-repository"></a>1.1.2. "Optional" Repository</h4>
+<h4 id="optional-repository-for-rhel-only"><a class="anchor" href="#optional-repository-for-rhel-only"></a>1.1.2. "Optional" Repository (for RHEL only)</h4>
 <div class="paragraph">
 <p>The way you enable the "Optional" repo will depend on your source.</p>
 </div>
@@ -989,7 +963,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6</pre>
 <div class="sect2">
 <h3 id="updates-and-ntp"><a class="anchor" href="#updates-and-ntp"></a>1.2. Updates and NTP</h3>
 <div class="paragraph">
-<p>The hosts should be running the latest Fedora packages, and should be configured to use NTP for clock synchronization.</p>
+<p>The hosts should be running the latest "minimal install" packages, and should be configured to use NTP for clock synchronization.</p>
 </div>
 <div class="sect3">
 <h4 id="update-the-operating-system"><a class="anchor" href="#update-the-operating-system"></a>1.2.1. Update the Operating System</h4>
@@ -1069,7 +1043,6 @@ MCollective will drop messages. Every MCollective request (discussed in a later 
 the recipient drops the message. This is often referred to as clock skew and is a common problem that users encounter when they fail to sync all of the system clocks.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>yum install -y ntpdate ntp
 ntpdate clock.redhat.com
@@ -1077,23 +1050,13 @@ chkconfig ntpd on
 service ntpd start</pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>yum install -y ntpdate ntp
-ntpdate clock.redhat.com
-systemctl enable ntpd.service
-systemctl start  ntpd.service</pre>
-</div>
-</div>
 </div>
 <div class="sect3">
 <h4 id="firewall-setup"><a class="anchor" href="#firewall-setup"></a>1.2.3. Firewall setup</h4>
 <div class="paragraph">
-<p>OpenShift Origin does not work with firewalld on Fedora 19. The following steps will uninstall firealld and install lokkit to manage firewall rules.</p>
+<p>Uninstall firewalld and install lokkit to manage firewall rules.</p>
 </div>
 <div class="listingblock">
-<div class="title">Fedora</div>
 <div class="content">
 <pre>yum erase -y firewalld
 yum install -y lokkit</pre>
@@ -1101,25 +1064,11 @@ yum install -y lokkit</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="setting-up-the-ruby-environment"><a class="anchor" href="#setting-up-the-ruby-environment"></a>1.2.4. Setting up the Ruby Environment</h4>
+<h4 id="setting-up-the-ruby-environment-software-collections"><a class="anchor" href="#setting-up-the-ruby-environment-software-collections"></a>1.2.4. Setting up the Ruby Environment (Software Collections)</h4>
 <div class="paragraph">
-<p>If you are running on a RHEL system, you will need to install and setup <a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Developer_Toolset/1/html-single/Software_Collections_Guide/index.html">SCL</a>
-Ruby193. This will provide you with a Ruby 1.9.3 environment which we will use for the rest of the setup.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="icon-note" title="Note"></i>
-</td>
-<td class="content">
-Fedora installations should skip this section.
-</td>
-</tr>
-</table>
+<p>In order to use Ruby 1.9.3, you will need to install and setup the <a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Developer_Toolset/1/html-single/Software_Collections_Guide/index.html">ruby193 SCL</a>. This will provide you with a ruby environment which we will use for the rest of the setup.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>yum install -y ruby193
 
@@ -1447,15 +1396,8 @@ restorecon /etc/named.conf</pre>
 <p>Now you are ready to start up your new DNS server and add some updates.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>service named start</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl start named.service</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1476,17 +1418,9 @@ restorecon /etc/named.conf</pre>
 <p>We also need to make sure that <em>named</em> starts on boot and that the firewall is configured to pass through DNS traffic:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>lokkit --service=dns
 chkconfig named on</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>lokkit --service=dns
-systemctl enable named.service</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1518,7 +1452,7 @@ If you get unknown locale error when running <em>lokkit</em>, consult the troubl
 </div>
 </div>
 <div class="paragraph">
-<p>Press control-D to exit from the interactive session.</p>
+<p>Press &lt;ctrl-D&gt; to exit from the interactive session.</p>
 </div>
 <div class="paragraph">
 <p>In order to verify that you have successfully added your broker node to your DNS server, you can perform:</p>
@@ -1621,11 +1555,8 @@ DNS1=10.4.59.x</pre>
 <div class="paragraph">
 <p>You need to set the hostname of your broker host.  We need to change this to
 reflect the new hostname that we are going to apply to this server. For this
-chapter, we will be using broker.example.com.</p>
+chapter, we will be using <em>broker.example.com</em>.</p>
 </div>
-<div class="exampleblock">
-<div class="title">Example 1. RHEL6</div>
-<div class="content">
 <div class="paragraph">
 <p>In order to accomplish this task, edit the <em>/etc/sysconfig/network</em> file
 and locate the section labeled <em>HOSTNAME</em>. The line that you want to
@@ -1643,18 +1574,6 @@ change:</p>
 <div class="listingblock">
 <div class="content">
 <pre>HOSTNAME=broker.example.com</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="exampleblock">
-<div class="title">Example 2. Fedora</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre>echo "broker.example.com" &gt; /etc/hostname</pre>
-</div>
-</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1724,38 +1643,7 @@ a document data storage system that uses JavaScript for the command syntax and s
 </div>
 </div>
 <div class="paragraph">
-<p>At the time of this writing, you should see the following packages being installed:</p>
-</div>
-<div class="listingblock">
-<div class="title">RHEL6</div>
-<div class="content">
-<pre>Package Name           Arch    Package Version    Repo                          Size
-mongodb-server         x86_64  2.0.2-2.el6op      rhel-server-ose-infra-6-rpms  3.8 M
-boost-program-options  x86_64  1.41.0-11.el6_1.2  rhel-6-server-rpms            105 k
-boost-thread           x86_64  1.41.0-11.el6_1.2  rhel-6-server-rpms            105 k
-libmongodb             x86_64  1.41.0-11.el6_1.2  rhel-6-server-rpms             41 k
-boost-program-options  x86_64  2.0.2-2.el6op      rhel-server-ose-infra-6-rpms  531 k</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>Package Name             Arch           Package Version           Repo          Size
-Installing:
- libmongodb             x86_64          2.4.6-1.fc19              updates       455 k
- mongodb                x86_64          2.4.6-1.fc19              updates        30 M
- mongodb-server         x86_64          2.4.6-1.fc19              updates       4.4 M
- boost-filesystem       x86_64          1.53.0-14.fc19            updates        67 k
- boost-iostreams        x86_64          1.53.0-14.fc19            updates        59 k
- boost-program-options  x86_64          1.53.0-14.fc19            updates       154 k
- boost-system           x86_64          1.53.0-14.fc19            updates        38 k
- boost-thread           x86_64          1.53.0-14.fc19            updates        55 k
- gperftools-libs        x86_64          2.1-1.fc19                updates       267 k
- libicu                 x86_64          50.1.2-9.fc19             updates       6.8 M
- libunwind              x86_64          1.1-2.fc19                fedora         61 k
- snappy                 x86_64          1.1.0-1.fc19              fedora         40 k
- v8                     x86_64          1:3.14.5.10-2.fc19        updates       3.0 M</pre>
-</div>
+<p>This will pull in a number of RPM dependencies and install them automatically.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1851,45 +1739,24 @@ will store in it. It is not absolutely necessary to set <em>smallfiles=true</em>
 <p>MongoDB is an essential part of the OpenShift Origin platform. Because of this, you must ensure that mongod is configured to start on system boot:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig mongod on</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable mongod.service</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>By default, when you install <em>mongod</em> via the yum command, the service is not started. You can verify this with the following:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>service mongod status</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl status mongod.service</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>This should return "<em>mongod is stopped</em>". In order to start the service, simply issue:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>service mongod start</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl start mongod.service</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2114,27 +1981,9 @@ The <em>$\{activemq.data}</em> text should be entered as stated as it does not r
 service activemq start</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Note: activemq server has not transitioned to systemd startup scripts yet.</p>
-</div>
 </div>
 <div class="sect2">
-<h3 id="tmpfs-setup"><a class="anchor" href="#tmpfs-setup"></a>4.4. Tmpfs setup</h3>
-<div class="paragraph">
-<p>On Fedora systems, /var/run is a tmpfs mount and needs some additonal configuration. Create a <em>/etc/tmpfiles.d/activemq.conf</em>.
-This step can be skipped on RHEL 6.4 systems.</p>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>cat &lt;&lt;EOF &gt;/etc/tmpfiles.d/activemq.conf
-d /var/run/activemq 0755 activemq activemq -
-EOF</pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="verify-that-activemq-is-working"><a class="anchor" href="#verify-that-activemq-is-working"></a>4.5. Verify that ActiveMQ is Working</h3>
+<h3 id="verify-that-activemq-is-working"><a class="anchor" href="#verify-that-activemq-is-working"></a>4.4. Verify that ActiveMQ is Working</h3>
 <div class="paragraph">
 <p>Now that ActiveMQ has been installed, configured, and started, verify that the web console is working as expected. The ActiveMQ web console should be running and listening on port 8161. In order to verify that
 everything worked correctly, load the following URL in a web browser:</p>
@@ -2242,38 +2091,9 @@ everything worked correctly, load the following URL in a web browser:</p>
 <div class="sect2">
 <h3 id="configuration-2"><a class="anchor" href="#configuration-2"></a>5.2. Configuration</h3>
 <div class="paragraph">
-<p>Replace the contents of the <em>/etc/mcollective/client.cfg</em> with the following information:</p>
+<p>Replace the contents of the <em>/opt/rh/ruby193/root/etc/mcollective/client.cfg</em> with the following information:</p>
 </div>
 <div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>cat &lt;&lt;EOF &gt; /etc/mcollective/client.cfg
-main_collective = mcollective
-collectives = mcollective
-libdir = /usr/libexec/mcollective
-logfile = /var/log/openshift/broker/mcollective-client.log
-loglevel = debug
-
-# Plugins
-securityprovider = psk
-plugin.psk = unset
-
-connector = activemq
-plugin.activemq.pool.size = 1
-plugin.activemq.pool.1.host = broker.example.com
-plugin.activemq.pool.1.port = 61613
-plugin.activemq.pool.1.user = mcollective
-plugin.activemq.pool.1.password = marionette
-
-plugin.activemq.stomp_1_0_fallback = 0
-plugin.activemq.heartbeat_interval = 30
-plugin.activemq.max_hbread_fails = 2
-plugin.activemq.max_hbrlck_fails = 2
-EOF</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">RHEL</div>
 <div class="content">
 <pre>cat &lt;&lt;EOF &gt; /opt/rh/ruby193/root/etc/mcollective/client.cfg
 main_collective = mcollective
@@ -2362,7 +2182,6 @@ EOF</pre>
 <p>In order for users to interact with the OpenShift Origin platform, they will typically use client tools or the web console. These tools communicate with the broker via a REST API that is also accessible for writing third party applications and tools. In order to use the broker application, we need to install several packages from the OpenShift Origin repository.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>yum install -y openshift-origin-broker openshift-origin-broker-util \
               rubygem-openshift-origin-auth-remote-user \
@@ -2372,19 +2191,6 @@ EOF</pre>
               rubygem-openshift-origin-dns-nsupdate \
               rubygem-openshift-origin-dns-route53 \
               ruby193-rubygem-passenger ruby193-mod_passenger</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>yum install -y openshift-origin-broker openshift-origin-broker-util \
-              rubygem-openshift-origin-auth-remote-user \
-              rubygem-openshift-origin-auth-mongo \
-              rubygem-openshift-origin-msg-broker-mcollective \
-              rubygem-openshift-origin-dns-avahi \
-              rubygem-openshift-origin-dns-nsupdate \
-              rubygem-openshift-origin-dns-route53 \
-              rubygem-passenger mod_passenger</pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2406,17 +2212,9 @@ Depending on your connection and speed of your broker host, this installation ma
 <p>The broker application requires a number of services to be running in order to function properly. Configure them to start at boot time:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig network on
 chkconfig sshd on</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable network.service
-systemctl enable sshd.service</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2583,12 +2381,30 @@ restorecon -v '/var/log/openshift/broker/user_action.log'</pre>
 <div class="sect3">
 <h4 id="gear-sizes"><a class="anchor" href="#gear-sizes"></a>6.5.1. Gear Sizes</h4>
 <div class="paragraph">
-<p>The OpenShift Origin broker uses a configuration file to define several of the attributes for controlling how the platform as a service works. This configuration file is located at <em>/etc/openshift/broker.conf</em>. For instance, the valid gear types that a user can create are defined using the <em>VALID_GEAR_SIZES</em> variable.</p>
+<p>The OpenShift Origin broker uses a configuration file to define several of the attributes for controlling how the platform as a service works. This configuration file is located at <em>/etc/openshift/broker.conf</em>. For instance, the complete set of valid gear types that a user can create are defined using the <em>VALID_GEAR_SIZES</em> variable.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre># Comma separated list of valid gear sizes
-VALID_GEAR_SIZES="small,medium"</pre>
+VALID_GEAR_SIZES="small,medium,large"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The related <em>DEAFULT_GEAR_CAPABILITIES</em> variable dictates which of these is available to a user when the user is created:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># Default gear sizes (comma-separated) allowed to a new user
+DEFAULT_GEAR_CAPABILITIES="small,medium"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And finally the <em>DEFAULT_GEAR_SIZE</em> variable determins which size gear a new application will get by default:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># Default gear size for a new gear
+DEFAULT_GEAR_SIZE="small"</pre>
 </div>
 </div>
 </div>
@@ -2773,19 +2589,8 @@ files.</p>
 <div class="listingblock">
 <div class="content">
 <pre>cp openshift-origin-auth-remote-user.conf.example openshift-origin-auth-remote-user.conf
-cp openshift-origin-msg-broker-mcollective.conf.example openshift-origin-msg-broker-mcollective.conf</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora 19</div>
-<div class="content">
-<pre>sed -i 's/MCOLLECTIVE_CONFIG.*/MCOLLECTIVE_CONFIG=\/etc\/mcollective\/client.cfg/g' /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">RHEL6</div>
-<div class="content">
-<pre>sed -i 's/MCOLLECTIVE_CONFIG.*/MCOLLECTIVE_CONFIG=\/opt\/rh\/ruby193\/root\/etc\/mcollective\/client.cfg/g' /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf</pre>
+cp openshift-origin-msg-broker-mcollective.conf.example openshift-origin-msg-broker-mcollective.conf
+sed -i 's/MCOLLECTIVE_CONFIG.*/MCOLLECTIVE_CONFIG=\/opt\/rh\/ruby193\/root\/etc\/mcollective\/client.cfg/g' /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2795,7 +2600,7 @@ cp openshift-origin-msg-broker-mcollective.conf.example openshift-origin-msg-bro
 <div class="sect2">
 <h3 id="configure-the-dns-plugin"><a class="anchor" href="#configure-the-dns-plugin"></a>7.2. Configure the DNS plugin</h3>
 <div class="paragraph">
-<p>If you installed a DNS server on the same host as the broker by following the instructions at TK, you can create a DNS configuration file using the <code>cat</code> command instead of starting with the example DNS configuration file. You can do that by taking advantage of the $domain and $keyfile environment variables that you created during that process. If you no longer have these variables set, you can recreate them with the following commands:</p>
+<p>If you installed a DNS server on the same host as the broker, you can create a DNS configuration file using the <code>cat</code> command instead of starting with the example DNS configuration file. You can do that by taking advantage of the <code>$domain</code> and <code>$keyfile</code> environment variables that you created during that process. If you no longer have these variables set, you can recreate them with the following commands:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2914,14 +2719,14 @@ BIND_ZONE="example.com"</pre>
 <pre>htpasswd -c /etc/openshift/htpasswd demo</pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="icon-note" title="Note"></i>
+<i class="icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-The -c option to htpasswd creates a new file, overwriting any existing htpasswd file. If your intention is to add a new user to an existing htpasswd file, simply drop the -c option.
+The -c option to htpasswd creates a new file, overwriting any existing htpasswd file. If your intention is to add a new user to an existing htpasswd file, drop the -c option.
 </td>
 </tr>
 </table>
@@ -3010,76 +2815,26 @@ where the broker application is listening behind the host proxy.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="run-the-ruby-bundler"><a class="anchor" href="#run-the-ruby-bundler"></a>7.5. Run the Ruby Bundler</h3>
-<div class="paragraph">
-<p>The broker Rails application depends on many gem files in order to operate correctly. You need to ensure that the Ruby bundler can find the appropriate gem files.</p>
-</div>
-<div class="paragraph">
-<div class="title">RHEL6</div>
-<p>This will happen automatically when the broker is started, so skip this section.
-Actually, doing this as root will keep the broker from properly regenerating the
-Gemfile.lock as needed.</p>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>cd /var/www/openshift/broker
-bundle --local</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This checks that the gem dependencies specified in the broker&#8217;s Gemfile are satisfied by the gems installed on the system and records the versions used in Gemfile.lock so that the same versions will be used reliably each time the broker is restarted.</p>
-</div>
-<div class="paragraph">
-<p>You should see a lot of information scroll by letting you know what gem files the system is actually using. The last line of output should be:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Whenever the versions of the gems installed change (either due to updated RPMs, or a new install from source) or the Gemfile is updated, you will need to remove the existing Gemfile.lock and run the commands above again.</p>
-</div>
-<div class="paragraph">
-<p>It is possible to have bundler resolve dependencies by installing gems downloaded from rubygems.org; however, this may have unpredictable results. We recommend using RPM-supplied gems unless you are developer and understand the consequences.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="set-services-to-start-on-boot"><a class="anchor" href="#set-services-to-start-on-boot"></a>7.6. Set Services to Start on Boot</h3>
+<h3 id="set-services-to-start-on-boot"><a class="anchor" href="#set-services-to-start-on-boot"></a>7.5. Set Services to Start on Boot</h3>
 <div class="paragraph">
 <p>The last step in configuring our broker application is to ensure that all of the necessary services are started and that they are configured to start upon system boot.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig openshift-broker on</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable openshift-broker.service</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>This will ensure that the broker starts upon next system boot. However, you also need to start the broker application to run now.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>service openshift-broker start</pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl start openshift-broker.service</pre>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="verify-the-broker-rest-api"><a class="anchor" href="#verify-the-broker-rest-api"></a>7.7. Verify the Broker REST API</h3>
+<h3 id="verify-the-broker-rest-api"><a class="anchor" href="#verify-the-broker-rest-api"></a>7.6. Verify the Broker REST API</h3>
 <div class="paragraph">
 <p>In order to verify that the REST API is functioning for the broker host, you can use the following <em>curl</em> command:</p>
 </div>
@@ -3226,22 +2981,14 @@ bundle --local</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="start-apache"><a class="anchor" href="#start-apache"></a>7.8. Start apache</h3>
+<h3 id="start-apache"><a class="anchor" href="#start-apache"></a>7.7. Start apache</h3>
 <div class="paragraph">
 <p>Start the apache server on the node to proxy web traffic to the broker.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL</div>
 <div class="content">
 <pre>chkconfig httpd on
 service httpd start</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable httpd.service
-systemctl start httpd.service</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3534,17 +3281,9 @@ restorecon -R /var/www/openshift/console</pre>
 <p>Start the service and ensure it starts on boot:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig openshift-console on
 service openshift-console start</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable openshift-console.service
-systemctl start openshift-console.service</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3766,6 +3505,9 @@ You can skip this section if you are build a all-in-one environment.
 <div class="sect2">
 <h3 id="configure-the-dhcp-client-and-hostname"><a class="anchor" href="#configure-the-dhcp-client-and-hostname"></a>9.4. Configure the DHCP Client and Hostname</h3>
 <div class="paragraph">
+<p><strong>You can skip this section if you are building an all-in-one environment.</strong></p>
+</div>
+<div class="paragraph">
 <p>On the node host, configure your system settings to prepend the DNS server to the resolv.conf file on system
 boot. This will allow the node host to resolve references to broker.example.com to ensure that all pieces of OpenShift Origin can communicate with one another. This process is similar to setting up the <em>dhclient-eth0.conf</em> configuration file for the broker application.</p>
 </div>
@@ -3776,19 +3518,7 @@ boot. This will allow the node host to resolve references to broker.example.com 
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-You can skip this section if you are build a all-in-one environment.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="icon-note" title="Note"></i>
-</td>
-<td class="content">
-This step assumes that your node host is using the eth0 device for network connectivity. If that is not the case, replace eth0 with the correct Ethernet device for your host.
+This step assumes that your node host is using the <strong>eth0</strong> device for network connectivity. If that is not the case, replace eth0 with the correct Ethernet device for your host.
 </td>
 </tr>
 </table>
@@ -3815,27 +3545,12 @@ DNS1=10.4.59.x</pre>
 <div class="paragraph">
 <p>Now set the hostname for node host to correctly reflect node.example.com.</p>
 </div>
-<div class="exampleblock">
-<div class="title">Example 3. RHEL6</div>
-<div class="content">
 <div class="paragraph">
 <p>Edit the <em>/etc/sysconfig/network</em> file and change the <em>HOSTNAME</em> entry to the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>HOSTNAME=node.example.com</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="exampleblock">
-<div class="title">Example 4. Fedora</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre># echo "node.example.com" &gt; /etc/hostname</pre>
-</div>
-</div>
 </div>
 </div>
 <div class="paragraph">
@@ -3919,45 +3634,9 @@ Depending on your connection and speed of your broker host, this installation ma
 <div class="sect2">
 <h3 id="configure-mcollective"><a class="anchor" href="#configure-mcollective"></a>9.6. Configure MCollective</h3>
 <div class="paragraph">
-<p>Configure the MCollective client to communicate with the broker application service. In order to accomplish this, replace the contents of the MCollective server.cfg configuration file to point to your correct stomp host. Edit the <em>/etc/mcollective/server.cfg</em> file and add the following information. If you used a different hostname for your broker application host, ensure that you provide the correct stomp host. You also need to ensure that you use the same username and password that you specified in your ActiveMQ configuration.</p>
+<p>Configure the MCollective client to communicate with the broker application service. In order to accomplish this, replace the contents of the MCollective server.cfg configuration file to point to your correct stomp host. Edit the <em>/opt/rh/ruby193/root/etc/mcollective/client.cfg</em> file and add the following information. If you used a different hostname for your broker application host, ensure that you provide the correct stomp host. You also need to ensure that you use the same username and password that you specified in your ActiveMQ configuration.</p>
 </div>
 <div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>cat &lt;&lt;EOF &gt;/etc/mcollective/server.cfg
-main_collective = mcollective
-collectives = mcollective
-libdir = /usr/libexec/mcollective
-logfile = /var/log/openshift/node/mcollective.log
-loglevel = debug
-daemonize = 0
-direct_addressing = 0
-registerinterval = 30
-
-# Plugins
-securityprovider = psk
-plugin.psk = unset
-
-connector = activemq
-plugin.activemq.pool.size = 1
-plugin.activemq.pool.1.host = broker.example.com
-plugin.activemq.pool.1.port = 61613
-plugin.activemq.pool.1.user = mcollective
-plugin.activemq.pool.1.password = marionette
-
-plugin.activemq.stomp_1_0_fallback = 0
-plugin.activemq.heartbeat_interval = 30
-plugin.activemq.max_hbread_fails = 2
-plugin.activemq.max_hbrlck_fails = 2
-
-# Facts
-factsource = yaml
-plugin.yaml = /etc/mcollective/facts.yaml
-EOF</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>cat &lt;&lt;EOF &gt; /opt/rh/ruby193/root/etc/mcollective/client.cfg
 main_collective = mcollective
@@ -3995,69 +3674,20 @@ EOF</pre>
 <p>Update the <em>plugin.activemq.pool.1.password</em> password to match what you set up in the active configuration.</p>
 </div>
 <div class="paragraph">
-<p>On Fedora 19, Update the systemd service file to manage only the mcollective process. This prevents gears spawned from the process from being shut down if you have to restart mcollective.
-Update the mcollective service file:</p>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>cat &lt;&lt;EOF &gt; /usr/lib/systemd/system/mcollective.service
-[Unit]
-Description=The Marionette Collective
-After=network.target
-
-[Service]
-Type=simple
-StandardOutput=syslog
-StandardError=syslog
-ExecStart=/usr/sbin/mcollectived --config=/etc/mcollective/server.cfg --pidfile=/var/run/mcollective.pid
-ExecReload=/bin/kill -USR1 $MAINPID
-PIDFile=/var/run/mcollective.pid
-KillMode=process
-
-[Install]
-WantedBy=multi-user.target
-EOF</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Reload the Systemd service files:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>systemctl --system daemon-reload</pre>
-</div>
-</div>
-<div class="paragraph">
 <p>Now ensure that MCollective is set to start on boot and also start the service for our current session.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig ruby193-mcollective on
 service ruby193-mcollective start</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable mcollective.service
-systemctl start mcollective.service</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>At this point, MCollective on the node host should be able to communicate with the broker application host. You can verify this by running the <em>mco ping</em> command on the broker.example.com host.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>oo-mco ping</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>mco ping</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4198,19 +3828,6 @@ Depending on your connection and speed of your broker host, this installation ma
 <pre>echo "ServerName node.example.com" &gt; /etc/httpd/conf.d/000001_openshift_origin_node_servername.conf</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Allow access to cartridge information on Fedora systems</p>
-</div>
-<div class="listingblock">
-<div class="title">Fedora-19 only</div>
-<div class="content">
-<pre>cat &lt;&lt; EOF &gt; /etc/httpd/conf.d/cartridge_files.conf
-&lt;Directory /usr/libexec/openshift/cartridges/*/info/configuration &gt;
-    Require all granted
-&lt;/Directory&gt;
-EOF</pre>
-</div>
-</div>
 </div>
 <div class="sect4">
 <h5 id="apache-mod-rewrite-plugin"><a class="anchor" href="#apache-mod-rewrite-plugin"></a>apache-mod-rewrite Plugin</h5>
@@ -4219,11 +3836,11 @@ EOF</pre>
 <pre>yum install -y rubygem-openshift-origin-frontend-apache-mod-rewrite</pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="icon-note" title="Note"></i>
+<i class="icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 This plugin conflicts with the apache-vhost plugin.
@@ -4273,11 +3890,11 @@ Skip this section if you are setting up broker and node on separate machines.
 <pre>yum install -y rubygem-openshift-origin-frontend-apache-vhost</pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="icon-note" title="Note"></i>
+<i class="icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 This plugin conflicts with the apache-mod-rewrite plugin.
@@ -4297,14 +3914,6 @@ This plugin conflicts with the apache-mod-rewrite plugin.
 <p>Start the node-proxy service</p>
 </div>
 <div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable openshift-node-web-proxy.service
-systemctl start openshift-node-web-proxy.service</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig openshift-node-web-proxy on
 service openshift-node-web-proxy start</pre>
@@ -4314,17 +3923,6 @@ service openshift-node-web-proxy start</pre>
 <div class="sect3">
 <h4 id="setup-firewall-rules-for-gear-port-proxy"><a class="anchor" href="#setup-firewall-rules-for-gear-port-proxy"></a>9.7.5. Setup firewall rules for gear port proxy</h4>
 <div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>iptables -N rhc-app-comm
-iptables -I INPUT 4 -m tcp -p tcp --dport 35531:65535 -m state --state NEW -j ACCEPT
-iptables -I INPUT 5 -j rhc-app-comm
-iptables -I OUTPUT 1 -j rhc-app-comm
-/usr/libexec/iptables/iptables.init save</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>iptables -N rhc-app-comm
 iptables -I INPUT 4 -m tcp -p tcp --dport 35531:65535 -m state --state NEW -j ACCEPT
@@ -4396,10 +3994,7 @@ openshift-origin-cartridge-php cartridges.</p>
 <p>openshift-origin-cartridge-postgresql: Provides embedded PostgreSQL support</p>
 </li>
 <li>
-<p>openshift-origin-cartridge-mariadb: Provides embedded MariaDB support (Fedora 19 systems only)</p>
-</li>
-<li>
-<p>openshift-origin-cartridge-mysql: Provides embedded mysql support (RHEL systems only)</p>
+<p>openshift-origin-cartridge-mysql: Provides embedded mysql support</p>
 </li>
 <li>
 <p>openshift-origin-cartridge-phpmyadmin: phpMyAdmin support for OpenShift</p>
@@ -4407,13 +4002,13 @@ openshift-origin-cartridge-php cartridges.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The only required cartridge is the openshift-origin-cartridge-cron package.</p>
+<p>The only <em>required</em> cartridge is the openshift-origin-cartridge-cron package.</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="icon-note" title="Note"></i>
+<i class="icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 If you are installing a multi-node configuration, it is important to remember that each node host <em>must</em> have the same cartridges installed.
@@ -4448,7 +4043,7 @@ chkconfig jenkins off</pre>
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-The OpenShift Jenkins plugin currently requires jenkins-1.510. You may need to downgrade your jenkins installation for it to work. "yum downgrade -y jenkins-1.510"
+The OpenShift Jenkins plugin currently requires Jenkins version 1.6 or higher.
 </td>
 </tr>
 </table>
@@ -4457,13 +4052,6 @@ The OpenShift Jenkins plugin currently requires jenkins-1.510. You may need to d
 <p>As an example, this additional command will install the cartridges needed for scalable PHP applications that can connect to MySQL:</p>
 </div>
 <div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>yum install -y openshift-origin-cartridge-haproxy openshift-origin-cartridge-php openshift-origin-cartridge-mariadb</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">RHEL</div>
 <div class="content">
 <pre>yum install -y openshift-origin-cartridge-haproxy openshift-origin-cartridge-php openshift-origin-cartridge-mysql</pre>
 </div>
@@ -4487,12 +4075,7 @@ OpenShift Origin cartridges.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Finally run the following to install the cartridges</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>/usr/sbin/oo-admin-cartridge --recursive -a install -s /usr/libexec/openshift/cartridges/</pre>
-</div>
+<p>In order to complete the process of registering cartridges, you will need to perform some post-install tasks. This is because the final step requires you to run a command from a running Broker to poll the running Nodes. More on that in the <a href="#post-install-tasks">Post-Install Tasks</a> section.</p>
 </div>
 </div>
 </div>
@@ -4502,7 +4085,6 @@ OpenShift Origin cartridges.</p>
 <p>The node host will need to allow HTTP, HTTPS, and SSH traffic to flow through the firewall. We also want to ensure that the httpd, network, and sshd services are set to start on boot.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>lokkit --service=ssh
 lokkit --service=https
@@ -4514,20 +4096,6 @@ chkconfig network on
 chkconfig sshd on
 chkconfig oddjobd on
 chkconfig openshift-node-web-proxy on</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>lokkit --service=ssh
-lokkit --service=https
-lokkit --service=http
-lokkit --port=8000:tcp
-lokkit --port=8443:tcp
-systemctl enable network.service
-systemctl enable sshd.service
-systemctl enable oddjobd.service
-systemctl enable openshift-node-web-proxy.service</pre>
 </div>
 </div>
 </div>
@@ -4681,21 +4249,11 @@ EOF</pre>
 <p>Cgroups enable you to allocate resources—such as CPU time, system memory, network bandwidth, or combinations of these resources—among user-defined groups of tasks (processes) running on a system. You can monitor the cgroups you configure, deny cgroups access to certain resources, and even reconfigure your cgroups dynamically on a running system.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig cgconfig on
 chkconfig cgred on
 service cgconfig restart
 service cgred restart</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable cgconfig.service
-systemctl enable cgred.service
-systemctl start cgconfig.service
-systemctl start cgred.service</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4711,30 +4269,16 @@ systemctl start cgred.service</pre>
 <p>In order to enable <em>usrqouta</em> on the filesystem, you will need to add the <em>usrquota</em> option in the <em>/etc/fstab</em> for the mount of /var/lib/openshift. In this chapter, the /var/lib/openshift directory is mounted as part of the root filesystem. The corresponding line in the /etc/fstab file looks like</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL</div>
 <div class="content">
 <pre>/dev/mapper/VolGroup-lv_root /                       ext4    defaults        1 1</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>/dev/mapper/fedora-root /                       ext4    defaults        1 1</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>In order to add the usrquota option to this mount point, change the entry to the following:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL</div>
 <div class="content">
 <pre>/dev/mapper/VolGroup-lv_root /                       ext4    defaults,usrquota        1 1</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>/dev/mapper/fedora-root /                       ext4    defaults,usrquota        1 1</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4950,15 +4494,8 @@ EOF</pre>
 <p>Configure traffic control to measure and control the amount of outgoing and incoming traffic used by each gear:</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig openshift-tc on</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable openshift-tc.service</pre>
 </div>
 </div>
 <div class="sect3">
@@ -4967,34 +4504,18 @@ EOF</pre>
 <p>Multiple application gears can and will reside on the same node host. In order for these applications to receive HTTP requests to the node, you need to configure a proxy that will pass traffic to the gear application that is listening for connections on the loopback address. To do this, you need to open up a range of ports that the node can accept traffic on as well as ensure the port-proxy is started on boot.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>lokkit --port=35531-65535:tcp
 chkconfig openshift-port-proxy on
 service openshift-port-proxy start</pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>lokkit --port=35531-65535:tcp
-systemctl enable openshift-port-proxy.service
-systemctl restart  openshift-port-proxy.service</pre>
-</div>
-</div>
 <div class="paragraph">
 <p>If a node is restarted, you want to ensure that the gear applications are also restarted. OpenShift Origin provides a script to accomplish this task, but you need to configure the service to start on boot.</p>
 </div>
 <div class="listingblock">
-<div class="title">RHEL6</div>
 <div class="content">
 <pre>chkconfig openshift-gears on</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Fedora</div>
-<div class="content">
-<pre>systemctl enable openshift-gears.service</pre>
 </div>
 </div>
 </div>
@@ -5065,7 +4586,7 @@ EOF</pre>
 <h3 id="reboot-the-node-host"><a class="anchor" href="#reboot-the-node-host"></a>10.10. Reboot the Node Host</h3>
 <div class="paragraph">
 <p>In order to verify that all services were installed and configured correctly, restart the node to ensure that all
-services start on boot as described in this post.</p>
+services start on boot as described.</p>
 </div>
 </div>
 </div>
@@ -5135,7 +4656,61 @@ You can also just use the IP address of your broker node instead of using port f
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuring-local-machine-for-dns-resolution"><a class="anchor" href="#configuring-local-machine-for-dns-resolution"></a>12. Configuring local machine for DNS resolution</h2>
+<h2 id="post-install-tasks"><a class="anchor" href="#post-install-tasks"></a>12. Post-Install Tasks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you have a correctly configured installation, there are two important final steps to be done. These steps assume that your Broker and Node(s) are running and able to communicate with each other as described in this guide.</p>
+</div>
+<div class="sect2">
+<h3 id="add-nodes-to-districts"><a class="anchor" href="#add-nodes-to-districts"></a>12.1. Add Nodes to Districts</h3>
+<div class="paragraph">
+<p>As of OpenShift Origin v4, Nodes <em>must</em> belong to a district in order to work properly. Adding a Node to a district after the Node already has hosted apps running on it is very difficult, so this is a very important pre-deployment task. For a discussion of what districts are, refer to the <a href="http://openshift.github.io/documentation-latest/oo_administration_guide.html#the-purpose-of-districts">Administration Guide</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Define one or more districts</strong><br>
+From a Broker host, run the following command to define a new district:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ oo-admin-ctl-district -c create -n &lt;district_name&gt; -p &lt;district_gear_size&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Add one or more Nodes to the district(s)</strong><br>
+To perform a blank assignment of all Nodes to a district, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ oo-admin-ctl-district -c add-node -n &lt;district_name&gt; -a</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Otherwise add Nodes one at a time with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ oo-admin-ctl-district -c add-node -n &lt;district_name&gt; -i &lt;node_server_name&gt;</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="register-cartridges-with-the-broker"><a class="anchor" href="#register-cartridges-with-the-broker"></a>12.2. Register Cartridges with the Broker</h3>
+<div class="paragraph">
+<p>From a Broker host, run the following command to poll a Node for available cartridge information:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ oo-admin-ctl-cartridge -c import-node --activate</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will automatically register the cartridges with the Broker and make them available to users for new hosted applications.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuring-local-machine-for-dns-resolution"><a class="anchor" href="#configuring-local-machine-for-dns-resolution"></a>13. Configuring local machine for DNS resolution</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Server used:</strong></p>
@@ -5164,7 +4739,7 @@ You can also just use the IP address of your broker node instead of using port f
 <p>At this point, you should have a complete and correctly functioning OpenShift Origin installation. During the next portion of the training, we will be focussing on administration and usage of the OpenShift Origin PaaS. To make performing these tasks easier, it is suggested that you add the DNS server that we created in lab 2 to be the first nameserver that your local machine uses to resolve hostnames. The process for this varies depending on the operating system. This lab manual will cover the configuration for both the Linux and Mac operating systems. If you are using a Microsoft Windows operating system, consult the instructor for instructions on how to perform this lab.</p>
 </div>
 <div class="sect2">
-<h3 id="configure-example-com-resolution-for-linux"><a class="anchor" href="#configure-example-com-resolution-for-linux"></a>12.1. Configure example.com resolution for Linux</h3>
+<h3 id="configure-example-com-resolution-for-linux"><a class="anchor" href="#configure-example-com-resolution-for-linux"></a>13.1. Configure example.com resolution for Linux</h3>
 <div class="paragraph">
 <p>If you are using Linux, the process for updating your name server is straightforward. Simply edit the <em>/etc/resolv.conf</em> configuration file and add the IP address of your broker node as the first entry. For
 example, add the following at the top of the file, replacing the 10.4.59.x IP address with the correct address of your broker node:</p>
@@ -5185,7 +4760,7 @@ $ ping node.example.com</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="configure-example-com-resolution-for-os-x"><a class="anchor" href="#configure-example-com-resolution-for-os-x"></a>12.2. Configure example.com resolution for OS X</h3>
+<h3 id="configure-example-com-resolution-for-os-x"><a class="anchor" href="#configure-example-com-resolution-for-os-x"></a>13.2. Configure example.com resolution for OS X</h3>
 <div class="paragraph">
 <p>If you are using OSX, you will notice that the operating has a <em>/etc/resolv.conf</em> configuration file. However, the operating system does not respect this file and requires users to edit the DNS servers via the <em>System Preferences</em> tool.</p>
 </div>
@@ -5248,11 +4823,17 @@ $ ping node.example.com</pre>
 </div>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="appendix-high-availability-deployments"><a class="anchor" href="#appendix-high-availability-deployments"></a>14. Appendix: High Availability Deployments</h2>
+<div class="sectionbody">
+
+</div>
 </div></div>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-15 13:40:48 EDT
+Last updated 2014-07-16 00:11:42 EDT
 </div>
 <!-- Google Analytics -->
 <script>
