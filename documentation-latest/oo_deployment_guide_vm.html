@@ -680,6 +680,7 @@ code { font-family: source_code_pro; }
 <li><a href="#add-bridged-networking">4.2.4. Add Bridged Networking</a></li>
 </ul>
 </li>
+<li><a href="#vmware">4.3. VMWare</a></li>
 </ul>
 </li>
 <li><a href="#accessing-the-virtual-machine">5. Accessing the Virtual Machine</a></li>
@@ -700,11 +701,9 @@ code { font-family: source_code_pro; }
 <p>This document describes the process of setting up a VM running an
 OpenShift development environment inside VirtualBox.</p>
 </div>
+<h3 id="prerequisites" class="float">Prerequisites</h3>
 <div class="paragraph">
-<p>You need to have a virtualization application such as KVM, or VirtuaBox installed on your
-workstation and you will need at least 25GB of free disk space. The compressed download is
-about 1.3GB and when you unpack it the resulting image file is almost 4GB vmdk file or 20 GB
-uncompressed RAW disk file (Linux only).</p>
+<p>You need to have a virtualization application such as KVM, or VirtuaBox installed on your workstation and you will need at least 25GB of free disk space. The compressed download is about 1.3GB and when you unpack it the resulting image file is almost 4GB vmdk file or 20 GB uncompressed RAW disk file (Linux only).</p>
 </div>
 </div>
 </div>
@@ -716,7 +715,7 @@ uncompressed RAW disk file (Linux only).</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ wget https://mirror.openshift.com/pub/origin-server/release/3/images/openshift-origin.zip</pre>
+<pre>$ wget https://mirror.openshift.com/pub/origin-server/release/4/images/openshift-origin.tgz</pre>
 </div>
 </div>
 </div>
@@ -725,25 +724,20 @@ uncompressed RAW disk file (Linux only).</p>
 <h2 id="unpack-vm-files"><a class="anchor" href="#unpack-vm-files"></a>2. Unpack VM files</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The download package is a ZIP archive. Unpack it with `unzip`or your system&#8217;s archive utility.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>$ unzip openshift-origin.zip</pre>
-</div>
+<p>The download package is a compressed tar archive. Unpack it with <code>tar xzf openshift-origin.tgz</code> or your system&#8217;s archive utility. This can take a while, as the files being uncompressed are pretty large.</p>
 </div>
 <div class="paragraph">
-<p>This can take quite a while.  The files being uncompressed are pretty
-large. The result will be the creation of four additional files:</p>
+<p>Once unpacked, you will find an "OpenShift Origin v4" directory with these contents:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ ls -1t
-openshift-origin.tbz2
-openshift-origin.ovf
-openshift-origin.tdl
-openshift-origin.vmdk
-openshift-origin.vmx</pre>
+<pre>$ ls -1t OpenShift\ Origin\ v4/
+OpenShift Origin v4.vbox
+origin-vm.vmdk
+OpenShift Origin v4.vmx
+OpenShift Origin v4.nvram
+OpenShift Origin v4.vmsd
+OpenShift Origin v4.vmxf</pre>
 </div>
 </div>
 </div>
@@ -752,9 +746,8 @@ openshift-origin.vmx</pre>
 <h2 id="configure-mdns"><a class="anchor" href="#configure-mdns"></a>3. Configure mDNS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The VM image is configured to use <a href="http://en.wikipedia.org/wiki/MDNS">mDNS</a> to provide DNS name resolution so that
-your browser and RHC client can resolve the URL of the broker and applications running on the VM. mDNS services are built-in
-on MacOSX (bonjour) and Windows (zeroconf) system, but require a few addition steps on Fedora 19 or other linux based systems.</p>
+<p>The VM image is configured to use <a href="http://en.wikipedia.org/wiki/MDNS">mDNS</a> to provide DNS name resolution so that your browser and RHC client can resolve the URL of the broker and applications running on the VM. mDNS services are built-in
+on MacOSX (bonjour) and Windows (zeroconf) system, but require a few addition steps on Fedora and other Linux-based systems.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -767,7 +760,7 @@ on MacOSX (bonjour) and Windows (zeroconf) system, but require a few addition st
 </div>
 </li>
 <li>
-<p>Edit your <em>/etc/nsswitch.conf</em> file. Search for a list beginning with <strong>"hosts:"</strong> and add <strong>mdns4</strong> to the end of the line.
+<p>Edit your <code>/etc/nsswitch.conf</code> file. Search for a list beginning with <strong>"hosts:"</strong> and add <strong>mdns4</strong> to the end of the line.
 After the edit, it should look like:</p>
 <div class="listingblock">
 <div class="content">
@@ -933,8 +926,13 @@ This step may take a while depending on the speed of your internet connection.
 <div class="sect2">
 <h3 id="virtualbox"><a class="anchor" href="#virtualbox"></a>4.2. VirtualBox</h3>
 <div class="paragraph">
-<p>VirtualBox is a process based virtual machine system.</p>
+<p>If Virtualbox is installed on your system, you should be able to click on the <code>Openshift Origin v4.vbox</code> file from a window manager to automatically register the VM and launch it.</p>
 </div>
+<div class="paragraph">
+<p>If this doesn&#8217;t work, or if you would like to modify the VM configuration, read on.</p>
+</div>
+<div class="sect3">
+<h4 id="create-new-vm-2"><a class="anchor" href="#create-new-vm-2"></a>4.2.1. Create New VM</h4>
 <div class="paragraph">
 <p>You can start VirtualBox either by clicking on the desktop item in the
 startup menus or from the command line:</p>
@@ -944,8 +942,6 @@ startup menus or from the command line:</p>
 <pre>$ virtualbox &amp;</pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="create-new-vm-2"><a class="anchor" href="#create-new-vm-2"></a>4.2.1. Create New VM</h4>
 <div class="paragraph">
 <p>When you start VirtualBox and you should see the welcome page. Click
 the New button in the upper left to begin the process of creating
@@ -1079,6 +1075,12 @@ show me again" box when you do.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="vmware"><a class="anchor" href="#vmware"></a>4.3. VMWare</h3>
+<div class="paragraph">
+<p>Provided with the VM is a file called <code>OpenShift Origin 4.vmx</code>. If VMWare is installed on your system, you should be able to double-click this vbox file from within a file manager and VMWare will automatically register the VM for you.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1196,7 +1198,7 @@ applications that are created within the OpenShift service.</p>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-18 00:11:33 EDT
+Last updated 2014-07-19 00:11:34 EDT
 </div>
 <!-- Google Analytics -->
 <script>
