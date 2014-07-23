@@ -773,7 +773,7 @@ Epic:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>a public web endpoint identified by a domain name and an optional set of SSL certificates that enables custom SSL security</p>
+<p>a public web endpoint identified by a project name and an optional set of SSL certificates that enables custom SSL security</p>
 </li>
 </ul>
 </div>
@@ -823,7 +823,7 @@ Epic:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>0..N domains</p>
+<p>0..N projects</p>
 <div class="ulist">
 <ul>
 <li>
@@ -866,25 +866,17 @@ Epic:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>an image may have extended metadata that defines how it can be used</p>
+<p>an image may have extended metadata beyond that specified in the Dockerfile/registry</p>
 <div class="ulist">
 <ul>
 <li>
-<p>how many instances of the image are required,</p>
-<div class="ulist">
-<ul>
+<p>how many instances of the image are required for normal function (1, 1..N)</p>
+</li>
 <li>
-<p>the environment variables it exposes</p>
-<div class="ulist">
-<ul>
+<p>the environment variables it exposes that must be generated or specified (beyond the defaults in the Dockerfile itself)</p>
+</li>
 <li>
 <p>additional port metadata describing what type of network services are exposed</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
 </li>
 </ul>
 </div>
@@ -899,7 +891,10 @@ Epic:</p>
 <p>image metadata may change over successive versions of an image - multiple images may share the same metadata</p>
 </li>
 <li>
-<p>any image can be executed (which runs its default command/entrypoint), but different images may have different roles and thus not be suitable for execution as a service component</p>
+<p>any image can be executed (which runs its default command/entrypoint), but different images may have different roles and thus not be suitable for execution as a network service</p>
+</li>
+<li>
+<p>An example is an image that contains scripts for backing up a database - the image might be used by a service like cron to periodically execute tasks against a remote DB, but the image itself is not useful for hosting the DB</p>
 </li>
 <li>
 <p>images are protected by reference - if you have access to a resource that refers to an image, you can view that image</p>
@@ -910,15 +905,15 @@ Epic:</p>
 <p>For more details about images and exposing software as components within in OpenShift, <a href="https://github.com/openshift/openshift-pep/blob/master/openshift-pep-010-docker-cartridges.md">see the Docker cartridge PEP</a>.</p>
 </div>
 <div class="paragraph">
-<p><strong>Docker Image Repository</strong> / <strong>Image Stream</strong></p>
+<p><strong>Image Repository</strong></p>
 </div>
 <div class="paragraph">
-<p>A set of images with a given name - roughly corresponds to a Docker repository (a set of images where a single tag represents the latest image that people pull by default) and has a 0..1 <strong>active images</strong> (which correspond to the :latest tag)</p>
+<p>A set of images with a given name corresponding to a Docker repository in a registry (a set of images where a single tag represents the latest image that people pull by default). A repository has 1..N tags - the implicit "latest" tag refers to the image that would be retrieved / used if the user did not specify a tag</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>an image stream has a set of default metadata which is applied to every image created under that stream, which allows an operator to define an image stream and then push images to the stream and have that metadata set</p>
+<p>an image repository has a set of default metadata which is applied to every image created under that stream, which allows an operator to define an image repository and then push images to the stream and have that metadata set</p>
 </li>
 <li>
 <p>Use case: allows operators to provide security updates to end users - allows end users to rely on a continuously maintained piece of software</p>
@@ -927,13 +922,13 @@ Epic:</p>
 <p>Use case: allow developers and operators to share a set of images across multiple applications and environments</p>
 </li>
 <li>
-<p>An image stream would expose a webhook that allows a consumer to register a new image, as well as integrating into a Docker registry so that a docker push to a certain repository (probably uniquely identified by name and a short id) would add that image</p>
-</li>
-<li>
-<p>Image streams are <em>owned</em> by a domain or are public, and an administrator of that domain can grant view access to that stream to other domains. Anyone who can view an image stream can use it. If access is revoked, any builds or services that reference that stream can still use it.</p>
+<p>An image repository would expose a webhook that allows a consumer to register a new image, as well as integrating into a Docker registry so that a docker push to a certain repository (probably uniquely identified by name and a short id) would add that image * Image streams are <em>owned</em> by a project or are public, and an administrator of that project can grant view access to that stream to other projects. Anyone who can view an image repository can use it. If access is revoked, any builds or services that reference that stream can still use it.</p>
 </li>
 <li>
 <p>Retention of images is controlled by reference - deployed services, service deployment history, and recent builds all take strong references on individual images in a stream and control when images pass out of scope.</p>
+</li>
+<li>
+<p>Image repositories may be global in scope to a deployment as well as per project</p>
 </li>
 </ul>
 </div>
@@ -941,7 +936,7 @@ Epic:</p>
 <p><strong>Build</strong></p>
 </div>
 <div class="paragraph">
-<p>A build creates a docker image as output and places that image into a single image stream.</p>
+<p>A build creates a docker image as output and places that image into a single image repository.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -960,10 +955,13 @@ Epic:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>A source build is typically based on either an image, OR an image stream</p>
+<p>A source build is typically based on either an image, OR an image repository</p>
 </li>
 </ul>
 </div>
+</li>
+<li>
+<p>a build is owned by a project</p>
 </li>
 <li>
 <p>a <strong>build result</strong> is recorded whenever a build happens</p>
@@ -972,10 +970,23 @@ Epic:</p>
 <p>a build provides a webhook resource for remote servers to notify a build that an underlying image or repo or archive has changed (allows consumers to trigger builds)</p>
 </li>
 <li>
+<p>build results history may be removed when it reaches certain limits</p>
+</li>
+<li>
 <p>a build has configuration to control whether an automatic build occurs when an input changes</p>
 </li>
 <li>
 <p>a build exposes an endpoint that allows a consumer to POST an archive that results in a build</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Example: post a WAR file to a source-to-images build that results in that WAR being deployed</p>
+</li>
+<li>
+<p>Example: post a zip of the source contents of a Git repo to the build endpoint to result in a Docker image build using those contents as the Docker build context</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -999,7 +1010,7 @@ Epic:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>the repository will be secured with the keys and tokens of the owning domain</p>
+<p>the repository will be secured with the keys and tokens of the owning project</p>
 </li>
 <li>
 <p>a build will be defined using the "source to images flow" if the image(s) used by the service support STI</p>
@@ -1063,7 +1074,7 @@ Epic:</p>
 <p>An integrator should be able to easily notify OpenShift when the inputs to a build have changed (source code or base image) as well as notify OpenShift of the existence of a new image generated by an external build</p>
 </li>
 <li>
-<p>Workflows on top of images should be able to refer to an image stream instead of having to directly specify an image</p>
+<p>Workflows on top of images should be able to refer to an image repository instead of having to directly specify an image</p>
 </li>
 <li>
 <p>A system administrator can manage the total images in use across the system by setting retention policies on accounts</p>
@@ -1071,7 +1082,7 @@ Epic:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>In a 3.x system, an image stream is a reusable component across multiple services - builds generate images and place them into image streams, third parties can push new images into image streams via <code>docker push</code>, and developers can push source code to git repositories (internal or external) that trigger docker builds and source to image builds that then result in new images. Services deploy based on images, not on builds or source code, which means any image creation can be used as the input to a deployment.</p>
+<p>In a 3.x system, an image repository is a reusable component across multiple services - builds generate images and place them into image repositories, third parties can push new images into image repositories via <code>docker push</code>, and developers can push source code to git repositories (internal or external) that trigger docker builds and source to image builds that then result in new images. Services deploy based on images, not on builds or source code, which means any image creation can be used as the input to a deployment.</p>
 </div>
 <div class="paragraph">
 <p>Enabling integration:</p>
@@ -1082,10 +1093,10 @@ Epic:</p>
 <p>Images may be referenced externally (via their full name &lt;registry&gt;/&lt;user&gt;/&lt;repository&gt;) or pulled into the integrated OpenShift registry</p>
 </li>
 <li>
-<p>An image stream should support a direct <code>docker push</code> with access control from a Docker client to the integrated OpenShift registry <code>docker push my.openshift.server.com/&lt;some_generated_user_name&gt;/mysql-58343</code></p>
+<p>An image repository should support a direct <code>docker push</code> with access control from a Docker client to the integrated OpenShift registry <code>docker push my.openshift.server.com/&lt;some_generated_user_name&gt;/mysql-58343</code></p>
 </li>
 <li>
-<p>An image stream should have a webhook endpoint which allows a new image to be created when a 3rd party builds an external image (like the DockerHub)</p>
+<p>An image repository should have a webhook endpoint which allows a new image to be created when a 3rd party builds an external image (like the DockerHub)</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1096,6 +1107,94 @@ Epic:</p>
 </li>
 <li>
 <p>A build can be triggered by a DockerHub build webhook (for a base image) or a GitHub commit webhook (for an external source repo)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="multi-tenancy-and-isolation"><a class="anchor" href="#multi-tenancy-and-isolation"></a>Multi-tenancy and Isolation</h5>
+<div class="paragraph">
+<p>In OpenShift 2.x, the primary unit of access control was the domain, which has a membership list and each member is granted a specific role. Someone with access to a domain sees all of the resources belonging to the domain. The domain owner may allow a subset of their capabilities to be expressed within the domain in order to subdivide their resources across multiple subsets of users - for instance, by limiting the gear sizes or cartridges available to an end user.</p>
+</div>
+<div class="paragraph">
+<p>In 3.x this pattern will continue, but we will rename the domain to a <strong>project</strong> to more closely associate the concept with its true use.</p>
+</div>
+<div class="paragraph">
+<p><strong>Project</strong></p>
+</div>
+<div class="paragraph">
+<p>The project is the set of resources that a team of people with a joint objective can access - the role each person or machine has on the project also applies to each resource. in the project</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Should be used to subdivide visibility and control</p>
+</li>
+<li>
+<p>Should represent the fundamental units of the organization creating the software</p>
+</li>
+<li>
+<p>team A creates a web service that is used by team B, both teams have their own projects</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Account</strong></p>
+</div>
+<div class="paragraph">
+<p>An account owns a set of projects and, by extension, the resources within those projects. Accounts represent an entity like a person or business organization or company that is charged / granted access to a set of cluster resources.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In most deployments, each account corresponds to a single user.</p>
+</li>
+<li>
+<p>An account has an ownership relationship to zero or more projects</p>
+</li>
+<li>
+<p>The resources an account may use (its capabilities and limits) can be selectively divided among the projects it owns</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Identity</strong></p>
+</div>
+<div class="paragraph">
+<p>In a system with multiple login providers and ways of authenticating, an identity is the combination of a source of users and the unique user identifier within that source. As an example, a person may log in directly to a system and have an identity of "dc=example.com,cn=bob" in the company LDAP, but that person may also be <a href="mailto:bob534@example.com">bob534@example.com</a> in Facebook. Both identities point to the same account, but the identity (source of authentication) is kept for audit purposes.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An account always has 1..N identities</p>
+</li>
+<li>
+<p>Most systems will have a default identity</p>
+</li>
+<li>
+<p>All actions in the system should be associated with an identity and an account</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Machine Identity</strong></p>
+</div>
+<div class="paragraph">
+<p>It should be possible to grant access on APIs and resources of a project to an automated system without requiring the creation of a new user account. Each project should allow 0..N machine identities to be created which can have individual authorization tokens granting access to the project.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A machine identity may be created by the owner or administrator of a domain</p>
+</li>
+<li>
+<p>A machine identity may have 0..N authorization tokens</p>
+</li>
+<li>
+<p>A record of all machine identities and their authorization tokens and the creators of those identities and tokens should be stored for audit purposes</p>
+</li>
+<li>
+<p>Any API action taken by a machine identity should be identified as such</p>
 </li>
 </ul>
 </div>
@@ -1128,7 +1227,7 @@ Epic:</p>
 <p><strong>Pod</strong></p>
 </div>
 <div class="paragraph">
-<p>A definition of a set of containers that should be run on a host</p>
+<p>A set of related containers that should be run together on a host as a group. The primary motivation of a pod is to support co-located, co-managed helper programs.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1155,13 +1254,13 @@ Epic:</p>
 <p>All services have environment variables, aliases, an optional internal or external source code repository, a build flow (if they have a source code repository), and a set of deployments</p>
 </li>
 <li>
-<p>equivalent to one or more <strong>replication controllers</strong> as defined by Google&#8217;s Kubernetes project</p>
+<p>a service is a template for a sequence of <strong>deployments</strong> which create actual containers. The service has 0..N current deployments, but typically transitions from one deployment to another.</p>
 </li>
 <li>
 <p>a user may customize the ports exposed by an image in a service</p>
 </li>
 <li>
-<p>note: the term services currently overlaps with the Google service concept - there has been discussion about renaming that to "lbservices" because the service term is generic.</p>
+<p>note: the term services currently overlaps with the Google service concept - there has been discussion about renaming that to "lbservices" because the service term is generic. TBD</p>
 </li>
 </ul>
 </div>
@@ -1175,6 +1274,13 @@ Epic:</p>
 <ul>
 <li>
 <p>in a stateful service, a "move" operation is exposed for each pod that will relocate the pod onto another host while preserving the data of that pod</p>
+<div class="ulist">
+<ul>
+<li>
+<p>this operation is yet to be defined but would likely be a pod specific action</p>
+</li>
+</ul>
+</div>
 </li>
 <li>
 <p>stateful services may incur downtime when a host is rebooted or fails, but the system will be designed to minimize that downtime</p>
@@ -1204,13 +1310,16 @@ Epic:</p>
 <li>
 <p>If an image requires a variable be generated, but does not publish it (via a link), the variable is only defined on the pod template. A published variable is added to the service environment.</p>
 </li>
+<li>
+<p>Changing an environment variable may require a deployment (if only to update environment settings). It may be desirable to offer a faster change process.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
 <p><strong>Deployment</strong></p>
 </div>
 <div class="paragraph">
-<p>A historical or in-progress rolling update to a service that replaces one service configuration with another (primarily updating the image, but also changing ports, environment, or adding new images)</p>
+<p>A historical or in-progress rolling update to a service that replaces one service configuration with another (primarily updating the image, but also changing ports, environment, or adding new images). A deployment is a snapshot of the state of a service at a point in time, and as such records the history of the service.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1224,7 +1333,29 @@ Epic:</p>
 <p>Some deployments may fail because the ports the old image exposes differ from the ports the new image exposes</p>
 </li>
 <li>
+<p>A deployment in the model records the intent of what a deployment should be - a <strong>deployment job</strong> carries out the deployment and may be cancelled or stopped. There may be pods representing multiple deployments active in a service at any one time.</p>
+</li>
+<li>
 <p>A deployment retains a reference to an image - the retention policy of deployments controls which references are valid, and as long as an image is referenced it will not be deleted.</p>
+</li>
+<li>
+<p>A deployment does <em>not</em> control the the horizontal scale of a service, and during a deployment the number of pods created may exceed the current horizontal scale depending on the type of deployment requested.</p>
+</li>
+<li>
+<p>There are different deployment types:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>External - user defines the new deployment, and creates or manipulates the underlying replication controllers corresponding to the service to add or remove pods for old and new versions</p>
+</li>
+<li>
+<p>Simple rolling deploy - pods corresponding to the new template are created, added to the load balancer(s), and then the old pods are removed from the load balancer and then deleted</p>
+</li>
+<li>
+<p>TBD</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -1232,7 +1363,7 @@ Epic:</p>
 <p><strong>Link</strong></p>
 </div>
 <div class="paragraph">
-<p>A relationship between two services that defines an explicit connection, how that connection is exposed (environment, a proxy or load balancer), and potentially whether start order is significant.</p>
+<p>A relationship between two services that defines an explicit connection, how that connection is exposed environment, a proxy or load balancer), and potentially whether start order is significant.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1244,6 +1375,9 @@ Epic:</p>
 </li>
 <li>
 <p>A link represents an intent to connect two components of a system - the existing "add cartridge" action is roughly translated to "create a new service and link to the existing service with a set of defaults".</p>
+</li>
+<li>
+<p>A link as described is different than a Docker link, which links individual containers. Service links define how sets of Docker links may be created.</p>
 </li>
 </ul>
 </div>
@@ -1267,6 +1401,9 @@ Epic:</p>
 <li>
 <p>A template may be the target of the "create and link" action, which allows complex components to be templatized and reused. The template must identify the components that should be linked in this fashion.</p>
 </li>
+<li>
+<p>Templates may be global in scope to a deployment as well as per project</p>
+</li>
 </ul>
 </div>
 </div>
@@ -1279,7 +1416,7 @@ Epic:</p>
 <p><strong>Router</strong></p>
 </div>
 <div class="paragraph">
-<p>A load balancing proxy server associated with the system capable of handling traffic for many services and protocols at once</p>
+<p>A load balancing proxy server associated with the system capable ofhandling traffic for many services and protocols at once</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1317,6 +1454,9 @@ Epic:</p>
 <li>
 <p>An alias may be configured to map different ports exposed by the container instances in the service</p>
 </li>
+<li>
+<p>An alias has similarities to a Kubernetes service and are likely to be merged / altered</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -1328,7 +1468,7 @@ Epic:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>A job is executed as a run-once container (runs to completion and succeeds or fails) and is associated with the account, domain, build, or service that triggered it</p>
+<p>A job is executed as a run-once container (runs to completion and succeeds or fails) and is associated with the account, project, build, or service that triggered it</p>
 </li>
 <li>
 <p>Modelling jobs as container executions means that all framework actions are extensible and that resource limits can be applied to the execution of the task, and that the scheduler can prioritize framework actions according to available resources or prioritization</p>
@@ -1350,17 +1490,17 @@ Epic:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>0..N public image streams</p>
+<p>0..N public image repositories</p>
 </li>
 <li>
 <p>1 account</p>
 <div class="ulist">
 <ul>
 <li>
-<p>0..N domains * 0..N image streams * 0..X owned image streams * 0..Y shared image streams * 0..M references to images (images are one-to-many repositories)</p>
+<p>0..N projects * 0..N image repositories * 0..X owned image repositories * 0..Y shared image repositories * 0..M references to images (images are one-to-many repositories)</p>
 </li>
 <li>
-<p>0..N services * 1 active pod definition (1..M images) * references 1..M image streams or explicit images</p>
+<p>0..N services * 1 active pod definition (1..M images) * references 1..M image repositories or explicit images</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1408,7 +1548,7 @@ Epic:</p>
 <div class="sect4">
 <h5 id="api-and-images-purple"><a class="anchor" href="#api-and-images-purple"></a>API and Images (purple)</h5>
 <div class="paragraph">
-<p>Implements a high level API that allows end users and clients to offer an application centric view of the world, vs a container centric view. Performs domain validation on incoming requests and invokes/triggers the orchestrator and scheduler as necessary.</p>
+<p>Implements a high level API that allows end users and clients to offer an application centric view of the world, vs a container centric view. Performs project validation on incoming requests and invokes/triggers the orchestrator and scheduler as necessary.</p>
 </div>
 <div class="paragraph">
 <p>The API allocates source repositories via an API and configures them to bind to build hooks. The build hooks can trigger builds via the orchestrator onto hosts as containers, and then after completion push the new images into the registry and trigger other orchestrations like deployments.</p>
@@ -1602,7 +1742,7 @@ Epic:</p>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-22 00:11:34 EDT
+Last updated 2014-07-23 00:11:34 EDT
 </div>
 <!-- Google Analytics -->
 <script>
