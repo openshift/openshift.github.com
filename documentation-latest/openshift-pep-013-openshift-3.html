@@ -1117,13 +1117,13 @@ Epic:</p>
 <p>In OpenShift 2.x, the primary unit of access control was the domain, which has a membership list and each member is granted a specific role. Someone with access to a domain sees all of the resources belonging to the domain. The domain owner may allow a subset of their capabilities to be expressed within the domain in order to subdivide their resources across multiple subsets of users - for instance, by limiting the gear sizes or cartridges available to an end user.</p>
 </div>
 <div class="paragraph">
-<p>In 3.x this pattern will continue, but we will rename the domain to a <strong>project</strong> to more closely associate the concept with its true use.</p>
+<p>In 3.x this pattern will continue, but we will rename the domain to a <strong>project</strong> to more closely associate the concept with its common use.</p>
 </div>
 <div class="paragraph">
 <p><strong>Project</strong></p>
 </div>
 <div class="paragraph">
-<p>The project is the set of resources that a team of people with a joint objective can access - the role each person or machine has on the project also applies to each resource. in the project</p>
+<p>The project is the set of resources that a team of people with a joint objective can access - the role each person or machine has on the project applies to each resource in the project.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1191,12 +1191,46 @@ Epic:</p>
 <p>A machine identity may have 0..N authorization tokens</p>
 </li>
 <li>
+<p>A machine identity may have 0..N private SSL keys assigned to it with downloadable public keys</p>
+</li>
+<li>
 <p>A record of all machine identities and their authorization tokens and the creators of those identities and tokens should be stored for audit purposes</p>
 </li>
 <li>
 <p>Any API action taken by a machine identity should be identified as such</p>
 </li>
+<li>
+<p>When integrating with external source control solutions, the machine identity SSH private keys will be used to authenticate to the remote solutions over SSH. There may be a need to pick the appropriate keys offered.</p>
+</li>
 </ul>
+</div>
+<div class="paragraph">
+<p><strong>Roles</strong></p>
+</div>
+<div class="paragraph">
+<p>In general the OpenShift access control model focuses on roles rather than assigning individual permissions. It makes clients easier to build and is easier for users to reason about. To that extent, we expect to continue to offer the same generally increasing roles we have in 2.x, with the potential for more flexibility in customization.</p>
+</div>
+<div class="paragraph">
+<p>Defined roles:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>View - Can see everything except secure data, does not necessarily have SSH access</p>
+</li>
+<li>
+<p>Edit - Can create or delete services, but not modify resource limits or assign access control</p>
+</li>
+<li>
+<p>Admin - Can assign access control, and modify some resource limits</p>
+</li>
+<li>
+<p>Admin(owner) - Can modify all resource limits</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A long term objective is to ensure the owner role is decoupled from a single account, so that organizations are less vulnerable to a single person leaving. A new role may be created "owner" which allows other owners to be assigned and to set resource limits.</p>
 </div>
 </div>
 <div class="sect4">
@@ -1742,7 +1776,7 @@ Epic:</p>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-24 00:11:34 EDT
+Last updated 2014-07-25 00:11:33 EDT
 </div>
 <!-- Google Analytics -->
 <script>
