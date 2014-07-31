@@ -658,6 +658,7 @@ code { font-family: source_code_pro; }
 <ul class="sectlevel2">
 <li><a href="#installer-system-prerequisites">1.1. Installer System Prerequisites</a></li>
 <li><a href="#target-system-prerequisties">1.2. Target System Prerequisties</a></li>
+<li><a href="#working-with-proxies">1.3. Working With Proxies</a></li>
 </ul>
 </li>
 <li><a href="#running-the-installer">2. Running the Installer</a></li>
@@ -823,6 +824,68 @@ For the curious, OpenShift Origin uses a <a href="https://forge.puppetlabs.com/o
 <div class="paragraph">
 <p>If you are running the installer locally, but your OpenShift deployment will be installed on a remote system, you will need passwordless SSH access to your target host(s). "Passwordless" here means that either you are using an SSH key pair that was generated without a password, or that you are using a password manager like <a href="http://en.wikipedia.org/wiki/Ssh-agent">ssh-agent</a> to provide the password as necessary.</p>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="working-with-proxies"><a class="anchor" href="#working-with-proxies"></a>1.3. Working With Proxies</h3>
+<div class="paragraph">
+<p>During the installation process, oo-install will attempt to download the <code>openshift/openshift_origin</code> puppet module from <a href="https://forge.puppetlabs.com/openshift/openshift_origin">PuppetForge</a> and onto your target system(s). If your target system(s) must use a proxy server to reach PuppetForge, here are some target host configuration steps that may help you:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the proxy configuration to the file <code>/etc/yum.conf</code>:<br></p>
+<div class="listingblock">
+<div class="content">
+<pre>proxy=http://proxy.example.com:3128</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a file in <code>/etc/profile.d/proxy.sh</code> and add the information about your proxy server. This will cause any commands run from the target host command line to honor the proxy server:</p>
+<div class="listingblock">
+<div class="content">
+<pre>#!/bin/bash
+export http_proxy="http://proxy.example.com:3128"
+export https_proxy="http://proxy.example.com:3128"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also make sure that the file is executable:<br></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>chmod +x /etc/profile.d/proxy.sh</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now do a <code>yum update</code> to ensure that the yum proxy settings are working.</p>
+</li>
+<li>
+<p>Install puppet manually. Normally <code>oo-install</code> does this for you, but you will need to add some proxy info to the puppet configuration:<br></p>
+<div class="listingblock">
+<div class="content">
+<pre>$ rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
+$ yum install puppet</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Go to the file <code>/etc/puppet/puppet.conf</code> and add the lines as shown below:<br></p>
+<div class="listingblock">
+<div class="content">
+<pre>http_proxy_host=proxy.example.com
+http_proxy_port=3128
+https_proxy_host=proxy.example.com
+https_proxy_port=3128</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Repeat this for every target host that must use a proxy server. Now you should be able to run oo-install and your target host(s) will use your proxy server correctly.</p>
 </div>
 </div>
 </div>
@@ -1862,7 +1925,7 @@ Between you and us, we don&#8217;t know why you couldn&#8217;t just put the IP i
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-30 00:11:45 EDT
+Last updated 2014-07-31 00:11:46 EDT
 </div>
 <!-- Google Analytics -->
 <script>

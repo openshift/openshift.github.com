@@ -721,9 +721,8 @@ code { font-family: source_code_pro; }
 <li><a href="#install-the-web-console-rpms">8.1. Install the Web Console RPMs</a></li>
 <li><a href="#understand-and-change-the-console-configuration">8.2. Understand and Change the Console Configuration</a></li>
 <li><a href="#configure-authentication-for-the-console">8.3. Configure Authentication for the Console</a></li>
-<li><a href="#verify-the-ruby-bundler">8.4. Verify the Ruby Bundler</a></li>
-<li><a href="#configure-selinux-2">8.5. Configure SELinux</a></li>
-<li><a href="#set-console-to-start-on-boot">8.6. Set Console to Start on Boot</a></li>
+<li><a href="#configure-selinux-2">8.4. Configure SELinux</a></li>
+<li><a href="#set-console-to-start-on-boot">8.5. Set Console to Start on Boot</a></li>
 </ul>
 </li>
 <li><a href="#the-node-host">9. The Node Host</a></li>
@@ -1073,30 +1072,15 @@ yum install -y lokkit</pre>
 <div class="sect3">
 <h4 id="setting-up-the-ruby-environment-software-collections"><a class="anchor" href="#setting-up-the-ruby-environment-software-collections"></a>1.2.4. Setting up the Ruby Environment (Software Collections)</h4>
 <div class="paragraph">
-<p>In order to use Ruby 1.9.3, you will need to install and setup the <a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Developer_Toolset/1/html-single/Software_Collections_Guide/index.html">ruby193 SCL</a>. This will provide you with a ruby environment which we will use for the rest of the setup.</p>
+<p>OpenShift makes use of <a href="http://docs.fedoraproject.org/en-US/Fedora_Contributor_Documentation/1/html/Software_Collections_Guide/">Software Collections</a> (SCLs) to enable alternate versions of some software packages. The specific packages that OpenShift requires are already expressed as RPM dependencies, so it should not be necessary for you to explicitly install SCLs on your host.</p>
+</div>
+<div class="paragraph">
+<p>Additionally, most of the oo- utilities that are part of the OpenShift system use wrappers to invoke these collections without any additional effort on the part of the user. However, if you attempt to run any of the embedded ruby utilities directly (like for <code>rake</code> tasks), you will need to explicitly invoke the SCL environment:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>yum install -y ruby193
-
-cat &lt;&lt;'EOF' &gt; /etc/profile.d/scl193.sh
-# Setup PATH, LD_LIBRARY_PATH and MANPATH for ruby-1.9
-ruby19_dir=$(dirname `scl enable ruby193 "which ruby"`)
-export PATH=$ruby19_dir:$PATH
-
-ruby19_ld_libs=$(scl enable ruby193 "printenv LD_LIBRARY_PATH")
-export LD_LIBRARY_PATH=$ruby19_ld_libs:$LD_LIBRARY_PATH
-
-ruby19_manpath=$(scl enable ruby193 "printenv MANPATH")
-export MANPATH=$ruby19_manpath:$MANPATH
-EOF
-
-cp -f /etc/profile.d/scl193.sh /etc/sysconfig/mcollective
-chmod 0644 /etc/profile.d/scl193.sh /etc/sysconfig/mcollective</pre>
+<pre>scl enable ruby193 v8314 "&lt;your command here&gt;"</pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Log out and log back into the machine to pick up the new Ruby environment.</p>
 </div>
 </div>
 </div>
@@ -3163,29 +3147,7 @@ Check <em>/etc/httpd/conf.d/ssl.conf</em> and completely remove the configuratio
 </div>
 </div>
 <div class="sect2">
-<h3 id="verify-the-ruby-bundler"><a class="anchor" href="#verify-the-ruby-bundler"></a>8.4. Verify the Ruby Bundler</h3>
-<div class="paragraph">
-<p>The console Rails application depends on several gem files in order to operate correctly. You need to ensure that the Ruby bundler can find the appropriate gem files.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>cd /var/www/openshift/console
-bundle --local
-rake assets:precompile
-chown -R apache:apache Gemfile.lock tmp</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You should see a lot of information scroll by letting you know what gem files the system is actually using. The last line of output should be:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="configure-selinux-2"><a class="anchor" href="#configure-selinux-2"></a>8.5. Configure SELinux</h3>
+<h3 id="configure-selinux-2"><a class="anchor" href="#configure-selinux-2"></a>8.4. Configure SELinux</h3>
 <div class="paragraph">
 <p>SELinux has several variables that we want to ensure are set correctly. These variables include the following:</p>
 </div>
@@ -3283,7 +3245,7 @@ restorecon -R /var/www/openshift/console</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="set-console-to-start-on-boot"><a class="anchor" href="#set-console-to-start-on-boot"></a>8.6. Set Console to Start on Boot</h3>
+<h3 id="set-console-to-start-on-boot"><a class="anchor" href="#set-console-to-start-on-boot"></a>8.5. Set Console to Start on Boot</h3>
 <div class="paragraph">
 <p>Start the service and ensure it starts on boot:</p>
 </div>
@@ -4878,7 +4840,7 @@ MONGO_HOST_PORT="db1.domain.com:27017,db2.domain.com:27017,db3.domain.com:27017"
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-07-30 00:11:36 EDT
+Last updated 2014-07-31 00:11:36 EDT
 </div>
 <!-- Google Analytics -->
 <script>
