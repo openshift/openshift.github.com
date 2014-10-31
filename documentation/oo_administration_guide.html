@@ -678,10 +678,9 @@ code { font-family: source_code_pro; }
 <li>
 <ul class="sectlevel2">
 <li><a href="#list-available-cartridges">3.1. List Available Cartridges</a></li>
-<li><a href="#install-jboss-eap-and-jboss-ews-support">3.2. Install JBoss EAP and JBoss EWS Support</a></li>
-<li><a href="#clear-the-broker-application-cache">3.3. Clear the Broker Application Cache</a></li>
-<li><a href="#test-the-new-cartridges">3.4. Test the New Cartridges</a></li>
-<li><a href="#install-the-postgresql-and-diy-cartridges">3.5. Install the PostgreSQL and DIY Cartridges</a></li>
+<li><a href="#register-the-new-cartridges">3.2. Register the New Cartridges</a></li>
+<li><a href="#test-the-new-cartridges">3.3. Test the New Cartridges</a></li>
+<li><a href="#install-the-postgresql-and-diy-cartridges">3.4. Install the PostgreSQL and DIY Cartridges</a></li>
 </ul>
 </li>
 <li><a href="#admin-console">4. Using the Administrative Console</a></li>
@@ -1423,10 +1422,10 @@ the broker:</p>
 <p>openshift-origin-cartridge-haproxy.noarch : Provides embedded haproxy-1.4 support</p>
 </li>
 <li>
-<p>openshift-origin-cartridge-jbosseap.noarch : Provides JBossEAP6.0 support</p>
+<p>openshift-origin-cartridge-jbossas : Provides JBossAS functionality, but see the note on JBoss below</p>
 </li>
 <li>
-<p>openshift-origin-cartridge-jbossews.noarch : Provides JBossEWS1.0 support</p>
+<p>openshift-origin-cartridge-jbossews : Provides JBossEWS functionality, but see the note on JBoss below</p>
 </li>
 <li>
 <p>openshift-origin-cartridge-jenkins.noarch : Provides jenkins-1 support</p>
@@ -1454,23 +1453,6 @@ the broker:</p>
 </li>
 </ul>
 </div>
-</div>
-<div class="sect2">
-<h3 id="install-jboss-eap-and-jboss-ews-support"><a class="anchor" href="#install-jboss-eap-and-jboss-ews-support"></a>3.2. Install JBoss EAP and JBoss EWS Support</h3>
-<div class="paragraph">
-<p>In order to enable consumers of the PaaS to create JBoss EAP / JBoss EWS gears, we will need to install all of the necessary cartridges for the application server and supporting build systems. Perform the following command to install the required cartridges:</p>
-</div>
-<div class="paragraph">
-<p><strong>Execute the following on the node host</strong>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre># yum install openshift-origin-cartridge-jbosseap.noarch openshift-origin-cartridge-jbossews.noarch openshift-origin-cartridge-jenkins.noarch openshift-origin-cartridge-jenkins-client.noarch</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The above command will allow users to create JBoss EAP and JBoss EWS gears. This also installs support for the Jenkins continuous integration environment, which is discussed in detail in the <a href="oo_user_guide.html#jenkins-continuous-integration">OpenShift Origin User&#8217;s Guide</a>. At the time of this writing, the above command will download and install an additional 285 packages on your node host.</p>
-</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1478,32 +1460,35 @@ the broker:</p>
 <i class="icon-note" title="Note"></i>
 </td>
 <td class="content">
-Depending on your connection and speed of your node host, this installation may take several minutes.
+<div class="paragraph">
+<p><strong>What about JBoss?</strong></p>
+</div>
+<div class="paragraph">
+<p>JBoss cartridges are distributed with OpenShift, however they will not work without a Java application server to run against.
+The JBoss and WildFly application servers are not currently available as RPMs, so unfortunately we cannot include them
+in our dependencies repo. Refer to the <a href="oo_m4_release_notes.html">OpenShift Origin M4 Release Notes</a> for a workaround to enable JBoss cartridges.</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="clear-the-broker-application-cache"><a class="anchor" href="#clear-the-broker-application-cache"></a>3.3. Clear the Broker Application Cache</h3>
+<h3 id="register-the-new-cartridges"><a class="anchor" href="#register-the-new-cartridges"></a>3.2. Register the New Cartridges</h3>
 <div class="paragraph">
-<p>At this point, you will notice if you try to create a JBoss EAP or JBoss EWS based application via the web console that the application type is not available. This is because the broker host creates a cache of available gear types to increase performance. After adding a new cartridge, you need to clear this cache in order for the new gear type to be available to users.</p>
-</div>
-<div class="paragraph">
-<p><strong>Execute the following on the broker host</strong>:</p>
+<p>From a Broker host, run the following command to poll a Node for available cartridge information:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre># cd /var/www/openshift/broker
-# bundle exec rake tmp:clear</pre>
+<pre>$ oo-admin-ctl-cartridge -c import-node --activate</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>It may take several minutes before you see the new cartridges available on the web console as it takes a few minutes for the cache to completely clear.</p>
+<p>This will automatically register the new cartridges with the Broker and make them available to users for new hosted applications.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="test-the-new-cartridges"><a class="anchor" href="#test-the-new-cartridges"></a>3.4. Test the New Cartridges</h3>
+<h3 id="test-the-new-cartridges"><a class="anchor" href="#test-the-new-cartridges"></a>3.3. Test the New Cartridges</h3>
 <div class="paragraph">
 <p>Open up your preferred browser and enter the following URL, using the correct host and domain name for your environment:</p>
 </div>
@@ -1529,7 +1514,7 @@ Depending on your connection and speed of your node host, this installation may 
 </div>
 </div>
 <div class="sect2">
-<h3 id="install-the-postgresql-and-diy-cartridges"><a class="anchor" href="#install-the-postgresql-and-diy-cartridges"></a>3.5. Install the PostgreSQL and DIY Cartridges</h3>
+<h3 id="install-the-postgresql-and-diy-cartridges"><a class="anchor" href="#install-the-postgresql-and-diy-cartridges"></a>3.4. Install the PostgreSQL and DIY Cartridges</h3>
 <div class="paragraph">
 <p>Using the information presented in this chapter, perform the necessary commands to install both the PostgreSQL and DIY cartridges on your node host. Verify the success of the installation by ensuring that the DIY application type is available on the web console:</p>
 </div>
@@ -2030,7 +2015,7 @@ The "info" command is default if no other is provided. The output is very detail
 </div>
 </div>
 <div class="sect4">
-<h5 id="code-oo-last-access-code-code-oo-list-stale-code-and-code-oo-autoidler-code"><a class="anchor" href="#code-oo-last-access-code-code-oo-list-stale-code-and-code-oo-autoidler-code"></a><code>oo-last-access</code>, <code>oo-list-stale</code>, and <code>oo-autoidler</code></h5>
+<h5 id="code-oo-last-access-code-code-oo-autoidler-code"><a class="anchor" href="#code-oo-last-access-code-code-oo-autoidler-code"></a><code>oo-last-access</code>, <code>oo-autoidler</code></h5>
 <div class="paragraph">
 <p>These tools enable automatic idling of stale gears.</p>
 </div>
@@ -2040,10 +2025,7 @@ The "info" command is default if no other is provided. The output is very detail
 <p><code>oo-last-access</code> is used to record in the gear operations directory how long it has been since the last access either via the web or git. This should be run regularly in a cron job.</p>
 </li>
 <li>
-<p><code>oo-list-stale</code> retrieves a list of gears that are older than a given age (by default, 15 days).</p>
-</li>
-<li>
-<p><code>oo-autoidler</code> uses <code>oo-list-stale</code> to retrieve a list of stale gears and run oo-idler on all of them to make them idle. It should be run regularly from a cron job.</p>
+<p><code>oo-autoidler</code> retrieves a list of stale gears and run oo-idler on all of them to make them idle. It should be run regularly from a cron job.</p>
 </li>
 </ul>
 </div>
@@ -2066,7 +2048,7 @@ The "info" command is default if no other is provided. The output is very detail
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-08-19 00:11:49 EDT
+Last updated 2014-10-31 00:11:51 EDT
 </div>
 <!-- Google Analytics -->
 <script>

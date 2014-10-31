@@ -756,6 +756,7 @@ code { font-family: source_code_pro; }
 <li><a href="#document-root">14.2. Document root</a></li>
 <li><a href="#php-include_path">14.3. PHP include_path</a></li>
 <li><a href="#php-markers">14.4. Markers</a></li>
+<li><a href="#environment-variables-9">14.5. Environment Variables</a></li>
 </ul>
 </li>
 <li><a href="#phpmyadmin">15. phpMyAdmin</a></li>
@@ -763,7 +764,7 @@ code { font-family: source_code_pro; }
 <li>
 <ul class="sectlevel2">
 <li><a href="#template-repository-layout-8">16.1. Template Repository Layout</a></li>
-<li><a href="#environment-variables-9">16.2. Environment Variables</a></li>
+<li><a href="#environment-variables-10">16.2. Environment Variables</a></li>
 </ul>
 </li>
 <li><a href="#python">17. Python</a></li>
@@ -772,7 +773,7 @@ code { font-family: source_code_pro; }
 <li><a href="#template-repository-layout-9">17.1. Template Repository Layout</a></li>
 <li><a href="#cartridge-layout-2">17.2. Cartridge Layout</a></li>
 <li><a href="#markers-7">17.3. Markers</a></li>
-<li><a href="#environment-variables-10">17.4. Environment variables</a></li>
+<li><a href="#environment-variables-11">17.4. Environment variables</a></li>
 </ul>
 </li>
 <li><a href="#ruby">18. Ruby</a></li>
@@ -781,7 +782,7 @@ code { font-family: source_code_pro; }
 <li><a href="#template-repository-layout-10">18.1. Template Repository Layout</a></li>
 <li><a href="#ruby-mirror">18.2. Ruby Mirror</a></li>
 <li><a href="#rails-3-0">18.3. Rails 3.0</a></li>
-<li><a href="#environment-variables-11">18.4. Environment Variables</a></li>
+<li><a href="#environment-variables-12">18.4. Environment Variables</a></li>
 <li><a href="#using-rails_env-development">18.5. Using RAILS_ENV=development</a></li>
 <li><a href="#code-threaddump-code-command">18.6. <code>threaddump</code> command</a></li>
 <li><a href="#markers-8">18.7. Markers</a></li>
@@ -2081,6 +2082,27 @@ will automatically enable SSH port forwarding:</p>
 </dd>
 </dl>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When changing the MongoDB password manually using <code>db.addUser()</code> before you
+restart the MongoDB server to pickup the new password, you have to update the
+environment variable first:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay"><code>$ rhc env set OPENSHIFT_MONGODB_DB_PASSWORD="newpassword"</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2550,6 +2572,50 @@ automatically searched when calling require(), include() and other file I/O func
 </table>
 
 </div>
+<div class="sect2">
+<h3 id="environment-variables-9"><a class="anchor" href="#environment-variables-9"></a>14.5. Environment Variables</h3>
+<div class="paragraph">
+<p>The <code>php</code> cartridge provides several environment variables to change the default PHP configuration:</p>
+</div>
+<table class="tableblock frame-all grid-all" style="width:100%; ">
+<colgroup>
+<col style="width:50%;">
+<col style="width:50%;"> 
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">APPLICATION_ENV</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application mode, default value is <code>production</code>. When set to <code>development</code>, the Xdebug extension is enabled, more verbose <code>error_reporting</code> and the <code>APC.stat</code> setting are set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPENSHIFT_PHP_APC_ENABLED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether APC op-code cache PECL is enabled, <code>true</code> by default. Set value to <code>false</code> to turn this extension off.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPENSHIFT_PHP_APC_SHM_SIZE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The APC shared memory size. The default value is <code>64M</code> on Small gears, <code>128M</code> on Medium gears and <code>256M</code> on Large gears.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPENSHIFT_PHP_XDEBUG_ENABLED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether Xdebug PECL is enabled, <code>true</code> by default. Set value to <code>false</code> to turn this extension off. This variable overrides behavior set by <code>APPLICATION_ENV</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OPENSHIFT_PHP_&lt;MODULE&gt;_ENABLED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether <code>&lt;MODULE&gt;</code> PECL is enabled, <code>true</code> by default. Set value to <code>false</code> to turn the specified extension off. To list all enabled modules, run <code>php -m</code> command while ssh&#8217;d into the gear.</p></td>
+</tr>
+</tbody>
+</table>
+
+<div class="paragraph">
+<p><em>Note: You must restart the <code>php</code> cartridge to pick-up the updated values.</em></p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2587,7 +2653,7 @@ Please leave <code>sql</code> and <code>data</code> directories but feel free to
 </div>
 </div>
 <div class="sect2">
-<h3 id="environment-variables-9"><a class="anchor" href="#environment-variables-9"></a>16.2. Environment Variables</h3>
+<h3 id="environment-variables-10"><a class="anchor" href="#environment-variables-10"></a>16.2. Environment Variables</h3>
 <div class="paragraph">
 <p>The <code>postgresql</code> cartridge provides several environment variables to reference for ease of use:</p>
 </div>
@@ -2669,6 +2735,12 @@ changing the default values for these variables:</p>
 </tbody>
 </table>
 
+<div class="paragraph">
+<p>Users can change the authentication and restrict the list of remote connection
+IPs by modifying the pg_hba.conf file, but doing so might be dangerous and
+possibly lead to broken application. Make sure you snapshot the application
+before doing such changes.</p>
+</div>
 <div class="paragraph">
 <p>For more details, please refer to PostgreSQL
 <a href="https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server">wiki page</a>.</p>
@@ -2772,7 +2844,7 @@ versions/      Version data to support multiple python versions (copied into pla
 
 </div>
 <div class="sect2">
-<h3 id="environment-variables-10"><a class="anchor" href="#environment-variables-10"></a>17.4. Environment variables</h3>
+<h3 id="environment-variables-11"><a class="anchor" href="#environment-variables-11"></a>17.4. Environment variables</h3>
 <div class="paragraph">
 <p>The <code>python</code> cartridge supports the following environment variables:</p>
 </div>
@@ -2928,7 +3000,7 @@ fi</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="environment-variables-11"><a class="anchor" href="#environment-variables-11"></a>18.4. Environment Variables</h3>
+<h3 id="environment-variables-12"><a class="anchor" href="#environment-variables-12"></a>18.4. Environment Variables</h3>
 <div class="paragraph">
 <p>The <code>ruby</code> cartridge provides several environment variables to reference for ease of use:</p>
 </div>
@@ -3052,7 +3124,7 @@ for the appropriate <code>Rack</code> process, and sending <code>ABRT</code> sig
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2014-08-19 00:11:49 EDT
+Last updated 2014-10-31 00:11:51 EDT
 </div>
 <!-- Google Analytics -->
 <script>
