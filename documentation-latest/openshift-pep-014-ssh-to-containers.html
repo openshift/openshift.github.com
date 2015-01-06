@@ -5,7 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;" name="author">
-<title>Building OpenShift Origin RPMS from Source</title>
+<title>OpenShift PEP 014: OpenShift 3 SSH to Containers</title>
 <style>@import url(http://openshift.redhat.com/app/assets/overpass.css);
 @import url(http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.0/css/font-awesome.css);
 /*
@@ -632,7 +632,7 @@ code { font-family: source_code_pro; }
 .valign-bottom { vertical-align: bottom }</style>
 <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
-<body class="article">
+<body class="article toc2">
 <nav class="global">
 <ul>
 <li>
@@ -646,76 +646,333 @@ code { font-family: source_code_pro; }
 </ul>
 </nav>
 <div id="header">
-<h1>Building OpenShift Origin RPMS from Source</h1>
+<h1>OpenShift PEP 014: OpenShift 3 SSH to Containers</h1>
 <span id="author">OpenShift Origin Documentation Project &lt;dev@lists.openshift.redhat.com&gt;</span>
 <br>
-<span id="revdate">LATEST DOC UPDATES</span>
+<div class="toc2" id="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel2">
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#specification">Specification</a></li>
+</ul>
+</div>
 </div>
 <div id="content"><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide will walk you through retrieving the OpenShift Origin source from GitHub and build local copies of the Origin RPMS.</p>
+<p>PEP: 014<br>
+Title: OpenShift 3 SSH to Containers<br>
+Status: draft<br>
+Author: Andy Goldstein <a href="mailto:agoldste@redhat.com">agoldste@redhat.com</a><br>
+Arch Priority: medium<br>
+Complexity: 100<br>
+Affected Components: apiserver<br>
+Affected Teams: Runtime, Infrastructure<br>
+User Impact: medium<br>
+Epic: TBD</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="abstract"><a class="anchor" href="#abstract"></a>Abstract</h3>
+<div class="paragraph">
+<p>Users and administrators are used to being able to SSH to their servers to perform various tasks. We need to devise a means for users to access cluster-managed containers via SSH.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="motivation"><a class="anchor" href="#motivation"></a>Motivation</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Provide SSH access to cluster-managed containers</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="specification"><a class="anchor" href="#specification"></a>Specification</h3>
+<div class="sect3">
+<h4 id="container-identification"><a class="anchor" href="#container-identification"></a>Container identification</h4>
+<div class="paragraph">
+<p>In OpenShift, the smallest deployable unit is a pod (a group of 1 or more containers), not a single container. A container belongs to a pod, which belongs to a namespace. To uniquely identify a specific container, you must specify all 3 elements: namespace, pod name, container name.</p>
 </div>
 <div class="paragraph">
-<p>OpenShift Origin requires a Fedora 19, or RHEL 6.4 compatible system to build these packages. You should start with a minimal installation to perform the build.</p>
+<p>To support as many SSH clients as possible, we really only have two items we can use when specifying which container is the target of an SSH request: username and hostname. If SSH supported HTTP-style virtual hosts, things would be easy, as we could just use something like <code>$namespace-$pod-$container.openshift.com</code> for the hostname, and that would identify the container. Unfortunately, this feature doesn&#8217;t exist (although it has been discussed <a href="https://groups.google.com/forum/#!topic/mailing.unix.openssh-dev/cyf3bhxpc8U">here</a>). For smaller environments, if it&#8217;s possible to assign 1 IP address per namespace/pod/container, hostname could be a viable identification mechanism, but this would require a lot of dynanmic infrastructure changes (DNS updates, sshd configuration updates) on the fly, so it&#8217;s probably not practical.</p>
 </div>
 <div class="paragraph">
-<p><strong>1. Install basic dependencies (Requires root to install RPMs)</strong></p>
+<p>That leaves username as the sole means to identify the container. Linux usernames are limited to 32 characters, and it&#8217;s highly likely that the namespace/pod/container combination will exceed the 32 character limit.</p>
+</div>
+<div class="paragraph">
+<p>We could potentially use Docker container IDs, although they are 64 characters and look like <code>718b86bd82e457d802f7077d79ab62e4ff386aaeb4fb1f5d00ec1475c42b7e5f</code>. A container&#8217;s ID can reasonably be shortened while still avoiding collisions; Docker shortens them to 12 characters when displaying them in <code>docker ps</code> (e.g. <code>718b86bd82e4</code>). Docker container IDs are not stored in etcd nor are they available in any of the API server&#8217;s data types (i.e. pod and its related types don&#8217;t have the container ID).</p>
+</div>
+<div class="paragraph">
+<p>When the cluster creates a container, it assigns the container a name such as <code>k8s_dockerregistry.b1c4fcf9_registry.default.etcd_1417618667_5c7a85e8</code>, which is clearly more than 32 characters, and not a good candidate for the identifier.</p>
+</div>
+<div class="paragraph">
+<p>A pod may be deleted from one node and recreated on the same node or on another one depending on various factors (scaling events, node evacuation, etc.). When this happens, the Docker container IDs and Docker names of all the pod&#8217;s containers change. There are things that remain consistent: the pod&#8217;s namespace, the pod&#8217;s name, and the pod&#8217;s containers' names (as specified in the pod definition; not the Docker container names for them). However, if replication controllers are used, the name of each pod created by a replication controller is a randomly-generated UUID such as <code>f9bc6e3d-7b15-11e4-a6c4-001c42c44ee1</code>.</p>
+</div>
+<div class="paragraph">
+<p>We looked at sending an environment variable (<code>-o SendEnv ...</code>) to specify the container, but unfortunately you can&#8217;t set the value in an entry in the <code>~/.ssh/config</code> file; you can only specify that the variable be passed from client to server, using its current value. An example would look something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>yum install -y rubygem-thor git tito yum-plugin-priorities wget vim-enhanced \
-ruby-devel rubygems-devel rubygem-aws-sdk rubygem-parseconfig rubygem-yard rubygem-redcarpet \
-createrepo</pre>
+<pre>CONTAINER=$ns/$pod/$container ssh -o 'SendEnv Container' ssh@ssh.openshift.com</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>2. Clone the openshift-dev-tools repository</strong></p>
+<p>This isn&#8217;t elegant, and the user experience is suboptimal (or maybe even impossible if an SSH client doesn&#8217;t support sending evironment variables).</p>
+</div>
+<div class="paragraph">
+<p>Out of all of the possibilities listed above, the one that seems best is using namespace/pod/container as the username, along with a custom NSS module to overcome the 32 character limit (more on this below).</p>
+</div>
+<div class="sect4">
+<h5 id="identifying-replication-controller-managed-pods"><a class="anchor" href="#identifying-replication-controller-managed-pods"></a>Identifying replication controller managed pods</h5>
+<div class="paragraph">
+<p>A pod in a replication controller is assigned a randomly-generated UUID as its name. This makes it difficult to provide a constant SSH URL. Imagine a replication controller named <code>foo</code> that defines some pod with a replica count of 3. You might end up with 3 pods named like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>git clone git://github.com/openshift/origin-dev-tools.git</pre>
+<pre>f9bc6e3d-7b15-11e4-a6c4-001c42c44ee1
+f9bc9428-7b15-11e4-a6c4-001c42c44ee1
+f9bca1c2-7b15-11e4-a6c4-001c42c44ee1</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>3. Clone the OpenShift Origin sources</strong></p>
+<p>The SSH URL for a container in the first pod might be <code>somenamespace/f9bc6e3d-7b15-11e4-a6c4-001c42c44ee1/apache</code>, which will remain constant as long as that pod exists. We could try to simplify things and support <code>namespace/replicationController.index./container</code>, which would make the above example <code>somenamespace/foo.0/apache</code>, but even then, you can&#8217;t be certain that you&#8217;re consistently referring to the same exact pod, in the event that 1 of the members of the replica set is deleted and recreated, or if the order of the pods retrieved when matching the replication controller&#8217;s label selector changes.</p>
+</div>
+<div class="paragraph">
+<p>This type of simplification might be useful, but it is not a method that guarantees that a user always gets the same container everytime <code>namespace/replicationController.index/container</code> is resolved.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="proxying-ssh"><a class="anchor" href="#proxying-ssh"></a>Proxying SSH</h4>
+<div class="paragraph">
+<p>Using namespace/pod/container as the username tells us the container, but it doesn&#8217;t give any information about the host where the container lives. We can have users SSH directly to the container&#8217;s node to reach the container, or we could have all SSH connections go through a proxy instead.</p>
+</div>
+<div class="paragraph">
+<p>Users that get an SSH URL referencing a specific node for the hostname will only be able to use it as long as the pod is on that node. At this time and for the near future, Kubernetes does not move containers across nodes.</p>
+</div>
+<div class="paragraph">
+<p>If we want to have a constant URL for a container regardless of the host where it&#8217;s running, we need a proxy with a constant URL. To SSH to a container using a proxy, we&#8217;d have a URL such as <code>namespace/pod/container@ssh.openshift.com</code>. Even if the container moves to a different node, the SSH URL remains the same. The proxy would be responsible for inspecting the username, determining the container&#8217;s node, and forwarding the request to that node.</p>
+</div>
+<div class="paragraph">
+<p>The proxy approach provides a better user experience, but adds complexity to the overall implementation. The client must authenticate with both the proxy&#8217;s sshd and the node&#8217;s sshd, but we don&#8217;t want the client to know about the 2 different sshd servers and ask them to authenticate twice. We could require the client to use an SSH agent and accept the same public keys from the client in both the proxy and node, but that would require SSH agent forwarding, which we shouldn&#8217;t allow on a multi-tenant server.</p>
+</div>
+<div class="paragraph">
+<p>As an alternative to agent forwarding, we could have the proxy obtain some form of authentication (token or key pair) from OpenShift as soon as the user authenticates to the proxy. The proxy would then pass this authentication to the node&#8217;s sshd server.</p>
+</div>
+<div class="sect4">
+<h5 id="proxied-containers-pods-deployed-by-openshift"><a class="anchor" href="#proxied-containers-pods-deployed-by-openshift"></a>Proxied containers: pods deployed by OpenShift</h5>
+<div class="paragraph">
+<p>OpenShift deployments, the common way users get a new version of their code running, are implemented using replication controllers. When a deployment occurs, the replication controllers in the deployment change. The replication controllers servicing the old deployments are deleted, and new ones are introduced to service the new deployment. Because replication controller managed pods receive unpredictable names, the container names associated with an OpenShift deployment will be inconsistent across deployment versions.</p>
+</div>
+<div class="paragraph">
+<p>In the future, the naming scheme for pods managed by replication controllers may change to become more deterministic. A possible format might be:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre># From origin-dev-tools's checkout
-export SKIP_SETUP=1
-./build/devenv clone_addtl_repos master</pre>
+<pre>&lt;replication controller name&gt;-&lt;replica number&gt;</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>4. Install package requirements (Requires root to install RPMs)</strong></p>
+<p>If the naming scheme changed in this way, it would become possible to address the pods associated with an OpenShift deployment in a predictable manner. If the replication controller name was driven by the deployment name, the container naming scheme might be approximately:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre># From origin-dev-tools's checkout
-# This step will install a lot of RPMs and will take a while
-./build/devenv install_required_packages</pre>
+<pre>&lt;namespace&gt;-&lt;deployment config name&gt;-&lt;deployment version&gt;-&lt;replica number&gt;
+&lt;----       replication controller name       ----------&gt;
+
+# Replica 2 for deployment config frontend version 1 in namespace test
+test-frontend-1-2
+
+# Replica 8 for deployment config backend version 12 in namespace production
+production-backend-12-8</pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>5. Build RPMs (Requires root to install RPMs)</strong></p>
+<p>Even with this scheme, in order to provide stable SSH URLs, Openshift would need a pluggable resolution strategy to resolve a version independent URL (<code>test-frontend-2</code>) to the correct versioned name: <code>test-frontend-1-2</code>. It is worth discussing the merits of a strategy for methods like OpenShift deployments that manipulate replication controllers.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre># From origin-dev-tools's checkout
-./build/devenv local-build --skip-install</pre>
 </div>
+<div class="sect4">
+<h5 id="proxied-containers-port-forwarding-scp-sftp"><a class="anchor" href="#proxied-containers-port-forwarding-scp-sftp"></a>Proxied containers: port forwarding, scp, sftp</h5>
+<div class="paragraph">
+<p>If the flow with a proxy is client &lt;&#8594; proxy sshd &lt;&#8594; node sshd, is it possible to support port forwarding, scp, and sftp? Of the 3, scp is the easiest, as it simply runs <code>scp</code> as a remote command.</p>
 </div>
 <div class="paragraph">
-<p>RPMs will be available in <code>origin-rpms</code> directory.</p>
+<p>Port forwarding and sftp are more challenging. With both of these, the ssh client sends SSH protocol messages to the sshd server, and these messages are not visible to whatever shell or process is executed by sshd upon client connection. Port forwarding is feasible with a flow such as this:</p>
 </div>
 <div class="paragraph">
-<p><strong>6. Create RPM metadata so that the directory can be accessed as a YUM repository</strong></p>
+<p>client <code>ssh -o "ProxyCommand ssh -W %h:%p ssh.openshift.com" namespace/pod/container@node123.openshift.com</code> &#8594; proxy sshd &#8594; node sshd &#8594; <code>nsenter -t $containerPid -m -u -i -n -p socat - tcp4-listen:$port,fork</code></p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre># From the origin-rpms directory
-createrepo .</pre>
+<div class="paragraph">
+<p>With <code>ProxyCommand ssh -W %h:%p ssh.openshift.com</code>, the client&#8217;s ssh client establishes a connection and authenticates to ssh.openshift.com, opens a connection to the node&#8217;s sshd at <code>namespace/pod/container@node123.openshift.com</code>, and then forwards all stdin/stdout between the ssh client and the node&#8217;s sshd. This allows SSH protocol messages to work between the client and node sshd. Without <code>ProxyCommand ssh -W %h:%p</code>, the SSH protocol messages would be between the client and the proxy sshd server, which isn&#8217;t what we want. While this looks feasible, it is not a good user experience and may not be supported by all SSH clients.</p>
+</div>
+<div class="paragraph">
+<p>SFTP might not be possible with a stock OpenSSH sshd server. For this to work, the SFTP SSH protocol messages would need to be between the client and the node&#8217;s sshd, just like with port forwarding. While this is feasible with the <code>ProxyCommand</code> option described above, that would only get us access to the node&#8217;s file system. We&#8217;d ideally want to <code>nsenter</code> the mount namespace of the container to access its files, but that would presumably require modifications to OpenSSH itself, as it is currently responsible for launching <code>sftp-server</code> for an incoming SFTP request, and it doesn&#8217;t appear to be possible to alter that process flow to insert <code>nsenter</code> as part of it.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="identification-user-id-uid-isolation"><a class="anchor" href="#identification-user-id-uid-isolation"></a>Identification: User id (uid) &amp; isolation</h4>
+<div class="paragraph">
+<p>If we use namespace/pod/container as the username, we need a uid to correspond to the username. Note, this uid is just used for the SSH session; processes in the container do not run as this uid. We could attempt to assign a unique uid to each container, but given that the number of containers created over the cluster&#8217;s lifetime could potentially be in the millions or billions, this doesn&#8217;t seem like a viable path. We also need to avoid a collision where 2 SSH sessions to 2 different containers share the same uid.</p>
+</div>
+<div class="paragraph">
+<p>It is probably best to define a maximum number of containers that a given node may run simultaneously. When a container is scheduled onto a node, it should be assigned a unique uid from the pool of available uids for that node. Whenever a container is removed from a node, its uid is returned to the pool for possible future reassignment.</p>
+</div>
+<div class="paragraph">
+<p>After a client has been authenticated, sshd drops privileges and switches to run as the authenticated user. When multiple clients connect to sshd, we want to ensure that one client is not allowed to see another client&#8217;s information. We can achieve isolation by giving each container a unique uid for SSH sessions and by setting a unique SELinux MCS label for the execution context of these processes and their descendents.</p>
+</div>
+<div class="paragraph">
+<p>OpenShift 2 uses a custom PAM module, <a href="https://github.com/openshift/origin-server/tree/master/pam_openshift">pam_openshift</a>, to set the SELinux context consistently based on the uid when a user interacts with a gear via SSH. OpenShift 3 could continue to use this module.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="containers-without-shells"><a class="anchor" href="#containers-without-shells"></a>Containers without shells</h4>
+<div class="paragraph">
+<p>Some container images are designed to be extremely small, comprised of just a single executable. These types of containers don&#8217;t have a shell that can be used for SSH access. There are a couple of ways we could approach this:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Tell users their container must have a shell if they want shell access</p>
+</li>
+<li>
+<p>Automatically add a special utility volume to every pod (bind mount into containers) with helpful tools such as a shell</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Supplying a utility volume has some possible pros and cons:</p>
+</div>
+<div class="paragraph">
+<p><strong>Pros:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>We can potentially add a shell to a container that does not have one</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Cons:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The architecture of the shell in the utility volume might not match that of the container</p>
+</li>
+<li>
+<p>The mount point of the utility volume in the container could potentially conflict with a real directory in the container</p>
+</li>
+<li>
+<p>The name of the utility volume could potentially conflict with a user-supplied volume name for a pod</p>
+</li>
+<li>
+<p>Automatically adding a utility volume to every pod feels hackish</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="where-code-sshd-code-runs"><a class="anchor" href="#where-code-sshd-code-runs"></a>Where <code>sshd</code> runs</h4>
+<div class="paragraph">
+<p>There are a few ways we could run sshd in front of a container:</p>
+</div>
+<div class="sect4">
+<h5 id="code-sshd-code-as-a-node-level-service-also-used-by-administrators-to-access-the-node"><a class="anchor" href="#code-sshd-code-as-a-node-level-service-also-used-by-administrators-to-access-the-node"></a><code>sshd</code> as a node level service, also used by administrators to access the node</h5>
+<div class="paragraph">
+<p>A custom NSS module delegates passwd database information lookups (username, uid, gid, shell, home directory) to OpenShift. A custom PAM module delegates authentication and authorization to OpenShift. Once a client has been authenticated and authorized to access the target container, sshd executes a custom <code>ForceCommand</code> that uses <code>nsenter</code> (or possibly <code>docker exec</code>) to run a shell or the supplied command in the container. Because this command runs as the container&#8217;s "uid" (from the NSS module and OpenShift), it will need privileged access to <code>nsenter</code>/<code>docker exec</code>, potentially via a setuid-enabled helper, sudo, or some other mechanism.</p>
+</div>
+<div class="paragraph">
+<p>Using a single sshd for both administrators and end users eliminates the need to manage an additional sshd service, as nodes will likely already have sshd running. Sharing 1 sshd would mean that the custom NSS and PAM modules would handle lookups for non-container users (i.e. administrators) and fail before other modules such as files/ldap have a chance to perform their lookups, or vice versa, depending on the module lookup order in the NSS and PAM configuration files.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="code-sshd-code-as-a-node-level-service-not-used-by-administrators"><a class="anchor" href="#code-sshd-code-as-a-node-level-service-not-used-by-administrators"></a><code>sshd</code> as a node level service, not used by administrators</h5>
+<div class="paragraph">
+<p>This is identical to the previous option, but using a 2nd sshd process and port instead of running a single <code>sshd</code>. This sshd would use an independent configuration file from that of the administrators' sshd. This has the advantage of being able to apply a more restrictive set of configuration settings for this sshd. Either this sshd or the one for administrators would need to run on a nonstandard port (or they both could), which makes it more difficult for attack (but far from impossible).</p>
+</div>
+<div class="paragraph">
+<p><strong>This is the recommended option.</strong></p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="code-sshd-code-as-a-node-level-service-via-a-pod"><a class="anchor" href="#code-sshd-code-as-a-node-level-service-via-a-pod"></a><code>sshd</code> as a node level service via a pod</h5>
+<div class="paragraph">
+<p>This ideally would be a "core" system pod, something that&#8217;s deployed as part of the cluster itself (a feature that doesn&#8217;t really exist today), and there would be 1 per node. The container running sshd would need to run privileged, and it would need to share the host&#8217;s pid namespace if using <code>nsenter</code> (support for this is currently pending <a href="https://github.com/docker/docker/pull/9339">here</a>) or the node&#8217;s docker socket if using <code>docker exec</code> (more R&amp;D is needed to determine if the broad scope of these privileges can be reduced). The port for sshd would need to be accessible from outside the host, either by specifying the host port in the container&#8217;s specification, or by using a Kubernetes service.</p>
+</div>
+<div class="paragraph">
+<p>One benefit to this approach is that the custom NSS and PAM modules could be installed only inside the sshd container, leaving the node&#8217;s NSS/PAM configurations untouched.</p>
+</div>
+<div class="paragraph">
+<p>One significant detractor is that a privileged container that shares the host&#8217;s pid namespace is required. This potentially opens up the door to additional attack vectors, as there are additional components involved (Docker, kernel namespaces).</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="code-sshd-code-as-an-always-on-sshd-container-in-a-pod"><a class="anchor" href="#code-sshd-code-as-an-always-on-sshd-container-in-a-pod"></a><code>sshd</code> as an always-on sshd container in a pod</h5>
+<div class="paragraph">
+<p>For this option, OpenShift automatically adds an sshd container to every pod in the system. Ideally this container wouldn&#8217;t need the privileges described in the previous option, but they may be necessary. If so, this is a "con" for this option, as we want to avoid allowing user containers to run with privileges.</p>
+</div>
+<div class="paragraph">
+<p>This option is also not desirable due to the excessive number of additional containers that will likely sit idle close to 100% of the time for the majority of pods.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="code-sshd-code-as-an-on-demand-sshd-container-in-a-pod"><a class="anchor" href="#code-sshd-code-as-an-on-demand-sshd-container-in-a-pod"></a><code>sshd</code> as an on-demand sshd container in a pod</h5>
+<div class="paragraph">
+<p>For this, we either need the ability to add a new container to an existing pod, or we need a way to create a new pod and ensure the scheduler places it on the same node as the target pod/container. Either way, this option is essentially the same as the always-on sshd container in a pod. The sshd container still needs to share the host&#8217;s pid namespace for <code>nsenter</code> or it needs the host&#8217;s docker socket bind mounted in for <code>docker exec</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="authentication"><a class="anchor" href="#authentication"></a>Authentication</h4>
+<div class="sect4">
+<h5 id="public-key-authentication"><a class="anchor" href="#public-key-authentication"></a>Public key authentication</h5>
+<div class="paragraph">
+<p>sshd uses a custom <code>AuthorizedKeysCommand</code> to ask OpenShift for a list of public keys allowed to access the target container. This command runs as <code>AuthorizedKeysCommandUser</code>, which must be an isolated user that has a private means of authenticating with OpenShift (e.g. a client certificate or token). sshd performs the key exchange with the client and allows the client to proceed if the client&#8217;s key is in the list of authorized keys retrieved from OpenShift.</p>
+</div>
+<div class="paragraph">
+<p>Avoiding denial of service attacks when requesting authorized public keys from OpenShift</p>
+</div>
+<div class="paragraph">
+<p>During the SSH connection handshake and key exchange, sshd executes the <code>AuthorizedKeysCommand</code> at least 2 times per public key presented by the client: once so the server can determine if it should accept a particular key, and a second time during the actual key exchange process. With a small number of users, keys, and SSH connection attempts, this won&#8217;t be an issue, but as the scale increases, the system needs to be able to handle a high volume of requests for authorized keys. It should additional protect against denial of service attacks.</p>
+</div>
+<div class="paragraph">
+<p>Each node could have a daemon running whose purpose is to query OpenShift for authorized keys and cache them for relatively short periods of time (a few minutes). The <code>AuthorizedKeysCommand</code>, instead of communicating directly with OpenShift, could talk to this daemon to request authorized keys. This way, repeated SSH connection attempts over a short period of time would use the cached data instead of always asking OpenShift.</p>
+</div>
+<div class="paragraph">
+<p>There are some potential issues with this approach. A key that was just granted access to a container but that isn&#8217;t yet in the cache might incorrectly be denied access until the cache is refreshed. Similarly, a key whose access was just revoked in OpenShift may still be in the cached data, allowing access for the key when it should be denied.</p>
+</div>
+<div class="paragraph">
+<p>An alternative to a cache with a time-based expiration policy could be to use the cache reflector available in Kubernetes to keep the daemon in sync with the OpenShift server.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="token-password-authentication"><a class="anchor" href="#token-password-authentication"></a>Token (password) authentication</h5>
+<div class="paragraph">
+<p>The client presents a token as a password to <code>sshd</code>. <code>sshd</code> delegates password authentication to PAM. A custom PAM module delegates authentication to OpenShift, and OpenShift validates the presented token.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="kerberos-authentication"><a class="anchor" href="#kerberos-authentication"></a>Kerberos authentication</h5>
+<div class="paragraph">
+<p>There are a couple of options for supporting Kerberos authentication.</p>
+</div>
+<div class="paragraph">
+<p>Manage per-container .k5login files</p>
+</div>
+<div class="paragraph">
+<p>With this option, each "container ssh user" has its own home directory. The standard Kerberos .k5login file controls which principals are allowed to access the node as the container ssh user. A controller watches OpenShift for changes to the set of principals allowed to access a container. When changes occur, the controller modifies that container ssh user&#8217;s .k5login file.</p>
+</div>
+<div class="paragraph">
+<p>Manage access using <code>gsscred</code></p>
+</div>
+<div class="paragraph">
+<p>With this option, a controller watches OpenShift for changes to the set of principals allowed to access a container. When changes occur, the controller executes the <code>gsscred</code> command to grant or revoke access for a principal to a container.</p>
 </div>
 </div>
 </div>
@@ -723,7 +980,7 @@ createrepo .</pre>
 <div id="footer">
 <div id="footer-text">
 <br>
-Last updated 2015-01-06 00:11:58 EST
+Last updated 2015-01-06 00:11:54 EST
 </div>
 <!-- Google Analytics -->
 <script>
